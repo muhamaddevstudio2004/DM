@@ -1271,13 +1271,21 @@ function shareLocation() {
       const lng = pos.coords.longitude;
       const url = `https://www.google.com/maps?q=${lat},${lng}`;
       document.getElementById('f-address').value = url;
+      document.getElementById('f-address').style.borderColor = 'var(--success)';
     },
     err => {
-      alert('لۆکەیشن نەگیرا — تکایە إذن بدە یان HTTPS بەکاربهێنە');
-    }
+      // کۆدی هەڵە دیاری بکە
+      if(err.code === 1) {
+        alert('❌ إذنی لۆکەیشن نەدراوە\n\nتکایە:\n• لەسەر مۆبایل: ئایکۆنی قفل/لۆکەیشن لە بالای براوزەر بکەوە\n• إذنی لۆکەیشن بدە، پاشان دووبارە هەوڵ بدەرەوە');
+      } else if(err.code === 2) {
+        alert('❌ لۆکەیشن نەگیرا — GPS چالاک بکە');
+      } else {
+        alert('❌ کاتی بەسەرچوو — دووبارە هەوڵ بدەرەوە');
+      }
+    },
+    { timeout: 10000, enableHighAccuracy: true }
   );
 }
-
 
 
 function resetAfterOrder() {
