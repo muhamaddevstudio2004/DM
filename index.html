@@ -234,6 +234,7 @@ section{position:relative;scroll-margin-top:calc(var(--nav-h) + 18px);}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
 .hero__strip{margin-top:22px;position:relative;}
+.hero__strip-slide a{display:block;}
 .hero__strip-track{display:flex;transition:transform .6s var(--ease);}
 .hero__strip-slide{min-width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .hero__strip .mockup{aspect-ratio:4/3;}
@@ -838,8 +839,8 @@ section{position:relative;scroll-margin-top:calc(var(--nav-h) + 18px);}
 	</div>
 
 	<div class="hero__visual" data-reveal="scale">
-	  <div class="hero__stage" id="heroStage">
-		<div class="mockup hero__mockup-lg" id="heroMockupLg" style="aspect-ratio:16/12;"></div>
+<div class="hero__stage" id="heroStage">
+    <a href="#" target="_blank" class="mockup hero__mockup-lg" id="heroMockupLg" style="aspect-ratio:16/12;"></a>
 		<div class="hero__float f1">
 		  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
 		  دابەزینی خێرا
@@ -1158,6 +1159,13 @@ section{position:relative;scroll-margin-top:calc(var(--nav-h) + 18px);}
 	facebook:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V5.5h-3A3.5 3.5 0 0 0 10.5 9v2H8v3.5h2.5V22H14v-7.5h3l.5-3.5h-3.5V9c0-.3.3-1 1-1Z"/></svg>`,
 	whatsapp:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21l1.4-4.2A8 8 0 1 1 8 19.4L3 21Z"/><path d="M8.5 9.5c0 3 2 5 5 5"/></svg>`
   };
+
+const HERO_LINKS = [
+    { seed:0, url:"https://example.com/link1" },
+    { seed:1, url:"https://example.com/link2" },
+    { seed:2, url:"https://example.com/link3" },
+    { seed:5, url:"https://example.com/link4" }
+];
 
   const CATEGORIES = [
 	{ key:"website", label:"ماڵپەڕ", en:"Website" },
@@ -1662,12 +1670,13 @@ section{position:relative;scroll-margin-top:calc(var(--nav-h) + 18px);}
   /* ---------------------------------------------------------------------
    * 13. HERO: large mockup + 4-image slider strip
    * ------------------------------------------------------------------- */
-  document.getElementById('heroMockupLg').outerHTML = mockupHTML(0);
+  const heroMain = document.getElementById('heroMockupLg');
+heroMain.innerHTML = mockupHTML(HERO_LINKS[0].seed);
+heroMain.href = HERO_LINKS[0].url;
 
-  const heroSeeds = [1,2,5,7];
-  document.getElementById('heroStripTrack').innerHTML = `
-	<div class="hero__strip-slide">${heroSeeds.map(s=>mockupHTML(s)).join("")}</div>
-  `;
+document.getElementById('heroStripTrack').innerHTML = `
+    <div class="hero__strip-slide">${HERO_LINKS.map(h=>`<a href="${h.url}" target="_blank">${mockupHTML(h.seed)}</a>`).join("")}</div>
+`;
   const heroStripNav = document.getElementById('heroStripNav');
   heroStripNav.innerHTML = `<button class="active" data-i="0"></button>`;
   // Only one slide currently rendered; nav kept for future multi-slide extension.
