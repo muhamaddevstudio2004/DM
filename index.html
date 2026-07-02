@@ -1680,43 +1680,65 @@ const HERO_LINKS = [
     <div class="hero__strip-slide">${HERO_LINKS.map(h=>`<a href="${h.url}" target="_blank">${mockupHTML(h.seed)}</a>`).join("")}</div>
 `;
 
-let heroIndex = 0;
+const heroSlideCount = HERO_LINKS.length;
+let heroRealIndex = 1; // 1..heroSlideCount (0 and N+1 are clones)
 let heroAutoTimer = null;
+let heroAnimating = false;
 
 function renderHeroMain(){
   const track = document.getElementById('heroMainTrack');
-  track.innerHTML = HERO_LINKS.map(h=>`<a href="${h.url}" target="_blank">${mockupHTML(h.seed)}</a>`).join("");
+  const slides = [HERO_LINKS[heroSlideCount-1], ...HERO_LINKS, HERO_LINKS[0]];
+  track.innerHTML = slides.map(h=>`<a href="${h.url}" target="_blank">${mockupHTML(h.seed)}</a>`).join("");
   const nav = document.getElementById('heroStripNav');
   nav.innerHTML = HERO_LINKS.map((_,i)=>`<button data-i="${i}" class="${i===0?'active':''}"></button>`).join("");
-  updateHeroSlide();
+  setHeroPosition(false);
 }
 
+function setHeroPosition(animate){
+  const track = document.getElementById('heroMainTrack');
+  track.style.transition = animate ? 'transform .5s var(--ease)' : 'none';
+  track.style.transform = `translateX(${heroRealIndex*100}%)`;
+  updateHeroDots();
+}
 
-function updateHeroSlide(){
-  document.getElementById('heroMainTrack').style.transform = `translateX(${heroIndex*100}%)`;
-  document.querySelectorAll('#heroStripNav button').forEach((d,i)=>d.classList.toggle('active', i===heroIndex));
+function updateHeroDots(){
+  const dotIndex = ((heroRealIndex - 1) + heroSlideCount) % heroSlideCount;
+  document.querySelectorAll('#heroStripNav button').forEach((d,i)=>d.classList.toggle('active', i===dotIndex));
+}
+
+function goToHeroReal(idx){
+  if(heroAnimating) return;
+  heroAnimating = true;
+  heroRealIndex = idx;
+  setHeroPosition(true);
 }
 
 function goToHeroSlide(i){
-  heroIndex = (i + HERO_LINKS.length) % HERO_LINKS.length;
-  updateHeroSlide();
+  goToHeroReal(i+1);
 }
+
+document.getElementById('heroMainTrack').addEventListener('transitionend', ()=>{
+  heroAnimating = false;
+  if(heroRealIndex === 0){
+    heroRealIndex = heroSlideCount;
+    setHeroPosition(false);
+  } else if(heroRealIndex === heroSlideCount+1){
+    heroRealIndex = 1;
+    setHeroPosition(false);
+  }
+});
 
 function startHeroAutoplay(){
   stopHeroAutoplay();
-  heroAutoTimer = setInterval(()=> goToHeroSlide(heroIndex+1), 4000);
+  heroAutoTimer = setInterval(()=> goToHeroReal(heroRealIndex+1), 4000);
 }
 function stopHeroAutoplay(){
   if(heroAutoTimer) clearInterval(heroAutoTimer);
 }
 
 renderHeroMain();
-const heroStageEl = document.getElementById('heroStage');
-heroStageEl.addEventListener('mouseenter', stopHeroAutoplay);
-heroStageEl.addEventListener('mouseleave', startHeroAutoplay);
-heroStageEl.addEventListener('touchstart', stopHeroAutoplay, {passive:true});
-
 startHeroAutoplay();
+
 document.getElementById('heroStripNav').addEventListener('click', (e)=>{
   const btn = e.target.closest('button');
   if(!btn) return;
@@ -1724,23 +1746,35 @@ document.getElementById('heroStripNav').addEventListener('click', (e)=>{
   startHeroAutoplay();
 });
 
+const heroStageEl = document.getElementById('heroStage');
+heroStageEl.addEventListener('mouseenter', stopHeroAutoplay);
+heroStageEl.addEventListener('mouseleave', startHeroAutoplay);
+heroStageEl.addEventListener('touchstart', stopHeroAutoplay, {passive:true});
+
 (function(){
   const track = document.getElementById('heroMainTrack');
   let startX=0, isDown=false, moved=0, usingTouch=false;
 
-  function down(x){ isDown=true; startX=x; moved=0; track.classList.add('dragging'); stopHeroAutoplay(); }
+  function down(x){
+    if(heroAnimating) return;
+    isDown=true; startX=x; moved=0;
+    track.classList.add('dragging');
+    track.style.transition = 'none';
+    stopHeroAutoplay();
+  }
   function move(x){
     if(!isDown) return;
     moved = x - startX;
-    track.style.transform = `translateX(calc(${heroIndex*-100}% + ${moved}px))`;
+    track.style.transform = `translateX(calc(${heroRealIndex*100}% + ${moved}px))`;
   }
   function up(){
     if(!isDown) return;
     isDown=false;
     track.classList.remove('dragging');
-    if(moved > 60) goToHeroSlide(heroIndex-1);
-    else if(moved < -60) goToHeroSlide(heroIndex+1);
-    else updateHeroSlide();
+    const threshold = 60;
+    if(moved > threshold) goToHeroReal(heroRealIndex-1);
+    else if(moved < -threshold) goToHeroReal(heroRealIndex+1);
+    else setHeroPosition(true);
     startHeroAutoplay();
   }
 
@@ -1750,7 +1784,7 @@ document.getElementById('heroStripNav').addEventListener('click', (e)=>{
     down(e.pageX);
   });
   window.addEventListener('mousemove', e=>{ if(!usingTouch) move(e.pageX); });
-  window.addEventListener('mouseup', e=>{ if(!usingTouch) up(); });
+  window.addEventListener('mouseup', ()=>{ if(!usingTouch) up(); });
 
   track.addEventListener('touchstart', e=>{
     usingTouch = true;
@@ -1762,7 +1796,6 @@ document.getElementById('heroStripNav').addEventListener('click', (e)=>{
     setTimeout(()=>{ usingTouch = false; }, 500);
   });
 })();
-
 
   /* ---------------------------------------------------------------------
    * 14. STATS counter animation
