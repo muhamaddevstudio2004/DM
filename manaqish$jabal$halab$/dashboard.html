@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>داشبۆردی بەڕێوەبردن | Arash FastFood</title>
+<title>داشبۆردی بەڕێوەبردن | Menu </title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -193,9 +193,22 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 .undo-toast-msg{flex:1;font-size:13px}
 .undo-toast-btn{background:var(--gold);color:var(--ink);padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700;flex-shrink:0}
 
-#annActive:checked + #annToggleTrack{background:var(--gold)}
-#annActive:checked + #annToggleTrack + #annToggleDot{transform:translateX(20px);background:var(--ink)}
-[dir=rtl] #annActive:checked + #annToggleTrack + #annToggleDot{transform:translateX(-20px)}
+.ann-track{
+  position:absolute;cursor:pointer;inset:0;
+  background:#2a1010;border:1px solid rgba(255,255,255,.12);
+  border-radius:99px;transition:.2s;
+}
+.ann-dot{
+  position:absolute;height:20px;width:20px;left:2px;top:2px;
+  background:var(--muted);border-radius:50%;
+  transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+
+#annActive:checked + .ann-track{background:var(--gold);border-color:var(--gold)}
+#annActive:checked + .ann-track + .ann-dot{background:var(--ink)}
+
+.ann-dot{transform:translateX(0)}
+#annActive:checked + .ann-track + .ann-dot{transform:translateX(22px)}
 
 </style>
 </head>
@@ -214,7 +227,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 <!-- ═══════════ APP ═══════════ -->
 <div id="app">
   <div class="topbar">
-	<div class="brand"><i class="fa-solid fa-burger"></i> داشبۆردی Arash</div>
+	<div class="brand"><i class="fa-solid fa-burger"></i> داشبۆرد </div>
 	<div style="display:flex;align-items:center;gap:14px">
 	  <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--faint)">
 		<span class="status-dot" id="statusDot"></span>
@@ -298,12 +311,13 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
     	  <div class="card">
 		<h2><i class="fa-solid fa-bullhorn"></i> ئاگادارکردنەوەی گشتی (بانەر)</h2>
 		<div class="field" style="display:flex;align-items:center;justify-content:space-between;background:var(--layer2);padding:12px 14px;border-radius:var(--r-sm);margin-bottom:14px">
-		  <label style="margin:0;font-size:13.5px;color:var(--cream)">چالاککردنی بانەر لەسەر مێنوو</label>
-		  <label style="position:relative;display:inline-block;width:44px;height:24px">
-			<input type="checkbox" id="annActive" style="opacity:0;width:0;height:0">
-			<span id="annToggleTrack" style="position:absolute;cursor:pointer;inset:0;background:var(--layer3);border-radius:99px;transition:.2s"></span>
-			<span id="annToggleDot" style="position:absolute;height:18px;width:18px;left:3px;top:3px;background:var(--faint);border-radius:50%;transition:.2s"></span>
-		  </label>
+				  		  <label style="margin:0;font-size:13.5px;color:var(--cream)">چالاککردنی بانەر لەسەر مێنوو</label>
+		  		 <label style="position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0">
+  <input type="checkbox" id="annActive" style="opacity:0;width:0;height:0;position:absolute">
+  <span id="annToggleTrack" class="ann-track"></span>
+  <span id="annToggleDot" class="ann-dot"></span>
+</label>
+
 		</div>
 		<div class="lang-tabs">
 		  <button class="lang-tab on" data-lt="ckb">کوردی</button>
@@ -314,7 +328,6 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 		<div class="lang-pane" data-lp="ar"><textarea id="annAr" rows="2" dir="rtl"></textarea></div>
 		<div class="lang-pane" data-lp="en"><textarea id="annEn" rows="2" dir="ltr"></textarea></div>
 		<p class="hint">ئەگەر بۆشە بۆ زمانێک، بانەر بۆ ئەو زمانە دەرناکەوێت.</p>
-		<button class="btn btn-gold" id="saveAnnouncement" style="margin-top:10px"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی بانەر</button>
 	  </div>
 	  <button class="btn btn-gold" id="saveDesign"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی دیزاین</button>
 	</section>
@@ -696,14 +709,17 @@ document.getElementById('saveDesign').addEventListener('click', async ()=>{
 	color_layer3: document.getElementById('cL3T').value,
 	color_gold: document.getElementById('cGoldT').value,
 	color_cream: document.getElementById('cCreamT').value,
+	announcement_ckb: document.getElementById('annCkb').value.trim(),
+	announcement_ar: document.getElementById('annAr').value.trim(),
+	announcement_en: document.getElementById('annEn').value.trim(),
+	announcement_active: document.getElementById('annActive').checked,
   };
     const {error} = await sb.from('site_settings').upsert(payload);
   if(error){ toast('هەڵە: '+error.message, false); return; }
   toast('دیزاین پاشەکەوتکرا ✓');
-  await logActivity('گۆڕینی دیزاین', 'ڕەنگ و فۆنت گۆڕدرا');
+  await logActivity('گۆڕینی دیزاین', 'ڕەنگ، فۆنت و بانەر گۆڕدرا');
   await loadAll();
 });
-
 
 /* ═══════════════════════════════════════════════════════════
    5. FOOTER TAB
@@ -1186,23 +1202,8 @@ function fillAnnouncementForm(){
   document.getElementById('annAr').value = SETTINGS.announcement_ar || '';
   document.getElementById('annEn').value = SETTINGS.announcement_en || '';
   document.getElementById('annActive').checked = !!SETTINGS.announcement_active;
-}
 
-document.getElementById('saveAnnouncement').addEventListener('click', async ()=>{
-  if(!guardConnected()) return;
-  const payload = {
-    id:1,
-    announcement_ckb: document.getElementById('annCkb').value.trim(),
-    announcement_ar: document.getElementById('annAr').value.trim(),
-    announcement_en: document.getElementById('annEn').value.trim(),
-    announcement_active: document.getElementById('annActive').checked,
-  };
-  const {error} = await sb.from('site_settings').upsert(payload);
-  if(error){ toast('هەڵە: '+error.message, false); return; }
-  toast('بانەر پاشەکەوتکرا ✓');
-  await logActivity('گۆڕینی ئاگادارکردنەوە', payload.announcement_active ? 'بانەر چالاککرا' : 'بانەر ناچالاککرا');
-  await loadAll();
-});
+}
 
 /* ═══════════════════════════════════════════════════════════
    8. BOOT
