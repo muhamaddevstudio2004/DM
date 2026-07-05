@@ -141,3 +141,9 @@ create policy "allow all plans" on plans for all using (true) with check (true);
 create policy "allow all expenses" on expenses for all using (true) with check (true);
 create policy "allow all categories" on categories for all using (true) with check (true);
 create policy "allow all settings" on settings for all using (true) with check (true);
+
+
+create policy "allow all uploads" on storage.objects
+for all using (bucket_id = 'images') with check (bucket_id = 'images');
+alter table products add column image_url text;
+alter table repairs add column image_url text;
