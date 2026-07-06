@@ -424,14 +424,19 @@ function renderMenu(){
   const gridEl = document.getElementById('menuGrid');
   const listEl = document.getElementById('menuList');
   const empty  = document.getElementById('emptyState');
-  const isGrid = S.view==='grid';
   document.getElementById('rCount').textContent = meals.length;
   empty.classList.toggle('on', !meals.length);
-  gridEl.style.display = isGrid ? '' : 'none';
-  listEl.style.display = isGrid ? 'none' : '';
-  const fn = isGrid ? gridCard : listCard;
-  (isGrid?gridEl:listEl).innerHTML = meals.map(fn).join('');
+  gridEl.innerHTML = meals.map(gridCard).join('');
+  listEl.innerHTML = meals.map(listCard).join('');
+  updateViewDisplay();
 }
+
+function updateViewDisplay(){
+  const isGrid = S.view==='grid';
+  document.getElementById('menuGrid').style.display = isGrid ? '' : 'none';
+  document.getElementById('menuList').style.display = isGrid ? 'none' : '';
+}
+
 
 function updateMenuTexts(){
   const meals = filtered();
@@ -519,8 +524,9 @@ function setView(v){
   document.getElementById('lBtn').classList.toggle('on', v==='list');
   document.getElementById('gBtn').setAttribute('aria-pressed', String(v==='grid'));
   document.getElementById('lBtn').setAttribute('aria-pressed', String(v==='list'));
-  renderMenu();
+  updateViewDisplay();
 }
+
 
 /* ════════════════════════════════════════════════════════════════
    9. EVENTS
