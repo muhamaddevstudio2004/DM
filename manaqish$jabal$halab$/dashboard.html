@@ -836,25 +836,58 @@ function renderFoodList(filterText=''){
   const q = filterText.trim().toLowerCase();
   const rows = MEALS.filter(m => !q || (m.name_ckb||'').toLowerCase().includes(q) || (m.name_ar||'').toLowerCase().includes(q) || (m.name_en||'').toLowerCase().includes(q));
   empty.style.display = rows.length ? 'none' : 'block';
-  list.innerHTML = rows.map(m=>`
-	<div class="list-item" data-id="${m.id}">
-	  <div class="li-drag"><i class="fa-solid fa-grip-vertical"></i></div>
-	  <div class="li-img">${m.img?`<img src="${m.img}" loading="lazy"/>`:''}</div>
-	  <div class="li-body">
-		<div class="li-title">${m.name_ckb}</div>
-		<div class="li-sub">${catsOfMeal(m.id).join(', ')} · ${(m.price||0).toLocaleString()} دینار</div>
-	  </div>
-	  <div class="li-actions">
-		<button class="icon-btn" data-edit-food="${m.id}"><i class="fa-solid fa-pen"></i></button>
-		<button class="icon-btn danger" data-del-food="${m.id}"><i class="fa-solid fa-trash"></i></button>
-	  </div>
-	</div>
-  `).join('');
+
+  const existing = {};
+  list.querySelectorAll('[data-id]').forEach(el => existing[el.dataset.id] = el);
+
+  rows.forEach(m=>{
+    const key = String(m.id);
+    let el = existing[key];
+
+    if(el){
+      // کارتی پێشوو هەیە — تەنها دەق و (ئەگەر پێویست بوو) وێنە نوێ بکەرەوە
+      el.querySelector('.li-title').textContent = m.name_ckb;
+      el.querySelector('.li-sub').textContent = `${catsOfMeal(m.id).join(', ')} · ${(m.price||0).toLocaleString()} دینار`;
+
+      const imgWrap = el.querySelector('.li-img');
+      const currentImg = imgWrap.querySelector('img');
+      if(m.img && (!currentImg || currentImg.getAttribute('src') !== m.img)){
+        imgWrap.innerHTML = `<img src="${m.img}" loading="lazy"/>`;
+      } else if(!m.img && currentImg){
+        imgWrap.innerHTML = '';
+      }
+
+      delete existing[key];
+      list.appendChild(el); // ڕیزبەندی ڕاست دەکاتەوە بەبێ دروستکردنەوەی img
+    } else {
+      // کارتی نوێ — دروستی بکە
+      const div = document.createElement('div');
+      div.className = 'list-item';
+      div.dataset.id = m.id;
+      div.innerHTML = `
+        <div class="li-drag"><i class="fa-solid fa-grip-vertical"></i></div>
+        <div class="li-img">${m.img?`<img src="${m.img}" loading="lazy"/>`:''}</div>
+        <div class="li-body">
+          <div class="li-title">${m.name_ckb}</div>
+          <div class="li-sub">${catsOfMeal(m.id).join(', ')} · ${(m.price||0).toLocaleString()} دینار</div>
+        </div>
+        <div class="li-actions">
+          <button class="icon-btn" data-edit-food="${m.id}"><i class="fa-solid fa-pen"></i></button>
+          <button class="icon-btn danger" data-del-food="${m.id}"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `;
+      list.appendChild(div);
+    }
+  });
+
+  // ئەوانەی لە داتای نوێدا نەماون، لابدە
+  Object.values(existing).forEach(el => el.remove());
+
   initFoodSortable(!!q);
 }
 
-document.getElementById('foodSearch').addEventListener('input', e=>renderFoodList(e.target.value));
 
+document.getElementById('foodSearch').addEventListener('input', e=>renderFoodList(e.target.value));
 document.getElementById('foodList').addEventListener('click', e=>{
   const ed = e.target.closest('[data-edit-food]');
   const del = e.target.closest('[data-del-food]');
