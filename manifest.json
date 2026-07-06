@@ -1,1 +1,22 @@
+  "name": "DEVS",
+  "short_name": "DMS",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffd84d",
+  "theme_color": "#ffd84d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "dev1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "dev2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
 
