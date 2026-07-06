@@ -1,19 +1,14 @@
-  "name": "System Mobile",
-  "short_name": "MobS",
-  "start_url": "./",
-  "display": "fullscreen",
+{
+  "name": "Mobile Store",
+  "short_name": "MStore",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
   "background_color": "#080d1a",
   "theme_color": "#6C63FF",
+  "orientation": "portrait",
   "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "dev1.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "dev2.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
