@@ -194,7 +194,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 
 <footer class="footer">
   <p style="color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:12px" id="footerAbout"></p>
-    <a href="tel:" id="footerBranchLink" style="color:var(--muted);text-decoration:none;display:block;font-size:13px">
+    <a href="#" id="footerBranchLink" style="color:var(--muted);text-decoration:none;display:block;font-size:13px">
     <i class="fa-solid fa-phone" style="color:var(--gold);margin-inline-end:6px"></i>
     <span id="footerBranchText"></span>
   </a>
@@ -367,7 +367,8 @@ function applySettings(){
   const aboutKey = 'footer_about_'+S.lang;
   document.getElementById('footerAbout').textContent = SETTINGS[aboutKey] || SETTINGS.footer_about_ckb || '';
   document.getElementById('footerBranchText').textContent = SETTINGS['branch_text_'+S.lang] || SETTINGS.branch_text_ckb || '';
-document.getElementById('footerBranchLink').href = 'tel:' + (SETTINGS.branch_phone || '');
+const branchDigits = (SETTINGS.branch_phone || '').replace(/[^0-9]/g,'');
+document.getElementById('footerBranchLink').href = branchDigits ? 'https://wa.me/'+branchDigits : '#';
   document.getElementById('footerWaLink').textContent = 'DevMuhamad.com';
 document.getElementById('footerWaLink').href = 'https://wa.me/9647509628683';
 }
