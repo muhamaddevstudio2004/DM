@@ -140,6 +140,26 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 }
 .ann-banner i{font-size:12px}
 
+.wa-contact-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;
+  background:linear-gradient(135deg,#25D366,#1EBE57);
+  color:#fff;border-radius:50%;
+  text-decoration:none;margin:6px 0 18px;
+  box-shadow:0 6px 20px rgba(37,211,102,.28),0 2px 8px rgba(0,0,0,.25);
+  transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s ease;
+  position:relative;overflow:hidden;
+}
+.wa-contact-btn i{font-size:24px}
+.wa-contact-btn::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:rgba(255,255,255,.25);transform:scale(0);opacity:0;
+  transition:transform .4s ease,opacity .4s ease;
+}
+.wa-contact-btn:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 10px 26px rgba(37,211,102,.4),0 4px 12px rgba(0,0,0,.3)}
+.wa-contact-btn:active{transform:translateY(0) scale(.9)}
+.wa-contact-btn:active::before{transform:scale(1);opacity:1;transition:0s}
+
 </style>
 </head>
 <body class="lang-ckb" dir="rtl">
@@ -195,6 +215,9 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 <footer class="footer">
   <p style="color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:12px" id="footerAbout"></p>
   <p>
+    <a href="https://wa.me/9647509628683" target="_blank" rel="noopener" class="wa-contact-btn" id="waContactBtn" aria-label="پەیوەندی بە واتسئەپ">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
     <span id="footerRights">هەموو مافەکان پارێزراون</span> &copy; 2025 &mdash;
     <span id="footerMadeByLabel">دروستکراوە لەلایەن</span>
     <a href="#" id="footerWaLink" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:600"></a>
