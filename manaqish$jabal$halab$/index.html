@@ -381,26 +381,43 @@ document.getElementById('footerWaLink').href = 'https://wa.me/9647509628683';
 ════════════════════════════════════════════════════════════════ */
 function renderCats(){
   const track = document.getElementById('catsTrack');
-  track.innerHTML = CATS.map(c=>`
-    <li class="cat-tile${S.cat===c.cat_id?' on':''}" role="listitem" data-cat="${c.cat_id}" tabindex="0" aria-pressed="${S.cat===c.cat_id}">
-      <div class="cat-img-ring">
-        <div class="cat-img-inner">
-          ${c.img ? `<img src="${c.img}" alt="${catLabel(c.cat_id)}" loading="lazy"/>` : `<div class="cat-icon-circle"><i class="${c.icon||'fa-solid fa-tag'}" aria-hidden="true"></i></div>`}
-        </div>
-      </div>
-      <span class="cat-label">${catLabel(c.cat_id)}</span>
-      <div class="cat-dot"></div>
-    </li>
-  `).join('');
 
   // ئۆتۆماتیک هەڵبژاردنی یەکەم کەتەگۆری ئەگەر هیچ هەڵنەبژێردراوە
   if(S.cat==='all' && CATS.length){
     S.cat = CATS[0].cat_id;
-    renderCats(); // دووبارە ڕێندەر بکە بۆ نیشاندانی on class
-    renderMenu();
-    return;
+  }
+
+  const existingIds = [...track.querySelectorAll('[data-cat]')].map(el=>el.dataset.cat);
+  const newIds = CATS.map(c=>c.cat_id);
+  const sameSet = existingIds.length===newIds.length && existingIds.every((id,i)=>id===newIds[i]);
+
+  if(sameSet){
+    // تەنها هەڵبژاردنی (on) و ناوی کەتەگۆری نوێ بکەرەوە، وێنە دەست پێ نەکەیت
+    CATS.forEach(c=>{
+      const tile = track.querySelector(`[data-cat="${c.cat_id}"]`);
+      if(!tile) return;
+      const isOn = S.cat===c.cat_id;
+      tile.classList.toggle('on', isOn);
+      tile.setAttribute('aria-pressed', String(isOn));
+      const label = tile.querySelector('.cat-label');
+      if(label) label.textContent = catLabel(c.cat_id);
+    });
+  } else {
+    // لیستی کەتەگۆری بەڕاستی گۆڕاوە (زیادکردن/سڕینەوە) — دروستی بکەرەوە
+    track.innerHTML = CATS.map(c=>`
+      <li class="cat-tile${S.cat===c.cat_id?' on':''}" role="listitem" data-cat="${c.cat_id}" tabindex="0" aria-pressed="${S.cat===c.cat_id}">
+        <div class="cat-img-ring">
+          <div class="cat-img-inner">
+            ${c.img ? `<img src="${c.img}" alt="${catLabel(c.cat_id)}" loading="lazy"/>` : `<div class="cat-icon-circle"><i class="${c.icon||'fa-solid fa-tag'}" aria-hidden="true"></i></div>`}
+          </div>
+        </div>
+        <span class="cat-label">${catLabel(c.cat_id)}</span>
+        <div class="cat-dot"></div>
+      </li>
+    `).join('');
   }
 }
+
 
 
 /* ════════════════════════════════════════════════════════════════
