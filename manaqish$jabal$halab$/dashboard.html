@@ -365,6 +365,24 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 		<div class="lang-pane" data-lp="ar"><textarea id="fAboutAr" rows="4" dir="rtl"></textarea></div>
 		<div class="lang-pane" data-lp="en"><textarea id="fAboutEn" rows="4" dir="ltr"></textarea></div>
 	  </div>
+    
+    <div class="card">
+  <h2><i class="fa-solid fa-location-dot"></i> زانیاری لق</h2>
+  <div class="field">
+    <label>ژمارەی مۆبایل (بۆ tel:)</label>
+    <input type="text" id="fBranchPhone" dir="ltr" placeholder="+9647509628683"/>
+  </div>
+  <div class="lang-tabs">
+    <button class="lang-tab on" data-lt="ckb">کوردی</button>
+    <button class="lang-tab" data-lt="ar">عربي</button>
+    <button class="lang-tab" data-lt="en">English</button>
+  </div>
+  <div class="lang-pane on" data-lp="ckb"><div class="field"><label>ناونیشانیل (کوردی)</label><input type="text" id="fBranchTextCkb"/></div></div>
+  <div class="lang-pane" data-lp="ar"><div class="field"><label>ناونیشان (عربي)</label><input type="text" id="fBranchTextAr" dir="rtl"/></div></div>
+  <div class="lang-pane" data-lp="en"><div class="field"><label> Address (English)</label><input type="text" id="fBranchTextEn" dir="ltr"/></div></div>
+</div>
+
+    
 	  <div class="card">
 		<h2><i class="fa-brands fa-whatsapp"></i> دروستکراوە لەلایەن</h2>
 		<div class="row2">
@@ -740,12 +758,22 @@ function fillFooterForm(){
   document.getElementById('fAboutCkb').value = SETTINGS.footer_about_ckb || '';
   document.getElementById('fAboutAr').value  = SETTINGS.footer_about_ar  || '';
   document.getElementById('fAboutEn').value  = SETTINGS.footer_about_en  || '';
+  document.getElementById('fBranchPhone').value = SETTINGS.branch_phone || '';
+document.getElementById('fBranchTextCkb').value = SETTINGS.branch_text_ckb || '';
+document.getElementById('fBranchTextAr').value = SETTINGS.branch_text_ar || '';
+document.getElementById('fBranchTextEn').value = SETTINGS.branch_text_en || '';
+
 }
 
 document.getElementById('saveFooter').addEventListener('click', async ()=>{
   if(!guardConnected()) return;
   const payload = {
 	id:1,
+  branch_phone: document.getElementById('fBranchPhone').value.trim(),
+branch_text_ckb: document.getElementById('fBranchTextCkb').value.trim(),
+branch_text_ar: document.getElementById('fBranchTextAr').value.trim(),
+branch_text_en: document.getElementById('fBranchTextEn').value.trim(),
+
 	footer_about_ckb: document.getElementById('fAboutCkb').value,
 	footer_about_ar:  document.getElementById('fAboutAr').value,
 	footer_about_en:  document.getElementById('fAboutEn').value,
