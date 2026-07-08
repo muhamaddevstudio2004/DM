@@ -715,6 +715,29 @@ select.filter-input { cursor: pointer; }
 }
 .period-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
+.sale-cat-pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.sale-cat-pills::-webkit-scrollbar { height: 4px; }
+.sale-cat-pill {
+  flex-shrink: 0;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12.5px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--card-border);
+  background: var(--card); color: var(--text2);
+  transition: all var(--transition);
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.sale-cat-pill.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.sale-cat-pill .cnt { font-size: 10.5px; opacity: 0.75; }
+
 /* ── LOW STOCK TABLE ── */
 .low-stock-row td:first-child { border-right: 3px solid var(--danger); }
 
@@ -1569,13 +1592,12 @@ kbd {
  <input class="filter-input" style="min-width:220px" type="text"
   placeholder="گەڕان بۆ زیادکردنی کاڵا بۆ فرۆشتن..." id="quickSaleSearch"
   oninput="applySaleFilters()">
-<select class="filter-input" id="quickSaleCatFilter" onchange="applySaleFilters()">
-  <option value="">هەموو بەشەکان</option>
-</select>
   <button class="btn btn-ghost" onclick="openBarcodeScanner('sale')">
     <i class="ti ti-camera"></i> سکانکردنی بارکۆد
   </button>
 </div>
+<div class="sale-cat-pills" id="quickSaleCatPills"></div>
+
 
 
 	  <!-- QUICK SALE GRID -->
@@ -4330,15 +4352,26 @@ function duplicateProduct(id) {
 // ══════════════════════════════════════════
 let saleCart = [];
 let salePeriod = 'today';
+let saleCatFilter = '';
+
 
 function populateQuickSaleCategories() {
   const products = DB.get('products');
   const cats = [...new Set(products.map(p=>p.category))];
-  const sel = document.getElementById('quickSaleCatFilter');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">هەموو کاتیگۆریەکان</option>' +
-    cats.map(c=>`<option${c===cur?' selected':''}>${c}</option>`).join('');
+  const counts = {};
+  products.forEach(p=>{ if(p.qty>0) counts[p.category] = (counts[p.category]||0)+1; });
+  const totalCount = products.filter(p=>p.qty>0).length;
+  const wrap = document.getElementById('quickSaleCatPills');
+  wrap.innerHTML = `<div class="sale-cat-pill ${!saleCatFilter?'active':''}" onclick="setSaleCatFilter('')">هەموو <span class="cnt">${totalCount}</span></div>` +
+    cats.map(c=>`<div class="sale-cat-pill ${saleCatFilter===c?'active':''}" onclick="setSaleCatFilter('${c.replace(/'/g,"\\'")}')">${c} <span class="cnt">${counts[c]||0}</span></div>`).join('');
 }
+
+function setSaleCatFilter(cat) {
+  saleCatFilter = cat;
+  populateQuickSaleCategories();
+  applySaleFilters();
+}
+
 
 function buildQtyControlsHTML(p) {
   const inCart = saleCart.find(c=>c.id===p.id);
@@ -4382,7 +4415,8 @@ function renderQuickSaleGrid() {
 
 function applySaleFilters() {
   const q = (document.getElementById('quickSaleSearch').value||'').toLowerCase();
-  const cat = document.getElementById('quickSaleCatFilter').value;
+  const cat = saleCatFilter;
+
   const cards = document.querySelectorAll('#quickSaleGrid .sale-product-card');
   let visibleCount = 0;
   cards.forEach(card => {
