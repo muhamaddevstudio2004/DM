@@ -3052,7 +3052,9 @@ window.addEventListener('online', async () => {
   renderPage(getCurrentPage());
   toast('داتاکان sync کران', 'success');
   updateInfoConnStatus();
+  subscribeRealtime();
 });
+
 
 window.addEventListener('offline', () => {
   isOnline = false;
@@ -3069,6 +3071,33 @@ window.addEventListener('online', () => {
   document.getElementById('offlineBanner').classList.remove('show');
 });
 
+let realtimeSubscribed = false;
+let realtimeDebounceTimer = null;
+
+function scheduleRealtimeRefresh() {
+  clearTimeout(realtimeDebounceTimer);
+  realtimeDebounceTimer = setTimeout(async () => {
+    if(!isOnline) return;
+    await loadAllData();
+    renderPage(getCurrentPage());
+    buildNotifications();
+  }, 400);
+}
+
+function subscribeRealtime() {
+  if(realtimeSubscribed) return;
+  realtimeSubscribed = true;
+  sb.channel('mstore-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'repairs' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'debts' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'plans' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, scheduleRealtimeRefresh)
+    .subscribe();
+}
 
 function getCurrentPage() {
   const active = document.querySelector('.nav-item.active');
@@ -5267,7 +5296,6 @@ async function init() {
     }
   } catch(e) { console.error('cache preload error', e); }
 
-  // پاشان لە پشتەوە sync لەگەڵ Supabase
   const ok = await loadAllData();
   updateStoreName();
   renderPage(getCurrentPage());
@@ -5275,8 +5303,11 @@ async function init() {
   document.getElementById('loadingOverlay').style.display = 'none';
   if (!ok) {
     toast('نەتوانرا پەیوەندی بە داتابەیس بکرێت. تکایە بەستنەوەی Supabase و خشتەکان بپشکنە.', 'error');
+  } else {
+    subscribeRealtime();
   }
 }
+
 
 const SESSION_KEY = 'ms_unlocked';
 
