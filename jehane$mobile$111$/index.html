@@ -4392,7 +4392,7 @@ function updateSaleCardUI(id) {
 
 // نوێکردنەوەی گرید بەبێ دووبارە بارکردنی وێنە
 // تەنها کاتێک لیستی کاڵاکان (زیاد/کەم بوونی کاڵا) گۆڕاوە گرید بە تەواوی دروست دەکاتەوە
-function function syncSaleGrid() {
+ function syncSaleGrid() {
   const products = DB.get('products').filter(p=>p.qty>0 || saleCart.find(c=>c.id===p.id));
   const grid = document.getElementById('quickSaleGrid');
   const existingCards = Array.from(grid.querySelectorAll('.sale-product-card'));
