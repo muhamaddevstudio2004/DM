@@ -1,587 +1,1311 @@
 <!DOCTYPE html>
-<html lang="ckb" dir="rtl">
+<html lang="ku" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
-<title> Menu  |  مینۆ </title>
-<meta name="theme-color" content="#3B1111"/>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{
-  --ink:#2C0D0D; --bg:#3B1111; --layer1:#4E1A1A; --layer2:#5E2020; --layer3:#6E2828;
-  --gold:#D4AF37; --gold-dim:#B8932E; --gold-faint:rgba(212,175,55,.12);
-  --cream:#F5E8C8; --muted:#C4A882; --faint:#856B50; --glass:rgba(46,13,13,.65); --ring:rgba(212,175,55,.45);
-  --r-sm:10px; --r-md:18px; --r-lg:26px; --r-xl:36px;
-  --ease:cubic-bezier(.4,0,.2,1); --t:.26s;
-  --sh-sm:0 2px 14px rgba(0,0,0,.32); --sh-md:0 8px 32px rgba(0,0,0,.44); --sh-lg:0 20px 64px rgba(0,0,0,.58);
-  --font-display:'Noto Sans Arabic',Georgia,serif; --font-ui:'Noto Sans Arabic',system-ui,sans-serif;
-  --base-font-size:15px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--cream);font-family:var(--font-ui);font-size:var(--base-font-size);line-height:1.6;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-img{display:block;width:100%;height:100%;object-fit:cover}
-button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;color:inherit}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--layer3);border-radius:99px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مینۆی خواردنگە</title>
 
-.nav{position:sticky;top:0;z-index:120;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(212,175,55,.12);padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-inline-start:auto}
-.nav-brand{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.4px;white-space:nowrap;flex-shrink:0}
-.lang-pill{display:flex;gap:2px;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.15);border-radius:99px;padding:3px}
-.lpb{padding:4px 9px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.4px;color:var(--faint);transition:all var(--t) var(--ease);font-family:system-ui,sans-serif!important}
-.lpb.on{background:var(--gold);color:var(--ink)}
-.lpb:hover:not(.on){color:var(--cream);background:rgba(255,255,255,.08)}
+  <!-- Noto Sans Arabic — بەهترین فۆنت بۆ کوردی سۆرانی و عەرەبی -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap"
+	rel="stylesheet"
+  />
 
-.cats-wrap{padding:4px 0 20px;position:relative}
-.cats-track{display:flex;gap:12px;overflow-x:auto;padding:6px 16px 10px;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;list-style:none}
-.cats-track::-webkit-scrollbar{display:none}
-.cat-tile{flex-shrink:0;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;width:74px}
-.cat-img-ring{width:66px;height:66px;border-radius:50%;border:2.5px solid transparent;padding:3px;background:linear-gradient(var(--layer1),var(--layer1)) padding-box,rgba(255,255,255,.12) border-box;transition:all var(--t) var(--ease);position:relative}
-.cat-tile.on .cat-img-ring{background:linear-gradient(var(--layer1),var(--layer1)) padding-box,var(--gold) border-box;box-shadow:0 0 0 3px rgba(212,175,55,.18),var(--sh-sm)}
-.cat-img-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--layer2)}
-.cat-icon-circle{width:100%;height:100%;border-radius:50%;background:var(--layer2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px;transition:color var(--t)}
-.cat-tile.on .cat-icon-circle{color:var(--gold)}
-.cat-label{font-size:11.5px;font-weight:500;color:var(--muted);text-align:center;line-height:1.25;max-width:70px;transition:color var(--t)}
-.cat-tile.on .cat-label{color:var(--gold);font-weight:600}
-.cat-tile.on .cat-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);margin:-4px auto 0}
+  <!-- Remix Icons -->
+  <link
+	href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+	rel="stylesheet"
+  />
 
-.toolbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px 14px}
-.toolbar-left{display:flex;align-items:center;gap:8px}
-.section-label{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--cream)}
-.result-pill{background:var(--gold-faint);border:1px solid rgba(212,175,55,.22);color:var(--gold);font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px}
-.view-tog{display:flex;gap:3px;background:var(--layer1);border-radius:var(--r-sm);padding:3px}
-.vbtn{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:14px;transition:all var(--t) var(--ease)}
-.vbtn.on{background:var(--layer3);color:var(--gold)}
+  <style>
+	/* ============================================================
+	   DESIGN TOKENS — Light Warm Palette
+	============================================================ */
+	:root {
+	  /* Backgrounds */
+	  --bg-base:		#FDF6EC;   /* کرێمی گەرم */
+	  --bg-layer:	   #FFFFFF;
+	  --bg-section:	 #FFF9F2;
 
-.menu-wrap{padding:0 12px 100px}
-.grid-view{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-@media(min-width:560px){.grid-view{grid-template-columns:repeat(3,1fr);gap:14px}}
-@media(min-width:900px){.grid-view{grid-template-columns:repeat(4,1fr);gap:16px}}
-@media(min-width:1200px){.grid-view{grid-template-columns:repeat(5,1fr)}}
-.gcard{background:var(--layer1);border-radius:var(--r-md);overflow:hidden;border:1px solid rgba(255,255,255,.05);box-shadow:var(--sh-sm);cursor:pointer;transition:transform var(--t) var(--ease),box-shadow var(--t),border-color var(--t);position:relative;animation:fadeUp .18s var(--ease) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.gcard:hover{transform:translateY(-5px);box-shadow:var(--sh-md);border-color:rgba(212,175,55,.22)}
-.gcard:active{transform:translateY(-2px)}
-.gc-img{position:relative;aspect-ratio:1/1;overflow:hidden;background:var(--layer2)}
-.gc-img img{transition:transform .5s ease}
-.gcard:hover .gc-img img{transform:scale(1.07)}
-.gc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(44,13,13,.7) 0%,transparent 55%);pointer-events:none}
-.gc-body{padding:10px 12px 12px}
-.gc-name{font-size:13.5px;font-weight:600;color:var(--cream);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+	  /* Glass / Card */
+	  --card-bg:		#FFFFFF;
+	  --card-border:	rgba(180, 120, 40, 0.12);
+	  --card-shadow:	0 2px 16px rgba(160, 90, 20, 0.10);
+	  --card-shadow-h:  0 8px 32px rgba(160, 90, 20, 0.18);
 
-.list-view{display:flex;flex-direction:column;gap:12px}
-.lcard{background:var(--layer1);border-radius:var(--r-md);overflow:hidden;border:1px solid rgba(255,255,255,.05);box-shadow:var(--sh-sm);cursor:pointer;display:flex;height:120px;transition:transform var(--t) var(--ease),box-shadow var(--t),border-color var(--t);animation:fadeUp .18s var(--ease) both}
-.lcard:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:rgba(212,175,55,.2)}
-@media(min-width:640px){.lcard{height:140px}}
-.lc-img{width:36%;flex-shrink:0;position:relative;overflow:hidden;background:var(--layer2)}
-.lc-img img{transition:transform .5s ease}
-.lcard:hover .lc-img img{transform:scale(1.06)}
-.lc-body{flex:1;padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
-.lc-cat{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);opacity:.75;margin-bottom:4px}
-.lc-name{font-size:15.5px;font-weight:600;color:var(--cream);line-height:1.28;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.lc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px}
-.lc-price{font-size:15px;font-weight:700;color:var(--gold)}
-.lc-price-cur{font-size:10.5px;color:var(--faint);font-weight:400;margin-inline-start:3px}
+	  /* Accent — گەرمی بۆری */
+	  --accent:		 #E07B2A;   /* بۆری تیرە */
+	  --accent-2:	   #F5A623;   /* زەردی زیو */
+	  --accent-light:   #FEF0DC;   /* پشتگرەی ئەکسێنت */
+	  --accent-glow:	rgba(224, 123, 42, 0.20);
 
-.empty{display:none;text-align:center;padding:64px 24px}
-.empty.on{display:block}
-.empty-icon{font-size:52px;color:var(--faint);margin-bottom:18px}
-.empty-title{font-size:18px;font-weight:600;color:var(--muted);margin-bottom:6px}
-.empty-sub{font-size:13px;color:var(--faint)}
+	  /* Text */
+	  --text-primary:   #2C1810;   /* قاوەیی تیرە */
+	  --text-secondary: #6B3A1F;   /* قاوەیی ناوەند */
+	  --text-muted:	 #A07050;   /* قاوەیی ئاساییەنە */
+	  --text-faint:	 #C4A882;   /* زەردی ئاساییەنە */
 
-.overlay{position:fixed;inset:0;z-index:300;background:rgba(20,4,4,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--t) var(--ease)}
-.overlay.open{opacity:1;pointer-events:auto}
-@media(min-width:600px){.overlay{align-items:center}}
-.modal{width:100%;max-width:540px;background:var(--layer1);border-radius:var(--r-xl) var(--r-xl) 0 0;overflow:hidden;box-shadow:var(--sh-lg);max-height:92vh;display:flex;flex-direction:column;transform:translateY(50px);transition:transform .32s var(--ease)}
-@media(min-width:600px){.modal{border-radius:var(--r-xl);max-height:88vh;transform:translateY(16px) scale(.97)}}
-.overlay.open .modal{transform:none}
-.modal-img-wrap{position:relative;height:250px;flex-shrink:0;background:var(--layer2)}
-@media(min-width:600px){.modal-img-wrap{height:300px}}
-.modal-img-wrap img{width:100%;height:100%;object-fit:cover}
-.modal-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--layer1) 0%,rgba(44,13,13,.3) 55%,transparent 100%);pointer-events:none}
-.modal-img-actions{position:absolute;top:14px;inset-inline-end:14px;display:flex;gap:8px;z-index:2}
-.modal-act-btn{width:38px;height:38px;border-radius:50%;background:rgba(20,5,5,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--cream);font-size:16px;transition:all var(--t) var(--ease)}
-.modal-act-btn:hover{background:rgba(20,5,5,.85);transform:scale(1.08)}
-.modal-cat-badge{position:absolute;bottom:18px;inset-inline-start:18px;z-index:2;background:rgba(212,175,55,.18);border:1px solid rgba(212,175,55,.35);color:var(--gold);font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;padding:4px 13px;border-radius:99px;backdrop-filter:blur(6px)}
-.modal-body{padding:20px 22px 36px;overflow-y:auto;flex:1}
-.modal-name{font-family:'Noto Sans Arabic',Georgia,serif!important;font-size:26px;font-weight:700;color:var(--cream);line-height:1.18;margin-bottom:10px}
-.modal-rule{height:1px;background:linear-gradient(to var(--rule-end,right),rgba(212,175,55,.25),transparent);margin-bottom:18px}
-[dir=rtl] .modal-rule{--rule-end:left}
-.modal-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
-.mchip{display:flex;align-items:center;gap:6px;background:var(--layer2);border-radius:var(--r-sm);padding:9px 16px;font-size:13px;color:var(--muted)}
-.mchip i{color:var(--gold);font-size:13px}
-.modal-price-row{display:flex;align-items:center;justify-content:space-between;background:var(--layer2);border-radius:var(--r-md);padding:16px 20px;border:1px solid rgba(212,175,55,.12)}
-.mpr-label{font-size:13px;color:var(--muted)}
-.mpr-val{font-size:28px;font-weight:700;color:var(--gold)}
-.mpr-cur{font-size:13px;color:var(--faint);margin-inline-start:5px}
+	  /* UI States */
+	  --danger:		 #D64545;
+	  --success:		#2E8B57;
+	  --success-light:  #E8F5EE;
 
-.footer{text-align:center;padding:24px 16px 16px;border-top:1px solid rgba(255,255,255,.05);font-size:12px;color:var(--faint)}
-.footer > *{margin-bottom:14px}
-.footer > *:last-child{margin-bottom:0}
+	  /* Header / Tab */
+	  --header-bg:	  rgba(253, 246, 236, 0.90);
+	  --tab-bg:		 rgba(253, 246, 236, 0.95);
+	  --divider:		rgba(180, 120, 40, 0.14);
 
-.footer span{color:var(--gold)}
+	  /* Radius & Effects */
+	  --radius-card:	20px;
+	  --radius-btn:	 12px;
+	  --radius-pill:	999px;
+	  --blur:		   blur(16px);
+	  --transition:	 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
-.boot-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
-.boot-screen i{font-size:34px;color:var(--gold);animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.boot-screen p{font-size:13px;color:var(--muted)}
+	  /* Layout */
+	  --header-h:	   68px;
+	  --tab-h:		  54px;
+	  --bar-h:		  80px;
 
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
-.gcard.hidden,.lcard.hidden{display:none!important}
+	  /* Font */
+	  --font:		   'Noto Sans Arabic', sans-serif;
+	}
 
-.ann-banner{
-  position:sticky;top:0;z-index:130;background:linear-gradient(90deg,var(--gold-dim),var(--gold));
-  color:var(--ink);font-weight:700;font-size:12.5px;text-align:center;
-  padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.ann-banner i{font-size:12px}
+	/* ============================================================
+	   RESET & BASE
+	============================================================ */
+	*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+	html { scroll-behavior: smooth; }
 
-</style>
+	body {
+	  font-family: var(--font);
+	  background: var(--bg-base);
+	  color: var(--text-primary);
+	  min-height: 100dvh;
+	  overflow-x: hidden;
+	  /* تیشکی سووری ئاسمانی */
+	  background-image:
+		radial-gradient(ellipse 70% 35% at 50% 0%, rgba(224,123,42,0.07) 0%, transparent 65%),
+		radial-gradient(ellipse 40% 20% at 100% 100%, rgba(245,166,35,0.05) 0%, transparent 60%);
+	}
+
+	img { display: block; width: 100%; }
+	button { font-family: var(--font); cursor: pointer; border: none; outline: none; }
+	input, textarea { font-family: var(--font); outline: none; }
+
+	/* Scrollbar */
+	::-webkit-scrollbar { width: 4px; }
+	::-webkit-scrollbar-track { background: transparent; }
+	::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+	/* ============================================================
+	   HEADER
+	============================================================ */
+	#header {
+	  position: fixed;
+	  top: 0; right: 0; left: 0;
+	  height: var(--header-h);
+	  z-index: 100;
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding: 0 20px;
+	  background: var(--header-bg);
+	  backdrop-filter: var(--blur);
+	  -webkit-backdrop-filter: var(--blur);
+	  border-bottom: 1px solid var(--divider);
+	  box-shadow: 0 1px 12px rgba(160,90,20,0.06);
+	}
+
+	.header-brand {
+	  display: flex;
+	  align-items: center;
+	  gap: 11px;
+	}
+
+	.header-logo {
+	  width: 44px; height: 44px;
+	  border-radius: 14px;
+	  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	  display: flex; align-items: center; justify-content: center;
+	  box-shadow: 0 3px 12px var(--accent-glow);
+	  flex-shrink: 0;
+	}
+	.header-logo i { font-size: 22px; color: #fff; }
+
+	.header-name {
+	  font-size: 1.1rem;
+	  font-weight: 800;
+	  color: var(--text-primary);
+	  line-height: 1.25;
+	  letter-spacing: 0.01em;
+	}
+
+	.header-subtitle {
+	  font-size: 0.72rem;
+	  color: var(--text-muted);
+	  margin-top: 1px;
+	}
+
+	/* Language Toggle */
+	.lang-toggle {
+	  display: flex;
+	  align-items: center;
+	  background: var(--accent-light);
+	  border: 1px solid rgba(224,123,42,0.2);
+	  border-radius: var(--radius-pill);
+	  padding: 3px;
+	  gap: 2px;
+	}
+
+	.lang-btn {
+	  padding: 5px 13px;
+	  font-size: 0.78rem;
+	  font-weight: 700;
+	  color: var(--text-muted);
+	  background: transparent;
+	  border-radius: var(--radius-pill);
+	  transition: var(--transition);
+	}
+
+	.lang-btn.active {
+	  background: var(--accent);
+	  color: #fff;
+	  box-shadow: 0 2px 8px var(--accent-glow);
+	}
+
+	/* ============================================================
+	   CATEGORY TABS
+	============================================================ */
+	#tabs-wrapper {
+	  position: fixed;
+	  top: var(--header-h);
+	  right: 0; left: 0;
+	  z-index: 90;
+	  background: var(--tab-bg);
+	  backdrop-filter: var(--blur);
+	  -webkit-backdrop-filter: var(--blur);
+	  border-bottom: 1px solid var(--divider);
+	}
+
+	#tabs {
+	  display: flex;
+	  gap: 8px;
+	  padding: 10px 18px;
+	  overflow-x: auto;
+	  scrollbar-width: none;
+	}
+	#tabs::-webkit-scrollbar { display: none; }
+
+	.tab-btn {
+	  flex-shrink: 0;
+	  padding: 7px 18px;
+	  border-radius: var(--radius-pill);
+	  font-size: 0.86rem;
+	  font-weight: 700;
+	  color: var(--text-muted);
+	  background: transparent;
+	  border: 1.5px solid transparent;
+	  transition: var(--transition);
+	  white-space: nowrap;
+	}
+
+	.tab-btn.active {
+	  background: var(--accent);
+	  color: #fff;
+	  border-color: var(--accent);
+	  box-shadow: 0 3px 10px var(--accent-glow);
+	}
+
+	.tab-btn:not(.active):hover {
+	  background: var(--accent-light);
+	  color: var(--accent);
+	  border-color: rgba(224,123,42,0.2);
+	}
+
+	/* ============================================================
+	   MAIN CONTENT
+	============================================================ */
+	#main {
+	  padding-top: calc(var(--header-h) + var(--tab-h) + 12px);
+	  padding-bottom: calc(var(--bar-h) + 24px);
+	  padding-right: 16px;
+	  padding-left: 16px;
+	  max-width: 900px;
+	  margin: 0 auto;
+	}
+
+	/* Section Heading */
+	.section-heading {
+	  font-size: 1rem;
+	  font-weight: 800;
+	  color: var(--text-secondary);
+	  margin: 28px 0 14px;
+	  display: flex;
+	  align-items: center;
+	  gap: 10px;
+	  text-transform: uppercase;
+	  letter-spacing: 0.04em;
+	}
+
+	.section-heading::before {
+	  content: '';
+	  width: 4px; height: 18px;
+	  background: linear-gradient(to bottom, var(--accent), var(--accent-2));
+	  border-radius: 2px;
+	  flex-shrink: 0;
+	}
+
+	.section-heading::after {
+	  content: '';
+	  flex: 1;
+	  height: 1px;
+	  background: var(--divider);
+	}
+
+	/* ============================================================
+	   MENU GRID
+	============================================================ */
+	.menu-section { margin-bottom: 6px; }
+
+	.menu-grid {
+	  display: grid;
+	  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+	  gap: 14px;
+	}
+
+	/* ============================================================
+	   MENU CARD
+	============================================================ */
+	.menu-card {
+	  background: var(--card-bg);
+	  border: 1px solid var(--card-border);
+	  border-radius: var(--radius-card);
+	  overflow: hidden;
+	  display: flex;
+	  flex-direction: column;
+	  box-shadow: var(--card-shadow);
+	  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+	}
+
+	.menu-card:hover {
+	  transform: translateY(-5px);
+	  box-shadow: var(--card-shadow-h);
+	  border-color: rgba(224,123,42,0.25);
+	}
+
+	/* Card image */
+	.card-img-wrap {
+	  position: relative;
+	  aspect-ratio: 4/3;
+	  overflow: hidden;
+	  background: var(--accent-light);
+	}
+
+	.card-img-wrap img {
+	  height: 100%;
+	  object-fit: cover;
+	  transition: transform 0.45s ease;
+	}
+
+	.menu-card:hover .card-img-wrap img {
+	  transform: scale(1.07);
+	}
+
+	/* Price badge on image */
+	.card-price-badge {
+	  position: absolute;
+	  bottom: 8px;
+	  left: 8px;
+	  background: rgba(255,255,255,0.92);
+	  backdrop-filter: blur(8px);
+	  border: 1px solid rgba(224,123,42,0.2);
+	  border-radius: 8px;
+	  padding: 3px 9px;
+	  font-size: 0.82rem;
+	  font-weight: 800;
+	  color: var(--accent);
+	}
+
+	/* Card body */
+	.card-body {
+	  padding: 12px 12px 14px;
+	  display: flex;
+	  flex-direction: column;
+	  gap: 4px;
+	  flex: 1;
+	}
+
+	.card-name {
+	  font-size: 0.95rem;
+	  font-weight: 700;
+	  color: var(--text-primary);
+	  line-height: 1.35;
+	}
+
+	.card-desc {
+	  font-size: 0.76rem;
+	  color: var(--text-muted);
+	  line-height: 1.5;
+	}
+
+	/* Add to Cart button */
+	.add-btn {
+	  margin-top: 10px;
+	  width: 100%;
+	  padding: 9px;
+	  border-radius: var(--radius-btn);
+	  background: var(--accent-light);
+	  color: var(--accent);
+	  border: 1.5px solid rgba(224,123,42,0.25);
+	  font-size: 0.86rem;
+	  font-weight: 700;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  gap: 6px;
+	  transition: background var(--transition), color var(--transition), border-color var(--transition), transform 0.15s;
+	}
+
+	.add-btn:hover {
+	  background: var(--accent);
+	  color: #fff;
+	  border-color: var(--accent);
+	}
+
+	.add-btn:active { transform: scale(0.97); }
+
+	.add-btn.added {
+	  background: var(--success);
+	  color: #fff;
+	  border-color: var(--success);
+	}
+
+	/* ============================================================
+	   BOTTOM CART BAR
+	============================================================ */
+	#cart-bar {
+	  position: fixed;
+	  bottom: 0; right: 0; left: 0;
+	  z-index: 100;
+	  padding: 12px 16px;
+	  background: rgba(253, 246, 236, 0.96);
+	  backdrop-filter: var(--blur);
+	  -webkit-backdrop-filter: var(--blur);
+	  border-top: 1px solid var(--divider);
+	  box-shadow: 0 -4px 20px rgba(160,90,20,0.10);
+	  transform: translateY(100%);
+	  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	#cart-bar.visible { transform: translateY(0); }
+
+	.cart-bar-inner {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  gap: 12px;
+	  max-width: 600px;
+	  margin: 0 auto;
+	}
+
+	.cart-bar-info {
+	  display: flex; align-items: center; gap: 10px;
+	}
+
+	.cart-count-badge {
+	  width: 32px; height: 32px;
+	  border-radius: 50%;
+	  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	  color: #fff;
+	  font-size: 0.88rem; font-weight: 800;
+	  display: flex; align-items: center; justify-content: center;
+	  box-shadow: 0 2px 8px var(--accent-glow);
+	}
+
+	.cart-bar-label { font-size: 0.78rem; color: var(--text-muted); }
+	.cart-bar-total { font-size: 1rem; font-weight: 800; color: var(--text-primary); }
+
+	.open-cart-btn {
+	  padding: 11px 22px;
+	  border-radius: var(--radius-btn);
+	  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	  color: #fff;
+	  font-size: 0.9rem; font-weight: 700;
+	  display: flex; align-items: center; gap: 7px;
+	  box-shadow: 0 3px 12px var(--accent-glow);
+	  transition: opacity var(--transition), transform 0.15s;
+	  white-space: nowrap;
+	}
+
+	.open-cart-btn:hover { opacity: 0.9; }
+	.open-cart-btn:active { transform: scale(0.97); }
+
+	/* ============================================================
+	   CART DRAWER
+	============================================================ */
+	#cart-overlay {
+	  position: fixed; inset: 0;
+	  background: rgba(44, 24, 16, 0.35);
+	  z-index: 200;
+	  opacity: 0;
+	  pointer-events: none;
+	  transition: opacity 0.3s ease;
+	}
+	#cart-overlay.open { opacity: 1; pointer-events: all; }
+
+	#cart-drawer {
+	  position: fixed;
+	  bottom: 0; right: 0; left: 0;
+	  z-index: 201;
+	  max-height: 85dvh;
+	  background: var(--bg-layer);
+	  border-top: 1px solid var(--divider);
+	  border-radius: 24px 24px 0 0;
+	  display: flex; flex-direction: column;
+	  transform: translateY(100%);
+	  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	  box-shadow: 0 -8px 32px rgba(160,90,20,0.12);
+	  overflow: hidden;
+	}
+	#cart-drawer.open { transform: translateY(0); }
+
+	.drawer-handle {
+	  width: 40px; height: 4px;
+	  background: var(--divider);
+	  border-radius: 2px;
+	  margin: 12px auto 0;
+	  flex-shrink: 0;
+	}
+
+	.drawer-header {
+	  display: flex; align-items: center; justify-content: space-between;
+	  padding: 14px 20px 12px;
+	  border-bottom: 1px solid var(--divider);
+	  flex-shrink: 0;
+	}
+
+	.drawer-title {
+	  font-size: 1.05rem; font-weight: 800;
+	  color: var(--text-primary);
+	  display: flex; align-items: center; gap: 8px;
+	}
+	.drawer-title i { color: var(--accent); }
+
+	.close-drawer-btn {
+	  width: 34px; height: 34px;
+	  border-radius: 50%;
+	  background: var(--accent-light);
+	  border: 1px solid rgba(224,123,42,0.15);
+	  color: var(--text-muted);
+	  display: flex; align-items: center; justify-content: center;
+	  font-size: 1.1rem;
+	  transition: var(--transition);
+	}
+	.close-drawer-btn:hover { background: var(--accent); color: #fff; }
+
+	#cart-items {
+	  overflow-y: auto;
+	  flex: 1;
+	  padding: 8px 16px;
+	}
+
+	.cart-empty {
+	  display: flex; flex-direction: column; align-items: center; justify-content: center;
+	  gap: 10px;
+	  padding: 48px 20px;
+	  color: var(--text-muted);
+	}
+	.cart-empty i { font-size: 3rem; color: var(--text-faint); }
+	.cart-empty p { font-size: 0.92rem; }
+
+	.cart-item {
+	  display: flex; align-items: center; gap: 12px;
+	  padding: 12px 0;
+	  border-bottom: 1px solid var(--divider);
+	  animation: slideIn 0.2s ease;
+	}
+
+	@keyframes slideIn {
+	  from { opacity: 0; transform: translateX(12px); }
+	  to   { opacity: 1; transform: translateX(0); }
+	}
+
+	.cart-item-img {
+	  width: 58px; height: 58px;
+	  border-radius: 12px;
+	  object-fit: cover;
+	  flex-shrink: 0;
+	  background: var(--accent-light);
+	  border: 1px solid var(--card-border);
+	}
+
+	.cart-item-info { flex: 1; min-width: 0; }
+	.cart-item-name {
+	  font-size: 0.9rem; font-weight: 700;
+	  color: var(--text-primary);
+	  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	}
+	.cart-item-price { font-size: 0.82rem; color: var(--accent); font-weight: 700; margin-top: 3px; }
+
+	.cart-item-controls {
+	  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+	}
+
+	.qty-btn {
+	  width: 30px; height: 30px;
+	  border-radius: 8px;
+	  background: var(--accent-light);
+	  border: 1px solid rgba(224,123,42,0.18);
+	  color: var(--accent);
+	  font-size: 1rem;
+	  display: flex; align-items: center; justify-content: center;
+	  transition: var(--transition);
+	}
+	.qty-btn:hover { background: var(--accent); color: #fff; }
+
+	.qty-num {
+	  min-width: 22px;
+	  text-align: center;
+	  font-size: 0.95rem; font-weight: 800;
+	  color: var(--text-primary);
+	}
+
+	.remove-btn {
+	  width: 30px; height: 30px;
+	  border-radius: 8px;
+	  background: rgba(214, 69, 69, 0.08);
+	  border: 1px solid rgba(214,69,69,0.18);
+	  color: var(--danger);
+	  display: flex; align-items: center; justify-content: center;
+	  font-size: 1rem;
+	  transition: var(--transition);
+	}
+	.remove-btn:hover { background: var(--danger); color: #fff; }
+
+	.drawer-footer {
+	  padding: 14px 16px 20px;
+	  border-top: 1px solid var(--divider);
+	  flex-shrink: 0;
+	  background: var(--bg-section);
+	}
+
+	.cart-total-row {
+	  display: flex; align-items: center; justify-content: space-between;
+	  margin-bottom: 14px;
+	}
+	.cart-total-label { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; }
+	.cart-total-amount { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+
+	.checkout-btn {
+	  width: 100%;
+	  padding: 14px;
+	  border-radius: var(--radius-btn);
+	  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	  color: #fff;
+	  font-size: 1rem; font-weight: 800;
+	  display: flex; align-items: center; justify-content: center; gap: 8px;
+	  box-shadow: 0 4px 16px var(--accent-glow);
+	  transition: opacity var(--transition), transform 0.15s;
+	}
+	.checkout-btn:hover { opacity: 0.9; }
+	.checkout-btn:active { transform: scale(0.98); }
+
+	/* ============================================================
+	   CHECKOUT MODAL
+	============================================================ */
+	#checkout-overlay {
+	  position: fixed; inset: 0;
+	  background: rgba(44, 24, 16, 0.40);
+	  z-index: 300;
+	  display: flex; align-items: flex-end; justify-content: center;
+	  opacity: 0;
+	  pointer-events: none;
+	  transition: opacity 0.3s ease;
+	}
+	#checkout-overlay.open { opacity: 1; pointer-events: all; }
+
+	#checkout-modal {
+	  background: var(--bg-layer);
+	  border: 1px solid var(--divider);
+	  border-radius: 24px 24px 0 0;
+	  width: 100%;
+	  max-width: 600px;
+	  max-height: 92dvh;
+	  overflow-y: auto;
+	  padding: 0 0 32px;
+	  transform: translateY(40px);
+	  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+	  box-shadow: 0 -8px 32px rgba(160,90,20,0.12);
+	}
+	#checkout-overlay.open #checkout-modal { transform: translateY(0); }
+
+	.modal-handle {
+	  width: 40px; height: 4px;
+	  background: var(--divider);
+	  border-radius: 2px;
+	  margin: 12px auto 0;
+	}
+
+	.modal-header {
+	  display: flex; align-items: center; justify-content: space-between;
+	  padding: 14px 20px 12px;
+	  border-bottom: 1px solid var(--divider);
+	}
+	.modal-title { font-size: 1.05rem; font-weight: 800; color: var(--text-primary); }
+
+	.close-modal-btn {
+	  width: 34px; height: 34px;
+	  border-radius: 50%;
+	  background: var(--accent-light);
+	  border: 1px solid rgba(224,123,42,0.15);
+	  color: var(--text-muted);
+	  display: flex; align-items: center; justify-content: center;
+	  font-size: 1.1rem;
+	  transition: var(--transition);
+	}
+	.close-modal-btn:hover { background: var(--accent); color: #fff; }
+
+	.modal-body { padding: 20px; }
+
+	/* Order Summary */
+	.order-summary {
+	  background: var(--accent-light);
+	  border: 1px solid rgba(224,123,42,0.18);
+	  border-radius: var(--radius-card);
+	  padding: 14px;
+	  margin-bottom: 20px;
+	}
+	.order-summary-title {
+	  font-size: 0.82rem;
+	  color: var(--accent);
+	  margin-bottom: 10px;
+	  font-weight: 800;
+	  text-transform: uppercase;
+	  letter-spacing: 0.05em;
+	}
+	.order-item-row {
+	  display: flex; justify-content: space-between;
+	  font-size: 0.88rem;
+	  padding: 4px 0;
+	  color: var(--text-secondary);
+	  font-weight: 600;
+	}
+	.order-total-row {
+	  display: flex; justify-content: space-between;
+	  font-size: 1rem; font-weight: 800;
+	  padding-top: 10px;
+	  margin-top: 8px;
+	  border-top: 1px solid rgba(224,123,42,0.2);
+	  color: var(--accent);
+	}
+
+	/* Form */
+	.form-group { margin-bottom: 15px; }
+
+	.form-label {
+	  display: block;
+	  font-size: 0.82rem;
+	  color: var(--text-secondary);
+	  margin-bottom: 7px;
+	  font-weight: 700;
+	}
+
+	.form-input,
+	.form-textarea {
+	  width: 100%;
+	  padding: 12px 14px;
+	  background: var(--bg-base);
+	  border: 1.5px solid var(--card-border);
+	  border-radius: var(--radius-btn);
+	  color: var(--text-primary);
+	  font-size: 0.95rem;
+	  font-family: var(--font);
+	  transition: border-color var(--transition), background var(--transition);
+	}
+	.form-input:focus,
+	.form-textarea:focus {
+	  border-color: var(--accent);
+	  background: #fff;
+	  box-shadow: 0 0 0 3px var(--accent-glow);
+	}
+	.form-textarea { resize: vertical; min-height: 80px; }
+	.form-input::placeholder,
+	.form-textarea::placeholder { color: var(--text-faint); }
+
+	.confirm-btn {
+	  width: 100%;
+	  padding: 15px;
+	  border-radius: var(--radius-btn);
+	  background: linear-gradient(135deg, var(--success), #3aad6a);
+	  color: #fff;
+	  font-size: 1rem; font-weight: 800;
+	  display: flex; align-items: center; justify-content: center; gap: 8px;
+	  box-shadow: 0 4px 14px rgba(46,139,87,0.25);
+	  transition: opacity var(--transition), transform 0.15s;
+	  margin-top: 4px;
+	}
+	.confirm-btn:hover { opacity: 0.9; }
+	.confirm-btn:active { transform: scale(0.98); }
+
+	/* Success */
+	.success-state {
+	  display: flex; flex-direction: column;
+	  align-items: center; justify-content: center;
+	  padding: 52px 20px;
+	  gap: 14px;
+	  text-align: center;
+	}
+	.success-icon {
+	  width: 76px; height: 76px;
+	  border-radius: 50%;
+	  background: var(--success-light);
+	  border: 2px solid var(--success);
+	  display: flex; align-items: center; justify-content: center;
+	  font-size: 2.2rem; color: var(--success);
+	  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+	}
+	@keyframes popIn {
+	  from { transform: scale(0); opacity: 0; }
+	  to   { transform: scale(1); opacity: 1; }
+	}
+	.success-title { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); }
+	.success-sub { font-size: 0.9rem; color: var(--text-muted); }
+
+	.back-menu-btn {
+	  margin-top: 8px;
+	  padding: 12px 32px;
+	  border-radius: var(--radius-btn);
+	  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	  color: #fff;
+	  font-size: 0.95rem; font-weight: 700;
+	  box-shadow: 0 3px 12px var(--accent-glow);
+	  transition: opacity var(--transition);
+	}
+	.back-menu-btn:hover { opacity: 0.9; }
+
+	/* ============================================================
+	   RESPONSIVE
+	============================================================ */
+	@media (min-width: 480px) {
+	  .menu-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+	}
+	@media (min-width: 720px) {
+	  #main { padding-right: 24px; padding-left: 24px; }
+	  .menu-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+	  #checkout-overlay { align-items: center; }
+	  #checkout-modal { border-radius: 24px; max-height: 85dvh; }
+	  #cart-drawer { max-width: 520px; right: auto; left: 50%; transform: translateX(-50%) translateY(100%); }
+	  #cart-drawer.open { transform: translateX(-50%) translateY(0); }
+	}
+
+	.hidden { display: none !important; }
+  </style>
 </head>
-<body class="lang-ckb" dir="rtl">
+<body>
 
-<div class="boot-screen" id="bootScreen">
-  <i class="fa-solid fa-burger"></i>
-  <p>چاوەڕێبە...</p>
-</div>
+  <!-- HEADER -->
+  <header id="header">
+	<div class="header-brand">
+	  <div class="header-logo">
+		<i class="ri-restaurant-2-fill"></i>
+	  </div>
+	  <div>
+		<div class="header-name" data-i18n="restaurantName">ئاراش فاست فوود</div>
+		<div class="header-subtitle" data-i18n="restaurantTagline">خواردنی تازە و خۆشتام</div>
+	  </div>
+	</div>
+	<div class="lang-toggle">
+	  <button class="lang-btn active" id="btn-ku" onclick="setLang('ku')">کوردی</button>
+	  <button class="lang-btn"		id="btn-ar" onclick="setLang('ar')">عربي</button>
+	</div>
+  </header>
 
-<div class="ann-banner" id="annBanner" style="display:none">
-  <i class="fa-solid fa-bullhorn"></i>
-  <span id="annBannerText"></span>
-</div>
-
-<header class="nav" role="banner">
-  <div class="nav-brand" id="navBrand"><i class="fa-solid fa-burger" style="font-size:18px;margin-inline-end:8px"></i><span id="navBrandText">Arash</span></div>
-  <div class="nav-right">
-    <div class="lang-pill" role="group" aria-label="Language">
-      <button class="lpb on" data-lang="ckb" aria-pressed="true">کوردی</button>
-      <button class="lpb" data-lang="ar" aria-pressed="false">عربي</button>
-      <button class="lpb" data-lang="en" aria-pressed="false">English</button>
-    </div>
+  <!-- CATEGORY TABS -->
+  <div id="tabs-wrapper">
+	<div id="tabs"></div>
   </div>
-</header>
 
-<main>
-<section class="cats-wrap" aria-label="Categories">
-  <div class="cats-track" id="catsTrack" role="list"></div>
-</section>
+  <!-- MAIN -->
+  <main id="main"></main>
 
-<div class="toolbar">
-  <div class="toolbar-left">
-    <span class="section-label" id="allMealsLabel">هەموو خواردنەکان</span>
-    <span class="result-pill" id="rCount" aria-live="polite">0</span>
+  <!-- BOTTOM CART BAR -->
+  <div id="cart-bar">
+	<div class="cart-bar-inner">
+	  <div class="cart-bar-info">
+		<div class="cart-count-badge" id="bar-count">0</div>
+		<div>
+		  <div class="cart-bar-label" data-i18n="yourCart">سەبەتەی کڕین</div>
+		  <div class="cart-bar-total" id="bar-total">0 IQD</div>
+		</div>
+	  </div>
+	  <button class="open-cart-btn" onclick="openCart()">
+		<i class="ri-shopping-cart-2-line"></i>
+		<span data-i18n="viewCart">سەبەتە ببینە</span>
+	  </button>
+	</div>
   </div>
-  <div class="view-tog" role="group" aria-label="View mode">
-    <button class="vbtn on" id="gBtn" aria-pressed="true" title="Grid"><i class="fa-solid fa-grip"></i></button>
-    <button class="vbtn" id="lBtn" aria-pressed="false" title="List"><i class="fa-solid fa-list"></i></button>
+
+  <!-- CART OVERLAY + DRAWER -->
+  <div id="cart-overlay" onclick="closeCart()"></div>
+  <div id="cart-drawer">
+	<div class="drawer-handle"></div>
+	<div class="drawer-header">
+	  <div class="drawer-title">
+		<i class="ri-shopping-cart-2-fill"></i>
+		<span data-i18n="cartTitle">سەبەتەی کڕین</span>
+	  </div>
+	  <button class="close-drawer-btn" onclick="closeCart()"><i class="ri-close-line"></i></button>
+	</div>
+	<div id="cart-items"></div>
+	<div class="drawer-footer">
+	  <div class="cart-total-row">
+		<span class="cart-total-label" data-i18n="totalLabel">کۆی گشتی</span>
+		<span class="cart-total-amount" id="drawer-total">0 IQD</span>
+	  </div>
+	  <button class="checkout-btn" onclick="openCheckout()">
+		<i class="ri-secure-payment-line"></i>
+		<span data-i18n="checkout">تەواوکردنی داواکاری</span>
+	  </button>
+	</div>
   </div>
-</div>
 
-<div class="menu-wrap">
-  <div class="grid-view" id="menuGrid" role="list"></div>
-  <div class="list-view" id="menuList" role="list" style="display:none"></div>
-  <div class="empty" id="emptyState">
-    <div class="empty-icon"><i class="fa-solid fa-bowl-food"></i></div>
-    <p class="empty-title" id="emptyTitle">هیچ ئەنجامێک نەدۆزرایەوە</p>
-    <p class="empty-sub" id="emptySub">گەڕانێکی تر تاقی بکەرەوە</p>
+  <!-- CHECKOUT MODAL -->
+  <div id="checkout-overlay">
+	<div id="checkout-modal">
+	  <div class="modal-handle"></div>
+	  <div class="modal-header">
+		<div class="modal-title" data-i18n="checkoutTitle">تەواوکردنی داواکاری</div>
+		<button class="close-modal-btn" onclick="closeCheckout()"><i class="ri-close-line"></i></button>
+	  </div>
+
+	  <!-- Form view -->
+	  <div class="modal-body" id="checkout-form-view">
+		<div class="order-summary">
+		  <div class="order-summary-title" data-i18n="orderSummary">پوختەی داواکاری</div>
+		  <div id="modal-order-items"></div>
+		  <div class="order-total-row">
+			<span data-i18n="totalLabel">کۆی گشتی</span>
+			<span id="modal-total">0 IQD</span>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label class="form-label" data-i18n="formName">ناوی کریار</label>
+		  <input type="text" id="f-name" class="form-input" data-i18n-placeholder="formNamePH" />
+		</div>
+		<div class="form-group">
+		  <label class="form-label" data-i18n="formPhone">ژمارەی مۆبایل</label>
+		  <input type="tel" id="f-phone" class="form-input" dir="ltr" placeholder="07XX XXX XXXX" />
+		</div>
+		<div class="form-group">
+		  <label class="form-label" data-i18n="formAddress">ناونیشان</label>
+		  <input type="text" id="f-address" class="form-input" data-i18n-placeholder="formAddressPH" />
+		</div>
+    <button type="button" onclick="shareLocation()" style="width:100%;padding:11px;border-radius:var(--radius-btn);background:var(--accent-light);color:var(--accent);border:1.5px solid rgba(224,123,42,0.25);font-size:0.86rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:15px;cursor:pointer;">
+  <i class="ri-map-pin-line"></i>
+  <span>📍 شێر کردنی لۆکەیشنەکەم</span>
+</button>
+
+
+		<div class="form-group">
+		  <label class="form-label">
+			<span data-i18n="formNote">تێبینی</span>
+			<span style="color:var(--text-faint);font-size:0.78rem;font-weight:400"> — <span data-i18n="optional">ئارەزووی</span></span>
+		  </label>
+		  <textarea id="f-note" class="form-textarea" data-i18n-placeholder="formNotePH"></textarea>
+		</div>
+		<button class="confirm-btn" onclick="submitOrder()">
+		  <i class="ri-check-double-line"></i>
+		  <span data-i18n="confirmOrder">پشتڕاستکردنەوەی داواکاری</span>
+		</button>
+	  </div>
+
+	  <!-- Success view -->
+	  <div class="modal-body hidden" id="checkout-success-view">
+		<div class="success-state">
+		  <div class="success-icon"><i class="ri-check-line"></i></div>
+		  <div class="success-title" data-i18n="successTitle">داواکاریەکەت وەرگیرا!</div>
+		  <div class="success-sub" data-i18n="successSub">زووترین کاتدا بۆت دەگەیێنرێت.</div>
+		  <button class="back-menu-btn" onclick="resetAfterOrder()" data-i18n="backToMenu">گەڕانەوە بۆ مینۆ</button>
+		</div>
+	  </div>
+	</div>
   </div>
-</div>
-</main>
 
-<footer class="footer">
-  <p style="color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:12px" id="footerAbout"></p>
-    <a href="#" id="footerBranchLink" style="color:var(--muted);text-decoration:none;display:block;font-size:13px">
-    <i class="fa-solid fa-phone" style="color:var(--gold);margin-inline-end:6px"></i>
-    <span id="footerBranchText"></span>
-  </a>
+  <!-- ============================================================
+	   JAVASCRIPT
+  ============================================================ -->
+  <script>
+	/* ---- TRANSLATIONS ---- */
+	const TRANSLATIONS = {
+	  ku: {
+		restaurantName:'ئاراش فاست فوود', restaurantTagline:'خواردنی تازە و خۆشتام',
+		yourCart:'سەبەتەی کڕین', viewCart:'سەبەتە ببینە', cartTitle:'سەبەتەی کڕین',
+		totalLabel:'کۆی گشتی', checkout:'تەواوکردنی داواکاری', checkoutTitle:'تەواوکردنی داواکاری',
+		orderSummary:'پوختەی داواکاری', formName:'ناوی کریار', formNamePH:'ناوی تەواوت بنووسە...',
+		formPhone:'ژمارەی مۆبایل', formAddress:'ناونیشان', formAddressPH:'ناونیشانی تەواوت بنووسە...',
+		formNote:'تێبینی', formNotePH:'هەر تێبینیەک هەیە؟', optional:'ئارەزووی',
+		confirmOrder:'پشتڕاستکردنەوەی داواکاری', successTitle:'داواکاریەکەت وەرگیرا!',
+		successSub:'زووترین کاتدا بۆت دەگەیێنرێت.', backToMenu:'گەڕانەوە بۆ مینۆ',
+		emptyCart:'سەبەتەکەت بەتاڵە', addItemsFirst:'خواردن زیاد بکە',
+		addToCart:'زیادکردن بۆ سەبەتە', added:'زیادکرا', allCategories:'هەموو',
+	  },
+	  ar: {
+		restaurantName:'آراش فاست فود', restaurantTagline:'طعام طازج ولذيذ',
+		yourCart:'سلة المشتريات', viewCart:'عرض السلة', cartTitle:'سلة المشتريات',
+		totalLabel:'المجموع الكلي', checkout:'إتمام الطلب', checkoutTitle:'إتمام الطلب',
+		orderSummary:'ملخص الطلب', formName:'اسم العميل', formNamePH:'اكتب اسمك الكامل...',
+		formPhone:'رقم الجوال', formAddress:'العنوان', formAddressPH:'اكتب عنوانك الكامل...',
+		formNote:'ملاحظة', formNotePH:'هل لديك أي ملاحظة؟', optional:'اختياري',
+		confirmOrder:'تأكيد الطلب', successTitle:'تم استلام طلبك!',
+		successSub:'سيصلك في أقرب وقت ممكن.', backToMenu:'العودة إلى القائمة',
+		emptyCart:'سلتك فارغة', addItemsFirst:'أضف عناصر أولاً',
+		addToCart:'أضف إلى السلة', added:'أُضيف', allCategories:'الكل',
+	  }
+	};
 
-  <p>
-    <span id="footerRights">هەموو مافەکان پارێزراون</span> &copy; 2025 &mdash;
-    <span id="footerMadeByLabel">دروستکراوە لەلایەن</span>
-    <a href="#" id="footerWaLink" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:600"></a>
-  </p>
-</footer>
+	/* ---- MENU DATA ---- */
+	const MENU_DATA = [
+	  {
+		id:1, cat:'pizza',
+		category:{ ku:'پیتزا', ar:'بيتزا' },
+		name:{ ku:'پیتزای مارگاریتا', ar:'بيتزا مارغريتا' },
+		desc:{ ku:'گووماوی ئیتالی، چیزی تازە، گیایی', ar:'صلصة إيطالية، جبن طازج، توابل عشبية' },
+		price:7500,
+		img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80',
+	  },
+	  {
+		id:2, cat:'burger',
+		category:{ ku:'بەرگەر', ar:'برغر' },
+		name:{ ku:'بەرگەری کلاسیک', ar:'برغر كلاسيك' },
+		desc:{ ku:'گۆشتی گووی، پەنیر چەدار، سەوزە تازە', ar:'لحم بقري، جبن شيدر، خضروات طازجة' },
+		price:6000,
+		img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80',
+	  },
+	  {
+		id:3, cat:'drink',
+		category:{ ku:'شەربەت', ar:'مشروبات' },
+		name:{ ku:'شەربەتی لیمۆی سارد', ar:'عصير ليمون بارد' },
+		desc:{ ku:'لیمۆی تازە، شەکر، یەخ', ar:'ليمون طازج، سكر، ثلج' },
+		price:2500,
+		img:'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&q=80',
+	  },
+	];
 
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Meal details">
-  <div class="modal" id="modal">
-    <div class="modal-img-wrap">
-      <img id="mImg" src="" alt="" loading="lazy"/>
-      <div class="modal-img-actions"><button class="modal-act-btn" id="mClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
-      <div class="modal-cat-badge" id="mCat"></div>
-    </div>
-    <div class="modal-body">
-      <h2 class="modal-name" id="mName"></h2>
-      <div class="modal-rule"></div>
-      <p id="mDesc" style="font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:18px"></p>
-      <div class="modal-chips" id="mChips"></div>
-      <div class="modal-price-row">
-        <span class="mpr-label" id="priceLabel">نرخ</span>
-        <div><span class="mpr-val" id="mPrice"></span><span class="mpr-cur" id="mCur">دینار</span></div>
-      </div>
-    </div>
-  </div>
-</div>
+	/* ---- STATE ---- */
+	let currentLang = 'ku';
+	let cart		= JSON.parse(localStorage.getItem('arash_cart') || '[]');
+	let activeTab   = 'all';
 
-<script>
-/* ════════════════════════════════════════════════════════════════
-   0. SUPABASE CONFIG — پڕی بکەرەوە دوای دروستکردنی پڕۆژەکەت
-════════════════════════════════════════════════════════════════ */
-const SUPABASE_URL = "https://iyfihswajujedgmxvcsr.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_jvK_LJjUDPRU1nNpt-2wUQ_h9uTmfVA";
+	const t   = k  => TRANSLATIONS[currentLang][k] || k;
+	const fmt = n  => n.toLocaleString() + ' IQD';
 
-let sb = null;
-try{
-  if(SUPABASE_URL && SUPABASE_URL.startsWith('https')){
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-}catch(e){ console.error(e); }
+	/* ---- LANGUAGE ---- */
+	function setLang(lang) {
+	  currentLang = lang;
+	  document.documentElement.lang = lang;
+	  document.getElementById('btn-ku').classList.toggle('active', lang==='ku');
+	  document.getElementById('btn-ar').classList.toggle('active', lang==='ar');
+	  document.querySelectorAll('[data-i18n]').forEach(el => {
+		const v = TRANSLATIONS[lang][el.dataset.i18n];
+		if (v) el.textContent = v;
+	  });
+	  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+		const v = TRANSLATIONS[lang][el.dataset.i18nPlaceholder];
+		if (v) el.placeholder = v;
+	  });
+	  renderTabs(); renderMenu(); renderCartDrawer(); renderModalSummary();
+	}
 
-/* ════════════════════════════════════════════════════════════════
-   1. STATIC TRANSLATIONS (UI chrome — not editable via dashboard)
-════════════════════════════════════════════════════════════════ */
-const I18N = {
-  ckb:{recently_viewed:'دوا بینراوەکان',all_meals:'هەموو خواردنەکان',no_results:'هیچ ئەنجامێک نەدۆزرایەوە',try_other:'گەڕانێکی تر تاقی بکەرەوە',price:'نرخ',currency:'دینار',rights:'هەموو مافەکان پارێزراون',calories:'کالۆری',prep_min:'خولەک',branches:'لقەکانمان',made_by:'دروستکراوە لەلایەن'},
-  ar:{recently_viewed:'شوهد مؤخراً',all_meals:'جميع الوجبات',no_results:'لا توجد نتائج',try_other:'جرّب كلمة أخرى',price:'السعر',currency:'دينار',rights:'جميع الحقوق محفوظة',calories:'سعرة',prep_min:'دقيقة',branches:'فروعنا',made_by:'تم التطوير بواسطة'},
-  en:{recently_viewed:'Recently Viewed',all_meals:'All Meals',no_results:'No results found',try_other:'Try another search',price:'Price',currency:'IQD',rights:'All rights reserved',calories:'kcal',prep_min:'min',branches:'Our Branches',made_by:'Developed by'},
-};
+	/* ---- TABS ---- */
+	function getCategories() {
+	  const seen=new Set(), cats=[];
+	  MENU_DATA.forEach(i=>{ if(!seen.has(i.cat)){ seen.add(i.cat); cats.push({key:i.cat,label:i.category}); }});
+	  return cats;
+	}
 
-/* ════════════════════════════════════════════════════════════════
-   2. STATE
-════════════════════════════════════════════════════════════════ */
-const S = { lang:'ckb', cat:'all', view:'grid' };
-let CATS = [];
-let MEALS = [];
-let SETTINGS = null;
-let MEAL_CATS = [];
+	function renderTabs() {
+	  const w = document.getElementById('tabs');
+	  w.innerHTML = '';
+	  const all = document.createElement('button');
+	  all.className = 'tab-btn'+(activeTab==='all'?' active':'');
+	  all.textContent = t('allCategories');
+	  all.onclick = ()=>{ activeTab='all'; renderTabs(); renderMenu(); };
+	  w.appendChild(all);
+	  getCategories().forEach(({key,label})=>{
+		const b = document.createElement('button');
+		b.className = 'tab-btn'+(activeTab===key?' active':'');
+		b.textContent = label[currentLang];
+		b.onclick = ()=>{ activeTab=key; renderTabs(); renderMenu(); };
+		w.appendChild(b);
+	  });
+	}
 
-function catsOfMeal(mealId){
-  return MEAL_CATS.filter(mc=>mc.meal_id===mealId).map(mc=>mc.cat_id);
-}
+	/* ---- MENU RENDER ---- */
+	function renderMenu() {
+	  const main  = document.getElementById('main');
+	  const items = activeTab==='all' ? MENU_DATA : MENU_DATA.filter(i=>i.cat===activeTab);
+	  const groups={};
+	  items.forEach(i=>{ if(!groups[i.cat]) groups[i.cat]=[]; groups[i.cat].push(i); });
+	  main.innerHTML='';
+	  Object.entries(groups).forEach(([cat, catItems])=>{
+		const sec = document.createElement('section');
+		sec.className='menu-section';
+		const h=document.createElement('div');
+		h.className='section-heading';
+		h.textContent=catItems[0].category[currentLang];
+		sec.appendChild(h);
+		const grid=document.createElement('div');
+		grid.className='menu-grid';
+		catItems.forEach(item=>grid.appendChild(buildCard(item)));
+		sec.appendChild(grid);
+		main.appendChild(sec);
+	  });
+	}
 
+	function buildCard(item) {
+	  const card=document.createElement('div');
+	  card.className='menu-card';
+	  card.innerHTML=`
+		<div class="card-img-wrap">
+		  <img src="${item.img}" alt="${item.name[currentLang]}" loading="lazy"/>
+		  <div class="card-price-badge">${fmt(item.price)}</div>
+		</div>
+		<div class="card-body">
+		  <div class="card-name">${item.name[currentLang]}</div>
+		  <div class="card-desc">${item.desc[currentLang]}</div>
+		  <button class="add-btn" id="add-btn-${item.id}" onclick="addToCart(${item.id})">
+			<i class="ri-add-circle-line"></i>
+			<span>${t('addToCart')}</span>
+		  </button>
+		</div>`;
+	  return card;
+	}
 
-const t = k => (I18N[S.lang] && I18N[S.lang][k]) || k;
-function locName(m){ return m['name_'+S.lang] || m.name_en || m.name_ckb || ''; }
-function locDesc(m){ return m['desc_'+S.lang] || m.desc_en || m.desc_ckb || ''; }
-function catLabel(catId){
-  const c = CATS.find(x=>x.cat_id===catId);
-  if(!c) return catId;
-  return c['label_'+S.lang] || c.label_ckb;
-}
-const filtered = () => MEALS.filter(m => S.cat==='all' || catsOfMeal(m.id).includes(S.cat));
+	/* ---- CART ---- */
+	const saveCart	= ()=> localStorage.setItem('arash_cart', JSON.stringify(cart));
+	const getCount	= ()=> cart.reduce((s,i)=>s+i.qty, 0);
+	const getTotal	= ()=> cart.reduce((s,i)=>s+(i.price*i.qty), 0);
 
-/* ════════════════════════════════════════════════════════════════
-   3. DATA LOADING
-════════════════════════════════════════════════════════════════ */
-async function loadData(){
-  const boot = document.getElementById('bootScreen');
-  if(!sb){
-    boot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#E15555"></i><p style="max-width:280px;text-align:center">Supabase ڕێکنەخراوە.<br/>SUPABASE_URL و SUPABASE_ANON_KEY لە سەرەوەی فایلەکە پڕبکەرەوە.</p>`;
+	function addToCart(id) {
+	  const item=MENU_DATA.find(m=>m.id===id); if(!item) return;
+	  const ex=cart.find(c=>c.id===id);
+	  ex ? ex.qty++ : cart.push({id,qty:1,price:item.price});
+	  saveCart(); updateCartBar(); renderCartDrawer(); flashAddBtn(id);
+	}
+
+	function changeQty(id,delta) {
+	  const ex=cart.find(c=>c.id===id); if(!ex) return;
+	  ex.qty+=delta;
+	  if(ex.qty<=0) cart=cart.filter(c=>c.id!==id);
+	  saveCart(); updateCartBar(); renderCartDrawer(); renderModalSummary();
+	}
+
+	function removeFromCart(id) {
+	  cart=cart.filter(c=>c.id!==id);
+	  saveCart(); updateCartBar(); renderCartDrawer(); renderModalSummary();
+	}
+
+	function flashAddBtn(id) {
+	  const btn=document.getElementById(`add-btn-${id}`); if(!btn) return;
+	  btn.classList.add('added');
+	  btn.querySelector('span').textContent=t('added');
+	  setTimeout(()=>{ btn.classList.remove('added'); btn.querySelector('span').textContent=t('addToCart'); },1300);
+	}
+
+	/* ---- CART BAR ---- */
+	function updateCartBar() {
+	  const c=getCount(), tot=getTotal();
+	  document.getElementById('bar-count').textContent=c;
+	  document.getElementById('bar-total').textContent=fmt(tot);
+	  document.getElementById('cart-bar').classList.toggle('visible',c>0);
+	}
+
+	/* ---- CART DRAWER ---- */
+	const openCart  = ()=>{ document.getElementById('cart-overlay').classList.add('open'); document.getElementById('cart-drawer').classList.add('open'); document.body.style.overflow='hidden'; };
+	const closeCart = ()=>{ document.getElementById('cart-overlay').classList.remove('open'); document.getElementById('cart-drawer').classList.remove('open'); document.body.style.overflow=''; };
+
+	function renderCartDrawer() {
+	  const con=document.getElementById('cart-items');
+	  document.getElementById('drawer-total').textContent=fmt(getTotal());
+	  if(cart.length===0){
+		con.innerHTML=`<div class="cart-empty"><i class="ri-shopping-basket-line"></i><p>${t('emptyCart')}</p><p style="font-size:.8rem">${t('addItemsFirst')}</p></div>`;
+		return;
+	  }
+	  con.innerHTML='';
+	  cart.forEach(ci=>{
+		const m=MENU_DATA.find(x=>x.id===ci.id); if(!m) return;
+		const row=document.createElement('div');
+		row.className='cart-item';
+		row.innerHTML=`
+		  <img class="cart-item-img" src="${m.img}" alt="${m.name[currentLang]}"/>
+		  <div class="cart-item-info">
+			<div class="cart-item-name">${m.name[currentLang]}</div>
+			<div class="cart-item-price">${fmt(m.price)}</div>
+		  </div>
+		  <div class="cart-item-controls">
+			<button class="qty-btn" onclick="changeQty(${ci.id},-1)"><i class="ri-subtract-line"></i></button>
+			<span class="qty-num">${ci.qty}</span>
+			<button class="qty-btn" onclick="changeQty(${ci.id},1)"><i class="ri-add-line"></i></button>
+			<button class="remove-btn" onclick="removeFromCart(${ci.id})"><i class="ri-delete-bin-6-line"></i></button>
+		  </div>`;
+		con.appendChild(row);
+	  });
+	}
+
+	/* ---- CHECKOUT ---- */
+	function openCheckout() {
+  if(cart.length===0) return;
+  closeCart(); renderModalSummary();
+  document.getElementById('checkout-overlay').classList.add('open');
+	  document.body.style.overflow='hidden';
+	}
+	function closeCheckout() {
+	  document.getElementById('checkout-overlay').classList.remove('open');
+	  document.body.style.overflow='';
+	}
+
+	function renderModalSummary() {
+	  const con=document.getElementById('modal-order-items');
+	  document.getElementById('modal-total').textContent=fmt(getTotal());
+	  con.innerHTML='';
+	  cart.forEach(ci=>{
+		const m=MENU_DATA.find(x=>x.id===ci.id); if(!m) return;
+		const row=document.createElement('div');
+		row.className='order-item-row';
+		row.innerHTML=`<span>${m.name[currentLang]} × ${ci.qty}</span><span>${fmt(m.price*ci.qty)}</span>`;
+		con.appendChild(row);
+	  });
+	}
+
+	const SUPABASE_URL = 'https://ltqkjovmixksuettszpp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oR8ePCfv_jVixCIs6_AlMA_hH1NyR8f';
+
+async function submitOrder() {
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const address = document.getElementById('f-address').value.trim();
+
+  // validate
+    [['f-name',name],['f-phone',phone],['f-address',address]].forEach(([id,val])=>{
+    document.getElementById(id).style.borderColor = val ? '' : 'var(--danger)';
+    if(val) document.getElementById(id).style.boxShadow='';
+  });
+  if(!name||!phone||!address) return;
+
+  if(!address.includes('google.com/maps')) {
+    document.getElementById('f-address').style.borderColor = 'var(--danger)';
+    document.getElementById('f-address').placeholder = '📍 تکایە لۆکەیشنەکەت شێر بکە!';
     return;
   }
-  try{
-    const [{data:cats,error:e1}, {data:meals,error:e2}, {data:settings,error:e3}, {data:mealCats,error:e4}] = await Promise.all([
-  sb.from('categories').select('*').order('sort',{ascending:true}),
-sb.from('meals').select('*').order('sort',{ascending:true}),
-  sb.from('site_settings').select('*').eq('id',1).single(),
-  sb.from('meal_categories').select('*')
-]);
-if(e1||e2||e3||e4) throw (e1||e2||e3||e4);
-CATS = cats || [];
-MEALS = meals || [];
-SETTINGS = settings || null;
-MEAL_CATS = mealCats || [];
-    applySettings();
-    renderAll();
-    boot.style.display='none';
-    // زیادکردنی ژمارەی سەردان — تەنها یەک جار بۆ هەر سێشن
-if(!sessionStorage.getItem('arash_viewed')){
-  sessionStorage.setItem('arash_viewed','1');
-  sb.from('site_settings').update({view_count: (SETTINGS.view_count||0)+1}).eq('id',1).then(()=>{});
-}
-
-        setupRealtime();
-  }catch(err){
-    console.error(err);
-    boot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#E15555"></i><p style="max-width:280px;text-align:center">هەڵەیەک ڕوویدا لە بارکردنی داتا.<br/>${(err&&err.message)||''}</p>`;
-  }
-}
-
-function setupRealtime(){
-  if(!sb) return;
-  sb.channel('public:all-changes')
-    .on('postgres_changes', {event:'*', schema:'public', table:'meals'}, async ()=>{
-      const {data} = await sb.from('meals').select('*').order('sort',{ascending:true});
-      MEALS = data || [];
-      renderMenu();
-    })
-    .on('postgres_changes', {event:'*', schema:'public', table:'categories'}, async ()=>{
-      const {data} = await sb.from('categories').select('*').order('sort',{ascending:true});
-      CATS = data || [];
-      renderCats();
-      renderMenu();
-    })
-    .on('postgres_changes', {event:'*', schema:'public', table:'site_settings'}, async ()=>{
-      const {data} = await sb.from('site_settings').select('*').eq('id',1).single();
-      SETTINGS = data || null;
-      applySettings();
-      renderAll();
-    })
-    .on('postgres_changes', {event:'*', schema:'public', table:'meal_categories'}, async ()=>{
-      const {data} = await sb.from('meal_categories').select('*');
-      MEAL_CATS = data || [];
-      renderMenu();
-    })
-    .subscribe();
-}
 
 
 
-function applySettings(){
-  if(!SETTINGS) return;
-  const root = document.documentElement.style;
-  if(SETTINGS.color_bg) root.setProperty('--bg', SETTINGS.color_bg);
-  if(SETTINGS.color_layer1) root.setProperty('--layer1', SETTINGS.color_layer1);
-  if(SETTINGS.color_layer2) root.setProperty('--layer2', SETTINGS.color_layer2);
-  if(SETTINGS.color_layer3) root.setProperty('--layer3', SETTINGS.color_layer3);
-  if(SETTINGS.color_gold) root.setProperty('--gold', SETTINGS.color_gold);
-  if(SETTINGS.color_cream) root.setProperty('--cream', SETTINGS.color_cream);
-  if(SETTINGS.font_size) root.setProperty('--base-font-size', SETTINGS.font_size+'px');
+  const note  = document.getElementById('f-note').value.trim();
+  const total = getTotal();
 
-  document.getElementById('navBrandText').textContent = SETTINGS.brand_name || 'Arash FastFood';
-  document.title = (SETTINGS.brand_name || 'Arash Fast Food') + ' | مێنوو';
+  // build items array from cart
+  const items = cart.map(ci => {
+    const m = MENU_DATA.find(x => x.id === ci.id);
+    return { name: m.name.ku, qty: ci.qty, price: m.price };
+  });
 
-      const annKey = 'announcement_'+S.lang;
-  const annText = SETTINGS[annKey] || '';
-  const annBanner = document.getElementById('annBanner');
-  if(SETTINGS.announcement_active && annText){
-    document.getElementById('annBannerText').textContent = annText;
-    annBanner.style.display = 'flex';
-  } else {
-    annBanner.style.display = 'none';
-  }
-
-  const aboutKey = 'footer_about_'+S.lang;
-  document.getElementById('footerAbout').textContent = SETTINGS[aboutKey] || SETTINGS.footer_about_ckb || '';
-  document.getElementById('footerBranchText').textContent = SETTINGS['branch_text_'+S.lang] || SETTINGS.branch_text_ckb || '';
-const branchDigits = (SETTINGS.branch_phone || '').replace(/[^0-9]/g,'');
-document.getElementById('footerBranchLink').href = branchDigits ? 'https://wa.me/'+branchDigits : '#';
-  document.getElementById('footerWaLink').textContent = 'DevMuhamad.com';
-document.getElementById('footerWaLink').href = 'https://wa.me/9647509628683';
-}
-
-/* ════════════════════════════════════════════════════════════════
-   4. RENDER CATEGORIES
-════════════════════════════════════════════════════════════════ */
-function renderCats(){
-  const track = document.getElementById('catsTrack');
-
-  // ئۆتۆماتیک هەڵبژاردنی یەکەم کەتەگۆری ئەگەر هیچ هەڵنەبژێردراوە
-  if(S.cat==='all' && CATS.length){
-    S.cat = CATS[0].cat_id;
-  }
-
-  const existingIds = [...track.querySelectorAll('[data-cat]')].map(el=>el.dataset.cat);
-  const newIds = CATS.map(c=>c.cat_id);
-  const sameSet = existingIds.length===newIds.length && existingIds.every((id,i)=>id===newIds[i]);
-
-  if(sameSet){
-    // تەنها هەڵبژاردنی (on) و ناوی کەتەگۆری نوێ بکەرەوە، وێنە دەست پێ نەکەیت
-    CATS.forEach(c=>{
-      const tile = track.querySelector(`[data-cat="${c.cat_id}"]`);
-      if(!tile) return;
-      const isOn = S.cat===c.cat_id;
-      tile.classList.toggle('on', isOn);
-      tile.setAttribute('aria-pressed', String(isOn));
-      const label = tile.querySelector('.cat-label');
-      if(label) label.textContent = catLabel(c.cat_id);
+  // send to Supabase
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        customer_name: name,
+        customer_phone: phone,
+        customer_address: address,
+        note: note,
+        items: items,
+        total: total,
+        status: 'pending'
+      })
     });
-  } else {
-    // لیستی کەتەگۆری بەڕاستی گۆڕاوە (زیادکردن/سڕینەوە) — دروستی بکەرەوە
-    track.innerHTML = CATS.map(c=>`
-      <li class="cat-tile${S.cat===c.cat_id?' on':''}" role="listitem" data-cat="${c.cat_id}" tabindex="0" aria-pressed="${S.cat===c.cat_id}">
-        <div class="cat-img-ring">
-          <div class="cat-img-inner">
-            ${c.img ? `<img src="${c.img}" alt="${catLabel(c.cat_id)}" loading="lazy"/>` : `<div class="cat-icon-circle"><i class="${c.icon||'fa-solid fa-tag'}" aria-hidden="true"></i></div>`}
-          </div>
-        </div>
-        <span class="cat-label">${catLabel(c.cat_id)}</span>
-        <div class="cat-dot"></div>
-      </li>
-    `).join('');
+
+    if (!res.ok) throw new Error('Supabase error');
+  } catch(e) {
+    console.error(e);
+    // هەڵەیەک هەبوو، بەڵام باز نادەین — داواکاری نیشان دەدەین
   }
+
+  document.getElementById('checkout-form-view').classList.add('hidden');
+  document.getElementById('checkout-success-view').classList.remove('hidden');
+  
+  // WhatsApp بۆ خاوەنی خواردنگە
+const ownerPhone = '9647509628683';
+const itemsText = items.map(i => `• ${i.name} × ${i.qty} — ${(i.price*i.qty).toLocaleString()} IQD`).join('\n');
+const waMsg = encodeURIComponent(
+  `🛵 داواکاری نوێ!\n\n` +
+  `👤 ناو: ${name}\n` +
+  `📞 تەلەفۆن: ${phone}\n` +
+  `📍 ناونیشان: ${address}\n` +
+  `${note ? '📝 تێبینی: ' + note + '\n' : ''}` +
+  `\n🍽️ خواردنەکان:\n${itemsText}\n\n` +
+  `💰 کۆی گشتی: ${total.toLocaleString()} IQD`
+);
+window.open(`https://wa.me/${ownerPhone}?text=${waMsg}`, '_blank');
+
+}
+
+function shareLocation() {
+  if(!navigator.geolocation) {
+    alert('براوزەرەکەت لۆکەیشن پشتگیری ناکات');
+    return;
+  }
+  
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const url = `https://www.google.com/maps?q=${lat},${lng}`;
+      document.getElementById('f-address').value = url;
+      document.getElementById('f-address').style.borderColor = 'var(--success)';
+    },
+    err => {
+      // کۆدی هەڵە دیاری بکە
+      if(err.code === 1) {
+        alert('❌ إذنی لۆکەیشن نەدراوە\n\nتکایە:\n• لەسەر مۆبایل: ئایکۆنی قفل/لۆکەیشن لە بالای براوزەر بکەوە\n• إذنی لۆکەیشن بدە، پاشان دووبارە هەوڵ بدەرەوە');
+      } else if(err.code === 2) {
+        alert('❌ لۆکەیشن نەگیرا — GPS چالاک بکە');
+      } else {
+        alert('❌ کاتی بەسەرچوو — دووبارە هەوڵ بدەرەوە');
+      }
+    },
+    { timeout: 10000, enableHighAccuracy: true }
+  );
+}
+
+
+function resetAfterOrder() {
+  // تەنها سەبەتە پاک دەکەینەوە — زانیاری کریار دەمێنێتەوە
+  cart=[]; saveCart(); updateCartBar(); renderCartDrawer();
+  
+  // تێبینی پاک دەکەینەوە چونکە تایبەتە بە هەر داواکارییەک
+  document.getElementById('f-note').value='';
+  document.getElementById('f-note').style.borderColor='';
+  document.getElementById('f-note').style.boxShadow='';
+
+  document.getElementById('checkout-form-view').classList.remove('hidden');
+  document.getElementById('checkout-success-view').classList.add('hidden');
+  closeCheckout();
 }
 
 
 
-/* ════════════════════════════════════════════════════════════════
-   5. RENDER CARDS
-════════════════════════════════════════════════════════════════ */
-function gridCard(m, idx){ return `
-  <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${locName(m)}">
-    <div class="gc-img"><img src="${m.img||''}" alt="${locName(m)}" loading="${idx<4?'eager':'lazy'}"/></div>
-    <div class="gc-body">
-      <div class="gc-name">${locName(m)}</div>
-      <div class="gc-price" style="font-size:13px;font-weight:600;color:var(--gold);margin-top:4px">${(m.price||0).toLocaleString()} <span class="gc-cur">${t('currency')}</span></div>
-    </div>
-  </article>`; }
-
-function listCard(m, idx){ return `
-  <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${locName(m)}">
-    <div class="lc-img"><img src="${m.img||''}" alt="${locName(m)}" loading="${idx<4?'eager':'lazy'}"/></div>
-<div class="lc-body">
-  <div>
-    <div class="lc-cat">${catsOfMeal(m.id).map(catLabel).join(' · ')}</div>
-    <div class="lc-name">${locName(m)}</div>
-  </div>
-  <div class="lc-footer"><div><span class="lc-price">${(m.price||0).toLocaleString()}</span><span class="lc-price-cur">${t('currency')}</span></div></div>
-</div>
-  </article>`; }
-
-/* ════════════════════════════════════════════════════════════════
-   6. RENDER MENU
-════════════════════════════════════════════════════════════════ */
-function renderMenu(){
-  const meals = filtered();
-  const gridEl = document.getElementById('menuGrid');
-  const listEl = document.getElementById('menuList');
-  const empty  = document.getElementById('emptyState');
-  document.getElementById('rCount').textContent = meals.length;
-  empty.classList.toggle('on', !meals.length);
-  gridEl.innerHTML = meals.map(gridCard).join('');
-  listEl.innerHTML = meals.map(listCard).join('');
-  updateViewDisplay();
-}
-
-function updateViewDisplay(){
-  const isGrid = S.view==='grid';
-  document.getElementById('menuGrid').style.display = isGrid ? '' : 'none';
-  document.getElementById('menuList').style.display = isGrid ? 'none' : '';
-}
-
-
-function updateMenuTexts(){
-  const meals = filtered();
-  document.querySelectorAll('#menuGrid .gcard').forEach(card=>{
-    const id = Number(card.dataset.id);
-    const m = meals.find(x=>x.id===id);
-    if(!m) return;
-    card.querySelector('.gc-name').textContent = locName(m);
-    card.querySelector('.gc-price').childNodes[0].textContent = (m.price||0).toLocaleString() + ' ';
-    card.querySelector('.gc-cur').textContent = t('currency');
-  });
-  document.querySelectorAll('#menuList .lcard').forEach(card=>{
-    const id = Number(card.dataset.id);
-    const m = meals.find(x=>x.id===id);
-    if(!m) return;
-    card.querySelector('.lc-cat').textContent = catsOfMeal(m.id).map(catLabel).join(' · ');
-    card.querySelector('.lc-name').textContent = locName(m);
-    card.querySelector('.lc-price').textContent = (m.price||0).toLocaleString();
-    card.querySelector('.lc-price-cur').textContent = t('currency');
-  });
-}
-
-function renderAll(){
-  renderCats();
-  renderMenu();
-  applyI18nStatic();
-}
-
-function applyI18nStatic(){
-  document.getElementById('allMealsLabel').textContent = t('all_meals');
-  document.getElementById('emptyTitle').textContent = t('no_results');
-  document.getElementById('emptySub').textContent = t('try_other');
-  document.getElementById('priceLabel').textContent = t('price');
-  document.getElementById('footerRights').textContent = t('rights');
-  document.getElementById('footerMadeByLabel').textContent = t('made_by');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   7. MODAL
-════════════════════════════════════════════════════════════════ */
-function openModal(id){
-  const m = MEALS.find(x=>x.id===id);
-  if(!m) return;
-  document.getElementById('mImg').src = m.img||'';
-  document.getElementById('mImg').alt = locName(m);
-document.getElementById('mCat').textContent = catsOfMeal(m.id).map(catLabel).join(' · ');
-  document.getElementById('mName').textContent = locName(m);
-  document.getElementById('mDesc').textContent = locDesc(m);
-  document.getElementById('mPrice').textContent = (m.price||0).toLocaleString();
-  document.getElementById('mCur').textContent = t('currency');
-  document.getElementById('mChips').innerHTML = `
-    <div class="mchip"><i class="fa-solid fa-fire"></i>${m.cal||0} ${t('calories')}</div>
-    <div class="mchip"><i class="fa-regular fa-clock"></i>${m.prep||0} ${t('prep_min')}</div>`;
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeModal(){
-  document.getElementById('overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-
-/* ════════════════════════════════════════════════════════════════
-   8. LANG / VIEW
-════════════════════════════════════════════════════════════════ */
-function setLang(lang){
-  S.lang = lang;
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang==='en' ? 'ltr' : 'rtl';
-  document.body.className = `lang-${lang}`;
-  document.querySelectorAll('.lpb').forEach(b=>{
-    const on = b.dataset.lang===lang;
-    b.classList.toggle('on', on);
-    b.setAttribute('aria-pressed', String(on));
-  });
-  applySettings();
-  renderCats();
-  updateMenuTexts();
-  applyI18nStatic();
-}
-
-
-function setView(v){
-  S.view = v;
-  document.getElementById('gBtn').classList.toggle('on', v==='grid');
-  document.getElementById('lBtn').classList.toggle('on', v==='list');
-  document.getElementById('gBtn').setAttribute('aria-pressed', String(v==='grid'));
-  document.getElementById('lBtn').setAttribute('aria-pressed', String(v==='list'));
-  updateViewDisplay();
-}
-
-
-/* ════════════════════════════════════════════════════════════════
-   9. EVENTS
-════════════════════════════════════════════════════════════════ */
-document.getElementById('catsTrack').addEventListener('click', e=>{
-  const tile = e.target.closest('[data-cat]');
-  if(!tile) return;
-  S.cat = tile.dataset.cat;
-  renderCats();
-  renderMenu();
-});
-document.getElementById('catsTrack').addEventListener('keydown', e=>{
-  if(e.key==='Enter'){ const tile=e.target.closest('[data-cat]'); if(tile){S.cat=tile.dataset.cat;renderCats();renderMenu();} }
-});
-document.getElementById('menuGrid').addEventListener('click', e=>{ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); });
-document.getElementById('menuList').addEventListener('click', e=>{ const card=e.target.closest('[data-id]'); if(card) openModal(Number(card.dataset.id)); });
-document.getElementById('gBtn').addEventListener('click', ()=>setView('grid'));
-document.getElementById('lBtn').addEventListener('click', ()=>setView('list'));
-document.getElementById('mClose').addEventListener('click', closeModal);
-document.getElementById('overlay').addEventListener('click', e=>{ if(e.target===document.getElementById('overlay')) closeModal(); });
-document.querySelectorAll('.lpb').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
-
-/* ════════════════════════════════════════════════════════════════
-   10. INIT
-════════════════════════════════════════════════════════════════ */
-loadData();
-</script>
+	/* ---- INIT ---- */
+	renderTabs(); renderMenu(); updateCartBar(); renderCartDrawer();
+  </script>
 </body>
 </html>
