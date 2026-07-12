@@ -968,12 +968,15 @@
 	};
 
 	/* ---- MENU DATA ---- */
-let MENU_DATA = [];
+	let MENU_DATA = [];
 
 	/* ---- STATE ---- */
 	let currentLang = 'ku';
-	let cart		= JSON.parse(localStorage.getItem('arash_cart') || '[]');
+	let cart        = JSON.parse(localStorage.getItem('arash_cart') || '[]');
 	let activeTab   = 'all';
+	let cardEls     = {};   // item.id -> card DOM element
+	let sectionEls  = {};   // category key -> {sectionEl, gridEl, headingEl}
+	let menuBuilt   = false;
 
 	const t   = k  => TRANSLATIONS[currentLang][k] || k;
 	const fmt = n  => n.toLocaleString() + ' IQD';
@@ -992,7 +995,8 @@ let MENU_DATA = [];
 		const v = TRANSLATIONS[lang][el.dataset.i18nPlaceholder];
 		if (v) el.placeholder = v;
 	  });
-	  renderTabs(); renderMenu(); renderCartDrawer(); renderModalSummary();
+	  // Language change touches every text string, so a full rebuild is needed here.
+	  renderTabs(); buildMenuDOM(); renderCartDrawer(); renderModalSummary();
 	}
 
 	/* ---- TABS ---- */
@@ -1008,42 +1012,135 @@ let MENU_DATA = [];
 	  const all = document.createElement('button');
 	  all.className = 'tab-btn'+(activeTab==='all'?' active':'');
 	  all.textContent = t('allCategories');
-	  all.onclick = ()=>{ activeTab='all'; renderTabs(); renderMenu(); };
+	  all.onclick = ()=>{ activeTab='all'; renderTabs(); filterMenuDisplay(); };
 	  w.appendChild(all);
 	  getCategories().forEach(({key,label})=>{
 		const b = document.createElement('button');
 		b.className = 'tab-btn'+(activeTab===key?' active':'');
 		b.textContent = label[currentLang];
-		b.onclick = ()=>{ activeTab=key; renderTabs(); renderMenu(); };
+		b.onclick = ()=>{ activeTab=key; renderTabs(); filterMenuDisplay(); };
 		w.appendChild(b);
 	  });
 	}
 
-	/* ---- MENU RENDER ---- */
-	function renderMenu() {
-	  const main  = document.getElementById('main');
-	  const items = activeTab==='all' ? MENU_DATA : MENU_DATA.filter(i=>i.cat===activeTab);
-	  const groups={};
-	  items.forEach(i=>{ if(!groups[i.cat]) groups[i.cat]=[]; groups[i.cat].push(i); });
-	  main.innerHTML='';
+	/* ---- BUILD MENU (once, or when categories/order actually change) ---- */
+	function buildMenuDOM() {
+	  const main = document.getElementById('main');
+	  main.innerHTML = '';
+	  cardEls = {};
+	  sectionEls = {};
+
+	  const groups = {};
+	  MENU_DATA.forEach(i=>{ if(!groups[i.cat]) groups[i.cat]=[]; groups[i.cat].push(i); });
+
 	  Object.entries(groups).forEach(([cat, catItems])=>{
 		const sec = document.createElement('section');
 		sec.className='menu-section';
+		sec.dataset.cat = cat;
+
 		const h=document.createElement('div');
 		h.className='section-heading';
 		h.textContent=catItems[0].category[currentLang];
 		sec.appendChild(h);
+
 		const grid=document.createElement('div');
 		grid.className='menu-grid';
-		catItems.forEach(item=>grid.appendChild(buildCard(item)));
+		catItems.forEach(item=>{
+		  const card = buildCard(item);
+		  cardEls[item.id] = card;
+		  grid.appendChild(card);
+		});
 		sec.appendChild(grid);
 		main.appendChild(sec);
+		sectionEls[cat] = { sectionEl: sec, gridEl: grid, headingEl: h };
 	  });
+
+	  menuBuilt = true;
+	  filterMenuDisplay();
+	}
+
+	/* ---- SHOW/HIDE ONLY — no DOM rebuild, no image reload ---- */
+	function filterMenuDisplay() {
+	  Object.entries(sectionEls).forEach(([cat, {sectionEl}])=>{
+		const show = activeTab==='all' || activeTab===cat;
+		sectionEl.style.display = show ? '' : 'none';
+	  });
+	}
+
+	/* ---- INCREMENTAL UPDATE — called on realtime changes, keeps existing images ---- */
+	function updateMenuIncremental(newData) {
+	  if (!menuBuilt) {
+		MENU_DATA = newData;
+		buildMenuDOM();
+		return;
+	  }
+
+	  const oldById = {}; MENU_DATA.forEach(i=>oldById[i.id]=i);
+	  const newById = {}; newData.forEach(i=>newById[i.id]=i);
+
+	  const oldCats = new Set(MENU_DATA.map(i=>i.cat));
+	  const newCats = new Set(newData.map(i=>i.cat));
+	  const catsChanged = oldCats.size!==newCats.size || [...oldCats].some(c=>!newCats.has(c));
+
+	  if (catsChanged) {
+		// categories were added/removed — safe to fully rebuild just this once
+		MENU_DATA = newData;
+		renderTabs();
+		buildMenuDOM();
+		return;
+	  }
+
+	  // remove deleted items
+	  Object.keys(cardEls).forEach(idStr=>{
+		const id = Number(idStr);
+		if(!newById[id]){
+		  cardEls[idStr].remove();
+		  delete cardEls[idStr];
+		}
+	  });
+
+	  let needsNewSection = false;
+
+	  // update or add items
+	  newData.forEach(item=>{
+		const old = oldById[item.id];
+		const existingCard = cardEls[item.id];
+
+		if (existingCard) {
+		  // update text/price fields only — never touch the <img> unless the URL changed
+		  const nameEl  = existingCard.querySelector('.card-name');
+		  const descEl  = existingCard.querySelector('.card-desc');
+		  const priceEl = existingCard.querySelector('.card-price-badge');
+		  if(nameEl)  nameEl.textContent  = item.name[currentLang];
+		  if(descEl)  descEl.textContent  = item.desc[currentLang];
+		  if(priceEl) priceEl.textContent = fmt(item.price);
+
+		  if (!old || old.img !== item.img) {
+			const imgEl = existingCard.querySelector('img');
+			if(imgEl && imgEl.src !== item.img) imgEl.src = item.img;
+		  }
+		} else {
+		  // new item
+		  const sec = sectionEls[item.cat];
+		  if (!sec) { needsNewSection = true; return; }
+		  const card = buildCard(item);
+		  cardEls[item.id] = card;
+		  sec.gridEl.appendChild(card);
+		}
+	  });
+
+	  MENU_DATA = newData;
+
+	  if (needsNewSection) {
+		renderTabs();
+		buildMenuDOM();
+	  }
 	}
 
 	function buildCard(item) {
 	  const card=document.createElement('div');
 	  card.className='menu-card';
+	  card.dataset.id = item.id;
 	  card.innerHTML=`
 		<div class="card-img-wrap">
 		  <img src="${item.img}" alt="${item.name[currentLang]}" loading="lazy" decoding="async"/>
@@ -1279,14 +1376,16 @@ function resetAfterOrder() {
 
 
 	/* ---- FETCH MENU ---- */
-	async function fetchMenuData() {
+	/* Returns a fresh array WITHOUT touching the global MENU_DATA or DOM,
+	   so callers can diff it safely against what's already on screen. */
+	async function fetchMenuDataOnly() {
 	  try {
 		const res = await fetch(
 		  `${SUPABASE_URL}/rest/v1/menu_items?select=*,menu_categories(key,label_ku,label_ar,sort_order)&active=eq.true&order=sort_order.asc`,
 		  { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
 		);
 		const rows = await res.json();
-		MENU_DATA = rows
+		return rows
 		  .filter(r => r.menu_categories)
 		  .map(r => ({
 			id: r.id,
@@ -1299,7 +1398,7 @@ function resetAfterOrder() {
 			img: r.img || ''
 		  }))
 		  .sort((a,b) => a.catSort - b.catSort);
-	  } catch(e) { console.error('Menu fetch failed:', e); }
+	  } catch(e) { console.error('Menu fetch failed:', e); return MENU_DATA; }
 	}
 
 	function startMenuRealtime() {
@@ -1316,8 +1415,8 @@ function resetAfterOrder() {
 		  const msg = JSON.parse(e.data);
 		  if ((msg.topic==='realtime:public:menu_items' || msg.topic==='realtime:public:menu_categories')
 			  && ['INSERT','UPDATE','DELETE'].includes(msg.event)) {
-			await fetchMenuData();
-			renderTabs(); renderMenu();
+			const freshData = await fetchMenuDataOnly();
+			updateMenuIncremental(freshData);
 		  }
 		};
 		ws.onclose = () => setTimeout(connect, 3000);
@@ -1328,8 +1427,8 @@ function resetAfterOrder() {
 
 	/* ---- INIT ---- */
 	(async function initMenu(){
-	  await fetchMenuData();
-	  renderTabs(); renderMenu(); updateCartBar(); renderCartDrawer();
+	  MENU_DATA = await fetchMenuDataOnly();
+	  renderTabs(); buildMenuDOM(); updateCartBar(); renderCartDrawer();
 	  startMenuRealtime();
 	})();
 
