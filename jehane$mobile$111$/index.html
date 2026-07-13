@@ -3664,6 +3664,7 @@ function openPlanModal(id) {
 }
 
 async function savePlan() {
+  if(!can('plans', editPlanId ? 'edit' : 'add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const title = document.getElementById('planTitle').value.trim();
   const content = document.getElementById('planContent').value.trim();
   if(!title||!content) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
@@ -3688,6 +3689,7 @@ async function savePlan() {
 }
 
 async function deletePlan(id) {
+  if(!can('plans','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم پلانە؟')) return;
   try {
     const { error } = await sb.from('plans').delete().eq('id', id);
@@ -4361,6 +4363,7 @@ function suggestProductInfo(name) {
 
 function editProduct(id) { openProductModal(id); }
 async function saveProduct() {
+  if(!can('inventory','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   const name=document.getElementById('pName').value.trim();
   const brand=document.getElementById('pBrand').value.trim();
   const cat=document.getElementById('pCategory').value;
@@ -4800,6 +4803,7 @@ function removeFromCart(id) {
 
 
 async function completeSale() {
+  if(!can('sales','add')) { toast('دەسەڵاتت نیە بۆ فرۆشتن','error'); return; }
   if(!saleCart.length) { toast('تکایە کاڵایەک هەڵبژێرە','error'); return; }
   const btn = document.getElementById('saleCompleteBtn');
   btn.disabled = true;
@@ -4919,6 +4923,7 @@ buildNotifications();
 
 
 async function returnSale(id) {
+  if(!can('sales','edit')) { toast('دەسەڵاتت نیە بۆ گەڕاندنەوە','error'); return; }
   const s = DB.get('sales').find(x=>x.id===id);
   if(!s) return;
   if(!confirm(`دڵنیایت لە گەڕاندنەوەی "${s.productName}"؟ کاڵاکە دەگەڕێتەوە دوکان.`)) return;
@@ -5002,6 +5007,7 @@ function openRepairModal(id) {
 }
 function editRepair(id) { openRepairModal(id); }
 async function saveRepair() {
+  if(!can('repairs', editRepairId ? 'edit' : 'add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const name=document.getElementById('rName').value.trim();
   const phone=document.getElementById('rPhone').value.trim();
   const device=document.getElementById('rDevice').value.trim();
@@ -5048,6 +5054,7 @@ async function saveRepair() {
 }
 
 async function deleteRepair(id) {
+  if(!can('repairs','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم چاکسازییە؟')) return;
   const backup = CACHE.repairs.find(r=>r.id===id);
   CACHE.repairs = CACHE.repairs.filter(r=>r.id!==id);
@@ -5179,6 +5186,7 @@ function openDebtModal() {
 }
 
 async function saveDebt() {
+  if(!can('debts','add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const name = document.getElementById('dName').value.trim();
   const phone = document.getElementById('dPhone').value.trim();
   const amount = parseFloat(document.getElementById('dAmount').value)||0;
@@ -5325,6 +5333,7 @@ function openPayDebtModal(id) {
 }
 
 async function confirmPayDebt() {
+  if(!can('debts','edit')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const d = DB.get('debts').find(x=>x.id===payDebtId);
   if(!d) return;
   const payAmt = parseFloat(document.getElementById('payAmount').value)||0;
@@ -5350,6 +5359,7 @@ async function confirmPayDebt() {
 }
 
 async function deleteDebt(id) {
+  if(!can('debts','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم قەرزە؟')) return;
   try {
 	const { error } = await sb.from('debts').delete().eq('id', id);
@@ -5702,6 +5712,7 @@ function openExpenseModal(id) {
 }
 
 async function saveExpense() {
+  if(!can('expenses', editExpenseId ? 'edit' : 'add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const title = document.getElementById('exTitle').value.trim();
   const amount = parseFloat(document.getElementById('exAmount').value)||0;
   const category = document.getElementById('exCategory').value;
@@ -5734,6 +5745,7 @@ async function saveExpense() {
 }
 
 async function deleteExpense(id) {
+  if(!can('expenses','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم خەرجییە؟')) return;
   try {
     const { error } = await sb.from('expenses').delete().eq('id', id);
