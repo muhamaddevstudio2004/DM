@@ -1493,16 +1493,19 @@ async function submitOrder() {
   
   // WhatsApp بۆ خاوەنی خواردنگە
 const ownerPhone = '9647517371460';
-const itemsText = items.map(i => `• ${i.name} × ${i.qty} — ${(i.price*i.qty).toLocaleString()} IQD`).join('\n');
+const itemsText = cart.map(ci => {
+  const m = MENU_DATA.find(x => x.id === ci.id);
+  return `• ${m.name.ar} × ${ci.qty} — ${(m.price*ci.qty).toLocaleString()} IQD`;
+}).join('\n');
 const orderNumberText = orderId ? `#${String(orderId).padStart(4,'0')}` : '';
 const waMsg = encodeURIComponent(
-  `🛵 داواکاری نوێ! ${orderNumberText}\n\n` +
-  `👤 ناو: ${name}\n` +
-  `📞 تەلەفۆن: ${phone}\n` +
-  `📍 ناونیشان: ${address}\n` +
-  `${note ? '📝 تێبینی: ' + note + '\n' : ''}` +
-  `\n🍽️ خواردنەکان:\n${itemsText}\n\n` +
-  `💰 کۆی گشتی: ${total.toLocaleString()} IQD`
+  `🛵 طلب جديد! ${orderNumberText}\n\n` +
+  `👤 الاسم: ${name}\n` +
+  `📞 الهاتف: ${phone}\n` +
+  `📍 العنوان: ${address}\n` +
+  `${note ? '📝 ملاحظة: ' + note + '\n' : ''}` +
+  `\n🍽️ الطلبات:\n${itemsText}\n\n` +
+  `💰 المجموع الكلي: ${total.toLocaleString()} IQD`
 );
 const waWindow = window.open(`https://wa.me/${ownerPhone}?text=${waMsg}`, '_blank');
 setTimeout(() => {
