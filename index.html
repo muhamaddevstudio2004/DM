@@ -529,6 +529,57 @@
   }
   .modal-order-btn:hover{ transform:translateY(-2px); opacity:.9; }
 
+  /* ===================== WHATSAPP CONFIRM DIALOG ===================== */
+  .confirm-overlay{
+	position:fixed; inset:0; z-index:400;
+	background:rgba(0,0,0,.8);
+	backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+	display:flex; align-items:center; justify-content:center;
+	padding:20px;
+	opacity:0; visibility:hidden;
+	transition:opacity .3s ease, visibility .3s ease;
+  }
+  .confirm-overlay.show{ opacity:1; visibility:visible; }
+  .confirm-box{
+	width:100%; max-width:340px;
+	background:#111214;
+	border:1px solid var(--line);
+	border-radius:20px;
+	padding:30px 24px 26px;
+	text-align:center;
+	transform:translateY(16px) scale(.96);
+	transition:transform .35s cubic-bezier(.4,0,.2,1);
+  }
+  .confirm-overlay.show .confirm-box{ transform:translateY(0) scale(1); }
+  .confirm-icon{
+	width:56px; height:56px; margin:0 auto 16px;
+	border-radius:50%;
+	background:rgba(37,211,102,.12);
+	color:#25D366;
+	font-size:26px;
+	display:flex; align-items:center; justify-content:center;
+  }
+  .confirm-title{ font-size:17px; font-weight:600; margin-bottom:8px; }
+  .confirm-desc{ color:var(--gray); font-size:13.5px; line-height:1.8; margin-bottom:22px; }
+  .confirm-actions{ display:flex; flex-direction:column; gap:10px; }
+  .confirm-btn{
+	width:100%;
+	border:none; border-radius:100px;
+	padding:12px 16px; font-size:14px; font-weight:600;
+	cursor:pointer;
+	font-family:inherit;
+	display:inline-flex; align-items:center; justify-content:center; gap:8px;
+	transition:transform .3s ease, opacity .3s ease, background .3s ease;
+  }
+  .confirm-btn.confirm-yes{ background:#fff; color:#000; }
+  .confirm-btn.confirm-yes:hover{ transform:translateY(-2px); opacity:.9; }
+  .confirm-btn.confirm-no{
+	background:transparent; color:var(--gray);
+	border:1px solid var(--line);
+  }
+  .confirm-btn.confirm-no:hover{ color:#fff; border-color:rgba(255,255,255,.3); }
+
+
 
   @media (max-width: 560px){
 	.lang-switch{ top:16px; inset-inline-end:16px; }
@@ -732,6 +783,22 @@
   <div class="copyright">© 2026 DevMuhamad.com — <span data-i18n="rights">All Rights Reserved.</span></div>
 </footer>
 
+<!-- WHATSAPP CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+	<div class="confirm-icon"><i class="fa-brands fa-whatsapp"></i></div>
+	<div class="confirm-title" data-i18n="confirmTitle">دەتەوێت پەیوەندی بکەیت؟</div>
+	<p class="confirm-desc" data-i18n="confirmDesc">بە کرتەکردنی "بەڵێ"، بۆ WhatsApp دەبردرێیت بۆ پەیوەندیکردن.</p>
+	<div class="confirm-actions">
+	  <button class="confirm-btn confirm-yes" id="confirmYes">
+		<i class="fa-brands fa-whatsapp"></i>
+		<span data-i18n="confirmYes">بەڵێ، پەیوەندی بکە</span>
+	  </button>
+	  <button class="confirm-btn confirm-no" id="confirmNo" data-i18n="confirmNo">پاشگەزبوونەوە</button>
+	</div>
+  </div>
+</div>
+
 <!-- SERVICE DETAILS MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
@@ -777,8 +844,13 @@
 		  footerCtaBtn:"دەستپێکردنی گفتوگۆ",
 	  orderBtn:"داواکردن",
 	  orderMsg:"سڵاو، دەمەوێت زانیاری زیاتر لەسەر ئەم خزمەتگوزارییە بزانم: ",
+	  confirmTitle:"دەتەوێت پەیوەندی بکەیت؟",
+	  confirmDesc:"بە کرتەکردنی \"بەڵێ\"، بۆ WhatsApp دەبردرێیت بۆ پەیوەندیکردن.",
+	  confirmYes:"بەڵێ، پەیوەندی بکە",
+	  confirmNo:"پاشگەزبوونەوە",
 	  dir:"rtl"
 	},
+
 
 
 	ar: {
@@ -802,9 +874,14 @@
 	  footerCtaText:"أرسل لنا رسالة عبر واتساب وسنرد عليك في أقرب وقت.",
 		  footerCtaBtn:"ابدأ المحادثة",
 	  orderBtn:"اطلب الآن",
-	  orderMsg:"مرحباً، أرغب بمعرفة المزيد عن هذه الخدمة: ",
+		  orderMsg:"مرحباً، أرغب بمعرفة المزيد عن هذه الخدمة: ",
+	  confirmTitle:"هل تريد التواصل معنا؟",
+	  confirmDesc:"بالضغط على \"نعم\"، سيتم تحويلك إلى واتساب للتواصل.",
+	  confirmYes:"نعم، تواصل الآن",
+	  confirmNo:"إلغاء",
 	  dir:"rtl"
 	}
+
 
 
   };
@@ -1021,6 +1098,42 @@
 
 	goTo(0, false);
 	startAutoplay();
+  })();
+
+  /* ---------- WhatsApp confirm dialog (intercepts every wa.me link) ---------- */
+  (function initWhatsappConfirm(){
+	const confirmOverlay = document.getElementById("confirmOverlay");
+	const confirmYes = document.getElementById("confirmYes");
+	const confirmNo = document.getElementById("confirmNo");
+	if(!confirmOverlay) return;
+
+	let pendingUrl = null;
+
+	function openConfirm(url){
+	  pendingUrl = url;
+	  confirmOverlay.classList.add("show");
+	  document.body.style.overflow = "hidden";
+	}
+	function closeConfirm(){
+	  confirmOverlay.classList.remove("show");
+	  document.body.style.overflow = "";
+	  pendingUrl = null;
+	}
+
+	document.addEventListener("click", function(e){
+	  const link = e.target.closest('a[href*="wa.me"]');
+	  if(!link) return;
+	  e.preventDefault();
+	  openConfirm(link.href);
+	});
+
+	confirmYes.addEventListener("click", ()=>{
+	  if(pendingUrl) window.open(pendingUrl, "_blank", "noopener");
+	  closeConfirm();
+	});
+	confirmNo.addEventListener("click", closeConfirm);
+	confirmOverlay.addEventListener("click", (e)=>{ if(e.target === confirmOverlay) closeConfirm(); });
+	document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && confirmOverlay.classList.contains("show")) closeConfirm(); });
   })();
 
   /* ---------- Services grid → modal ---------- */
