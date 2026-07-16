@@ -669,20 +669,49 @@
   }
   .swatch:hover{ transform:scale(1.1); }
   .swatch.selected{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent); }
-  .font-size-row{ display:flex; gap:8px; }
-  .font-size-btn{
-	flex:1;
-	background:rgba(255,255,255,.03);
-	border:1px solid var(--line);
+   .font-slider-row{
+	display:flex; align-items:center; gap:12px;
 	color:var(--gray);
-	font-family:inherit; font-size:0.8125rem;
-	padding:10px 6px; border-radius:10px;
+  }
+  .font-slider{
+	flex:1;
+	-webkit-appearance:none; appearance:none;
+	height:4px; border-radius:4px;
+	background:rgba(255,255,255,.12);
+	outline:none;
 	cursor:pointer;
-	transition:all .25s ease;
+  }
+  .font-slider::-webkit-slider-thumb{
+	-webkit-appearance:none; appearance:none;
+	width:18px; height:18px; border-radius:50%;
+	background:var(--accent);
+	border:2px solid #111214;
+	box-shadow:0 0 0 1px var(--accent);
+	cursor:pointer;
+	transition:transform .2s ease;
+  }
+  .font-slider::-webkit-slider-thumb:hover{ transform:scale(1.15); }
+  .font-slider::-moz-range-thumb{
+	width:18px; height:18px; border-radius:50%;
+	background:var(--accent);
+	border:2px solid #111214;
+	box-shadow:0 0 0 1px var(--accent);
+	cursor:pointer;
+	transition:transform .2s ease;
+  }
+  .font-slider::-moz-range-thumb:hover{ transform:scale(1.15); }
+  .font-slider::-moz-range-track{
+	height:4px; border-radius:4px;
+	background:rgba(255,255,255,.12);
+  }
+  .font-slider-value{
+	text-align:center;
+	margin-top:10px;
+	font-size:0.8125rem;
+	color:var(--gray);
+	font-family:'JetBrains Mono', monospace;
   }
 
-  .font-size-btn:hover{ color:#fff; }
-  .font-size-btn.selected{ background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
   .settings-reset{
 	width:100%;
 	background:transparent; border:1px solid var(--line);
@@ -924,12 +953,14 @@
 
 	<div class="settings-section">
 	  <div class="settings-label" data-i18n="settingsFont">قەبارەی فۆنت</div>
-	  <div class="font-size-row">
-		<button class="font-size-btn" data-size="14" data-i18n="fontSmall">بچووک</button>
-		<button class="font-size-btn" data-size="16" data-i18n="fontMedium">ئاسایی</button>
-		<button class="font-size-btn" data-size="18" data-i18n="fontLarge">گەورە</button>
+	  <div class="font-slider-row">
+		<i class="fa-solid fa-a" style="font-size:11px"></i>
+		<input type="range" id="fontSlider" class="font-slider" min="13" max="20" step="0.5" value="16">
+		<i class="fa-solid fa-a" style="font-size:18px"></i>
 	  </div>
+	  <div class="font-slider-value" id="fontSliderValue">16px</div>
 	</div>
+
 
 	<button class="settings-reset" id="settingsReset" data-i18n="settingsReset">گەڕانەوە بۆ دۆخی سەرەتایی</button>
   </div>
@@ -1119,7 +1150,8 @@
 	const settingsOverlay = document.getElementById("settingsOverlay");
 	const settingsClose = document.getElementById("settingsClose");
 	const swatches = document.querySelectorAll(".swatch");
-	const fontBtns = document.querySelectorAll(".font-size-btn");
+	const fontSlider = document.getElementById("fontSlider");
+	const fontSliderValue = document.getElementById("fontSliderValue");
 	const resetBtn = document.getElementById("settingsReset");
 	const root = document.documentElement;
 	if(!settingsBtn || !settingsOverlay) return;
@@ -1134,7 +1166,8 @@
 	}
 	function applyFontSize(size){
 	  root.style.fontSize = size + "px";
-	  fontBtns.forEach(b => b.classList.toggle("selected", b.dataset.size === size));
+	  fontSlider.value = size;
+	  fontSliderValue.textContent = size + "px";
 	  try{ localStorage.setItem("dm_fontsize", size); }catch(e){}
 	}
 
@@ -1145,7 +1178,7 @@
 	applyFontSize(savedFont);
 
 	swatches.forEach(s => s.addEventListener("click", ()=> applyAccent(s.dataset.color)));
-	fontBtns.forEach(b => b.addEventListener("click", ()=> applyFontSize(b.dataset.size)));
+	fontSlider.addEventListener("input", ()=> applyFontSize(fontSlider.value));
 	resetBtn.addEventListener("click", ()=>{ applyAccent(DEFAULT_ACCENT); applyFontSize(DEFAULT_FONT); });
 
 	function openSettings(){
