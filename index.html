@@ -254,6 +254,65 @@
 	border-top:1px solid var(--line);
 	margin-top:40px;
   }
+
+  .discord-card{
+	max-width:1000px;
+	margin:0 auto 48px;
+	background:rgba(255,255,255,.03);
+	border:1px solid var(--line);
+	border-radius:20px;
+	padding:24px;
+	transition:border-color .35s ease, box-shadow .35s ease;
+  }
+  .discord-card:hover{
+	border-color:var(--accent);
+	box-shadow:0 12px 30px rgba(255,255,255,.06);
+  }
+  .discord-card-top{
+	display:flex; align-items:center; justify-content:space-between;
+	gap:16px; margin-bottom:14px;
+  }
+  .discord-card-title{ font-size:16px; font-weight:600; margin-bottom:8px; }
+  .discord-status{
+	display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+	font-size:12.5px; color:var(--gray);
+  }
+  .discord-status-dot{
+	width:7px; height:7px; border-radius:50%;
+	background:#4ADE80;
+	box-shadow:0 0 8px #4ADE80;
+	animation:pulseDot 1.8s ease-in-out infinite;
+	flex-shrink:0;
+  }
+  .discord-dot-sep{ opacity:.4; }
+  .discord-card-icon{
+	flex-shrink:0;
+	width:54px; height:54px; border-radius:16px;
+	background:rgba(255,255,255,.05);
+	color:var(--accent);
+	font-size:24px;
+	display:flex; align-items:center; justify-content:center;
+	transition:color .3s ease;
+  }
+  .discord-card-desc{
+	color:var(--gray); font-size:13.5px; line-height:1.9;
+	margin-bottom:20px;
+  }
+  .discord-join-btn{
+	display:inline-flex; align-items:center; justify-content:center; gap:8px;
+	width:100%;
+	background:var(--accent); color:#000; font-weight:600; font-size:14px;
+	padding:13px 16px; border-radius:100px;
+	text-decoration:none;
+	transition:transform .3s ease, opacity .3s ease;
+  }
+  .discord-join-btn:hover{ transform:translateY(-2px); opacity:.9; }
+
+  @media (min-width:560px){
+	.discord-card{ padding:28px 32px; }
+	.discord-join-btn{ width:auto; padding:13px 32px; }
+  }
+
   .footer-top{
 	max-width:1000px;
 	margin:0 auto;
@@ -903,7 +962,29 @@
 </main>
 
 <footer class="footer">
+
+  <div class="discord-card">
+	<div class="discord-card-top">
+	  <div class="discord-card-info">
+		<div class="discord-card-title" data-i18n="discordTitle">بازرگانی کوردستان</div>
+		<div class="discord-status">
+		  <span class="discord-status-dot"></span>
+		  <span data-i18n="discordActive">چالاک</span>
+		  <span class="discord-dot-sep">•</span>
+		  <span data-i18n="discordMembers">٥٠٠٠+ ئەندام</span>
+		</div>
+	  </div>
+	  <div class="discord-card-icon"><i class="fa-brands fa-discord"></i></div>
+	</div>
+	<p class="discord-card-desc" data-i18n="discordDesc">گەورەترین سێرڤەری بازرگانی لە Discord — کڕین و فرۆشتنی هەموو بابەتێک بە متمانەوە، لەگەڵ هەزاران ئەندام و سیستەمی پارێزراو بۆ مامەڵەکردن.</p>
+	<a class="discord-join-btn" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener">
+	  <i class="fa-brands fa-discord"></i>
+	  <span data-i18n="discordJoin">بەشداری کردن</span>
+	</a>
+  </div>
+
   <div class="footer-top">
+
 
 	<div class="footer-col">
 	  <div class="footer-col-logo">DevMuhamad<span class="slash">.com</span></div>
@@ -1092,9 +1173,15 @@
 	  settingsBgStyle:"شێوازی پاشبنەما",
 	  bgStyleDots:"خاڵ‌خاڵ",
 	  bgStylePlain:"سادە",
-	  bgStyleGrid:"خەتی چوارگۆشە",
+	  	  bgStyleGrid:"خەتی چوارگۆشە",
+	  discordTitle:"بازرگانی کوردستان",
+	  discordActive:"چالاک",
+	  discordMembers:"٥٠٠٠+ ئەندام",
+	  discordDesc:"گەورەترین سێرڤەری بازرگانی لە Discord — کڕین و فرۆشتنی هەموو بابەتێک بە متمانەوە، لەگەڵ هەزاران ئەندام و سیستەمی پارێزراو بۆ مامەڵەکردن.",
+	  discordJoin:"بەشداری کردن",
 	  dir:"rtl"
 	},
+
 
 
 
@@ -1140,9 +1227,15 @@
 	  settingsBgStyle:"نمط الخلفية",
 	  bgStyleDots:"نقاط",
 	  bgStylePlain:"بسيط",
-	  bgStyleGrid:"شبكة مربعات",
+	  	  bgStyleGrid:"شبكة مربعات",
+	  discordTitle:"بازركاني كوردستان",
+	  discordActive:"نشط",
+	  discordMembers:"+5000 عضو",
+	  discordDesc:"أكبر سيرفر تجاري على Discord — بيع وشراء جميع الأغراض بكل ثقة، مع آلاف الأعضاء ونظام آمن للتعاملات.",
+	  discordJoin:"انضم الآن",
 	  dir:"rtl"
 	}
+
 
 
 
