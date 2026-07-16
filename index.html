@@ -242,10 +242,10 @@
 	display:grid;
 	grid-template-columns:repeat(4, 1fr);
 	gap:32px;
-	text-align:start;
+	text-align:right;
   }
   @media (max-width:760px){
-	.footer-top{ grid-template-columns:repeat(2, 1fr); gap:28px; text-align:center; }
+	.footer-top{ grid-template-columns:repeat(2, 1fr); gap:28px; }
   }
   @media (max-width:480px){
 	.footer-top{ grid-template-columns:1fr; }
@@ -263,13 +263,17 @@
   .footer-heading{
 	font-size:14px; font-weight:600; color:var(--fg); margin-bottom:14px;
   }
+    .footer-col-divided{
+	border-top:1px solid var(--line);
+	padding-top:22px;
+  }
+
   .footer-link-list{ display:flex; flex-direction:column; gap:10px; }
   .footer-link{
 	color:var(--gray); font-size:13.5px; text-decoration:none;
 	transition:color .25s ease;
 	width:fit-content;
   }
-  @media (max-width:760px){ .footer-link{ margin:0 auto; } }
   .footer-link:hover{ color:#fff; }
   .footer-cta-box{
 	background:rgba(255,255,255,.03);
@@ -290,7 +294,6 @@
   }
   .cta-btn:hover{ transform:translateY(-2px); opacity:.9; }
   .social-row{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-  @media (max-width:760px){ .social-row{ justify-content:center; } }
   .social-btn{
 	position:relative;
 	width:48px; height:48px; border-radius:50%;
@@ -682,7 +685,7 @@
 	  <p class="footer-about" data-i18n="footerAbout">DevMuhamad.com پسپۆڕە لە دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییەکان — لە سیستەمی خواردنگە و QR Menu بگرە تا ماڵپەڕ، ئەپی مۆبایل و پڕۆژەی تایبەت. ئامانجمان دابینکردنی چارەسەری خێرا، جوان و متمانەپێکراوە.</p>
 	</div>
 
-	<div class="footer-col">
+	<div class="footer-col footer-col-divided">
 	  <div class="footer-heading" data-i18n="footerLinksTitle">خزمەتگوزارییەکان</div>
 	  <div class="footer-link-list">
 		<a class="footer-link" href="#servicesGrid" data-i18n="s1">سیستەمی خواردنگە</a>
@@ -694,14 +697,13 @@
 	  </div>
 	</div>
 
-	<div class="footer-col">
+	<div class="footer-col footer-col-divided">
 	  <div class="footer-heading" data-i18n="footerContactTitle">پەیوەندیمان پێوە بکە</div>
-	  <div class="social-row">
+		  <div class="social-row">
 		<a class="social-btn" href="https://wa.me/9647509628683" target="_blank" rel="noopener" aria-label="WhatsApp">
 		  <i class="fa-brands fa-whatsapp"></i>
 		</a>
 	  </div>
-	  <div class="wa-label">+964 750 962 8683</div>
 	</div>
 
 	<div class="footer-col">
