@@ -232,10 +232,65 @@
   /* footer / social */
   .footer{
 	position:relative; z-index:3;
-	display:flex; flex-direction:column; align-items:center; gap:22px;
-	padding:0 20px 46px;
+	padding:60px 20px 40px;
+	border-top:1px solid var(--line);
+	margin-top:40px;
   }
-  .social-row{ display:flex; align-items:center; gap:14px; }
+  .footer-top{
+	max-width:1000px;
+	margin:0 auto;
+	display:grid;
+	grid-template-columns:repeat(4, 1fr);
+	gap:32px;
+	text-align:start;
+  }
+  @media (max-width:760px){
+	.footer-top{ grid-template-columns:repeat(2, 1fr); gap:28px; text-align:center; }
+  }
+  @media (max-width:480px){
+	.footer-top{ grid-template-columns:1fr; }
+  }
+  .footer-col-logo{
+	font-family:'JetBrains Mono', monospace;
+	font-size:19px; font-weight:600;
+	direction:ltr; unicode-bidi:isolate;
+	margin-bottom:12px;
+  }
+  .footer-col-logo .slash{ color:var(--gray); font-weight:300; }
+  .footer-about{
+	color:var(--gray); font-size:13.5px; line-height:1.9;
+  }
+  .footer-heading{
+	font-size:14px; font-weight:600; color:var(--fg); margin-bottom:14px;
+  }
+  .footer-link-list{ display:flex; flex-direction:column; gap:10px; }
+  .footer-link{
+	color:var(--gray); font-size:13.5px; text-decoration:none;
+	transition:color .25s ease;
+	width:fit-content;
+  }
+  @media (max-width:760px){ .footer-link{ margin:0 auto; } }
+  .footer-link:hover{ color:#fff; }
+  .footer-cta-box{
+	background:rgba(255,255,255,.03);
+	border:1px solid var(--line);
+	border-radius:16px;
+	padding:16px;
+  }
+  .footer-cta-text{
+	color:var(--gray); font-size:13px; line-height:1.8; margin-bottom:14px;
+  }
+  .cta-btn{
+	display:inline-flex; align-items:center; justify-content:center; gap:8px;
+	width:100%;
+	background:#fff; color:#000; font-weight:600; font-size:13.5px;
+	padding:11px 16px; border-radius:100px;
+	text-decoration:none;
+	transition:transform .3s ease, opacity .3s ease;
+  }
+  .cta-btn:hover{ transform:translateY(-2px); opacity:.9; }
+  .social-row{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  @media (max-width:760px){ .social-row{ justify-content:center; } }
   .social-btn{
 	position:relative;
 	width:48px; height:48px; border-radius:50%;
@@ -260,9 +315,13 @@
   }
 
   .copyright{
+	max-width:1000px; margin:40px auto 0;
+	padding-top:24px; border-top:1px solid var(--line);
+	text-align:center;
 	font-size:12.5px; color:var(--gray-dim);
 	letter-spacing:.3px;
   }
+
 
   /* ripple */
   .ripple{
@@ -616,12 +675,48 @@
 </main>
 
 <footer class="footer">
-  <div class="social-row">
-	<a class="social-btn" href="https://wa.me/9647509628683" target="_blank" rel="noopener" aria-label="WhatsApp">
-	  <i class="fa-brands fa-whatsapp"></i>
-	</a>
+  <div class="footer-top">
+
+	<div class="footer-col">
+	  <div class="footer-col-logo">DevMuhamad<span class="slash">.com</span></div>
+	  <p class="footer-about" data-i18n="footerAbout">DevMuhamad.com پسپۆڕە لە دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییەکان — لە سیستەمی خواردنگە و QR Menu بگرە تا ماڵپەڕ، ئەپی مۆبایل و پڕۆژەی تایبەت. ئامانجمان دابینکردنی چارەسەری خێرا، جوان و متمانەپێکراوە.</p>
+	</div>
+
+	<div class="footer-col">
+	  <div class="footer-heading" data-i18n="footerLinksTitle">خزمەتگوزارییەکان</div>
+	  <div class="footer-link-list">
+		<a class="footer-link" href="#servicesGrid" data-i18n="s1">سیستەمی خواردنگە</a>
+		<a class="footer-link" href="#servicesGrid" data-i18n="s2">QR Menu</a>
+		<a class="footer-link" href="#servicesGrid" data-i18n="s3">Dashboard</a>
+		<a class="footer-link" href="#servicesGrid" data-i18n="s4">ماڵپەڕ</a>
+		<a class="footer-link" href="#servicesGrid" data-i18n="s5">ئەپی مۆبایل</a>
+		<a class="footer-link" href="#servicesGrid" data-i18n="s7">SA-MP Projects</a>
+	  </div>
+	</div>
+
+	<div class="footer-col">
+	  <div class="footer-heading" data-i18n="footerContactTitle">پەیوەندیمان پێوە بکە</div>
+	  <div class="social-row">
+		<a class="social-btn" href="https://wa.me/9647509628683" target="_blank" rel="noopener" aria-label="WhatsApp">
+		  <i class="fa-brands fa-whatsapp"></i>
+		</a>
+	  </div>
+	  <div class="wa-label">+964 750 962 8683</div>
+	</div>
+
+	<div class="footer-col">
+	  <div class="footer-cta-box">
+		<div class="footer-heading" data-i18n="footerCtaTitle">ئامادەیت پڕۆژەکەت دەست پێبکەیت؟</div>
+		<p class="footer-cta-text" data-i18n="footerCtaText">پەیامێکمان بۆ بنێرە بە WhatsApp، لە کەمترین کاتدا وەڵامت دەدەینەوە.</p>
+		<a class="cta-btn" href="https://wa.me/9647509628683" target="_blank" rel="noopener">
+		  <i class="fa-brands fa-whatsapp"></i>
+		  <span data-i18n="footerCtaBtn">دەستپێکردنی گفتوگۆ</span>
+		</a>
+	  </div>
+	</div>
+
   </div>
-  <div class="wa-label">+964 750 962 8683</div>
+
   <div class="copyright">© 2026 DevMuhamad.com — <span data-i18n="rights">All Rights Reserved.</span></div>
 </footer>
 
@@ -656,9 +751,16 @@
 	  c4t:"ماڵپەڕ", c4d:"دیزاین و دروستکردنی ماڵپەڕی مۆدێرن و خێرا بۆ کۆمپانیا و کەسانی تایبەت.",
 	  c5t:"ئەپی مۆبایل", c5d:"دروستکردنی ئەپی مۆبایل بۆ Android و iOS بە کوالیتی بەرز.",
 	  c6t:"Discord Bots", c6d:"دروستکردنی بۆتی Discord بۆ بەڕێوەبردنی سێرڤەر و کاراکردنی ئۆتۆماتیکی کارەکان.",
-	  c7t:"SA-MP Projects", c7d:"پڕۆژەی گەیم مۆدی SA-MP، لەگەڵ سیستەمی تایبەت و سکریپتی داخوازیکراو.",
+		  c7t:"SA-MP Projects", c7d:"پڕۆژەی گەیم مۆدی SA-MP، لەگەڵ سیستەمی تایبەت و سکریپتی داخوازیکراو.",
+	  footerAbout:"DevMuhamad.com پسپۆڕە لە دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییەکان — لە سیستەمی خواردنگە و QR Menu بگرە تا ماڵپەڕ، ئەپی مۆبایل و پڕۆژەی تایبەت. ئامانجمان دابینکردنی چارەسەری خێرا، جوان و متمانەپێکراوە.",
+	  footerLinksTitle:"خزمەتگوزارییەکان",
+	  footerContactTitle:"پەیوەندیمان پێوە بکە",
+	  footerCtaTitle:"ئامادەیت پڕۆژەکەت دەست پێبکەیت؟",
+	  footerCtaText:"پەیامێکمان بۆ بنێرە بە WhatsApp، لە کەمترین کاتدا وەڵامت دەدەینەوە.",
+	  footerCtaBtn:"دەستپێکردنی گفتوگۆ",
 	  dir:"rtl"
 	},
+
 	ar: {
 	  eyebrow: "قيد التحضير",
 	  soon: "مرحبا…",
@@ -672,9 +774,16 @@
 	  c4t:"مواقع إلكترونية", c4d:"تصميم وتطوير مواقع إلكترونية حديثة وسريعة للشركات والأفراد.",
 	  c5t:"تطبيقات الهواتف", c5d:"تطوير تطبيقات موبايل لأنظمة Android وiOS بجودة عالية.",
 	  c6t:"بوتات Discord", c6d:"إنشاء بوتات Discord لإدارة السيرفرات وأتمتة المهام.",
-	  c7t:"مشاريع SA-MP", c7d:"مشاريع جيم مود SA-MP مع أنظمة خاصة وسكربتات مخصصة.",
+		  c7t:"مشاريع SA-MP", c7d:"مشاريع جيم مود SA-MP مع أنظمة خاصة وسكربتات مخصصة.",
+	  footerAbout:"يتخصص موقع DevMuhamad.com في تطوير وبيع الأنظمة الرقمية — من أنظمة المطاعم وقوائم QR إلى المواقع الإلكترونية وتطبيقات الهواتف والمشاريع الخاصة. هدفنا تقديم حلول سريعة وأنيقة وموثوقة.",
+	  footerLinksTitle:"خدماتنا",
+	  footerContactTitle:"تواصل معنا",
+	  footerCtaTitle:"جاهز لبدء مشروعك؟",
+	  footerCtaText:"أرسل لنا رسالة عبر واتساب وسنرد عليك في أقرب وقت.",
+	  footerCtaBtn:"ابدأ المحادثة",
 	  dir:"rtl"
 	}
+
   };
 
   /* ---------- Build Kurdistan flag sun rays (21 triangular rays) ---------- */
