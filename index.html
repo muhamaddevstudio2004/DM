@@ -352,14 +352,7 @@
   }
   @keyframes rippleAnim{ to{ transform:scale(2.6); opacity:0; } }
 
-  /* custom cursor glow */
-  .cursor-glow{
-	position:fixed; z-index:2; width:340px; height:340px; border-radius:50%;
-	background:radial-gradient(circle, rgba(255,255,255,.05), transparent 70%);
-	pointer-events:none; transform:translate(-50%,-50%);
-	transition:opacity .3s ease; opacity:0;
-  }
-  @media(hover:hover){ .cursor-glow{ opacity:1; } }
+
 
   /* ===================== HEADER BANNER SLIDER ===================== */
 .site-header{
@@ -725,7 +718,6 @@
 <div class="grid-overlay"></div>
 <div class="glow-orb one"></div>
 <div class="glow-orb two"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
 
 <button class="settings-btn" id="settingsBtn" aria-label="Settings">
   <i class="fa-solid fa-house"></i>
@@ -1194,12 +1186,6 @@
 	});
   });
 
-  /* ---------- Cursor glow ---------- */
-  const glow = document.getElementById("cursorGlow");
-  window.addEventListener("pointermove", (e)=>{
-	glow.style.left = e.clientX + "px";
-	glow.style.top = e.clientY + "px";
-  });
 
   /* ---------- Particle network background ---------- */
   const canvas = document.getElementById("bg-canvas");
