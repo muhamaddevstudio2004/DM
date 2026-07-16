@@ -1168,8 +1168,16 @@
   window.addEventListener("load", ()=>{
 	setTimeout(()=>{
 	  document.getElementById("splash").classList.add("hide");
+	  setTimeout(()=>{
+		const settingsOverlay = document.getElementById("settingsOverlay");
+		if(settingsOverlay){
+		  settingsOverlay.classList.add("show");
+		  document.body.style.overflow = "hidden";
+		}
+	  }, 500);
 	}, 3200);
   });
+
 
   /* ---------- Ripple on social buttons ---------- */
   document.querySelectorAll(".social-btn").forEach(btn=>{
