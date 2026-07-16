@@ -281,11 +281,11 @@
   @media(hover:hover){ .cursor-glow{ opacity:1; } }
 
   /* ===================== HEADER BANNER SLIDER ===================== */
-  .site-header{
+.site-header{
 	position:relative; z-index:3;
-	padding:26px 20px 0;
+	padding:80px 20px 0;
 	display:flex; justify-content:center;
-  }
+}
   .banner-wrap{
 	width:100%; max-width:920px;
 	display:flex; flex-direction:column; align-items:center;
@@ -315,15 +315,15 @@
 	flex:0 0 100%;
 	position:relative;
   }
-  .banner-slide img{
+.banner-slide img{
 	width:100%;
-	height:clamp(160px,32vw,320px);
+	aspect-ratio:16 / 9;
 	object-fit:cover;
 	display:block;
 	filter:grayscale(.15) brightness(.82);
 	pointer-events:none;
 	-webkit-user-drag:none;
-  }
+}
   .banner-slide::after{
 	content:'';
 	position:absolute; inset:0;
