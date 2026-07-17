@@ -1,1 +1,1709 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>داشبۆردی خاوەنی دوکان</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+	:root {
+	  --bg-base:#FDF6EC; --bg-layer:#FFFFFF; --bg-section:#FFF9F2; --bg-sidebar:#2C1810;
+	  --card-bg:#FFFFFF; --card-border:rgba(180,120,40,0.12);
+	  --card-shadow:0 2px 16px rgba(160,90,20,0.10); --card-shadow-h:0 8px 32px rgba(160,90,20,0.18);
+	  --accent:#E07B2A; --accent-2:#F5A623; --accent-light:#FEF0DC; --accent-glow:rgba(224,123,42,0.20);
+	  --text-primary:#2C1810; --text-secondary:#6B3A1F; --text-muted:#A07050; --text-faint:#C4A882;
+	  --text-sidebar:rgba(255,255,255,0.85); --text-sidebar-m:rgba(255,255,255,0.50);
+	  --danger:#D64545; --danger-light:#FEE8E8;
+	  --warning:#E09B2A; --warning-light:#FEF3DC;
+	  --success:#2E8B57; --success-light:#E8F5EE;
+	  --info:#2A7AE0; --info-light:#DCE8FE;
+	  --whatsapp:#25D366; --whatsapp-light:#E8FBF0;
+	  --divider:rgba(180,120,40,0.14); --sidebar-divider:rgba(255,255,255,0.08);
+	  --radius-card:20px; --radius-btn:12px; --radius-pill:999px;
+	  --blur:blur(16px); --transition:0.22s cubic-bezier(0.4,0,0.2,1);
+	  --sidebar-w:240px; --header-h:64px;
+	  --font:'Noto Sans Arabic',sans-serif;
+	}
+	*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+	html{scroll-behavior:smooth}
+	body{font-family:var(--font);background:var(--bg-base);color:var(--text-primary);min-height:100dvh;overflow-x:hidden}
+	button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+	input,select,textarea{font-family:var(--font);outline:none}
+	::-webkit-scrollbar{width:4px}
+	::-webkit-scrollbar-track{background:transparent}
+	::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:4px}
+	.hidden{display:none!important}
+
+	/* ── PIN ── */
+	#pin-screen{position:fixed;inset:0;z-index:999;background:var(--bg-base);
+	  background-image:radial-gradient(ellipse 70% 35% at 50% 0%,rgba(224,123,42,0.07) 0%,transparent 65%),
+		radial-gradient(ellipse 40% 20% at 100% 100%,rgba(245,166,35,0.05) 0%,transparent 60%);
+	  display:flex;align-items:center;justify-content:center}
+	.pin-box{background:var(--card-bg);border:1px solid var(--card-border);border-radius:28px;
+	  box-shadow:var(--card-shadow-h);padding:44px 36px;width:340px;text-align:center;
+	  display:flex;flex-direction:column;align-items:center;gap:24px}
+	.pin-logo{width:64px;height:64px;border-radius:20px;
+	  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+	  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px var(--accent-glow)}
+	.pin-logo i{font-size:30px;color:#fff}
+	.pin-title{font-size:1.25rem;font-weight:800;color:var(--text-primary)}
+	.pin-sub{font-size:0.82rem;color:var(--text-muted);margin-top:-16px}
+	.pin-dots{display:flex;gap:12px;justify-content:center}
+	.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--card-border);background:transparent;transition:var(--transition)}
+	.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+	.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+	.pin-key{aspect-ratio:1;border-radius:14px;background:var(--accent-light);
+	  border:1.5px solid rgba(224,123,42,0.18);font-size:1.2rem;font-weight:700;
+	  color:var(--text-primary);transition:background var(--transition),transform 0.1s;
+	  display:flex;align-items:center;justify-content:center}
+	.pin-key:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+	.pin-key:active{transform:scale(0.93)}
+	.pin-key.del{background:rgba(214,69,69,0.08);border-color:rgba(214,69,69,0.18);color:var(--danger)}
+	.pin-key.del:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+	.pin-error{font-size:0.82rem;color:var(--danger);background:var(--danger-light);
+	  border:1px solid rgba(214,69,69,0.2);border-radius:8px;padding:7px 14px;animation:shake 0.35s ease}
+	@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+	/* ── LAYOUT ── */
+	#app{display:none;min-height:100dvh}
+	#sidebar{position:fixed;top:0;right:0;width:var(--sidebar-w);height:100dvh;
+	  background:var(--bg-sidebar);z-index:200;display:flex;flex-direction:column;
+	  transition:transform var(--transition);overflow-y:auto}
+	.sidebar-brand{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;
+	  border-bottom:1px solid var(--sidebar-divider);flex-shrink:0}
+	.sidebar-logo{width:42px;height:42px;border-radius:12px;
+	  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+	  display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px var(--accent-glow)}
+	.sidebar-logo i{font-size:20px;color:#fff}
+	.sidebar-brand-text .name{font-size:0.95rem;font-weight:800;color:#fff}
+	.sidebar-brand-text .role{font-size:0.72rem;color:var(--text-sidebar-m);margin-top:2px}
+	.sidebar-nav{flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:3px}
+	.nav-section-label{font-size:0.68rem;font-weight:700;letter-spacing:0.08em;
+	  color:var(--text-sidebar-m);text-transform:uppercase;padding:10px 10px 5px}
+	.nav-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:12px;
+	  color:var(--text-sidebar);font-size:0.9rem;font-weight:600;cursor:pointer;
+	  transition:background var(--transition),color var(--transition);border:1.5px solid transparent}
+	.nav-item i{font-size:1.15rem;width:20px;text-align:center;flex-shrink:0}
+	.nav-item:hover{background:rgba(255,255,255,0.07)}
+	.nav-item.active{background:rgba(224,123,42,0.18);color:var(--accent-2);border-color:rgba(224,123,42,0.25)}
+	.nav-item .badge{margin-right:auto;background:var(--accent);color:#fff;
+	  font-size:0.72rem;font-weight:800;padding:2px 7px;border-radius:var(--radius-pill);min-width:20px;text-align:center}
+	.sidebar-footer{padding:14px 12px;border-top:1px solid var(--sidebar-divider);flex-shrink:0}
+	.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+	  color:rgba(214,69,69,0.85);font-size:0.88rem;font-weight:600;width:100%;background:transparent;
+	  transition:background var(--transition)}
+	.logout-btn:hover{background:rgba(214,69,69,0.12);color:var(--danger)}
+	.logout-btn i{font-size:1.1rem}
+
+	#topbar{position:fixed;top:0;left:0;right:var(--sidebar-w);height:var(--header-h);z-index:100;
+	  background:rgba(253,246,236,0.92);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+	  border-bottom:1px solid var(--divider);display:flex;align-items:center;justify-content:space-between;
+	  padding:0 24px;box-shadow:0 1px 10px rgba(160,90,20,0.06)}
+	.topbar-left{display:flex;align-items:center;gap:14px}
+	.menu-toggle{display:none;width:36px;height:36px;border-radius:10px;background:var(--accent-light);
+	  border:1px solid rgba(224,123,42,0.18);color:var(--accent);align-items:center;justify-content:center;font-size:1.2rem}
+	.topbar-page-title{font-size:1.05rem;font-weight:800;color:var(--text-primary)}
+	.topbar-page-sub{font-size:0.75rem;color:var(--text-muted);margin-top:1px}
+	.topbar-right{display:flex;align-items:center;gap:10px}
+	.topbar-time{font-size:0.8rem;color:var(--text-muted);font-weight:600;background:var(--accent-light);
+	  border:1px solid rgba(224,123,42,0.15);padding:5px 12px;border-radius:var(--radius-pill)}
+	.notif-btn{position:relative;width:38px;height:38px;border-radius:11px;background:var(--accent-light);
+	  border:1px solid rgba(224,123,42,0.18);color:var(--accent);display:flex;align-items:center;
+	  justify-content:center;font-size:1.2rem;transition:var(--transition)}
+	.notif-btn:hover{background:var(--accent);color:#fff}
+	.notif-dot{position:absolute;top:6px;left:6px;width:8px;height:8px;border-radius:50%;
+	  background:var(--danger);border:2px solid var(--bg-base)}
+
+	#content{margin-right:var(--sidebar-w);padding-top:var(--header-h);min-height:100dvh}
+	.page{display:none;padding:28px 24px 40px;max-width:1100px}
+	.page.active{display:block}
+
+	/* ── STAT CARDS ── */
+	.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-bottom:28px}
+	.stat-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-card);
+	  padding:20px;box-shadow:var(--card-shadow);display:flex;align-items:flex-start;gap:14px;
+	  transition:transform var(--transition),box-shadow var(--transition)}
+	.stat-card:hover{transform:translateY(-3px);box-shadow:var(--card-shadow-h)}
+	.stat-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+	.stat-icon.orange{background:var(--accent-light);color:var(--accent)}
+	.stat-icon.green{background:var(--success-light);color:var(--success)}
+	.stat-icon.red{background:var(--danger-light);color:var(--danger)}
+	.stat-icon.blue{background:var(--info-light);color:var(--info)}
+	.stat-info{flex:1;min-width:0}
+	.stat-value{font-size:1.45rem;font-weight:800;color:var(--text-primary);line-height:1}
+	.stat-label{font-size:0.78rem;color:var(--text-muted);margin-top:5px;font-weight:600}
+	.stat-trend{font-size:0.74rem;color:var(--success);margin-top:6px;font-weight:700}
+
+	/* ── SECTION HEADING ── */
+	.section-heading{font-size:0.92rem;font-weight:800;color:var(--text-secondary);margin:0 0 14px;
+	  display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:0.04em}
+	.section-heading::before{content:'';width:4px;height:18px;
+	  background:linear-gradient(to bottom,var(--accent),var(--accent-2));border-radius:2px;flex-shrink:0}
+	.section-heading .count{margin-right:auto;font-size:0.75rem;color:var(--text-muted);
+	  font-weight:600;text-transform:none;letter-spacing:0}
+
+	/* ── ORDERS ── */
+	.orders-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+	.search-box{flex:1;min-width:200px;position:relative}
+	.search-box i{position:absolute;right:13px;top:50%;transform:translateY(-50%);
+	  color:var(--text-muted);font-size:1rem;pointer-events:none}
+	.search-input{width:100%;padding:10px 38px 10px 14px;background:var(--card-bg);
+	  border:1.5px solid var(--card-border);border-radius:var(--radius-btn);font-size:0.9rem;
+	  color:var(--text-primary);transition:border-color var(--transition)}
+	.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+	.search-input::placeholder{color:var(--text-faint)}
+	.filter-select{padding:10px 14px;background:var(--card-bg);border:1.5px solid var(--card-border);
+	  border-radius:var(--radius-btn);font-size:0.88rem;color:var(--text-primary);cursor:pointer;
+	  transition:border-color var(--transition);min-width:140px}
+	.filter-select:focus{border-color:var(--accent)}
+
+	.orders-list{display:flex;flex-direction:column;gap:12px}
+	.order-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-card);
+	  box-shadow:var(--card-shadow);overflow:hidden;transition:box-shadow var(--transition)}
+	.order-card:hover{box-shadow:var(--card-shadow-h)}
+	.order-card-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+	.order-id{font-size:0.78rem;font-weight:800;color:var(--accent);background:var(--accent-light);
+	  border:1px solid rgba(224,123,42,0.2);padding:3px 9px;border-radius:8px;white-space:nowrap}
+	.order-customer{flex:1;min-width:0}
+	.order-cust-name{font-size:0.92rem;font-weight:700;color:var(--text-primary);
+	  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+	.order-cust-phone{font-size:0.76rem;color:var(--text-muted);margin-top:2px;direction:ltr;text-align:right}
+	.order-total-badge{font-size:0.88rem;font-weight:800;color:var(--text-primary);white-space:nowrap}
+	.status-badge{padding:4px 10px;border-radius:var(--radius-pill);font-size:0.75rem;font-weight:800;white-space:nowrap;flex-shrink:0}
+	.status-badge.pending{background:var(--warning-light);color:var(--warning)}
+	.status-badge.preparing{background:var(--info-light);color:var(--info)}
+	.status-badge.done{background:var(--success-light);color:var(--success)}
+	.status-badge.cancelled{background:var(--danger-light);color:var(--danger)}
+	.expand-icon{color:var(--text-muted);font-size:1rem;transition:transform var(--transition);flex-shrink:0}
+	.order-card.expanded .expand-icon{transform:rotate(180deg)}
+	.order-card-body{display:none;padding:0 16px 16px;border-top:1px solid var(--divider)}
+	.order-card.expanded .order-card-body{display:block}
+	.order-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin:14px 0 16px}
+	.detail-label{font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em}
+	.detail-value{font-size:0.88rem;font-weight:600;color:var(--text-primary);margin-top:3px}
+	.order-items-list{margin-bottom:16px}
+	.order-items-title{font-size:0.78rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+	.order-item-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;
+	  background:var(--bg-section);border:1px solid var(--divider);border-radius:10px;margin-bottom:5px}
+	.order-item-row:last-child{margin-bottom:0}
+	.oir-name{font-size:0.87rem;font-weight:600;color:var(--text-primary)}
+	.oir-qty{font-size:0.78rem;color:var(--text-muted)}
+	.oir-price{font-size:0.87rem;font-weight:700;color:var(--accent)}
+
+	/* Action buttons row */
+	.order-actions{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+	.wa-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;
+	  background:var(--whatsapp-light);color:var(--whatsapp);
+	  border:1.5px solid rgba(37,211,102,0.3);font-size:0.82rem;font-weight:700;
+	  transition:var(--transition);text-decoration:none}
+	.wa-btn:hover{background:var(--whatsapp);color:#fff;border-color:var(--whatsapp)}
+	.wa-btn i{font-size:1rem}
+
+	.status-controls{display:flex;gap:8px;flex-wrap:wrap}
+	.status-btn{padding:7px 14px;border-radius:10px;font-size:0.8rem;font-weight:700;
+	  border:1.5px solid transparent;transition:var(--transition);flex:1;text-align:center;min-width:80px}
+	.status-btn.s-pending{background:var(--warning-light);color:var(--warning);border-color:rgba(224,155,42,0.3)}
+	.status-btn.s-preparing{background:var(--info-light);color:var(--info);border-color:rgba(42,122,224,0.3)}
+	.status-btn.s-done{background:var(--success-light);color:var(--success);border-color:rgba(46,139,87,0.3)}
+	.status-btn.s-cancelled{background:var(--danger-light);color:var(--danger);border-color:rgba(214,69,69,0.3)}
+	.status-btn:hover{filter:brightness(0.92)}
+	.status-btn.current{opacity:1;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+	.status-btn:not(.current){opacity:0.55}
+	.status-btn:not(.current):hover{opacity:0.85}
+
+	/* ── EMPTY STATE ── */
+	.empty-state{text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:12px}
+	.empty-state i{font-size:3rem;color:var(--text-faint)}
+	.empty-state p{font-size:0.92rem;color:var(--text-muted)}
+
+	/* ── DASHBOARD ── */
+	.dashboard-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+	.chart-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-card);
+	  box-shadow:var(--card-shadow);padding:20px}
+	.chart-card-title{font-size:0.88rem;font-weight:800;color:var(--text-secondary);margin-bottom:16px}
+	.status-breakdown{display:flex;flex-direction:column;gap:10px}
+	.sb-row{display:flex;align-items:center;gap:10px}
+	.sb-label{font-size:0.82rem;font-weight:600;color:var(--text-muted);flex:1}
+	.sb-bar-wrap{flex:2;background:var(--bg-section);border-radius:6px;height:8px;overflow:hidden}
+	.sb-bar{height:100%;border-radius:6px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1)}
+	.sb-count{font-size:0.82rem;font-weight:800;color:var(--text-primary);min-width:20px;text-align:left}
+	.recent-orders-list{display:flex;flex-direction:column;gap:8px}
+	.recent-order-row{display:flex;align-items:center;gap:10px;padding:10px 12px;
+	  background:var(--bg-section);border:1px solid var(--divider);border-radius:12px}
+	.ror-icon{width:34px;height:34px;border-radius:10px;background:var(--accent-light);
+	  display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1rem;flex-shrink:0}
+	.ror-info{flex:1;min-width:0}
+	.ror-name{font-size:0.86rem;font-weight:700;color:var(--text-primary)}
+	.ror-time{font-size:0.74rem;color:var(--text-muted);margin-top:2px}
+	.ror-amount{font-size:0.88rem;font-weight:800;color:var(--accent);white-space:nowrap}
+
+	/* ── REPORTS PAGE ── */
+	.reports-header{margin-bottom:20px}
+	.period-tabs{display:flex;gap:6px;background:var(--accent-light);
+	  border:1px solid rgba(224,123,42,0.18);border-radius:var(--radius-pill);padding:4px;
+	  width:fit-content}
+	.period-btn{padding:7px 18px;border-radius:var(--radius-pill);font-size:0.86rem;font-weight:700;
+	  color:var(--text-muted);background:transparent;border:none;transition:var(--transition);cursor:pointer}
+	.period-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow)}
+
+	.reports-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+	.report-stat{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-card);
+	  padding:18px 20px;box-shadow:var(--card-shadow)}
+	.report-stat-val{font-size:1.6rem;font-weight:800;color:var(--text-primary)}
+	.report-stat-label{font-size:0.78rem;color:var(--text-muted);margin-top:4px;font-weight:600}
+	.report-stat-sub{font-size:0.74rem;color:var(--success);margin-top:6px;font-weight:700}
+
+	/* SVG Chart */
+	.chart-wrap{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-card);
+	  box-shadow:var(--card-shadow);padding:20px;margin-bottom:16px}
+	.chart-wrap-title{font-size:0.9rem;font-weight:800;color:var(--text-secondary);margin-bottom:18px;
+	  display:flex;align-items:center;gap:8px}
+	.chart-wrap-title i{color:var(--accent)}
+	.chart-svg-area{width:100%;overflow:hidden}
+	.bar-chart-svg{width:100%;display:block}
+	.bar-chart-svg text{font-family:var(--font)}
+
+	/* Top items table */
+	.top-items-table{width:100%;border-collapse:collapse}
+	.top-items-table th{font-size:0.75rem;font-weight:800;color:var(--text-muted);
+	  text-transform:uppercase;letter-spacing:0.05em;padding:8px 10px;text-align:right;
+	  border-bottom:2px solid var(--divider);background:var(--bg-section)}
+	.top-items-table td{padding:10px 10px;font-size:0.87rem;color:var(--text-primary);
+	  font-weight:600;border-bottom:1px solid var(--divider)}
+	.top-items-table tr:last-child td{border-bottom:none}
+	.top-items-table tr:hover td{background:var(--bg-section)}
+	.rank-badge{display:inline-flex;width:22px;height:22px;border-radius:6px;align-items:center;
+	  justify-content:center;font-size:0.75rem;font-weight:800;background:var(--accent-light);color:var(--accent)}
+	.rank-badge.r1{background:rgba(245,166,35,0.2);color:#b07a00}
+	.rank-badge.r2{background:rgba(160,160,160,0.18);color:#666}
+	.rank-badge.r3{background:rgba(180,100,50,0.15);color:#8b5e3c}
+
+	/* ── SETTINGS ── */
+	.settings-grid{display:flex;flex-direction:column;gap:20px;max-width:620px}
+	.settings-card{background:var(--card-bg);border:1px solid var(--card-border);
+	  border-radius:var(--radius-card);box-shadow:var(--card-shadow);overflow:hidden}
+	.settings-card-header{padding:16px 20px;border-bottom:1px solid var(--divider);display:flex;align-items:center;gap:10px}
+	.settings-card-header i{color:var(--accent);font-size:1.1rem}
+	.settings-card-title{font-size:0.92rem;font-weight:800;color:var(--text-primary)}
+	.settings-card-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+	.form-group{display:flex;flex-direction:column;gap:6px}
+	.form-label{font-size:0.8rem;font-weight:700;color:var(--text-secondary)}
+	.form-input,.form-select{padding:11px 14px;background:var(--bg-base);border:1.5px solid var(--card-border);
+	  border-radius:var(--radius-btn);color:var(--text-primary);font-size:0.92rem;font-family:var(--font);
+	  transition:border-color var(--transition)}
+	.form-input:focus,.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+	.save-btn{padding:11px 24px;border-radius:var(--radius-btn);
+	  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+	  font-size:0.9rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;
+	  box-shadow:0 3px 12px var(--accent-glow);transition:opacity var(--transition),transform 0.15s;align-self:flex-start}
+	.save-btn:hover{opacity:0.9}
+	.save-btn:active{transform:scale(0.97)}
+	.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+	.toggle-label{font-size:0.88rem;font-weight:600;color:var(--text-primary)}
+	.toggle-sub{font-size:0.76rem;color:var(--text-muted);margin-top:2px}
+	.toggle{width:44px;height:24px;background:var(--card-border);border-radius:var(--radius-pill);
+	  position:relative;cursor:pointer;transition:background var(--transition);border:none;flex-shrink:0}
+	.toggle::after{content:'';position:absolute;top:3px;right:3px;width:18px;height:18px;
+	  border-radius:50%;background:#fff;transition:right var(--transition);box-shadow:0 1px 4px rgba(0,0,0,0.18)}
+	.toggle.on{background:var(--accent)}
+	.toggle.on::after{right:calc(100% - 21px)}
+
+	/* Sidebar overlay mobile */
+	#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(44,24,16,0.45);z-index:199}
+
+	/* ── TOAST ── */
+	#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+	  background:var(--text-primary);color:#fff;padding:10px 20px;border-radius:var(--radius-pill);
+	  font-size:0.88rem;font-weight:700;z-index:9999;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);white-space:nowrap}
+	#toast.show{transform:translateX(-50%) translateY(0)}
+
+	/* ── RESPONSIVE ── */
+	@media(max-width:768px){
+	  #sidebar{transform:translateX(100%)}
+	  #sidebar.open{transform:translateX(0)}
+	  #sidebar-overlay{display:block;opacity:0;pointer-events:none;transition:opacity 0.3s}
+	  #sidebar-overlay.open{opacity:1;pointer-events:all}
+	  #topbar{right:0}
+	  #content{margin-right:0}
+	  .menu-toggle{display:flex}
+	  .dashboard-grid-2,.reports-grid{grid-template-columns:1fr}
+	  .order-details-grid{grid-template-columns:1fr}
+	  :root{--sidebar-w:260px}
+	  .page{padding:20px 16px 40px}
+	  .topbar-time{display:none}
+	}
+	@media(max-width:480px){
+	  .stats-grid{grid-template-columns:1fr 1fr}
+	  .status-controls{flex-direction:column}
+	  .status-btn{min-width:unset}
+	  .period-tabs{width:100%}
+	  .period-btn{flex:1;text-align:center}
+	}
+  </style>
+</head>
+<body>
+
+<!-- PIN -->
+<div id="pin-screen">
+  <div class="pin-box">
+	<div class="pin-logo"><i class="ri-lock-password-fill"></i></div>
+	<div>
+	  <div class="pin-title">داشبۆردی خاوەنی دوکان</div>
+	  <div class="pin-sub" style="margin-top:6px">پین کۆدت بنووسە بۆ چوونەژوورەوە</div>
+	</div>
+	<div class="pin-dots">
+	  <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+	  <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+	</div>
+	<div class="pin-pad">
+	  <button class="pin-key" onclick="pinKey('1')">1</button>
+	  <button class="pin-key" onclick="pinKey('2')">2</button>
+	  <button class="pin-key" onclick="pinKey('3')">3</button>
+	  <button class="pin-key" onclick="pinKey('4')">4</button>
+	  <button class="pin-key" onclick="pinKey('5')">5</button>
+	  <button class="pin-key" onclick="pinKey('6')">6</button>
+	  <button class="pin-key" onclick="pinKey('7')">7</button>
+	  <button class="pin-key" onclick="pinKey('8')">8</button>
+	  <button class="pin-key" onclick="pinKey('9')">9</button>
+	  <div></div>
+	  <button class="pin-key" onclick="pinKey('0')">0</button>
+	  <button class="pin-key del" onclick="pinDel()"><i class="ri-delete-back-2-line"></i></button>
+	</div>
+	<div id="pin-error" class="pin-error hidden">پین کۆد هەڵەیە. دووبارە هەوڵبدەرەوە.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <nav id="sidebar">
+	<div class="sidebar-brand">
+	  <div class="sidebar-logo"><i class="ri-restaurant-2-fill"></i></div>
+	  <div class="sidebar-brand-text">
+		<div class="name">مناقیش جبل حلب</div>
+		<div class="role">پانێلی بەڕێوەبردن</div>
+	  </div>
+	</div>
+	<div class="sidebar-nav">
+	  <div class="nav-item active" onclick="showPage('dashboard',this)">
+		<i class="ri-dashboard-3-line"></i><span>داشبۆرد</span>
+	  </div>
+	  <div class="nav-item" onclick="showPage('orders',this)">
+		<i class="ri-file-list-3-line"></i><span>داواکارییەکان</span>
+		<span class="badge" id="sidebar-pending-count">0</span>
+	  </div>
+	  <div class="nav-item" onclick="showPage('menu',this)">
+		<i class="ri-restaurant-2-line"></i><span>مینۆ</span>
+	  </div>
+	  <div class="nav-item" onclick="showPage('reports',this)">
+
+		<i class="ri-bar-chart-2-line"></i><span>راپۆرتەکان</span>
+	  </div>
+	  <div class="nav-item" onclick="showPage('settings',this)">
+		<i class="ri-settings-4-line"></i><span>ڕێکخستنەکان</span>
+	  </div>
+	</div>
+	<div class="sidebar-footer">
+	  <button class="logout-btn" onclick="logout()">
+		<i class="ri-logout-box-r-line"></i><span>دەرچوون</span>
+	  </button>
+
+	
+	  <div id="db-status" style="
+    display:flex;align-items:center;gap:7px;
+    padding:9px 12px;margin-top:8px;
+    border-radius:10px;background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08)">
+    <span id="db-dot" style="
+      width:8px;height:8px;border-radius:50%;
+      background:#666;flex-shrink:0;
+      transition:background 0.3s"></span>
+    <span id="db-label" style="
+      font-size:0.75rem;font-weight:600;
+      color:rgba(255,255,255,0.45)">چاوەڕوان...</span>
+  </div>
+			</div>
+  </nav>
+
+  <div id="topbar">
+	<div class="topbar-left">
+	  <button class="menu-toggle" onclick="toggleSidebar()"><i class="ri-menu-line"></i></button>
+	  <div>
+		<div class="topbar-page-title" id="topbar-title">داشبۆرد</div>
+		<div class="topbar-page-sub" id="topbar-sub">پوختەی کارەکانت</div>
+	  </div>
+	</div>
+	<div class="topbar-right">
+	  <div class="topbar-time" id="clock">--:--</div>
+	  <button class="notif-btn" onclick="showPage('orders',document.querySelector('[onclick*=orders]'))">
+		<i class="ri-notification-3-line"></i>
+		<div class="notif-dot" id="notif-dot"></div>
+	  </button>
+	</div>
+  </div>
+
+  <div id="content">
+
+	<!-- DASHBOARD -->
+	<div class="page active" id="page-dashboard">
+	  <div class="stats-grid" id="stats-grid"></div>
+	  <div class="dashboard-grid-2">
+		<div class="chart-card">
+		  <div class="chart-card-title"><i class="ri-pie-chart-2-line" style="color:var(--accent);margin-left:6px"></i>دۆخی داواکارییەکان</div>
+		  <div class="status-breakdown" id="status-breakdown"></div>
+		</div>
+		<div class="chart-card">
+		  <div class="chart-card-title"><i class="ri-time-line" style="color:var(--accent);margin-left:6px"></i>دوایین داواکارییەکان</div>
+		  <div class="recent-orders-list" id="recent-orders-list"></div>
+		</div>
+	  </div>
+	</div>
+
+	<!-- ORDERS -->
+	<div class="page" id="page-orders">
+	  <div class="orders-toolbar">
+		<div class="search-box">
+		  <i class="ri-search-line"></i>
+		  <input type="text" class="search-input" id="search-input" placeholder="گەڕان بە ناو یان ژمارەی تەلەفۆن..." oninput="filterOrders()" />
+		</div>
+		<select class="filter-select" id="status-filter" onchange="filterOrders()">
+		  <option value="all">هەموو دۆخەکان</option>
+		  <option value="pending">چاوەڕوان</option>
+		  <option value="preparing">ئامادەکردن</option>
+		  <option value="cancelled">هەڵوەشێندراو</option>
+		</select>
+	  </div>
+	  <div class="section-heading">داواکارییەکان<span class="count" id="orders-count-label">0 داواکاری</span></div>
+	  <div class="orders-list" id="orders-list"></div>
+	</div>
+
+	<!-- MENU MANAGEMENT -->
+	<div class="page" id="page-menu">
+	  <div class="section-heading">کەتەگۆریەکان<span class="count" id="menu-cat-count">0 کەتەگۆری</span></div>
+	  <button class="save-btn" style="margin-bottom:14px" onclick="openCategoryForm()">
+		<i class="ri-add-line"></i>کەتەگۆری نوێ
+	  </button>
+	  <div class="orders-list" id="menu-categories-list" style="margin-bottom:32px"></div>
+
+	  <div class="section-heading">کاڵاکام<span class="count" id="menu-items-count">0 کاڵا</span></div>
+	  <button class="save-btn" style="margin-bottom:14px" onclick="openItemForm()">
+		<i class="ri-add-line"></i>کاڵای نوێ
+	  </button>
+	  <div class="orders-list" id="menu-items-list"></div>
+	</div>
+
+
+	<!-- REPORTS -->
+	<div class="page" id="page-reports">
+	  <div class="reports-header">
+		<div class="period-tabs" id="period-tabs">
+		  <button class="period-btn active" onclick="setPeriod('daily',this)">رۆژانە</button>
+		  <button class="period-btn" onclick="setPeriod('weekly',this)">حەفتانە</button>
+		  <button class="period-btn" onclick="setPeriod('monthly',this)">مانگانە</button>
+		  <button class="period-btn" onclick="setPeriod('yearly',this)">ساڵانە</button>
+		</div>
+	  </div>
+	  <div class="reports-grid" id="report-stats"></div>
+	  <div class="chart-wrap">
+		<div class="chart-wrap-title"><i class="ri-bar-chart-2-line"></i>چارتی فرۆشتن</div>
+		<div class="chart-svg-area">
+		  <svg id="sales-chart" class="bar-chart-svg" height="220"></svg>
+		</div>
+	  </div>
+			
+			<div class="chart-wrap" style="margin-bottom:16px">
+  <div class="chart-wrap-title">
+    <i class="ri-shopping-bag-3-line"></i> چارتی ژمارەی ئۆردەرەکان
+  </div>
+  <div class="chart-svg-area">
+    <svg id="orders-chart" class="bar-chart-svg" height="220"></svg>
+  </div>
+</div>
+
+<!-- چارتی پڕفرۆشترین کاڵا -->
+<div class="chart-wrap" style="margin-bottom:16px">
+  <div class="chart-wrap-title">
+    <i class="ri-fire-line"></i> پڕفرۆشترین کاڵاکان
+  </div>
+  <div id="top-items-chart"></div>
+</div>
+
+	  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+		<div class="chart-wrap" style="margin-bottom:0">
+		  <div class="chart-wrap-title"><i class="ri-trophy-line"></i>باشترین کاڵاکان</div>
+		  <table class="top-items-table" id="top-items-table">
+			<thead><tr><th>#</th><th>ناوی کاڵا</th><th>دانە</th><th>داهات</th></tr></thead>
+			<tbody id="top-items-body"></tbody>
+		  </table>
+		</div>
+		<div class="chart-wrap" style="margin-bottom:0">
+		  <div class="chart-wrap-title"><i class="ri-pie-chart-line"></i>پارچەبەندی دۆخ</div>
+		  <svg id="donut-chart" width="100%" height="200" viewBox="0 0 200 200"></svg>
+		  <div id="donut-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+		</div>
+	  </div>
+	</div>
+
+	<!-- SETTINGS -->
+	<div class="page" id="page-settings">
+	  <div class="settings-grid">
+		<div class="settings-card">
+		  <div class="settings-card-header"><i class="ri-store-3-line"></i><div class="settings-card-title">زانیاری دوکان</div></div>
+		  <div class="settings-card-body">
+			<div class="form-group"><label class="form-label">ناوی دوکان</label><input type="text" class="form-input" value="مناقئش جبل حلب"/></div>
+			<div class="form-group"><label class="form-label">ژمارەی تەلەفۆن</label><input type="tel" class="form-input" dir="ltr" value="0771 000 0000"/></div>
+			<div class="form-group"><label class="form-label">ناونیشان</label><input type="text" class="form-input" value="سلێمانی، گەڕەکی ئازادی"/></div>
+			<button class="save-btn" onclick="showToast('زانیاریەکان پاشەکەوت کران ✓')"><i class="ri-save-line"></i>پاشەکەوتکردن</button>
+		  </div>
+		</div>
+		<div class="settings-card">
+		  <div class="settings-card-header"><i class="ri-notification-3-line"></i><div class="settings-card-title">ئاگادارکردنەوەکان</div></div>
+		  <div class="settings-card-body">
+			<div class="toggle-row">
+			  <div><div class="toggle-label">ئاگادارکردنەوەی داواکاری نوێ</div><div class="toggle-sub">دەنگی ئاگادارکردنەوە لەکاتی داواکاری نوێدا</div></div>
+			  <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+			</div>
+			<div class="toggle-row">
+			  <div><div class="toggle-label">داواکارییە گواستراوەکان</div><div class="toggle-sub">ئاگادارکردنەوەی گۆڕینی دۆخی داواکاری</div></div>
+			  <button class="toggle" onclick="this.classList.toggle('on')"></button>
+			</div>
+		  </div>
+		</div>
+		<div class="settings-card">
+		  <div class="settings-card-header"><i class="ri-lock-password-line"></i><div class="settings-card-title">گۆڕینی پین کۆد</div></div>
+		  <div class="settings-card-body">
+			<div class="form-group"><label class="form-label">پین کۆدی نوێ (4 ژمارە)</label><input type="password" class="form-input" maxlength="4" placeholder="••••" id="new-pin-input"/></div>
+			<button class="save-btn" onclick="changePin()"><i class="ri-key-line"></i>گۆڕینی پین کۆد</button>
+		  </div>
+		</div>
+		<div class="settings-card">
+		  <div class="settings-card-header"><i class="ri-palette-line"></i><div class="settings-card-title">ڕووکار</div></div>
+		  <div class="settings-card-body">
+			<div class="form-group"><label class="form-label">زمان</label>
+			  <select class="form-input form-select"><option>کوردی سۆرانی</option><option>عربي</option></select>
+			</div>
+			<div class="toggle-row">
+			  <div><div class="toggle-label">دۆخی شەو</div><div class="toggle-sub">گۆڕین بۆ تەما تاریک (بەزوودی)</div></div>
+			  <button class="toggle" onclick="this.classList.toggle('on')"></button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+  </div>
+</div>
+
+<div id="menu-modal-overlay" class="hidden" style="position:fixed;inset:0;background:rgba(44,24,16,0.45);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:20px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;padding:22px;box-shadow:0 8px 32px rgba(160,90,20,0.18)">
+    <div id="menu-modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+
+<script>
+
+	const SUPABASE_URL = 'https://btkjdfyhwzvkozsxvtik.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_JZ5SxfzxDMd4vVsHyeZN3Q_ov5niHOL';
+
+/* ── PIN ── */
+const CORRECT_PIN = '1991';
+let pinInput = '', currentPin = CORRECT_PIN;
+
+function pinKey(k){ if(pinInput.length>=4)return; pinInput+=k; updateDots(); if(pinInput.length===4)setTimeout(checkPin,150); }
+function pinDel(){ pinInput=pinInput.slice(0,-1); updateDots(); document.getElementById('pin-error').classList.add('hidden'); }
+function updateDots(){ for(let i=0;i<4;i++) document.getElementById('d'+i).classList.toggle('filled',i<pinInput.length); }
+function checkPin(){
+  if(pinInput===currentPin){
+	document.getElementById('pin-screen').style.display='none';
+	document.getElementById('app').style.display='block';
+	initApp();
+  } else {
+	document.getElementById('pin-error').classList.remove('hidden');
+	pinInput=''; updateDots();
+	const err=document.getElementById('pin-error');
+	err.style.animation='none'; err.offsetHeight; err.style.animation='';
+  }
+}
+function changePin(){
+  const v=document.getElementById('new-pin-input').value.trim();
+  if(v.length!==4||!/^\d{4}$/.test(v)){showToast('پین کۆد دەبێت 4 ژمارە بێت');return;}
+  currentPin=v; document.getElementById('new-pin-input').value='';
+  showToast('پین کۆد گۆڕدرا ✓');
+}
+
+/* ── DATA ── */
+// Read from localStorage (written by index.html) OR fall back to demo data
+const STORAGE_KEY = 'arash_cart'; // index.html key for cart
+// For orders, index.html saves cart — we simulate a richer orders store:
+const ORDERS_KEY = 'arash_orders';
+
+// Demo orders (used when no real orders exist yet)
+const DEMO_ORDERS = [
+  { id:'#0001', status:'pending',   time:'10:15', date:'2025-06-29',
+	customer:{name:'ئەحمەد کەریم', phone:'07701112233', address:'گەڕەکی ئازادی، کۆچەی 5'},
+	note:'تکایە زووتر بنێرە',
+	items:[{name:'پیتزای مارگاریتا',qty:2,price:7500},{name:'شەربەتی لیمۆی سارد',qty:2,price:2500}]
+  },
+  { id:'#0002', status:'preparing', time:'10:02', date:'2025-06-29',
+	customer:{name:'سارا عەلی', phone:'07502223344', address:'شەقامی 60 مەتری'},
+	note:'',
+	items:[{name:'بەرگەری کلاسیک',qty:3,price:6000}]
+  },
+  { id:'#0003', status:'done',	  time:'09:48', date:'2025-06-28',
+	customer:{name:'ئومێد رەزا', phone:'07713334455', address:'گەڕەکی بەختیاری'},
+	note:'بێ پیاز',
+	items:[{name:'پیتزای مارگاریتا',qty:1,price:7500},{name:'بەرگەری کلاسیک',qty:1,price:6000},{name:'شەربەتی لیمۆی سارد',qty:3,price:2500}]
+  },
+  { id:'#0004', status:'cancelled', time:'09:30', date:'2025-06-28',
+	customer:{name:'خاوین محەمەد', phone:'07724445566', address:'کۆچەی گولستان'},
+	note:'',
+	items:[{name:'بەرگەری کلاسیک',qty:2,price:6000}]
+  },
+  { id:'#0005', status:'done',	  time:'10:22', date:'2025-06-27',
+	customer:{name:'لاڤین کاکە', phone:'07735556677', address:'گەڕەکی راپەرین'},
+	note:'لایم زیادی',
+	items:[{name:'شەربەتی لیمۆی سارد',qty:4,price:2500},{name:'پیتزای مارگاریتا',qty:1,price:7500}]
+  },
+  { id:'#0006', status:'done',	  time:'14:10', date:'2025-06-27',
+	customer:{name:'بینا ئەحمەد', phone:'07746667788', address:'سەردەم'},
+	note:'',
+	items:[{name:'پیتزای مارگاریتا',qty:2,price:7500},{name:'بەرگەری کلاسیک',qty:2,price:6000}]
+  },
+  { id:'#0007', status:'done',	  time:'19:05', date:'2025-06-26',
+	customer:{name:'شیرکۆ ئەمین', phone:'07757778899', address:'خەباتی یەکەم'},
+	note:'',
+	items:[{name:'بەرگەری کلاسیک',qty:4,price:6000},{name:'شەربەتی لیمۆی سارد',qty:4,price:2500}]
+  },
+  { id:'#0008', status:'done',	  time:'12:30', date:'2025-06-25',
+	customer:{name:'ناریمان حەسەن', phone:'07768889900', address:'گەڕەکی نوێ'},
+	note:'',
+	items:[{name:'پیتزای مارگاریتا',qty:3,price:7500}]
+  },
+];
+
+async function loadOrders() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/orders?select=*&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY
+        }
+      }
+    );
+    if (!res.ok) throw new Error();
+    const rows = await res.json();
+    // transform to the shape dashboard expects
+    return rows.map(r => ({
+      id: '#' + String(r.id).padStart(4,'0'),
+      status: r.status,
+      time: new Date(r.created_at).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'}),
+      date: r.created_at.slice(0,10),
+      customer: {
+        name:    r.customer_name,
+        phone:   r.customer_phone,
+        address: r.customer_address
+      },
+      note:  r.note || '',
+      items: r.items || [],
+      _dbId: r.id   // keep real id for status updates
+    }));
+  } catch(e) {
+    console.error('Supabase fetch failed:', e);
+    return DEMO_ORDERS;
+  }
+}
+
+
+function saveOrders(orders){
+  try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); }catch(e){}
+}
+
+// Also pull pending cart from index.html localStorage and convert to a new order
+function importCartOrder(){
+  try{
+	const cart = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+	if(!cart || cart.length===0) return;
+	const MENU = [
+	  {id:1,name:'پیتزای مارگاریتا',price:7500},
+	  {id:2,name:'بەرگەری کلاسیک',price:6000},
+	  {id:3,name:'شەربەتی لیمۆی سارد',price:2500},
+	];
+	const items = cart.map(c=>{
+	  const m=MENU.find(x=>x.id===c.id);
+	  return m ? {name:m.name,qty:c.qty,price:m.price} : null;
+	}).filter(Boolean);
+	if(items.length===0) return;
+	const orders = loadOrders();
+	const maxId = orders.reduce((m,o)=>Math.max(m,parseInt(o.id.replace('#',''))||0),0);
+	const newOrder = {
+	  id:'#'+String(maxId+1).padStart(4,'0'),
+	  status:'pending',
+	  time: new Date().toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'}),
+	  date: new Date().toISOString().slice(0,10),
+	  customer:{name:'کریاری نوێ (ئەپ)',phone:'',address:''},
+	  note:'داواکاری لە index.html هاتووە',
+	  items
+	};
+	orders.unshift(newOrder);
+	saveOrders(orders);
+	localStorage.removeItem(STORAGE_KEY); // clear cart after import
+  }catch(e){}
+}
+
+let ORDERS = [];
+
+const STATUS_LABELS = {pending:'چاوەڕوان',preparing:'ئامادەکردن',done:'تەواوبوو',cancelled:'هەڵوەشێندراو'};
+const fmt = n => n.toLocaleString() + ' IQD';
+const orderTotal = o => o.items.reduce((s,i)=>s+i.price*i.qty,0);
+
+/* ── INIT ── */
+async function initApp(){
+  ORDERS = await loadOrders();
+  startClock();
+  renderDashboard();
+  renderOrders();
+  updateSidebarBadge();
+  renderReports('daily');
+		startRealtime();
+		checkDbConnection();
+}
+
+/* ── REALTIME ── */
+function startRealtime() {
+  const ws_url = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+  
+  let ws;
+  let heartbeatTimer;
+  let reconnectTimer;
+
+  function connect() {
+    ws = new WebSocket(ws_url);
+
+    ws.onopen = () => {
+      console.log('Realtime connected');
+
+      // Join channel
+      ws.send(JSON.stringify({
+        topic: 'realtime:public:orders',
+        event: 'phx_join',
+        payload: {},
+        ref: '1'
+      }));
+
+      // Heartbeat هەر ٣٠ چرکە
+      heartbeatTimer = setInterval(() => {
+        ws.send(JSON.stringify({
+          topic: 'phoenix',
+          event: 'heartbeat',
+          payload: {},
+          ref: '2'
+        }));
+      }, 30000);
+    };
+
+    ws.onmessage = async (e) => {
+      const msg = JSON.parse(e.data);
+      
+      // داواکاری نوێ هات
+      if (msg.event === 'INSERT' && msg.topic === 'realtime:public:orders') {
+        const row = msg.payload.record;
+        const newOrder = {
+          id: '#' + String(row.id).padStart(4, '0'),
+          status: row.status,
+          time: new Date(row.created_at).toLocaleTimeString('ku', {hour:'2-digit', minute:'2-digit'}),
+          date: row.created_at.slice(0, 10),
+          customer: {
+            name:    row.customer_name,
+            phone:   row.customer_phone,
+            address: row.customer_address
+          },
+          note:  row.note || '',
+          items: row.items || [],
+          _dbId: row.id
+        };
+
+        // زیادکردن بۆ سەرەوەی لیستەکە
+        ORDERS.unshift(newOrder);
+        renderDashboard();
+        renderOrders();
+
+        // دەنگی ئاگادارکردنەوە
+        playNotifSound();
+        showToast('داواکاری نوێ هات! ' + newOrder.customer.name);
+      }
+
+      // دۆخی داواکاری گۆڕدرا
+      if (msg.event === 'UPDATE' && msg.topic === 'realtime:public:orders') {
+        const row = msg.payload.record;
+        const orderId = '#' + String(row.id).padStart(4, '0');
+        const existing = ORDERS.find(o => o.id === orderId);
+        if (existing) {
+          existing.status = row.status;
+          renderDashboard();
+          renderOrders();
+        }
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('Realtime disconnected — reconnecting...');
+      clearInterval(heartbeatTimer);
+      // دووبارە بەستنەوە دوای ٣ چرکە
+      reconnectTimer = setTimeout(connect, 3000);
+    };
+
+    ws.onerror = (err) => {
+      console.error('Realtime error:', err);
+      ws.close();
+    };
+  }
+
+  connect();
+}
+
+/* ── دەنگی ئاگادارکردنەوە ── */
+function playNotifSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+/* ── CLOCK ── */
+function startClock(){
+  const el=document.getElementById('clock');
+  const tick=()=>{ el.textContent=new Date().toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'}); };
+  tick(); setInterval(tick,1000);
+}
+
+/* ── NAV ── */
+const PAGE_META = {
+  dashboard:{title:'داشبۆرد',sub:'پوختەی کارەکانت'},
+  orders:{title:'داواکارییەکان',sub:'بەڕێوەبردن و گۆڕینی دۆخ'},
+  menu:{title:'مینۆ',sub:'بەڕێوەبردنی کاڵا و کەتەگۆری'},
+  reports:{title:'راپۆرتەکان',sub:'شیکاری فرۆشتن و داهات'},
+  settings:{title:'ڕێکخستنەکان',sub:'ڕێکخستنی کاڵا'},
+};
+
+function showPage(key,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+key).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl) navEl.classList.add('active');
+  const m=PAGE_META[key];
+  document.getElementById('topbar-title').textContent=m.title;
+  document.getElementById('topbar-sub').textContent=m.sub;
+  closeSidebar();
+  if(key==='dashboard') renderDashboard();
+  if(key==='menu') renderMenuPage();
+  if(key==='reports') renderReports(currentPeriod);
+}
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); }
+function logout(){ document.getElementById('app').style.display='none'; document.getElementById('pin-screen').style.display='flex'; pinInput=''; updateDots(); document.getElementById('pin-error').classList.add('hidden'); }
+
+/* ── DASHBOARD ── */
+function renderDashboard(){
+  const pending   = ORDERS.filter(o=>o.status==='pending').length;
+  const preparing = ORDERS.filter(o=>o.status==='preparing').length;
+  const done	  = ORDERS.filter(o=>o.status==='done').length;
+  const cancelled = ORDERS.filter(o=>o.status==='cancelled').length;
+  const revenue   = ORDERS.filter(o=>o.status==='done').reduce((s,o)=>s+orderTotal(o),0);
+  const total	 = ORDERS.length;
+
+  document.getElementById('stats-grid').innerHTML=`
+	<div class="stat-card"><div class="stat-icon orange"><i class="ri-file-list-3-line"></i></div><div class="stat-info"><div class="stat-value">${total}</div><div class="stat-label">کۆی داواکارییەکان</div></div></div>
+	<div class="stat-card"><div class="stat-icon orange"><i class="ri-time-line"></i></div><div class="stat-info"><div class="stat-value">${pending}</div><div class="stat-label">چاوەڕوانی وەڵام</div></div></div>
+	<div class="stat-card"><div class="stat-icon green"><i class="ri-checkbox-circle-line"></i></div><div class="stat-info"><div class="stat-value">${cancelled}</div><div class="stat-label">تەواوبوو</div></div></div>
+	<div class="stat-card"><div class="stat-icon blue"><i class="ri-money-dollar-circle-line"></i></div><div class="stat-info"><div class="stat-value">${(revenue/1000).toFixed(0)}K</div><div class="stat-label">داهاتی IQD</div><div class="stat-trend">تەنها داواکارییە تەواوبووەکان</div></div></div>
+  `;
+
+  const statusData=[
+	{label:'چاوەڕوان',color:'var(--warning)',count:pending},
+	{label:'ئامادەکردن',color:'var(--info)',count:preparing},
+	{label:'تەواوبوو',color:'var(--success)',count:done},
+	{label:'هەڵوەشێندراو',color:'var(--danger)',count:cancelled},
+  ];
+  document.getElementById('status-breakdown').innerHTML=statusData.map(s=>`
+	<div class="sb-row">
+	  <span class="sb-label">${s.label}</span>
+	  <div class="sb-bar-wrap"><div class="sb-bar" style="width:${total?(s.count/total*100):0}%;background:${s.color}"></div></div>
+	  <span class="sb-count">${s.count}</span>
+	</div>`).join('');
+
+  const recent=[...ORDERS].slice(0,4);
+  document.getElementById('recent-orders-list').innerHTML=recent.length===0
+	? '<div class="empty-state" style="padding:24px"><i class="ri-inbox-line"></i><p>داواکاری نییە</p></div>'
+	: recent.map(o=>`
+	  <div class="recent-order-row">
+		<div class="ror-icon"><i class="ri-user-line"></i></div>
+		<div class="ror-info"><div class="ror-name">${o.customer.name}</div><div class="ror-time">${o.id} · ${o.time}</div></div>
+		<span class="status-badge ${o.status}">${STATUS_LABELS[o.status]}</span>
+	  </div>`).join('');
+  updateSidebarBadge();
+}
+
+/* ── ORDERS ── */
+function updateSidebarBadge(){
+  const p=ORDERS.filter(o=>o.status==='pending').length;
+  document.getElementById('sidebar-pending-count').textContent=p;
+  document.getElementById('notif-dot').style.display=p>0?'block':'none';
+}
+function filterOrders(){
+  const q=document.getElementById('search-input').value.trim().toLowerCase();
+  const status=document.getElementById('status-filter').value;
+  let f=ORDERS;
+  if(status!=='all') f=f.filter(o=>o.status===status);
+  if(q) f=f.filter(o=>o.customer.name.toLowerCase().includes(q)||o.customer.phone.includes(q)||o.id.includes(q));
+  renderOrdersList(f);
+}
+function renderOrders(){ renderOrdersList(ORDERS); }
+function renderOrdersList(list){
+  document.getElementById('orders-count-label').textContent=list.length+' داواکاری';
+  const con=document.getElementById('orders-list');
+  if(list.length===0){ con.innerHTML=`<div class="empty-state"><i class="ri-inbox-line"></i><p>هیچ داواکاریەک نەدۆزرایەوە</p></div>`; return; }
+  con.innerHTML='';
+  list.forEach(order=>con.appendChild(buildOrderCard(order)));
+}
+
+function buildOrderCard(order){
+  const total=orderTotal(order);
+  const div=document.createElement('div');
+  div.className='order-card'; div.id='oc-'+order.id;
+
+	const addr = order.customer.address;
+const isMap = addr && addr.includes('google.com/maps');
+
+const addressHTML = isMap
+  ? `<a href="${addr}" target="_blank" 
+       style="color:var(--accent);font-weight:700;display:flex;align-items:center;gap:4px">
+       <i class="ri-map-pin-line"></i> لۆکەیشن ببینە لە ماپ
+     </a>`
+  : addr || '—';
+
+
+  // WhatsApp link — clean phone (remove spaces/dashes, add 964 country code)
+  let phone = order.customer.phone.replace(/[\s\-\(\)]/g,'');
+  if(phone.startsWith('0')) phone='964'+phone.slice(1);
+  const waMsg = encodeURIComponent(
+	`سڵاو ${order.customer.name} 👋\nداواکارییەکەت ${order.id} وەرگیرا و ئێستا ئامادەی دەکەین.\nکۆی گشتی: ${fmt(total)}`
+  );
+  const waLink = `https://wa.me/${phone}?text=${waMsg}`;
+
+  div.innerHTML=`
+	<div class="order-card-header" onclick="toggleOrder('${order.id}')">
+	  <span class="order-id">${order.id}</span>
+	  <div class="order-customer">
+		<div class="order-cust-name">${order.customer.name}</div>
+		<div class="order-cust-phone">${order.customer.phone||'—'}</div>
+	  </div>
+	  <span class="order-total-badge">${fmt(total)}</span>
+	  <span class="status-badge ${order.status}">${STATUS_LABELS[order.status]}</span>
+	  <i class="ri-arrow-down-s-line expand-icon"></i>
+	</div>
+	<div class="order-card-body">
+	  <div class="order-details-grid">
+		<div class="order-detail-item"><div class="detail-label">ناونیشان</div><div class="detail-value">${addressHTML}</div></div>
+		<div class="order-detail-item"><div class="detail-label">کاتی داواکاری</div><div class="detail-value">${order.time}</div></div>
+		${order.note?`<div class="order-detail-item" style="grid-column:1/-1"><div class="detail-label">تێبینی</div><div class="detail-value">${order.note}</div></div>`:''}
+	  </div>
+	  <div class="order-items-list">
+		<div class="order-items-title">کاڵاکان</div>
+		${order.items.map(i=>`
+		  <div class="order-item-row">
+			<span class="oir-name">${i.name}</span>
+			<span class="oir-qty">× ${i.qty}</span>
+			<span class="oir-price">${fmt(i.price*i.qty)}</span>
+		  </div>`).join('')}
+	  </div>
+	  <div class="order-actions">
+		${phone.length>6?`<a href="${waLink}" target="_blank" class="wa-btn"><i class="ri-whatsapp-line"></i>واتساپ بکە</a>`:''}
+	  </div>
+	  <div>
+		<div class="detail-label" style="margin-bottom:8px">گۆڕینی دۆخ</div>
+		<div class="status-controls">
+  <button class="status-btn s-preparing ${order.status==='preparing'?'current':''}" 
+    onclick="setStatus('${order.id}','preparing')">
+    <i class="ri-check-double-line"></i> قبوڵکردن و ئامادەکردن
+  </button>
+  <button class="status-btn s-cancelled ${order.status==='cancelled'?'current':''}" 
+    onclick="setStatus('${order.id}','cancelled')">
+    <i class="ri-close-circle-line"></i> هەڵوەشاندنەوە
+  </button>
+</div>
+
+	  </div>
+	</div>`;
+  return div;
+}
+
+function toggleOrder(id){ const c=document.getElementById('oc-'+id); if(c) c.classList.toggle('expanded'); }
+async function setStatus(id, status) {
+  const order = ORDERS.find(o => o.id === id);
+  if (!order) return;
+
+  // update in Supabase using real db id
+  if (order._dbId) {
+    await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${order._dbId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ status })
+    });
+  }
+
+  order.status = status;
+		
+		// WhatsApp ئاگادارکردنەوەی کریار
+let waMsg = '';
+let custPhone = order.customer.phone.replace(/[\s\-\(\)]/g, '');
+if (custPhone.startsWith('0')) custPhone = '964' + custPhone.slice(1);
+
+if (status === 'preparing') {
+  waMsg = encodeURIComponent(
+
+    `سڵاو ${order.customer.name}\n` +
+    `داواکارییەکەت ${order.id} قبوڵکرا\n` +
+    `ئێستا ئامادەی دەکەین\n` +
+    `کۆی گشتی: ${fmt(orderTotal(order))}`
+  );
+} else if (status === 'cancelled') {
+  waMsg = encodeURIComponent(
+    `سڵاو ${order.customer.name}\n` +
+    `داواکارییەکەت ${order.id} هەڵوەشێندراوە\n` +
+    `تکایە پەیوەندیمان پێوە بکە بۆ زانیاری زیاتر.`
+  );
+}
+if (waMsg && custPhone.length > 6) {
+  window.open(`https://wa.me/${custPhone}?text=${waMsg}`, '_blank');
+}
+
+
+		
+  const existing = document.getElementById('oc-' + id);
+  if (existing) {
+    const was = existing.classList.contains('expanded');
+    const nc  = buildOrderCard(order);
+    if (was) nc.classList.add('expanded');
+    existing.replaceWith(nc);
+  }
+  updateSidebarBadge();
+  renderDashboard();
+  showToast('دۆخی داواکاری گۆڕدرا بۆ «' + STATUS_LABELS[status] + '»');
+}
+
+
+/* ══════════════════════════════════════════
+   REPORTS
+══════════════════════════════════════════ */
+let currentPeriod = 'daily';
+
+function setPeriod(p, btn){
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderReports(p);
+}
+
+function getDateRange(period){
+  const now = new Date();
+  const today = now.toISOString().slice(0,10);
+
+  if(period==='daily'){
+	// Last 7 days, one bar per day
+	const days=[];
+	for(let i=6;i>=0;i--){
+	  const d=new Date(); d.setDate(d.getDate()-i);
+	  days.push(d.toISOString().slice(0,10));
+	}
+	return { labels: days.map(d=>{ const dd=new Date(d); return (dd.getMonth()+1)+'/'+dd.getDate(); }), keys: days };
+  }
+  if(period==='weekly'){
+	// Last 8 weeks
+	const weeks=[];
+	for(let i=7;i>=0;i--){
+	  const start=new Date(); start.setDate(start.getDate()-i*7-start.getDay());
+	  weeks.push(start.toISOString().slice(0,10));
+	}
+	return { labels: weeks.map((_,i)=>'هەفت '+(8-i)), keys: weeks, type:'weekly' };
+  }
+  if(period==='monthly'){
+	const months=[];
+	for(let i=11;i>=0;i--){
+	  const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()-i);
+	  months.push(d.toISOString().slice(0,7));
+	}
+	const KU_MONTHS=['کانوونی دووەم','شوبات','ئازار','نیسان','ئایار','حوزەیران','تەممووز','ئاب','ئەیلوول','تشرینی یەکەم','تشرینی دووەم','کانوونی یەکەم'];
+	return { labels: months.map(m=>KU_MONTHS[parseInt(m.split('-')[1])-1]), keys: months, type:'monthly' };
+  }
+  // yearly — last 5 years
+  const years=[];
+  for(let i=4;i>=0;i--) years.push(String(now.getFullYear()-i));
+  return { labels: years, keys: years, type:'yearly' };
+}
+
+function getSalesData(period){
+  const range = getDateRange(period);
+  return range.keys.map(key=>{
+	const filtered = ORDERS.filter(o=>{
+	  if(!o.date) return false;
+	  if(period==='daily') return o.date===key;
+	  if(period==='weekly'){
+		const od=new Date(o.date), kd=new Date(key);
+		const diff=(od-kd)/(1000*60*60*24);
+		return diff>=0 && diff<7;
+	  }
+	  if(period==='monthly') return o.date.startsWith(key);
+	  if(period==='yearly') return o.date.startsWith(key);
+	  return false;
+	});
+	const revenue = filtered.filter(o=>o.status==='done').reduce((s,o)=>s+orderTotal(o),0);
+	const count   = filtered.length;
+	return {revenue, count};
+  });
+}
+
+function renderReports(period){
+  const range = getDateRange(period);
+  const data  = getSalesData(period);
+
+  const totalRevenue = data.reduce((s,d)=>s+d.revenue,0);
+  const totalOrders  = data.reduce((s,d)=>s+d.count,0);
+  const avgOrder	 = totalOrders>0 ? Math.round(totalRevenue/Math.max(1,data.filter(d=>d.revenue>0).length)) : 0;
+  const maxRevDay	= data.reduce((m,d)=>d.revenue>m.revenue?d:m,{revenue:0,count:0});
+
+  document.getElementById('report-stats').innerHTML=`
+	<div class="report-stat"><div class="report-stat-val">${(totalRevenue/1000).toFixed(0)}K</div><div class="report-stat-label">داهاتی گشتی (IQD)</div><div class="report-stat-sub">داواکارییە تەواوبووەکان</div></div>
+	<div class="report-stat"><div class="report-stat-val">${totalOrders}</div><div class="report-stat-label">کۆی داواکارییەکان</div></div>
+	<div class="report-stat"><div class="report-stat-val">${(avgOrder/1000).toFixed(0)}K</div><div class="report-stat-label">تێکڕای داهاتی هەر بەشێک</div></div>
+	<div class="report-stat"><div class="report-stat-val">${(maxRevDay.revenue/1000).toFixed(0)}K</div><div class="report-stat-label">باشترین داهاتی یەک بەشێک</div></div>
+  `;
+
+drawBarChart(range.labels, data);          // ← زیاد بکە
+drawOrdersChart(range.labels, data);
+const topChartEl = document.getElementById('top-items-chart');
+if (topChartEl) topChartEl.innerHTML = drawTopItemsChart(period); // ← period زیاد بکە
+renderTopItems(period);
+drawDonut();
+
+}
+
+function drawBarChart(labels, data){
+  const svg = document.getElementById('sales-chart');
+  const W = svg.parentElement.clientWidth || 600;
+  const H = 220;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.setAttribute('width', W);
+
+  const maxVal = Math.max(...data.map(d=>d.revenue), 1);
+  const padL=10, padR=10, padT=20, padB=40;
+  const chartW = W-padL-padR;
+  const chartH = H-padT-padB;
+  const n = data.length;
+  const barW = Math.max(6, Math.floor(chartW/n*0.55));
+  const gap   = chartW/n;
+
+  let html='';
+
+  // Grid lines
+  for(let i=0;i<=4;i++){
+	const y = padT + chartH - (i/4)*chartH;
+	const val = Math.round((maxVal*(i/4))/1000);
+	html+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="rgba(180,120,40,0.1)" stroke-width="1"/>`;
+	html+=`<text x="${padL+2}" y="${y-3}" font-size="9" fill="#A07050" text-anchor="start">${val>0?val+'K':''}</text>`;
+  }
+
+  data.forEach((d,i)=>{
+	const x = padL + i*gap + gap/2;
+	const barH = d.revenue>0 ? Math.max(4, (d.revenue/maxVal)*chartH) : 0;
+	const y = padT+chartH-barH;
+	const isMax = d.revenue===Math.max(...data.map(dd=>dd.revenue));
+
+	html+=`<rect x="${x-barW/2}" y="${y}" width="${barW}" height="${barH}"
+	  rx="5" ry="5"
+	  fill="${isMax?'url(#barGrad)':'rgba(224,123,42,0.45)'}"
+	  style="transition:height 0.4s ease"/>`;
+
+	if(d.revenue>0){
+	  const kv=(d.revenue/1000).toFixed(0);
+	  html+=`<text x="${x}" y="${y-4}" font-size="9" fill="var(--accent)" text-anchor="middle" font-weight="700">${kv}K</text>`;
+	}
+
+	const lbl=labels[i];
+	html+=`<text x="${x}" y="${H-6}" font-size="${n>8?'8':'10'}" fill="#A07050" text-anchor="middle">${lbl}</text>`;
+  });
+
+  svg.innerHTML=`
+	<defs>
+	  <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+		<stop offset="0%" stop-color="#E07B2A"/>
+		<stop offset="100%" stop-color="#F5A623"/>
+	  </linearGradient>
+	</defs>
+	${html}`;
+}
+
+function drawOrdersChart(labels, data) {
+  const svg = document.getElementById('orders-chart');
+  if (!svg) return;
+  const W = svg.parentElement.clientWidth || 600;
+  const H = 220;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', W);
+
+  const maxVal = Math.max(...data.map(d => d.count), 1);
+  const padL=10, padR=10, padT=20, padB=40;
+  const chartW=W-padL-padR, chartH=H-padT-padB;
+  const n=data.length, barW=Math.max(6, Math.floor(chartW/n*0.55));
+  const gap=chartW/n;
+  let html='';
+
+  for(let i=0;i<=4;i++){
+    const y=padT+chartH-(i/4)*chartH;
+    html+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" 
+      stroke="rgba(42,122,224,0.1)" stroke-width="1"/>`;
+  }
+
+  data.forEach((d,i) => {
+    const x=padL+i*gap+gap/2;
+    const barH=d.count>0 ? Math.max(4,(d.count/maxVal)*chartH) : 0;
+    const y=padT+chartH-barH;
+    html+=`<rect x="${x-barW/2}" y="${y}" width="${barW}" height="${barH}"
+      rx="5" fill="rgba(42,122,224,0.6)"/>`;
+    if(d.count>0)
+      html+=`<text x="${x}" y="${y-4}" font-size="9" fill="#2A7AE0" 
+        text-anchor="middle" font-weight="700">${d.count}</text>`;
+    html+=`<text x="${x}" y="${H-6}" font-size="${n>8?'8':'10'}" 
+      fill="#A07050" text-anchor="middle">${labels[i]}</text>`;
+  });
+
+  svg.innerHTML=html;
+}
+
+function renderTopItems(period){
+  const range = getDateRange(period);
+  const filtered = ORDERS.filter(o=>{
+	if(!o.date) return false;
+	if(period==='daily') return range.keys.includes(o.date);
+	if(period==='monthly') return range.keys.some(k=>o.date.startsWith(k));
+	if(period==='yearly') return range.keys.some(k=>o.date.startsWith(k));
+	return true;
+  }).filter(o=>o.status==='done');
+
+  const itemMap={};
+  filtered.forEach(o=>o.items.forEach(i=>{
+	if(!itemMap[i.name]) itemMap[i.name]={name:i.name,qty:0,revenue:0};
+	itemMap[i.name].qty+=i.qty;
+	itemMap[i.name].revenue+=i.qty*i.price;
+  }));
+  const sorted=Object.values(itemMap).sort((a,b)=>b.revenue-a.revenue).slice(0,5);
+
+  const rankClass=['r1','r2','r3','',''];
+  document.getElementById('top-items-body').innerHTML=sorted.length===0
+	? `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px">داتایەک نییە</td></tr>`
+	: sorted.map((it,i)=>`
+	  <tr>
+		<td><span class="rank-badge ${rankClass[i]||''}">${i+1}</span></td>
+		<td>${it.name}</td>
+		<td style="color:var(--text-secondary);font-weight:700">${it.qty}</td>
+		<td style="color:var(--accent);font-weight:800">${(it.revenue/1000).toFixed(0)}K</td>
+	  </tr>`).join('');
+}
+
+function drawDonut(){
+  const svg = document.getElementById('donut-chart');
+  const pending   = ORDERS.filter(o=>o.status==='pending').length;
+  const preparing = ORDERS.filter(o=>o.status==='preparing').length;
+  const done	  = ORDERS.filter(o=>o.status==='done').length;
+  const cancelled = ORDERS.filter(o=>o.status==='cancelled').length;
+  const total	 = ORDERS.length || 1;
+
+  const segments=[
+	{label:'تەواوبوو',value:done,color:'#2E8B57'},
+	{label:'چاوەڕوان',value:pending,color:'#E09B2A'},
+	{label:'ئامادەکردن',value:preparing,color:'#2A7AE0'},
+	{label:'هەڵوەشێندراو',value:cancelled,color:'#D64545'},
+  ].filter(s=>s.value>0);
+
+  const cx=100,cy=100,r=70,ir=45;
+  let startAngle=-Math.PI/2;
+  let paths='';
+
+  segments.forEach(seg=>{
+	const angle=(seg.value/total)*2*Math.PI;
+	const endAngle=startAngle+angle;
+	const x1=cx+r*Math.cos(startAngle), y1=cy+r*Math.sin(startAngle);
+	const x2=cx+r*Math.cos(endAngle),   y2=cy+r*Math.sin(endAngle);
+	const ix1=cx+ir*Math.cos(startAngle),iy1=cy+ir*Math.sin(startAngle);
+	const ix2=cx+ir*Math.cos(endAngle),  iy2=cy+ir*Math.sin(endAngle);
+	const large=angle>Math.PI?1:0;
+	paths+=`<path d="M${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${ix2},${iy2} A${ir},${ir} 0 ${large},0 ${ix1},${iy1} Z" fill="${seg.color}" opacity="0.9"/>`;
+	startAngle=endAngle;
+  });
+
+  if(segments.length===0) paths=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--bg-section)"/>`;
+
+  svg.innerHTML=`${paths}<circle cx="${cx}" cy="${cy}" r="${ir-4}" fill="white"/>
+	<text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="18" font-weight="800" fill="#2C1810" font-family="Noto Sans Arabic">${total}</text>
+	<text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="9" fill="#A07050" font-family="Noto Sans Arabic">داواکاری</text>`;
+
+  document.getElementById('donut-legend').innerHTML=segments.map(s=>`
+	<div style="display:flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:700;color:var(--text-muted)">
+	  <span style="width:10px;height:10px;border-radius:3px;background:${s.color};display:inline-block;flex-shrink:0"></span>
+	  ${s.label} (${s.value})
+	</div>`).join('');
+}
+
+function drawTopItemsChart(period) {   // ← period زیاد بکە
+  const range = getDateRange(period); // داتا کۆبکەرەوە
+  const itemMap = {};
+  ORDERS.filter(o => o.status === 'done').forEach(o => {
+    o.items.forEach(i => {
+      if (!itemMap[i.name]) itemMap[i.name] = { qty: 0, revenue: 0 };
+      itemMap[i.name].qty += i.qty;
+      itemMap[i.name].revenue += i.qty * i.price;
+    });
+  });
+  const sorted = Object.entries(itemMap)
+    .sort((a,b) => b[1].qty - a[1].qty).slice(0, 5);
+  const max = sorted[0]?.[1].qty || 1;
+
+  // HTML چارت
+  const colors = ['#E07B2A','#F5A623','#2E8B57','#2A7AE0','#D64545'];
+  return sorted.map(([name, d], i) => `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+        <span style="font-size:.85rem;font-weight:700;color:var(--text-primary)">${name}</span>
+        <span style="font-size:.82rem;font-weight:800;color:${colors[i]}">${d.qty} دانە</span>
+      </div>
+      <div style="background:var(--bg-section);border-radius:8px;height:10px;overflow:hidden">
+        <div style="width:${(d.qty/max*100)}%;height:100%;background:${colors[i]};
+          border-radius:8px;transition:width .7s cubic-bezier(.4,0,.2,1)"></div>
+      </div>
+    </div>`).join('');
+}
+
+function checkDbConnection() {
+  const dot   = document.getElementById('db-dot');
+  const label = document.getElementById('db-label');
+
+  fetch(`${SUPABASE_URL}/rest/v1/orders?limit=1`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
+  })
+  .then(res => {
+    if (res.ok) {
+      dot.style.background   = '#2E8B57';
+      dot.style.boxShadow    = '0 0 6px rgba(46,139,87,0.7)';
+      label.style.color      = 'rgba(46,139,87,0.9)';
+      label.textContent      = 'داتابەیس پەیوەستە';
+    } else {
+      throw new Error();
+    }
+  })
+  .catch(() => {
+    dot.style.background  = '#D64545';
+    dot.style.boxShadow   = '0 0 6px rgba(214,69,69,0.7)';
+    label.style.color     = 'rgba(214,69,69,0.8)';
+    label.textContent     = 'پەیوەندی نییە';
+  });
+}
+
+/* ══════════════════════════════════════════
+   MENU MANAGEMENT
+══════════════════════════════════════════ */
+let MENU_CATEGORIES = [];
+let MENU_ITEMS = [];
+let menuPageLoaded = false;
+
+async function renderMenuPage(){
+  await loadMenuData();
+  renderMenuCategories();
+  renderMenuItems();
+  if(!menuPageLoaded){ menuPageLoaded = true; startMenuRealtimeAdmin(); }
+}
+
+async function loadMenuData(){
+  try{
+    const catRes = await fetch(`${SUPABASE_URL}/rest/v1/menu_categories?select=*&order=sort_order.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const catJson = await catRes.json();
+    console.log('CATEGORIES RESPONSE:', catRes.status, catJson);
+
+    const itemRes = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=*,menu_categories(key,label_ku)&order=sort_order.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const itemJson = await itemRes.json();
+    console.log('ITEMS RESPONSE:', itemRes.status, itemJson);
+
+    MENU_CATEGORIES = Array.isArray(catJson) ? catJson : [];
+    MENU_ITEMS = Array.isArray(itemJson) ? itemJson : [];
+  }catch(e){ console.error('Menu load failed:', e); }
+}
+
+
+function renderMenuCategories(){
+  document.getElementById('menu-cat-count').textContent = MENU_CATEGORIES.length + ' کەتەگۆری';
+  const con = document.getElementById('menu-categories-list');
+  if(MENU_CATEGORIES.length===0){ con.innerHTML = `<div class="empty-state"><i class="ri-inbox-line"></i><p>هیچ کەتەگۆریەک نییە</p></div>`; return; }
+  con.innerHTML = MENU_CATEGORIES.map(cat => `
+    <div class="order-card">
+      <div class="order-card-header" style="cursor:default">
+        <span class="order-id">${cat.key}</span>
+        <div class="order-customer">
+          <div class="order-cust-name">${cat.label_ku}</div>
+          <div class="order-cust-phone">${cat.label_ar}</div>
+        </div>
+        <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:44px" onclick="openCategoryForm(${cat.id})"><i class="ri-edit-line"></i></button>
+        <button class="status-btn s-cancelled" style="flex:0 0 auto;min-width:44px" onclick="deleteCategory(${cat.id})"><i class="ri-delete-bin-6-line"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+function renderMenuItems(){
+  document.getElementById('menu-items-count').textContent = MENU_ITEMS.length + ' کاڵا';
+  const con = document.getElementById('menu-items-list');
+  if(MENU_ITEMS.length===0){ con.innerHTML = `<div class="empty-state"><i class="ri-inbox-line"></i><p>هیچ کاڵایەک نییە</p></div>`; return; }
+  con.innerHTML = MENU_ITEMS.map(item => `
+    <div class="order-card">
+      <div class="order-card-header" style="cursor:default">
+        <img src="${item.img||''}" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--accent-light)" onerror="this.style.visibility='hidden'"/>
+        <div class="order-customer">
+          <div class="order-cust-name">${item.name_ku}</div>
+          <div class="order-cust-phone">${fmt(item.price)} · ${item.menu_categories ? item.menu_categories.label_ku : '—'}</div>
+        </div>
+        <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:44px" onclick="openItemForm(${item.id})"><i class="ri-edit-line"></i></button>
+        <button class="status-btn s-cancelled" style="flex:0 0 auto;min-width:44px" onclick="deleteItem(${item.id})"><i class="ri-delete-bin-6-line"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+function closeMenuModal(){ document.getElementById('menu-modal-overlay').classList.add('hidden'); }
+
+/* ---- CATEGORY FORM ---- */
+function openCategoryForm(id){
+  const cat = id ? MENU_CATEGORIES.find(c=>c.id===id) : null;
+  document.getElementById('menu-modal-body').innerHTML = `
+    <div class="settings-card-title" style="margin-bottom:16px">${cat?'دەستکاریکردنی کەتەگۆری':'کەتەگۆری نوێ'}</div>
+    <div class="form-group"><label class="form-label">ناو بە کوردی</label><input type="text" class="form-input" id="cat-label-ku" value="${cat?cat.label_ku:''}"/></div>
+
+    <div class="form-group"><label class="form-label">ناو بە عەرەبی</label><input type="text" class="form-input" id="cat-label-ar" value="${cat?cat.label_ar:''}"/></div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="save-btn" onclick="saveCategory(${cat?cat.id:'null'})"><i class="ri-save-line"></i>پاشەکەوتکردن</button>
+      <button class="save-btn" style="background:var(--card-border);color:var(--text-primary)" onclick="closeMenuModal()">پاشگەزبوونەوە</button>
+    </div>`;
+  document.getElementById('menu-modal-overlay').classList.remove('hidden');
+}
+
+async function saveCategory(id){
+  const label_ku = document.getElementById('cat-label-ku').value.trim();
+  const label_ar = document.getElementById('cat-label-ar').value.trim();
+  if(!label_ku || !label_ar){ showToast('هەموو خانەکان پڕبکەرەوە'); return; }
+  const body = { label_ku, label_ar };
+  if(!id){ body.key = 'cat_' + Date.now(); }
+  try{
+    let res;
+    if(id){
+      res = await fetch(`${SUPABASE_URL}/rest/v1/menu_categories?id=eq.${id}`, {
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+        body: JSON.stringify(body)
+      });
+    } else {
+      body.sort_order = MENU_CATEGORIES.length + 1;
+      res = await fetch(`${SUPABASE_URL}/rest/v1/menu_categories`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+        body: JSON.stringify(body)
+      });
+    }
+    if(!res.ok){
+      const errText = await res.text();
+      console.error('SAVE CATEGORY FAILED:', res.status, errText);
+      showToast('هەڵە: ' + errText.slice(0,80));
+      return;
+    }
+    closeMenuModal();
+    await loadMenuData(); renderMenuCategories(); renderMenuItems();
+    showToast('کەتەگۆری پاشەکەوت کرا ✓');
+  }catch(e){
+    console.error('SAVE CATEGORY ERROR:', e);
+    showToast('هەڵەیەک ڕوویدا');
+  }
+}
+
+
+async function deleteCategory(id){
+  if(!confirm('دڵنیایت لە سڕینەوەی ئەم کەتەگۆریە؟ کاڵا ناوی دەسڕدرێنەوە.')) return;
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/menu_categories?id=eq.${id}`, {
+      method:'DELETE',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    await loadMenuData(); renderMenuCategories(); renderMenuItems();
+    showToast('کەتەگۆری سڕدرایەوە');
+  }catch(e){ showToast('هەڵەیەک ڕوویدا'); }
+}
+
+/* ---- ITEM FORM ---- */
+function openItemForm(id){
+  const item = id ? MENU_ITEMS.find(i=>i.id===id) : null;
+  const catOptions = MENU_CATEGORIES.map(c=>`<option value="${c.id}" ${item&&item.category_id===c.id?'selected':''}>${c.label_ku}</option>`).join('');
+  document.getElementById('menu-modal-body').innerHTML = `
+    <div class="settings-card-title" style="margin-bottom:16px">${item?'دەستکاریکردنی کاڵا':'کاڵای نوێ'}</div>
+    <div class="form-group"><label class="form-label">کەتەگۆری</label><select class="form-input form-select" id="item-cat">${catOptions}</select></div>
+    <div class="form-group"><label class="form-label">ناو بە کوردی</label><input type="text" class="form-input" id="item-name-ku" value="${item?item.name_ku:''}"/></div>
+    <div class="form-group"><label class="form-label">ناو بە عەرەبی</label><input type="text" class="form-input" id="item-name-ar" value="${item?item.name_ar:''}"/></div>
+    <div class="form-group"><label class="form-label">وەسف بە کوردی</label><input type="text" class="form-input" id="item-desc-ku" value="${item?item.desc_ku||'':''}"/></div>
+    <div class="form-group"><label class="form-label">وەسف بە عەرەبی</label><input type="text" class="form-input" id="item-desc-ar" value="${item?item.desc_ar||'':''}"/></div>
+    <div class="form-group"><label class="form-label">نرخ (IQD)</label><input type="number" class="form-input" id="item-price" value="${item?item.price:''}"/></div>
+    <div class="form-group">
+      <label class="form-label">وێنەی کاڵا</label>
+      <input type="file" accept="image/*" id="item-img-file" class="form-input" style="padding:8px"/>
+      <div id="item-img-preview" style="margin-top:8px">${item&&item.img?`<img src="${item.img}" style="width:70px;height:70px;border-radius:10px;object-fit:cover"/>`:''}</div>
+      <input type="hidden" id="item-img" value="${item?item.img||'':''}"/>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="save-btn" onclick="saveItem(${item?item.id:'null'})"><i class="ri-save-line"></i>پاشەکەوتکردن</button>
+      <button class="save-btn" style="background:var(--card-border);color:var(--text-primary)" onclick="closeMenuModal()">پاشگەزبوونەوە</button>
+    </div>`;
+  document.getElementById('menu-modal-overlay').classList.remove('hidden');
+
+  document.getElementById('item-img-file').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const preview = document.getElementById('item-img-preview');
+    preview.innerHTML = '<span style="font-size:0.8rem;color:var(--text-muted)">بارکردن...</span>';
+    try{
+      const ext = file.name.split('.').pop();
+      const fileName = `item_${Date.now()}.${ext}`;
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/menu-images/${fileName}`, {
+        method:'POST',
+        headers:{ 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Content-Type': file.type },
+        body: file
+      });
+      if(!res.ok) throw new Error(await res.text());
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/menu-images/${fileName}`;
+      document.getElementById('item-img').value = publicUrl;
+      preview.innerHTML = `<img src="${publicUrl}" style="width:70px;height:70px;border-radius:10px;object-fit:cover"/>`;
+    }catch(err){
+      console.error('IMAGE UPLOAD ERROR:', err);
+      preview.innerHTML = '<span style="color:var(--danger);font-size:0.8rem">هەڵە لە بارکردنی وێنە</span>';
+    }
+  });
+}
+
+
+async function saveItem(id){
+  const category_id = document.getElementById('item-cat').value;
+  const name_ku = document.getElementById('item-name-ku').value.trim();
+  const name_ar = document.getElementById('item-name-ar').value.trim();
+  const desc_ku = document.getElementById('item-desc-ku').value.trim();
+  const desc_ar = document.getElementById('item-desc-ar').value.trim();
+  const price = parseFloat(document.getElementById('item-price').value) || 0;
+  const img = document.getElementById('item-img').value.trim();
+  if(!category_id || !name_ku || !name_ar || !price){ showToast('هەموو خانە پێویستەکان پڕبکەرەوە'); return; }
+  const body = { category_id, name_ku, name_ar, desc_ku, desc_ar, price, img };
+  try{
+    let res;
+    if(id){
+      res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?id=eq.${id}`, {
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+        body: JSON.stringify(body)
+      });
+    } else {
+      body.sort_order = MENU_ITEMS.length + 1;
+      res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+        body: JSON.stringify(body)
+      });
+    }
+    if(!res.ok){
+      const errText = await res.text();
+      console.error('SAVE ITEM FAILED:', res.status, errText);
+      showToast('هەڵە: ' + errText.slice(0,80));
+      return;
+    }
+    closeMenuModal();
+    await loadMenuData(); renderMenuItems();
+    showToast('کاڵا پاشەکەوت کرا ✓');
+  }catch(e){
+    console.error('SAVE ITEM ERROR:', e);
+    showToast('هەڵەیەک ڕوویدا');
+  }
+}
+
+
+async function deleteItem(id){
+  if(!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/menu_items?id=eq.${id}`, {
+      method:'DELETE',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    await loadMenuData(); renderMenuItems();
+    showToast('کاڵا سڕدرایەوە');
+  }catch(e){ showToast('هەڵەیەک ڕوویدا'); }
+}
+
+function startMenuRealtimeAdmin(){
+  const ws_url = SUPABASE_URL.replace('https://','wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+  let ws;
+  function connect(){
+    ws = new WebSocket(ws_url);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ topic:'realtime:public:menu_items', event:'phx_join', payload:{}, ref:'m1' }));
+      ws.send(JSON.stringify({ topic:'realtime:public:menu_categories', event:'phx_join', payload:{}, ref:'m2' }));
+      setInterval(()=>{ if(ws.readyState===1) ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'m3'})); }, 30000);
+    };
+    ws.onmessage = async (e)=>{
+      const msg = JSON.parse(e.data);
+      if((msg.topic==='realtime:public:menu_items'||msg.topic==='realtime:public:menu_categories') && ['INSERT','UPDATE','DELETE'].includes(msg.event)){
+        await loadMenuData(); renderMenuCategories(); renderMenuItems();
+      }
+    };
+    ws.onclose = ()=> setTimeout(connect, 3000);
+    ws.onerror = ()=> ws.close();
+  }
+  connect();
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+</script>
+</body>
+</html>
 
