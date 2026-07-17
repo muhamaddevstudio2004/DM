@@ -399,6 +399,10 @@
 	  <div class="nav-item" onclick="showPage('menu',this)">
 		<i class="ri-restaurant-2-line"></i><span>مینۆ</span>
 	  </div>
+				  <div class="nav-item" onclick="showPage('ads',this)">
+		<i class="ri-image-2-line"></i><span>ڕیکلام</span>
+	  </div>
+
 	  <div class="nav-item" onclick="showPage('reports',this)">
 
 		<i class="ri-bar-chart-2-line"></i><span>راپۆرتەکان</span>
@@ -494,6 +498,15 @@
 		<i class="ri-add-line"></i>کاڵای نوێ
 	  </button>
 	  <div class="orders-list" id="menu-items-list"></div>
+	</div>
+
+	<!-- ADS BANNER MANAGEMENT -->
+	<div class="page" id="page-ads">
+	  <div class="section-heading">وێنەکانی ڕیکلام<span class="count" id="ads-count">0 وێنە</span></div>
+	  <button class="save-btn" style="margin-bottom:14px" onclick="openAdForm()">
+		<i class="ri-add-line"></i>وێنەی نوێ
+	  </button>
+	  <div class="orders-list" id="ads-list"></div>
 	</div>
 
 
@@ -899,6 +912,7 @@ const PAGE_META = {
   dashboard:{title:'داشبۆرد',sub:'پوختەی کارەکانت'},
   orders:{title:'داواکارییەکان',sub:'بەڕێوەبردن و گۆڕینی دۆخ'},
   menu:{title:'مینۆ',sub:'بەڕێوەبردنی کاڵا و کەتەگۆری'},
+		  ads:{title:'ڕیکلام',sub:'بەڕێوەبردنی وێنەی ڕیکلام'},
   reports:{title:'راپۆرتەکان',sub:'شیکاری فرۆشتن و داهات'},
   settings:{title:'ڕێکخستنەکان',sub:'ڕێکخستنی کاڵا'},
 };
@@ -914,6 +928,7 @@ function showPage(key,navEl){
   closeSidebar();
   if(key==='dashboard') renderDashboard();
   if(key==='menu') renderMenuPage();
+		  if(key==='ads') renderAdsPage();
   if(key==='reports') renderReports(currentPeriod);
 }
 function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); }
@@ -1687,6 +1702,186 @@ function startMenuRealtimeAdmin(){
       const msg = JSON.parse(e.data);
       if((msg.topic==='realtime:public:menu_items'||msg.topic==='realtime:public:menu_categories') && ['INSERT','UPDATE','DELETE'].includes(msg.event)){
         await loadMenuData(); renderMenuCategories(); renderMenuItems();
+      }
+    };
+    ws.onclose = ()=> setTimeout(connect, 3000);
+    ws.onerror = ()=> ws.close();
+  }
+  connect();
+}
+
+/* ══════════════════════════════════════════
+   ADS BANNER MANAGEMENT
+══════════════════════════════════════════ */
+let ADS_BANNERS = [];
+let adsPageLoaded = false;
+
+async function renderAdsPage(){
+  await loadAdsData();
+  renderAdsList();
+  if(!adsPageLoaded){ adsPageLoaded = true; startAdsRealtimeAdmin(); }
+}
+
+async function loadAdsData(){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/ads_banners?select=*&order=sort_order.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const json = await res.json();
+    ADS_BANNERS = Array.isArray(json) ? json : [];
+  }catch(e){ console.error('Ads load failed:', e); }
+}
+
+function renderAdsList(){
+  document.getElementById('ads-count').textContent = ADS_BANNERS.length + ' وێنە';
+  const con = document.getElementById('ads-list');
+  if(ADS_BANNERS.length===0){ con.innerHTML = `<div class="empty-state"><i class="ri-image-2-line"></i><p>هیچ وێنەیەک زیاد نەکراوە</p></div>`; return; }
+  con.innerHTML = ADS_BANNERS.map((ad,i) => `
+    <div class="order-card">
+      <div class="order-card-header" style="cursor:default">
+        <img src="${ad.img}" style="width:70px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--accent-light)"/>
+        <div class="order-customer">
+          <div class="order-cust-name">${ad.active ? 'چالاکە' : 'ناچالاکە'}</div>
+          <div class="order-cust-phone">${ad.link_url || 'بەبێ لینک'}</div>
+        </div>
+        <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:40px" onclick="moveAd(${ad.id},-1)"><i class="ri-arrow-up-line"></i></button>
+        <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:40px" onclick="moveAd(${ad.id},1)"><i class="ri-arrow-down-line"></i></button>
+        <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:40px" onclick="openAdForm(${ad.id})"><i class="ri-edit-line"></i></button>
+        <button class="status-btn s-cancelled" style="flex:0 0 auto;min-width:40px" onclick="deleteAd(${ad.id})"><i class="ri-delete-bin-6-line"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+function closeAdModal(){ document.getElementById('menu-modal-overlay').classList.add('hidden'); }
+
+function openAdForm(id){
+  const ad = id ? ADS_BANNERS.find(a=>a.id===id) : null;
+  document.getElementById('menu-modal-body').innerHTML = `
+    <div class="settings-card-title" style="margin-bottom:16px">${ad?'دەستکاریکردنی ڕیکلام':'ڕیکلامی نوێ'}</div>
+    <div class="form-group">
+      <label class="form-label">وێنە</label>
+      <input type="file" accept="image/*" id="ad-img-file" class="form-input" style="padding:8px"/>
+      <div id="ad-img-preview" style="margin-top:8px">${ad&&ad.img?`<img src="${ad.img}" style="width:120px;height:70px;border-radius:10px;object-fit:cover"/>`:''}</div>
+      <input type="hidden" id="ad-img" value="${ad?ad.img:''}"/>
+    </div>
+    <div class="form-group"><label class="form-label">لینک (ئارەزوومەندانە)</label><input type="text" class="form-input" id="ad-link" placeholder="https://..." value="${ad?ad.link_url||'':''}"/></div>
+    <div class="toggle-row" style="margin-bottom:10px">
+      <div class="toggle-label">چالاک بێت؟</div>
+      <button type="button" class="toggle ${ad&&!ad.active?'':'on'}" id="ad-active-toggle" onclick="this.classList.toggle('on')"></button>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="save-btn" onclick="saveAd(${ad?ad.id:'null'})"><i class="ri-save-line"></i>پاشەکەوتکردن</button>
+      <button class="save-btn" style="background:var(--card-border);color:var(--text-primary)" onclick="closeAdModal()">پاشگەزبوونەوە</button>
+    </div>`;
+  document.getElementById('menu-modal-overlay').classList.remove('hidden');
+
+  document.getElementById('ad-img-file').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const preview = document.getElementById('ad-img-preview');
+    preview.innerHTML = '<span style="font-size:0.8rem;color:var(--text-muted)">بارکردن...</span>';
+    try{
+      const ext = file.name.split('.').pop();
+      const fileName = `ad_${Date.now()}.${ext}`;
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/menu-images/${fileName}`, {
+        method:'POST',
+        headers:{ 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Content-Type': file.type },
+        body: file
+      });
+      if(!res.ok) throw new Error(await res.text());
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/menu-images/${fileName}`;
+      document.getElementById('ad-img').value = publicUrl;
+      preview.innerHTML = `<img src="${publicUrl}" style="width:120px;height:70px;border-radius:10px;object-fit:cover"/>`;
+    }catch(err){
+      console.error('AD IMAGE UPLOAD ERROR:', err);
+      preview.innerHTML = '<span style="color:var(--danger);font-size:0.8rem">هەڵە لە بارکردنی وێنە</span>';
+    }
+  });
+}
+
+async function saveAd(id){
+  const img = document.getElementById('ad-img').value.trim();
+  const link_url = document.getElementById('ad-link').value.trim();
+  const active = document.getElementById('ad-active-toggle').classList.contains('on');
+  if(!img){ showToast('تکایە وێنەیەک زیاد بکە'); return; }
+  const body = { img, link_url, active };
+  try{
+    let res;
+    if(id){
+      res = await fetch(`${SUPABASE_URL}/rest/v1/ads_banners?id=eq.${id}`, {
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+        body: JSON.stringify(body)
+      });
+    } else {
+      body.sort_order = ADS_BANNERS.length + 1;
+      res = await fetch(`${SUPABASE_URL}/rest/v1/ads_banners`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+        body: JSON.stringify(body)
+      });
+    }
+    if(!res.ok){
+      const errText = await res.text();
+      console.error('SAVE AD FAILED:', res.status, errText);
+      showToast('هەڵە: ' + errText.slice(0,80));
+      return;
+    }
+    closeAdModal();
+    await loadAdsData(); renderAdsList();
+    showToast('ڕیکلام پاشەکەوت کرا ✓');
+  }catch(e){
+    console.error('SAVE AD ERROR:', e);
+    showToast('هەڵەیەک ڕوویدا');
+  }
+}
+
+async function deleteAd(id){
+  if(!confirm('دڵنیایت لە سڕینەوەی ئەم ڕیکلامە؟')) return;
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/ads_banners?id=eq.${id}`, {
+      method:'DELETE',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    await loadAdsData(); renderAdsList();
+    showToast('ڕیکلام سڕدرایەوە');
+  }catch(e){ showToast('هەڵەیەک ڕوویدا'); }
+}
+
+async function moveAd(id, dir){
+  const idx = ADS_BANNERS.findIndex(a=>a.id===id);
+  const swapIdx = idx + dir;
+  if(swapIdx < 0 || swapIdx >= ADS_BANNERS.length) return;
+  const a = ADS_BANNERS[idx], b = ADS_BANNERS[swapIdx];
+  const aOrder = a.sort_order, bOrder = b.sort_order;
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/ads_banners?id=eq.${a.id}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+      body: JSON.stringify({ sort_order: bOrder })
+    });
+    await fetch(`${SUPABASE_URL}/rest/v1/ads_banners?id=eq.${b.id}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+      body: JSON.stringify({ sort_order: aOrder })
+    });
+    await loadAdsData(); renderAdsList();
+  }catch(e){ showToast('هەڵەیەک ڕوویدا'); }
+}
+
+function startAdsRealtimeAdmin(){
+  const ws_url = SUPABASE_URL.replace('https://','wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+  let ws;
+  function connect(){
+    ws = new WebSocket(ws_url);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ topic:'realtime:public:ads_banners', event:'phx_join', payload:{}, ref:'a1' }));
+      setInterval(()=>{ if(ws.readyState===1) ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'a2'})); }, 30000);
+    };
+    ws.onmessage = async (e)=>{
+      const msg = JSON.parse(e.data);
+      if(msg.topic==='realtime:public:ads_banners' && ['INSERT','UPDATE','DELETE'].includes(msg.event)){
+        await loadAdsData(); renderAdsList();
       }
     };
     ws.onclose = ()=> setTimeout(connect, 3000);
