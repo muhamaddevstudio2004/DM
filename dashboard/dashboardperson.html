@@ -334,12 +334,50 @@ tbody tr:hover{background:var(--line-soft);}
   .grid-4,.grid-3{grid-template-columns:repeat(2,1fr);}
   .field-row,.field-row3{grid-template-columns:1fr;}
   .content{padding:16px;}
+  .topbar{padding:0 14px;}
+  .tb-title{font-size:17px;}
+  .page-head{flex-direction:column;align-items:flex-start;}
+  .page-head > div:last-child{width:100%;display:flex;flex-wrap:wrap;gap:8px;}
+  .dropdown{width:min(340px,92vw);right:-8px;}
+}
+@media(max-width:640px){
+  /* Turn dense tables into stacked cards on phones */
+  .table-wrap table, .table-wrap thead, .table-wrap tbody, .table-wrap th, .table-wrap td, .table-wrap tr{
+    display:block;
+  }
+  .table-wrap thead{display:none;}
+  .table-wrap tr{
+    border:1px solid var(--line);border-radius:12px;margin-bottom:12px;padding:10px 12px;background:var(--card);
+  }
+  .table-wrap tbody tr:hover{background:var(--card);}
+  .table-wrap td{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:8px 2px;border-bottom:1px solid var(--line-soft);white-space:normal;text-align:right;
+  }
+  .table-wrap td:last-child{border-bottom:none;}
+  .table-wrap td:before{
+    content:attr(data-label);font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;
+    letter-spacing:.3px;text-align:left;flex:none;
+  }
+  .table-wrap td.cell-flex{justify-content:flex-start;}
+  .row-actions{justify-content:flex-end;width:100%;}
 }
 @media(max-width:560px){
-  .grid-4,.grid-3,.qa-grid{grid-template-columns:1fr 1fr;}
+  .grid-4,.grid-3{grid-template-columns:1fr 1fr;}
+  .qa-grid{grid-template-columns:1fr 1fr;}
+  .kpi .kpi-value{font-size:21px;}
   .modal{border-radius:14px 14px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:90vh;}
   .modal-overlay{align-items:flex-end;padding:0;}
+  .grid-2{gap:14px;}
 }
+@media(max-width:420px){
+  .grid-4,.grid-3,.qa-grid{grid-template-columns:1fr;}
+  .kpi-value{font-size:22px;}
+  .btn{font-size:12.6px;padding:9px 12px;}
+  .content{padding:12px;}
+  .card-pad{padding:16px;}
+}
+
 .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:190;}
 .sidebar-backdrop.active{display:block;}
 </style>
@@ -2009,6 +2047,21 @@ function enterApp(){
   document.getElementById('backend-status').textContent = USE_SUPABASE ? 'Connected to Supabase backend' : 'Local demo data · connect Supabase in Settings → Backend';
   goTo('dashboard');
 }
+async function loadFromSupabase(){
+  const tables = ['clients','systems','sales','subscriptions','debts','tasks','documents'];
+  for (const t of tables){
+    try{
+      const { data, error } = await supa.from(t).select('*');
+      if (!error && data) STATE[t] = data;
+    }catch(e){ console.warn('Could not load', t, e); }
+  }
+  try{
+    const { data } = await supa.from('settings').select('*').eq('id','main').single();
+    if (data) STATE.settings = {...STATE.settings, ...data};
+  }catch(e){}
+  persist();
+}
+
 document.getElementById('login-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const email = document.getElementById('login-email').value;
@@ -2017,6 +2070,8 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
       const { error } = await supa.auth.signInWithPassword({ email, password: document.getElementById('login-password').value });
       if (error) { toast('Sign in failed: '+error.message, 'error'); return; }
     }catch(err){ toast('Sign in failed','error'); return; }
+    toast('Loading your data from Supabase…');
+    await loadFromSupabase();
   }
   STATE.currentUser = {name: email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()), email};
   persist();
