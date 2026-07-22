@@ -1855,7 +1855,7 @@ function generateReceiptPdf(sale, kind){
   const pdfBlob = doc.output('blob');
   const pdfFile = new File([pdfBlob], fileName, {type:'application/pdf'});
 
-  if (navigator.share && navigator.canShare && navigator.canShare({files:[pdfFile]})){
+    if (navigator.share && navigator.canShare && navigator.canShare({files:[pdfFile]})){
     navigator.share({
       files:[pdfFile],
       title: fileName,
@@ -1864,7 +1864,6 @@ function generateReceiptPdf(sale, kind){
   } else {
     doc.save(fileName);
   }
-}
 }
 function sendWhatsAppReminder(client){
   const s = STATE.settings;
