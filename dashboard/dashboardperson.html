@@ -690,7 +690,12 @@ const DB = {
     STATE[entity] = STATE[entity] || [];
     STATE[entity].unshift(obj);
     persist();
-    if (USE_SUPABASE) { try{ await supa.from(entity).insert(obj); }catch(e){ console.warn('Supabase insert failed, kept locally', e); } }
+if (USE_SUPABASE) { 
+  try{ 
+    const { error } = await supa.from(entity).insert(obj); 
+    if (error) toast('هەڵە: '+error.message,'error');
+  }catch(e){ console.warn('Supabase insert failed, kept locally', e); } 
+}
     return obj;
   },
   async update(entity,id,patch){
@@ -751,6 +756,16 @@ function bestSellingSystem(){
 }
 function activeClientsCount(){ return DB.list('clients').filter(c=>c.status==='Active').length; }
 function outstandingDebtsTotal(){ return DB.list('debts').reduce((sum,d)=> sum + Math.max(0,(d.totalOwed||0)-(d.paidSoFar||0)), 0); }
+function unpaidSalesSummary(){
+  const unpaid = DB.list('sales').filter(s => saleRemaining(s) > 0);
+  const total = unpaid.reduce((sum,s)=> sum + saleRemaining(s), 0);
+  const byClient = {};
+  unpaid.forEach(s=>{
+    const name = clientName(s.clientId);
+    byClient[name] = (byClient[name]||0) + saleRemaining(s);
+  });
+  return { total, clients: Object.entries(byClient).map(([name,amount])=>({name,amount})).sort((a,b)=>b.amount-a.amount) };
+}
 function expiringServices(days=30){
   return DB.list('subscriptions').filter(s=>{
     const d = daysBetween(todayISO(), s.expiryDate);
@@ -918,6 +933,20 @@ function viewDashboard(){
       </div>
     </div>
   </div>
+
+  <div class="grid grid-2" style="margin-bottom:22px;align-items:start;">
+    <div class="card">
+      <div class="card-head"><div><h3>Clients with unpaid balance</h3><div class="sub">Total owing: ${fmtMoney(unpaidSalesSummary().total)}</div></div></div>
+      <div class="card-pad" style="display:flex;flex-direction:column;gap:10px;">
+        ${unpaidSalesSummary().clients.map(c=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span>${escapeHtml(c.name)}</span>
+            <span class="badge badge-bad">${fmtMoney(c.amount)}</span>
+          </div>`).join('') || '<p style="color:var(--mute);font-size:12.5px;">هیچ قەرزارێک نییە</p>'}
+      </div>
+    </div>
+  </div>
+
 
   <div class="grid grid-2" style="align-items:start;">
     <div class="card">
