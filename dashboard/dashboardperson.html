@@ -718,6 +718,11 @@ const DB = {
 function clientName(id){ const c = DB.get('clients',id); return c ? c.name : 'Unknown client'; }
 function systemById(id){ return DB.get('systems',id); }
 function finalPrice(sys){ return Math.max(0, (Number(sys.originalPrice)||0) - (Number(sys.discount)||0)); }
+function saleItemName(sale){
+  if (sale.itemLabel && sale.itemLabel.trim()) return sale.itemLabel.trim();
+  const sys = systemById(sale.systemId);
+  return sys ? sys.name : '—';
+}
 function saleFinal(sale){
   const sys = systemById(sale.systemId);
   if (!sys) return 0;
@@ -888,7 +893,7 @@ function viewDashboard(){
       <div class="table-wrap"><table><thead><tr><th>Client</th><th>System</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>
         ${recentSales.map(s=>{ const sys=systemById(s.systemId); return `<tr>
           <td class="cell-flex"><span class="avatar-sm">${initials(clientName(s.clientId))}</span>${escapeHtml(clientName(s.clientId))}</td>
-          <td>${sys?escapeHtml(sys.name):'—'}</td>
+          <td>${escapeHtml(saleItemName(s))}</td>
           <td class="num">${fmtMoney(saleFinal(s))}</td>
           <td>${paymentBadge(s.status)}</td>
           <td class="mono" style="color:var(--mute);">${fmtDate(s.saleDate)}</td>
@@ -1266,8 +1271,9 @@ function saleFormHtml(s){
   return `
   <div class="field-row">
     <div class="field"><label>Client</label><select id="f-saleclient">${clients.map(c=>`<option value="${c.id}" ${s.clientId===c.id?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select></div>
-    <div class="field"><label>System</label><select id="f-salesystem">${systems.map(sy=>`<option value="${sy.id}" ${s.systemId===sy.id?'selected':''}>${escapeHtml(sy.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>System (category)</label><select id="f-salesystem">${systems.map(sy=>`<option value="${sy.id}" ${s.systemId===sy.id?'selected':''}>${escapeHtml(sy.name)}</option>`).join('')}</select></div>
   </div>
+  <div class="field"><label>What did you sell? (optional — overrides system name)</label><input id="f-saleitemlabel" value="${escapeHtml(s.itemLabel||'')}" placeholder="e.g. QR Menu PLUS + custom logo"></div>
   <div class="field-row3">
     <div class="field"><label>Quantity</label><input id="f-saleqty" type="number" min="1" value="${s.qty}"></div>
     <div class="field"><label>Unit price (editable)</label><input id="f-saleunitprice" type="number" min="0" step="0.01" value="${s.unitPrice!==undefined && s.unitPrice!==null ? s.unitPrice : ''}" placeholder="e.g. 450"></div>
@@ -1307,12 +1313,13 @@ function openSaleForm(existing){
   document.getElementById('f-saleunitprice').addEventListener('input', recalcFinal);
   fillDefaultPrice();
   document.getElementById('modal-cancel').onclick = closeModal;
-  document.getElementById('modal-save').onclick = async ()=>{
+    document.getElementById('modal-save').onclick = async ()=>{
      const sysForPrice = systemById(document.getElementById('f-salesystem').value);
     const unitPriceVal = document.getElementById('f-saleunitprice').value;
     const obj = {
       clientId: document.getElementById('f-saleclient').value,
       systemId: document.getElementById('f-salesystem').value,
+      itemLabel: document.getElementById('f-saleitemlabel').value.trim(),
       qty: Number(document.getElementById('f-saleqty').value)||1,
       unitPrice: unitPriceVal !== '' ? Number(unitPriceVal) : (sysForPrice ? finalPrice(sysForPrice) : 0),
       saleDate: document.getElementById('f-saledate').value || todayISO(),
@@ -1697,7 +1704,7 @@ function viewAutomation(){
     <div class="card card-pad">
       <h3 style="margin:0 0 4px;font-family:'Outfit';">Generate a document</h3>
       <p class="sub" style="margin:0 0 16px;">Pick a sale to produce a PDF receipt or invoice.</p>
-      <div class="field"><label>Sale</label><select id="auto-sale">${DB.list('sales').map(s=>`<option value="${s.id}">${escapeHtml(clientName(s.clientId))} — ${escapeHtml(systemById(s.systemId)?.name||'')}</option>`).join('')}</select></div>
+      <div class="field"><label>Sale</label><select id="auto-sale">${DB.list('sales').map(s=>`<option value="${s.id}">${escapeHtml(clientName(s.clientId))} — ${escapeHtml(saleItemName(s))}</option>`).join('')}</select></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-soft" id="gen-receipt">${ic('pdf')} PDF receipt</button>
         <button class="btn btn-soft" id="gen-invoice">${ic('invoice')} PDF invoice</button>
