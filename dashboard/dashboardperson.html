@@ -11,13 +11,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-/* ============================================================
-   DEVMUHAMAD CRM — DESIGN TOKENS
-   Palette: Ink navy / Signal blue / Paper white
-   Type: Outfit (display, numerals) + Inter (UI/body) + JetBrains Mono (data/codes)
-   Signature: "Renewal Pulse" — colour-coded countdown rings used
-   everywhere a subscription's time-to-expiry matters.
-   ============================================================ */
 :root{
   --blue-950:#050b1a;
   --blue-900:#0b1526;
@@ -720,7 +713,8 @@ function finalPrice(sys){ return Math.max(0, (Number(sys.originalPrice)||0) - (N
 function saleFinal(sale){
   const sys = systemById(sale.systemId);
   if (!sys) return 0;
-  return finalPrice(sys) * (sale.qty||1);
+  const unit = (sale.unitPrice !== undefined && sale.unitPrice !== null && sale.unitPrice !== '') ? Number(sale.unitPrice) : finalPrice(sys);
+  return unit * (sale.qty||1);
 }
 function saleRemaining(sale){ return Math.max(0, saleFinal(sale) - (sale.paid||0)); }
 function totalRevenue(){ return DB.list('sales').reduce((sum,s)=>sum + (s.paid||0), 0); }
@@ -1244,9 +1238,11 @@ function saleFormHtml(s){
   </div>
   <div class="field-row3">
     <div class="field"><label>Quantity</label><input id="f-saleqty" type="number" min="1" value="${s.qty}"></div>
-    <div class="field"><label>Final price (calc.)</label><input id="f-salefinal" disabled value=""></div>
-    <div class="field"><label>Sale date</label><input id="f-saledate" type="date" value="${s.saleDate}"></div>
+    <div class="field"><label>Unit price (editable)</label><input id="f-saleunitprice" type="number" min="0" step="0.01" value="${s.unitPrice!==undefined && s.unitPrice!==null ? s.unitPrice : ''}" placeholder="e.g. 450"></div>
+    <div class="field"><label>Total (calc.)</label><input id="f-salefinal" disabled value=""></div>
   </div>
+  <div class="field"><label>Sale date</label><input id="f-saledate" type="date" value="${s.saleDate}"></div>
+
   <div class="field-row">
     <div class="field"><label>Paid amount</label><input id="f-salepaid" type="number" min="0" value="${s.paid}"></div>
     <div class="field"><label>Payment status</label><select id="f-salestatus">${['Paid','Partial','Unpaid'].map(st=>`<option ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div>
@@ -1263,17 +1259,30 @@ function openSaleForm(existing){
     const sysId = document.getElementById('f-salesystem').value;
     const sys = systemById(sysId);
     const qty = Number(document.getElementById('f-saleqty').value)||1;
-    document.getElementById('f-salefinal').value = sys ? fmtMoney(finalPrice(sys)*qty) : '';
+    const priceInput = document.getElementById('f-saleunitprice');
+    const unit = priceInput.value !== '' ? Number(priceInput.value) : (sys ? finalPrice(sys) : 0);
+    document.getElementById('f-salefinal').value = fmtMoney(unit*qty);
   };
-  document.getElementById('f-salesystem').addEventListener('change', recalcFinal);
+  const fillDefaultPrice = ()=>{
+    const sysId = document.getElementById('f-salesystem').value;
+    const sys = systemById(sysId);
+    const priceInput = document.getElementById('f-saleunitprice');
+    if (sys && priceInput.value===''){ priceInput.value = finalPrice(sys); }
+    recalcFinal();
+  };
+  document.getElementById('f-salesystem').addEventListener('change', fillDefaultPrice);
   document.getElementById('f-saleqty').addEventListener('input', recalcFinal);
-  recalcFinal();
+  document.getElementById('f-saleunitprice').addEventListener('input', recalcFinal);
+  fillDefaultPrice();
   document.getElementById('modal-cancel').onclick = closeModal;
   document.getElementById('modal-save').onclick = async ()=>{
+     const sysForPrice = systemById(document.getElementById('f-salesystem').value);
+    const unitPriceVal = document.getElementById('f-saleunitprice').value;
     const obj = {
       clientId: document.getElementById('f-saleclient').value,
       systemId: document.getElementById('f-salesystem').value,
       qty: Number(document.getElementById('f-saleqty').value)||1,
+      unitPrice: unitPriceVal !== '' ? Number(unitPriceVal) : (sysForPrice ? finalPrice(sysForPrice) : 0),
       saleDate: document.getElementById('f-saledate').value || todayISO(),
       paid: Number(document.getElementById('f-salepaid').value)||0,
       status: document.getElementById('f-salestatus').value,
