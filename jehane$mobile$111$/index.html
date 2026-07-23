@@ -13,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
 :root {
   --bg: #080d1a;
@@ -1392,6 +1393,63 @@ kbd {
 }
 .home-btn.show { display: flex; }
 .home-btn:hover { background: var(--card-hover); color: var(--text); }
+/* ── BARCODE PAGE ── */
+.barcode-settings-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.barcode-opt-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.barcode-opt-check {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; cursor: pointer;
+}
+.barcode-opt-check input { width: 16px; height: 16px; cursor: pointer; }
+
+.barcode-list-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.barcode-list-item img {
+  width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+}
+.barcode-list-info { flex: 1; min-width: 0; }
+.barcode-list-name { font-size: 13.5px; font-weight: 600; }
+.barcode-list-code { font-size: 11.5px; color: var(--text3); font-family: 'Space Grotesk', monospace; margin-top: 2px; }
+.barcode-no-code { font-size: 11.5px; color: var(--danger); margin-top: 2px; }
+
+.barcode-preview-grid {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 10px;
+}
+.barcode-label-item {
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+  background: #fff;
+}
+.barcode-label-item svg { max-width: 100%; }
+.barcode-label-text { font-size: 11px; color: #000; margin-top: 4px; line-height: 1.4; }
+
+.barcode-select-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
 </style>
 </head>
 <body>
@@ -1459,7 +1517,9 @@ kbd {
 <div class="nav-item" data-page="expenses" onclick="navigate(this)">
   <i class="ti ti-wallet"></i> خەرجییەکان
 </div>
-
+   <div class="nav-item" data-page="barcode" onclick="navigate(this)">
+  <i class="ti ti-barcode"></i> بارکۆد
+</div>
    <div class="nav-item" data-page="settings" onclick="navigate(this)">
   <i class="ti ti-settings"></i> ڕێکخستن
 </div>
@@ -1519,10 +1579,111 @@ kbd {
   <i class="ti ti-wifi-off"></i>
   ئۆفلاین مۆدچالاک کرا - لەگەل گەرانەوە ئینتەرنێت گۆرانکاریەکان بۆ داتا دەنێردرێت
 </div>
-
-
   <!-- CONTENT -->
   <div class="content">
+<!-- ═══════════════════════ BARCODE ═══════════════════════ -->
+<div class="page" id="page-barcode">
+  <div class="page-title">
+    <div><h2>بارکۆد</h2><p>دروستکردن و چاپکردنی بارکۆدی کاڵاکان</p></div>
+  </div>
+
+  <!-- ڕێکخستنی چاپکردن -->
+  <div class="barcode-settings-card">
+    <div style="font-size:13.5px;font-weight:700;margin-bottom:4px">ڕێکخستنی لەیبڵ</div>
+    <div class="barcode-opt-row">
+      <label class="barcode-opt-check"><input type="checkbox" id="bcShowName" checked> ناوی کاڵا</label>
+      <label class="barcode-opt-check"><input type="checkbox" id="bcShowPrice" checked> نرخی فرۆشتن</label>
+      <label class="barcode-opt-check"><input type="checkbox" id="bcShowBrand"> براند/کاتیگۆری</label>
+    </div>
+    <div class="barcode-opt-row">
+      <div class="form-group" style="min-width:140px">
+        <label>قەبارەی لەیبڵ</label>
+        <select class="form-control" id="bcLabelSize">
+          <option value="small">بچووک</option>
+          <option value="medium" selected>مامناوەند</option>
+          <option value="large">گەورە</option>
+        </select>
+      </div>
+      <div class="form-group" style="min-width:140px">
+        <label>ستوون لە هەر ڕیزێک</label>
+        <select class="form-control" id="bcCols">
+          <option value="2">٢</option>
+          <option value="3" selected>٣</option>
+          <option value="4">٤</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- فلتەر و گەڕان -->
+  <div class="filters-bar">
+    <input class="filter-input" style="min-width:220px" type="text" placeholder="گەڕان..." id="bcSearch" oninput="renderBarcodePage()">
+    <select class="filter-input" id="bcFilter" onchange="renderBarcodePage()">
+      <option value="">هەموو کاڵاکان</option>
+      <option value="has">تەنها ئەوانەی بارکۆدیان هەیە</option>
+      <option value="missing">تەنها ئەوانەی بارکۆدیان نییە</option>
+    </select>
+  </div>
+
+  <div class="barcode-select-bar">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="selectAllBarcodes(true)">هەڵبژاردنی هەموو</button>
+      <button class="btn btn-ghost btn-sm" onclick="selectAllBarcodes(false)">لابردنی هەڵبژاردن</button>
+    </div>
+    <span id="bcSelectedCount" style="font-size:12.5px;color:var(--text2)">٠ کاڵا هەڵبژێردراوە</span>
+  </div>
+
+  <div class="card">
+    <div class="card-body" id="barcodeListBody" style="padding:12px"></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="previewBarcodeLabels()"><i class="ti ti-eye"></i> پێشبینین</button>
+    <button class="btn btn-success" onclick="printBarcodeLabels()"><i class="ti ti-printer"></i> چاپکردن</button>
+  </div>
+</div>
+
+<!-- GENERATE BARCODE MODAL -->
+<div class="modal-overlay" id="genBarcodeModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3>دروستکردنی بارکۆد</h3>
+      <button class="modal-close" onclick="closeModal('genBarcodeModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px" id="genBarcodeProductName"></div>
+      <div class="form-group">
+        <label>شێوازی دروستکردن</label>
+        <select class="form-control" id="genBarcodeMethod">
+          <option value="auto">بارکۆدی نوێی خۆکار</option>
+          <option value="id">بەکارهێنانی ژمارەی کاڵا (ID)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('genBarcodeModal')">هەڵوەشاندنەوە</button>
+      <button class="btn btn-primary" id="genBarcodeBtn" onclick="confirmGenerateBarcode()"><i class="ti ti-check"></i> دروستکردن</button>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW BARCODE MODAL -->
+<div class="modal-overlay" id="previewBarcodeModal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h3>پێشبینینی لەیبڵەکان</h3>
+      <button class="modal-close" onclick="closeModal('previewBarcodeModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="barcode-preview-grid" id="barcodePreviewGrid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('previewBarcodeModal')">داخستن</button>
+      <button class="btn btn-success" onclick="printBarcodeLabels()"><i class="ti ti-printer"></i> چاپکردن</button>
+    </div>
+  </div>
+</div>
+
 <div class="page active" id="page-apps">
   <div class="page-title">
     <div>
@@ -1563,10 +1724,14 @@ kbd {
       <div class="app-launch-icon"><i class="ti ti-layout-dashboard"></i></div>
       <div class="app-launch-name">داشبۆرد</div>
     </div>
-    <div class="app-launch-card" id="appCard-settings" style="--app-color:#8B95A5" onclick="navigate(null,'settings')">
-      <div class="app-launch-icon"><i class="ti ti-settings"></i></div>
-      <div class="app-launch-name">ڕێکخستن</div>
-    </div>
+ <div class="app-launch-card" id="appCard-barcode" style="--app-color:#FB923C" onclick="navigate(null,'barcode')">
+  <div class="app-launch-icon"><i class="ti ti-barcode"></i></div>
+  <div class="app-launch-name">بارکۆد</div>
+</div>
+<div class="app-launch-card" id="appCard-settings" style="--app-color:#8B95A5" onclick="navigate(null,'settings')">
+  <div class="app-launch-icon"><i class="ti ti-settings"></i></div>
+  <div class="app-launch-name">ڕێکخستن</div>
+</div>
   </div>
 </div>
 
