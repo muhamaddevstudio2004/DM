@@ -143,6 +143,12 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 }
 .ann-banner i{font-size:12px}
 
+#footerWaLink:hover{
+  background:rgba(212,175,55,.16);
+  border-color:rgba(212,175,55,.5);
+  transform:translateY(-1px);
+}
+
 </style>
 </head>
 <body class="lang-ckb" dir="rtl">
@@ -202,12 +208,19 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
     <span id="footerBranchText"></span>
   </a>
 
-  <p>
-    <span id="footerRights">All rights reserved</span> &copy; 2025 &mdash;
-    <span id="footerMadeByLabel">Developed by</span>
-    <a href="#" id="footerWaLink" target="_blank" style="color:#FF6B35;text-decoration:none;font-weight:700"></a>
-    <i class="fa-solid fa-laptop-code" style="color:#FF6B35;margin-inline-start:4px"></i>
+  <p id="footerRightsRow" style="margin-bottom:14px">
+    <span id="footerRights">All rights reserved</span> &copy; 2025
   </p>
+  <a href="#" id="footerWaLink" target="_blank" style="
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);
+    border-radius:99px;padding:8px 18px;text-decoration:none;
+    transition:all .25s ease;
+  ">
+    <span style="font-size:11.5px;color:var(--muted);font-weight:500">Developed by</span>
+    <span style="font-size:14.5px;font-weight:800;background:linear-gradient(90deg,#FF6B35,#D4AF37);-webkit-background-clip:text;background-clip:text;color:transparent">DevMuhamad.com</span>
+    <i class="fa-solid fa-code" style="color:#FF6B35;font-size:13px"></i>
+  </a>
 </footer>
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Meal details">
@@ -499,7 +512,6 @@ function applyI18nStatic(){
   document.getElementById('emptyTitle').textContent = t('no_results');
   document.getElementById('emptySub').textContent = t('try_other');
   document.getElementById('priceLabel').textContent = t('price');
-    document.getElementById('footerRights').textContent = t('rights');
 }
 
 /* ════════════════════════════════════════════════════════════════
