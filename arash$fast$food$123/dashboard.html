@@ -506,12 +506,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   </div>
 </section>
 <section class="panel" id="panel-qr">
-  <div class="card">
-    <h2><i class="fa-solid fa-link"></i> لینکی مێنوو</h2>
-    <div class="field"><label>لینکی گشتی (بۆ هەموو مێزەکان)</label>
-      <input type="text" id="qrLink" dir="ltr" value="https://devmuhamad.com/arash$fast$food$123/"/>
-    </div>
-  </div>
+
 
   <div class="card">
     <h2><i class="fa-solid fa-qrcode"></i> پیشاندان</h2>
@@ -1459,6 +1454,7 @@ function fillAnnouncementForm(){
   document.getElementById('annActive').checked = !!SETTINGS.announcement_active;
 
 }
+const FIXED_MENU_LINK = "https://devmuhamad.com/arash$fast$food$123/";
 let qrCodeInstance = null;
 
 function buildQrOptions(){
@@ -1466,7 +1462,7 @@ function buildQrOptions(){
     width: 260,
     height: 260,
     type: 'svg',
-    data: document.getElementById('qrLink').value.trim(),
+    data: FIXED_MENU_LINK,
     image: document.getElementById('qrLogoUrl').value || undefined,
     qrOptions: {
       errorCorrectionLevel: 'H'
@@ -1524,7 +1520,7 @@ document.querySelectorAll('.qr-style-select').forEach(group=>{
   t.addEventListener('input', ()=>{ if(/^#[0-9a-fA-F]{6}$/.test(t.value)){ c.value=t.value; renderQr(); } });
 });
 
-['qrLink','qrCaption','qrLogoSize'].forEach(id=>{
+['qrCaption','qrLogoSize'].forEach(id=>{
   document.getElementById(id).addEventListener('input', renderQr);
 });
 
