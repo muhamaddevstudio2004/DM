@@ -746,7 +746,6 @@ function openSection(tabName){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.getElementById('panel-'+tabName).classList.add('on');
   document.getElementById('appGridWrap').style.display='none';
-  document.getElementById('tabs').classList.remove('hidden-nav');
   document.getElementById('mainContent').classList.remove('hidden-nav');
   document.getElementById('homeBtn').style.display='flex';
   if(tabName==='activity') loadActivity();
