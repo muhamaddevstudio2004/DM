@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
 <style>
 :root{
   --ink:#2C0D0D; --bg:#241010; --layer1:#3A1717; --layer2:#481D1D; --layer3:#5A2424;
@@ -233,7 +234,15 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 
 .ann-dot{transform:translateX(0)}
 #annActive:checked + .ann-track + .ann-dot{transform:translateX(22px)}
-
+.qr-preview-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px;background:var(--layer2);border-radius:var(--r-lg)}
+#qrCanvasBox{background:#fff;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:center}
+.qr-caption-preview{font-size:13px;color:var(--muted);text-align:center;max-width:260px}
+.qr-controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.qr-controls-grid{grid-template-columns:1fr}}
+.qr-style-select{display:flex;flex-wrap:wrap;gap:8px}
+.qr-style-opt{padding:8px 14px;border-radius:10px;background:var(--layer2);color:var(--faint);font-size:12.5px;border:1px solid transparent}
+.qr-style-opt.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.qr-dl-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 </style>
 </head>
 <body>
@@ -295,9 +304,13 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
         <div class="app-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="app-card-label">پاراستن</div>
       </button>
-      <button class="app-card" data-tab="activity" style="--acc:#C9A227">
+          <button class="app-card" data-tab="activity" style="--acc:#C9A227">
         <div class="app-card-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
         <div class="app-card-label">چالاکی</div>
+      </button>
+      <button class="app-card" data-tab="qr" style="--acc:#B8792E">
+        <div class="app-card-icon"><i class="fa-solid fa-qrcode"></i></div>
+        <div class="app-card-label">QR کۆد</div>
       </button>
     </div>
   </div>
@@ -310,6 +323,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	<button class="tab" data-tab="footer"><i class="fa-solid fa-shoe-prints"></i> فوتەر</button>
   <button class="tab" data-tab="security"><i class="fa-solid fa-shield-halved"></i> پاراستن</button>
   <button class="tab" data-tab="activity"><i class="fa-solid fa-clock-rotate-left"></i> چالاکی</button>
+  <button class="tab" data-tab="qr"><i class="fa-solid fa-qrcode"></i> QR کۆد</button>
   </div>
 
   <main class="hidden-nav" id="mainContent">
@@ -491,7 +505,95 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
     <p class="empty-note" id="activityEmpty" style="display:none">هیچ چالاکییەک تۆمار نەکراوە</p>
   </div>
 </section>
+<section class="panel" id="panel-qr">
+  <div class="card">
+    <h2><i class="fa-solid fa-link"></i> لینکی مێنوو</h2>
+    <div class="field"><label>لینکی گشتی (بۆ هەموو مێزەکان)</label>
+      <input type="text" id="qrLink" dir="ltr" value="https://devmuhamad.com/arash$fast$food$123/"/>
+    </div>
+  </div>
 
+  <div class="card">
+    <h2><i class="fa-solid fa-qrcode"></i> پیشاندان</h2>
+    <div class="qr-preview-wrap">
+      <div id="qrCanvasBox"></div>
+      <div class="qr-caption-preview" id="qrCaptionPreview"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fa-solid fa-palette"></i> ڕەنگەکان</h2>
+    <div class="qr-controls-grid">
+      <div class="field"><label>ڕەنگی خاڵەکان</label>
+        <div class="color-field"><input type="color" id="qrDotsColor"/><input type="text" id="qrDotsColorT"/></div>
+      </div>
+      <div class="field"><label>ڕەنگی پاشبنەما</label>
+        <div class="color-field"><input type="color" id="qrBgColor"/><input type="text" id="qrBgColorT"/></div>
+      </div>
+      <div class="field"><label>ڕەنگی چوارچێوەی گۆشە</label>
+        <div class="color-field"><input type="color" id="qrCornerSquareColor"/><input type="text" id="qrCornerSquareColorT"/></div>
+      </div>
+      <div class="field"><label>ڕەنگی ناوەوەی گۆشە</label>
+        <div class="color-field"><input type="color" id="qrCornerDotColor"/><input type="text" id="qrCornerDotColorT"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fa-solid fa-shapes"></i> شێوازەکان</h2>
+    <div class="field"><label>شێوازی خاڵ</label>
+      <div class="qr-style-select" id="qrDotsType" data-key="dotsType">
+        <button class="qr-style-opt" data-val="square">چوارگۆشە</button>
+        <button class="qr-style-opt" data-val="dots">خاڵ</button>
+        <button class="qr-style-opt on" data-val="rounded">گرد</button>
+        <button class="qr-style-opt" data-val="extra-rounded">زۆر گرد</button>
+        <button class="qr-style-opt" data-val="classy">کلاسیک</button>
+        <button class="qr-style-opt" data-val="classy-rounded">کلاسیکی گرد</button>
+      </div>
+    </div>
+    <div class="field"><label>شێوازی چوارچێوەی گۆشە</label>
+      <div class="qr-style-select" id="qrCornerSquareType" data-key="cornerSquareType">
+        <button class="qr-style-opt on" data-val="square">چوارگۆشە</button>
+        <button class="qr-style-opt" data-val="dot">بازنە</button>
+        <button class="qr-style-opt" data-val="extra-rounded">گرد</button>
+      </div>
+    </div>
+    <div class="field"><label>شێوازی ناوەوەی گۆشە</label>
+      <div class="qr-style-select" id="qrCornerDotType" data-key="cornerDotType">
+        <button class="qr-style-opt on" data-val="square">چوارگۆشە</button>
+        <button class="qr-style-opt" data-val="dot">بازنە</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fa-solid fa-image"></i> لۆگۆی ناوەڕاست</h2>
+    <input type="file" id="qrLogoFile" accept="image/*" style="display:none"/>
+    <input type="hidden" id="qrLogoUrl"/>
+    <div id="qrLogoStatus">
+      <label for="qrLogoFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی لۆگۆ</label>
+    </div>
+    <button class="btn btn-ghost" id="qrLogoRemove" style="margin-top:10px">سڕینەوەی لۆگۆ</button>
+    <div class="field" style="margin-top:12px"><label>ئەندازەی لۆگۆ (٪ لە گشتی QR)</label>
+      <input type="number" id="qrLogoSize" min="10" max="40" value="22"/>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fa-solid fa-font"></i> دەقی ژێر QR (ئارەزوومەندانە)</h2>
+    <div class="field"><label>دەق (بەتاڵی بهێڵەرەوە ئەگەر نەتەوێت دەق دەربکەوێت)</label>
+      <textarea id="qrCaption" rows="2" placeholder="بۆ نموونە: سکان بکە بۆ بینینی مێنوو"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="qr-dl-row">
+      <button class="btn btn-gold" id="qrDownloadPng"><i class="fa-solid fa-download"></i> داونلۆد PNG</button>
+      <button class="btn btn-ghost" id="qrDownloadSvg"><i class="fa-solid fa-download"></i> داونلۆد SVG</button>
+      <button class="btn btn-gold" id="qrSaveSettings"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی ڕێکخستن</button>
+    </div>
+  </div>
+</section>
   </main>
 </div>
 
@@ -733,6 +835,7 @@ sb.from('meals').select('*').order('sort', {ascending:true}),
   if(SETTINGS) fillDesignForm();
   if(SETTINGS) fillFooterForm();
   if(SETTINGS) fillAnnouncementForm();
+  if(SETTINGS) fillQrForm();
   updateAppBadges();
 }
 function catsOfMeal(mealId){
@@ -1356,7 +1459,157 @@ function fillAnnouncementForm(){
   document.getElementById('annActive').checked = !!SETTINGS.announcement_active;
 
 }
+let qrCodeInstance = null;
 
+function buildQrOptions(){
+  return {
+    width: 260,
+    height: 260,
+    type: 'svg',
+    data: document.getElementById('qrLink').value.trim(),
+    image: document.getElementById('qrLogoUrl').value || undefined,
+    dotsOptions: {
+      color: document.getElementById('qrDotsColorT').value,
+      type: document.querySelector('#qrDotsType .on')?.dataset.val || 'rounded'
+    },
+    backgroundOptions: {
+      color: document.getElementById('qrBgColorT').value
+    },
+    cornersSquareOptions: {
+      color: document.getElementById('qrCornerSquareColorT').value,
+      type: document.querySelector('#qrCornerSquareType .on')?.dataset.val || 'square'
+    },
+    cornersDotOptions: {
+      color: document.getElementById('qrCornerDotColorT').value,
+      type: document.querySelector('#qrCornerDotType .on')?.dataset.val || 'square'
+    },
+    imageOptions: {
+      crossOrigin: 'anonymous',
+      imageSize: (Number(document.getElementById('qrLogoSize').value)||22)/100,
+      margin: 4
+    }
+  };
+}
+
+function renderQr(){
+  const opts = buildQrOptions();
+  const box = document.getElementById('qrCanvasBox');
+  if(!qrCodeInstance){
+    qrCodeInstance = new QRCodeStyling(opts);
+    box.innerHTML='';
+    qrCodeInstance.append(box);
+  } else {
+    qrCodeInstance.update(opts);
+  }
+  document.getElementById('qrCaptionPreview').textContent = document.getElementById('qrCaption').value.trim();
+}
+
+// style option click (dots/corner types)
+document.querySelectorAll('.qr-style-select').forEach(group=>{
+  group.addEventListener('click', e=>{
+    const btn = e.target.closest('.qr-style-opt');
+    if(!btn) return;
+    group.querySelectorAll('.qr-style-opt').forEach(b=>b.classList.toggle('on', b===btn));
+    renderQr();
+  });
+});
+
+// color sync + live update
+['qrDotsColor','qrBgColor','qrCornerSquareColor','qrCornerDotColor'].forEach(id=>{
+  const c = document.getElementById(id), t = document.getElementById(id+'T');
+  c.addEventListener('input', ()=>{ t.value=c.value; renderQr(); });
+  t.addEventListener('input', ()=>{ if(/^#[0-9a-fA-F]{6}$/.test(t.value)){ c.value=t.value; renderQr(); } });
+});
+
+['qrLink','qrCaption','qrLogoSize'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderQr);
+});
+
+document.getElementById('qrLogoFile').addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file || !guardConnected()) return;
+  document.getElementById('qrLogoStatus').innerHTML = `<div class="upload-btn"><i class="fa-solid fa-spinner fa-spin"></i> بارکردن...</div>`;
+  const url = await uploadImage(file);
+  if(url){
+    document.getElementById('qrLogoUrl').value = url;
+    document.getElementById('qrLogoStatus').innerHTML = `<div class="upload-done"><i class="fa-solid fa-check"></i> ${file.name} <label for="qrLogoFile" style="margin-inline-start:auto;color:var(--muted);cursor:pointer;font-size:12px">گۆڕین</label></div>`;
+    renderQr();
+  } else {
+    document.getElementById('qrLogoStatus').innerHTML = `<label for="qrLogoFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی لۆگۆ</label>`;
+  }
+});
+
+document.getElementById('qrLogoRemove').addEventListener('click', ()=>{
+  document.getElementById('qrLogoUrl').value='';
+  document.getElementById('qrLogoStatus').innerHTML = `<label for="qrLogoFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی لۆگۆ</label>`;
+  renderQr();
+});
+
+document.getElementById('qrDownloadPng').addEventListener('click', ()=>{
+  if(!qrCodeInstance) return;
+  qrCodeInstance.download({name:'menu-qr', extension:'png'});
+});
+document.getElementById('qrDownloadSvg').addEventListener('click', ()=>{
+  if(!qrCodeInstance) return;
+  qrCodeInstance.download({name:'menu-qr', extension:'svg'});
+});
+
+document.getElementById('qrSaveSettings').addEventListener('click', async ()=>{
+  if(!guardConnected()) return;
+  const payload = {
+    id:1,
+    qr_dots_color: document.getElementById('qrDotsColorT').value,
+    qr_bg_color: document.getElementById('qrBgColorT').value,
+    qr_corner_square_color: document.getElementById('qrCornerSquareColorT').value,
+    qr_corner_dot_color: document.getElementById('qrCornerDotColorT').value,
+    qr_dots_type: document.querySelector('#qrDotsType .on')?.dataset.val,
+    qr_corner_square_type: document.querySelector('#qrCornerSquareType .on')?.dataset.val,
+    qr_corner_dot_type: document.querySelector('#qrCornerDotType .on')?.dataset.val,
+    qr_logo_url: document.getElementById('qrLogoUrl').value,
+    qr_logo_size: Number(document.getElementById('qrLogoSize').value)||22,
+    qr_caption: document.getElementById('qrCaption').value.trim(),
+  };
+  const {error} = await sb.from('site_settings').upsert(payload);
+  if(error){ toast('هەڵە: '+error.message, false); return; }
+  toast('ڕێکخستنی QR پاشەکەوتکرا ✓');
+  await logActivity('گۆڕینی QR', 'ڕێکخستنی QR نوێکرایەوە');
+  await loadAll();
+});
+
+function fillQrForm(){
+  document.getElementById('qrDotsColor').value = SETTINGS.qr_dots_color || '#D4AF37';
+  document.getElementById('qrDotsColorT').value = SETTINGS.qr_dots_color || '#D4AF37';
+  document.getElementById('qrBgColor').value = SETTINGS.qr_bg_color || '#FFFFFF';
+  document.getElementById('qrBgColorT').value = SETTINGS.qr_bg_color || '#FFFFFF';
+  document.getElementById('qrCornerSquareColor').value = SETTINGS.qr_corner_square_color || '#D4AF37';
+  document.getElementById('qrCornerSquareColorT').value = SETTINGS.qr_corner_square_color || '#D4AF37';
+  document.getElementById('qrCornerDotColor').value = SETTINGS.qr_corner_dot_color || '#D4AF37';
+  document.getElementById('qrCornerDotColorT').value = SETTINGS.qr_corner_dot_color || '#D4AF37';
+  document.getElementById('qrLogoUrl').value = SETTINGS.qr_logo_url || '';
+  document.getElementById('qrLogoSize').value = SETTINGS.qr_logo_size || 22;
+  document.getElementById('qrCaption').value = SETTINGS.qr_caption || '';
+
+  if(SETTINGS.qr_logo_url){
+    document.getElementById('qrLogoStatus').innerHTML = `<div class="upload-done"><i class="fa-solid fa-check"></i> لۆگۆی هەڵبژێردراو <label for="qrLogoFile" style="margin-inline-start:auto;color:var(--muted);cursor:pointer;font-size:12px">گۆڕین</label></div>`;
+  }
+
+  ['qrDotsType','qrCornerSquareType','qrCornerDotType'].forEach(groupId=>{
+    const key = document.getElementById(groupId).dataset.key;
+    const val = SETTINGS['qr_'+key.replace('Type','_type').replace(/([A-Z])/g,'_$1').toLowerCase()];
+  });
+  // ساده‌تر: ڕاستەوخۆ دانان بەپێی ناوی ستوون
+  setActiveStyle('qrDotsType', SETTINGS.qr_dots_type || 'rounded');
+  setActiveStyle('qrCornerSquareType', SETTINGS.qr_corner_square_type || 'square');
+  setActiveStyle('qrCornerDotType', SETTINGS.qr_corner_dot_type || 'square');
+
+  renderQr();
+}
+
+function setActiveStyle(groupId, val){
+  document.querySelectorAll('#'+groupId+' .qr-style-opt').forEach(b=>{
+    b.classList.toggle('on', b.dataset.val===val);
+  });
+}
 /* ═══════════════════════════════════════════════════════════
    8. BOOT
 ═══════════════════════════════════════════════════════════ */
