@@ -240,6 +240,12 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 </div>
 
 <script>
+function esc(str){
+  if(str==null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
 /* ════════════════════════════════════════════════════════════════
    0. SUPABASE CONFIG — پڕی بکەرەوە دوای دروستکردنی پڕۆژەکەت
 ════════════════════════════════════════════════════════════════ */
@@ -313,7 +319,7 @@ MEAL_CATS = mealCats || [];
     // زیادکردنی ژمارەی سەردان — تەنها یەک جار بۆ هەر سێشن
 if(!sessionStorage.getItem('arash_viewed')){
   sessionStorage.setItem('arash_viewed','1');
-  sb.from('site_settings').update({view_count: (SETTINGS.view_count||0)+1}).eq('id',1).then(()=>{});
+  sb.rpc('increment_view_count').then(()=>{});
 }
 
         setupRealtime();
@@ -418,10 +424,10 @@ function renderCats(){
       <li class="cat-tile${S.cat===c.cat_id?' on':''}" role="listitem" data-cat="${c.cat_id}" tabindex="0" aria-pressed="${S.cat===c.cat_id}">
         <div class="cat-img-ring">
           <div class="cat-img-inner">
-            ${c.img ? `<img src="${c.img}" alt="${catLabel(c.cat_id)}" loading="lazy"/>` : `<div class="cat-icon-circle"><i class="${c.icon||'fa-solid fa-tag'}" aria-hidden="true"></i></div>`}
+            ${c.img ? `<img src="${esc(c.img)}" alt="${esc(catLabel(c.cat_id))}" loading="lazy"/>` : `<div class="cat-icon-circle"><i class="${esc(c.icon)||'fa-solid fa-tag'}" aria-hidden="true"></i></div>`}
           </div>
         </div>
-        <span class="cat-label">${catLabel(c.cat_id)}</span>
+        <span class="cat-label">${esc(catLabel(c.cat_id))}</span>
         <div class="cat-dot"></div>
       </li>
     `).join('');
@@ -434,21 +440,21 @@ function renderCats(){
    5. RENDER CARDS
 ════════════════════════════════════════════════════════════════ */
 function gridCard(m, idx){ return `
-  <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${locName(m)}">
-    <div class="gc-img"><img src="${m.img||''}" alt="${locName(m)}" loading="${idx<4?'eager':'lazy'}"/></div>
+  <article class="gcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${esc(locName(m))}">
+    <div class="gc-img"><img src="${esc(m.img)||''}" alt="${esc(locName(m))}" loading="${idx<4?'eager':'lazy'}"/></div>
     <div class="gc-body">
-      <div class="gc-name">${locName(m)}</div>
+      <div class="gc-name">${esc(locName(m))}</div>
       <div class="gc-price" style="font-size:13px;font-weight:600;color:var(--gold);margin-top:4px">${(m.price||0).toLocaleString()} <span class="gc-cur">${t('currency')}</span></div>
     </div>
   </article>`; }
 
 function listCard(m, idx){ return `
-  <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${locName(m)}">
-    <div class="lc-img"><img src="${m.img||''}" alt="${locName(m)}" loading="${idx<4?'eager':'lazy'}"/></div>
+  <article class="lcard" role="listitem" data-id="${m.id}" tabindex="0" aria-label="${esc(locName(m))}">
+    <div class="lc-img"><img src="${esc(m.img)||''}" alt="${esc(locName(m))}" loading="${idx<4?'eager':'lazy'}"/></div>
 <div class="lc-body">
   <div>
-    <div class="lc-cat">${catsOfMeal(m.id).map(catLabel).join(' · ')}</div>
-    <div class="lc-name">${locName(m)}</div>
+    <div class="lc-cat">${esc(catsOfMeal(m.id).map(catLabel).join(' · '))}</div>
+    <div class="lc-name">${esc(locName(m))}</div>
   </div>
   <div class="lc-footer"><div><span class="lc-price">${(m.price||0).toLocaleString()}</span><span class="lc-price-cur">${t('currency')}</span></div></div>
 </div>
