@@ -780,7 +780,27 @@ function toast(msg, ok=true){
 ═══════════════════════════════════════════════════════════ */
 const SUPABASE_URL = "https://ucewvsqwiupuxcsefqpg.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_tngbKw8nkcKTUF9XCxxY1A_nrPzPxRJ";
+const ADMIN_FN_URL = SUPABASE_URL + "/functions/v1/admin-action";
 
+async function adminCall(action, table, payload, match, needsDeletePin=false){
+  let pin;
+  if(needsDeletePin){
+    pin = prompt('تکایە پین کۆدی تایبەتی سڕینەوە بنووسە:');
+    if(pin===null) return {error:'cancelled'};
+  } else {
+    pin = localStorage.getItem('arash_pin') || '1991';
+  }
+  try{
+    const res = await fetch(ADMIN_FN_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+      body: JSON.stringify({ pin, action, table, payload, match, needsDeletePin })
+    });
+    return await res.json();
+  }catch(e){
+    return { error: 'پەیوەندی بە سێرڤەرەوە شکستی هێنا' };
+  }
+}
 let sb = null;
 let CATS = [];
 let MEALS = [];
@@ -921,8 +941,8 @@ document.getElementById('saveDesign').addEventListener('click', async ()=>{
 	announcement_en: document.getElementById('annEn').value.trim(),
 	announcement_active: document.getElementById('annActive').checked,
   };
-    const {error} = await sb.from('site_settings').upsert(payload);
-  if(error){ toast('هەڵە: '+error.message, false); return; }
+    const {error} = await adminCall('upsert', 'site_settings', payload);
+  if(error){ toast('هەڵە: '+error, false); return; }
   toast('دیزاین پاشەکەوتکرا ✓');
   await logActivity('گۆڕینی دیزاین', 'ڕەنگ، فۆنت و بانەر گۆڕدرا');
   await loadAll();
@@ -969,8 +989,8 @@ branch_text_en: document.getElementById('fBranchTextEn').value.trim(),
 	made_by_label: 'DevMuhamad.com',
 whatsapp_link: 'https://wa.me/9647509628683',
   };
-    const {error} = await sb.from('site_settings').upsert(payload);
-  if(error){ toast('هەڵە: '+error.message, false); return; }
+    const {error} = await adminCall('upsert', 'site_settings', payload);
+  if(error){ toast('هەڵە: '+error, false); return; }
   toast('فوتەر پاشەکەوتکرا ✓');
   await logActivity('گۆڕینی فوتەر', 'زانیاری فوتەر نوێکرایەوە');
   await loadAll();
@@ -980,11 +1000,12 @@ whatsapp_link: 'https://wa.me/9647509628683',
 async function uploadImage(file){
   if(!file) return null;
   const ext = file.name.split('.').pop();
-  const path = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-  const {error} = await sb.storage.from('images').upload(path, file);
+  const urlRes = await adminCall('getUploadUrl', 'storage', {ext});
+  if(urlRes.error){ toast('هەڵە: '+urlRes.error, false); return null; }
+  const { path, token, publicUrl } = urlRes.data;
+  const {error} = await sb.storage.from('images').uploadToSignedUrl(path, token, file);
   if(error){ toast('هەڵە لە بارکردنی وێنە: '+error.message, false); return null; }
-  const {data} = sb.storage.from('images').getPublicUrl(path);
-  return data.publicUrl;
+  return publicUrl;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1021,14 +1042,9 @@ async function loadStorageInfo(){
 
 document.getElementById('deleteAllBtn').addEventListener('click', async ()=>{
   if(!guardConnected()) return;
-  const entered = prompt('تکایە پین کۆدی تایبەتی سڕینەوە بنووسە:');
-  if(entered !== (localStorage.getItem('arash_admin_pin') || '1881')){
-    toast('پین کۆدی هەڵە', false); return;
-  }
   if(!confirm('دڵنیایت؟ هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە!')) return;
-    await sb.from('meal_categories').delete().neq('meal_id',0);
-  await sb.from('meals').delete().neq('id',0);
-  await sb.from('categories').delete().neq('id',0);
+  const res = await adminCall('deleteAll', null, null, null, true);
+  if(res.error){ toast('هەڵە: '+res.error, false); return; }
   toast('هەموو داتا سڕایەوە ✓');
   await logActivity('سڕینەوەی گشتی', 'هەموو خواردن و کەتەگۆرییەکان سڕانەوە');
   await loadAll();
@@ -1171,21 +1187,20 @@ document.getElementById('foodSave').addEventListener('click', async ()=>{
   if(!payload.name_ckb){ toast('ناوی خواردن بنووسە (بەلایەنی کەم کوردی)', false); return; }
 
   let mealId = id ? Number(id) : null;
-  let error;
+  let res;
   if(mealId){
-    ({error} = await sb.from('meals').update(payload).eq('id', mealId));
+    res = await adminCall('update', 'meals', payload, {id: mealId});
   } else {
-    const {data, error:insErr} = await sb.from('meals').insert(payload).select('id').single();
-    error = insErr;
-    mealId = data?.id;
+    res = await adminCall('insert', 'meals', payload);
+    mealId = res.data?.[0]?.id;
   }
-  if(error){ toast('هەڵە: '+error.message, false); return; }
+  if(res.error){ toast('هەڵە: '+res.error, false); return; }
 
   // نوێکردنەوەی پەیوەندییەکانی کەتەگۆری
-  await sb.from('meal_categories').delete().eq('meal_id', mealId);
+  await adminCall('delete', 'meal_categories', null, {meal_id: mealId});
   const rows = checkedCats.map(cat_id=>({meal_id:mealId, cat_id}));
-  const {error: mcErr} = await sb.from('meal_categories').insert(rows);
-  if(mcErr){ toast('هەڵە لە کەتەگۆری: '+mcErr.message, false); return; }
+  const mcRes = await adminCall('insert', 'meal_categories', rows);
+  if(mcRes.error){ toast('هەڵە لە کەتەگۆری: '+mcRes.error, false); return; }
 
     toast(id ? 'خواردنەکە نوێکرایەوە ✓' : 'خواردن زیادکرا ✓');
   await logActivity(id ? 'دەستکاریکردنی خواردن' : 'زیادکردنی خواردن', payload.name_ckb);
@@ -1233,9 +1248,9 @@ function initCatSortable(){
   catSortableInstance = new Sortable(document.getElementById('catList'), {
     handle: '.li-drag',
     animation: 150,
-    onEnd: async ()=>{
+        onEnd: async ()=>{
       const ids = [...document.querySelectorAll('#catList [data-id]')].map(el=>Number(el.dataset.id));
-      await Promise.all(ids.map((id,i)=> sb.from('categories').update({sort:i}).eq('id',id)));
+      await Promise.all(ids.map((id,i)=> adminCall('update', 'categories', {sort:i}, {id:id})));
       toast('ڕیزبەندی نوێکرایەوە ✓');
       await loadAll();
     }
@@ -1275,10 +1290,10 @@ document.getElementById('catSave').addEventListener('click', async ()=>{
 	label_en:  document.getElementById('catLabelEn').value.trim(),
   };
   if(!payload.cat_id || !payload.label_ckb){ toast('cat_id و ناوی کوردی پێویستە', false); return; }
-  let error;
-  if(rowId){ ({error} = await sb.from('categories').update(payload).eq('id', Number(rowId))); }
-  else  { payload.sort = CATS.length; ({error} = await sb.from('categories').insert(payload)); }
-  if(error){ toast('هەڵە: '+error.message, false); return; }
+  let res;
+  if(rowId){ res = await adminCall('update', 'categories', payload, {id: Number(rowId)}); }
+  else  { payload.sort = CATS.length; res = await adminCall('insert', 'categories', payload); }
+  if(res.error){ toast('هەڵە: '+res.error, false); return; }
     toast(rowId ? 'کەتەگۆری نوێکرایەوە ✓' : 'کەتەگۆری زیادکرا ✓');
   await logActivity(rowId ? 'دەستکاریکردنی کەتەگۆری' : 'زیادکردنی کەتەگۆری', payload.label_ckb);
   closeCatModal();
@@ -1323,9 +1338,9 @@ function initFoodSortable(isFiltered){
   foodSortableInstance = new Sortable(document.getElementById('foodList'), {
     handle: '.li-drag',
     animation: 150,
-    onEnd: async ()=>{
+        onEnd: async ()=>{
       const ids = [...document.querySelectorAll('#foodList [data-id]')].map(el=>Number(el.dataset.id));
-      await Promise.all(ids.map((id,i)=> sb.from('meals').update({sort:i}).eq('id',id)));
+      await Promise.all(ids.map((id,i)=> adminCall('update', 'meals', {sort:i}, {id:id})));
       toast('ڕیزبەندی نوێکرایەوە ✓');
       await loadAll();
     }
@@ -1350,10 +1365,10 @@ async function deleteFood(id){
     loadAll();
   });
 
-  pendingDeletes[key] = setTimeout(async ()=>{
+    pendingDeletes[key] = setTimeout(async ()=>{
     delete pendingDeletes[key];
-    const {error} = await sb.from('meals').delete().eq('id', id);
-    if(!error) await logActivity('سڕینەوەی خواردن', `"${m.name_ckb}" سڕایەوە`);
+    const res = await adminCall('delete', 'meals', null, {id: id});
+    if(!res.error) await logActivity('سڕینەوەی خواردن', `"${m.name_ckb}" سڕایەوە`);
   }, 10000);
 }
 
@@ -1375,8 +1390,8 @@ async function deleteCat(id){
 
   pendingDeletes[key] = setTimeout(async ()=>{
     delete pendingDeletes[key];
-    const {error} = await sb.from('categories').delete().eq('id', id);
-    if(!error) await logActivity('سڕینەوەی کەتەگۆری', `"${c.label_ckb}" سڕایەوە`);
+    const res = await adminCall('delete', 'categories', null, {id: id});
+    if(!res.error) await logActivity('سڕینەوەی کەتەگۆری', `"${c.label_ckb}" سڕایەوە`);
   }, 10000);
 }
 
@@ -1415,16 +1430,15 @@ function getDeviceInfo(){
 }
 
 async function logActivity(action, details){
-  if(!sb) return;
   try{
-    await sb.from('activity_log').insert({ action, details, device: getDeviceInfo() });
+    await adminCall('insert', 'activity_log', { action, details, device: getDeviceInfo() });
   }catch(e){ console.error(e); }
 }
 
 async function loadActivity(){
-  if(!sb) return;
-  const {data, error} = await sb.from('activity_log').select('*').order('created_at',{ascending:false}).limit(50);
-  if(error) return;
+  const res = await adminCall('select', 'activity_log');
+  if(res.error) return;
+  const data = res.data;
   const list = document.getElementById('activityList');
   const empty = document.getElementById('activityEmpty');
   empty.style.display = (data&&data.length) ? 'none':'block';
@@ -1568,8 +1582,8 @@ document.getElementById('qrSaveSettings').addEventListener('click', async ()=>{
     qr_logo_size: Number(document.getElementById('qrLogoSize').value)||22,
     qr_caption: document.getElementById('qrCaption').value.trim(),
   };
-  const {error} = await sb.from('site_settings').upsert(payload);
-  if(error){ toast('هەڵە: '+error.message, false); return; }
+   const {error} = await adminCall('upsert', 'site_settings', payload);
+  if(error){ toast('هەڵە: '+error, false); return; }
   toast('ڕێکخستنی QR پاشەکەوتکرا ✓');
   await logActivity('گۆڕینی QR', 'ڕێکخستنی QR نوێکرایەوە');
   await loadAll();
