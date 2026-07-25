@@ -5950,14 +5950,25 @@ function fabAction(type) {
   if(type === 'help') {
     openHelpModal();
   } else if(type === 'conn') {
-    navigate(null,'settings');
-    setTimeout(()=>{
-      const el = document.querySelector('.settings-menu-item[data-s="info"]');
-      if(el) openSettingsSection(el);
-    }, 250);
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    if(isAdmin) {
+      navigate(null,'settings');
+      setTimeout(()=>{
+        const el = document.querySelector('.settings-menu-item[data-s="info"]');
+        if(el) openSettingsSection(el);
+      }, 250);
+    } else {
+      showConnQuickStatus();
+    }
   } else if(type === 'logout') {
     if(confirm('دڵنیایت لە دەرچوون؟')) logoutUser();
   }
+}
+
+function showConnQuickStatus() {
+  const label = isOnline ? 'پەیوەستە ✓ — هەموو داتاکان sync دەکرێن' : 'ئۆفلاین ✗ — داتاکان کاتێک ئینتەرنێت گەڕایەوە sync دەکرێن';
+  const type = isOnline ? 'success' : 'error';
+  toast(label, type);
 }
 // داخستنی FAB کاتێک دەرەوەی کلیک دەکرێت
 document.addEventListener('click', e => {
