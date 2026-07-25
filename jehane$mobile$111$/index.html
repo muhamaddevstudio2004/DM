@@ -5039,16 +5039,18 @@ function renderSaleProducts() {
 	</div>`;
   }).join('') || '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px">هیچ کاڵایەک نەدۆزرایەوە</div>';
 }
-function addToCart(id) {
+function addToCart(id, silent) {
   const p = DB.get('products').find(x=>x.id===id);
-  if(!p) return;
+  if(!p) return false;
   const ex = saleCart.find(c=>c.id===id);
-  if(ex) { if(ex.qty<p.qty) ex.qty++; else { toast('کاڵا بەسەر چووە','error'); return; } }
-else saleCart.push({id, name:p.name, model:p.model||'', qty:1, unitPrice:p.sellPrice, buyPrice:p.buyPrice, maxQty:p.qty});
+  if(ex) {
+    if(ex.qty<p.qty) { ex.qty++; }
+    else { if(!silent) toast('کاڵا بەسەر چووە','error'); return false; }
+  }
+  else saleCart.push({id, name:p.name, model:p.model||'', qty:1, unitPrice:p.sellPrice, buyPrice:p.buyPrice, maxQty:p.qty});
   updateSaleCardUI(id); updateSaleStickyBar();
+  return true;
 }
-
-
 function renderSaleCart() {
   const c = document.getElementById('saleCart');
   if(!saleCart.length) { c.innerHTML=''; document.getElementById('saleTotalBox').style.display='none'; return; }
