@@ -4885,12 +4885,17 @@ function handleSaleSearchKeydown(e) {
     playScanBeep(false);
     toast('کاڵا لە کۆگا نەماوە: ' + product.name, 'error');
   } else {
-    addToCart(product.id);
-    flashSaleSearch(true);
-    playScanBeep(true);
-    toast('✓ ' + product.name + ' زیادکرا', 'success');
+    const added = addToCart(product.id, true);
+    if(added) {
+      flashSaleSearch(true);
+      playScanBeep(true);
+      toast('✓ ' + product.name + ' زیادکرا', 'success');
+    } else {
+      flashSaleSearch(false);
+      playScanBeep(false);
+      toast('⚠ زیاتر لە بڕی بەردەست هەڵناگیرێت: ' + product.name + ' (' + product.qty + ' دانە بەردەستە)', 'error');
+    }
   }
-
   e.target.value = '';
   applySaleFilters();
   if(scanModeOn) e.target.focus();
