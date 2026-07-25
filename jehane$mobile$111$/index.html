@@ -531,6 +531,56 @@ select.filter-input { cursor: pointer; }
 .sale-total-label { font-size: 13px; color: var(--text2); }
 .sale-total-val { font-size: 20px; font-weight: 700; color: var(--primary); font-family: 'Space Grotesk', sans-serif; }
 
+/* ── SCANNER MODE (USB/Bluetooth) ── */
+.scan-mode-btn.active {
+  background: var(--success-light);
+  color: var(--success);
+  border-color: rgba(0,217,166,0.35);
+}
+.scan-mode-status {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--success);
+  background: var(--success-light);
+  border: 1px solid rgba(0,217,166,0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.scan-mode-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+  animation: scanPulse 1.2s infinite;
+}
+@keyframes scanPulse {
+  0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(0,217,166,0.5); }
+  50% { opacity:0.6; transform:scale(1.25); box-shadow:0 0 0 6px rgba(0,217,166,0); }
+}
+#quickSaleSearch.scan-flash-success {
+  border-color: var(--success) !important;
+  box-shadow: 0 0 0 3px var(--success-light) !important;
+  background: var(--success-light) !important;
+  transition: all 0.15s ease;
+}
+#quickSaleSearch.scan-flash-error {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-light) !important;
+  background: var(--danger-light) !important;
+  transition: all 0.15s ease;
+  animation: scanShake 0.3s ease;
+}
+@keyframes scanShake {
+  0%,100% { transform:translateX(0); }
+  25% { transform:translateX(-4px); }
+  75% { transform:translateX(4px); }
+}
+
 /* ── REPAIR STATUS TIMELINE ── */
 .status-steps {
   display: flex;
@@ -1694,12 +1744,18 @@ kbd {
 	  </div>
 
 <!-- QUICK SALE SEARCH -->
+<div class="scan-mode-status" id="scanModeStatus">
+  <span class="scan-mode-dot"></span> ئامادەیە بۆ سکانکردن — بارکۆد سکان بکە
+</div>
 <div class="filters-bar">
  <input class="filter-input" style="min-width:220px" type="text"
   placeholder="گەڕان بۆ زیادکردنی کاڵا بۆ فرۆشتن..." id="quickSaleSearch"
-  oninput="applySaleFilters()">
+  oninput="applySaleFilters()" onkeydown="handleSaleSearchKeydown(event)">
+  <button class="btn btn-ghost scan-mode-btn" id="scanModeBtn" onclick="toggleScanMode()">
+    <i class="ti ti-barcode"></i> دۆخی سکانەری USB/Bluetooth
+  </button>
   <button class="btn btn-ghost" onclick="openBarcodeScanner('sale')">
-    <i class="ti ti-camera"></i> سکانکردنی بارکۆد
+    <i class="ti ti-camera"></i> سکانکردن بە کامێرا
   </button>
 </div>
 <div class="sale-cat-pills" id="quickSaleCatPills"></div>
@@ -3588,6 +3644,8 @@ function navigate(el, page) {
     saleCatFilter = '';
     const searchBox = document.getElementById('quickSaleSearch');
     if(searchBox) searchBox.value = '';
+  } else if(scanModeOn) {
+    toggleScanMode();
   }
 
   renderPage(page);
@@ -4760,6 +4818,93 @@ function applySaleFilters() {
   }
 }
 
+// ══════════════════════════════════════════
+//  USB / BLUETOOTH BARCODE SCANNER MODE
+// ══════════════════════════════════════════
+let scanModeOn = false;
+
+function toggleScanMode() {
+  scanModeOn = !scanModeOn;
+  const btn = document.getElementById('scanModeBtn');
+  const status = document.getElementById('scanModeStatus');
+  const input = document.getElementById('quickSaleSearch');
+  btn.classList.toggle('active', scanModeOn);
+  if(scanModeOn) {
+    status.style.display = 'flex';
+    input.placeholder = 'چاوەڕوانی سکانی بارکۆدە...';
+    input.focus();
+    toast('دۆخی سکانەر چالاککرا', 'success');
+  } else {
+    status.style.display = 'none';
+    input.placeholder = 'گەڕان بۆ زیادکردنی کاڵا بۆ فرۆشتن...';
+  }
+}
+
+function playScanBeep(success) {
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = success ? 1500 : 260;
+    gain.gain.setValueAtTime(0.16, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (success?0.12:0.22));
+    osc.start();
+    osc.stop(ctx.currentTime + (success?0.12:0.22));
+    if(!success && navigator.vibrate) navigator.vibrate(120);
+  } catch(e) {}
+}
+
+function flashSaleSearch(success) {
+  const input = document.getElementById('quickSaleSearch');
+  input.classList.remove('scan-flash-success','scan-flash-error');
+  void input.offsetWidth;
+  input.classList.add(success ? 'scan-flash-success' : 'scan-flash-error');
+  setTimeout(()=>input.classList.remove('scan-flash-success','scan-flash-error'), 350);
+}
+
+function handleSaleSearchKeydown(e) {
+  if(e.key !== 'Enter') return;
+  const raw = e.target.value.trim();
+  if(!raw) return;
+
+  // تەنها ئەگەر شێوازەکە وەک بارکۆد بێت کار دەکات، ئەگینا وەک گەڕانی ئاسایی بەجێدەهێڵرێت
+  const isBarcodeLike = /^[0-9A-Za-z\-]{4,}$/.test(raw) && /\d/.test(raw);
+  if(!isBarcodeLike) return;
+
+  e.preventDefault();
+  const product = CACHE.products.find(p => p.barcode === raw);
+
+  if(!product) {
+    flashSaleSearch(false);
+    playScanBeep(false);
+    toast('بارکۆد نەدۆزرایەوە: ' + raw, 'error');
+  } else if(product.qty <= 0) {
+    flashSaleSearch(false);
+    playScanBeep(false);
+    toast('کاڵا لە کۆگا نەماوە: ' + product.name, 'error');
+  } else {
+    addToCart(product.id);
+    flashSaleSearch(true);
+    playScanBeep(true);
+    toast('✓ ' + product.name + ' زیادکرا', 'success');
+  }
+
+  e.target.value = '';
+  applySaleFilters();
+  if(scanModeOn) e.target.focus();
+}
+
+document.addEventListener('click', function(e) {
+  if(!scanModeOn) return;
+  if(getCurrentPage() !== 'sales') return;
+  if(e.target.closest('.modal-overlay.open')) return;
+  const input = document.getElementById('quickSaleSearch');
+  if(input && document.activeElement !== input) {
+    setTimeout(()=>input.focus(), 60);
+  }
+});
 
 function updateSaleCardUI(id) {
   const card = document.querySelector(`.sale-product-card[data-id="${id}"]`);
