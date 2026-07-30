@@ -31,7 +31,8 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--layer3);border-radius:99px}
 
-.nav{position:sticky;top:0;z-index:120;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(212,175,55,.12);padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sticky-header{position:sticky;top:0;z-index:130}
+.nav{background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(212,175,55,.12);padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-inline-start:auto}
 .nav-brand{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.4px;white-space:nowrap;flex-shrink:0}
 .lang-pill{display:flex;gap:2px;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.15);border-radius:99px;padding:3px}
@@ -137,7 +138,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 .gcard.hidden,.lcard.hidden{display:none!important}
 
 .ann-banner{
-  position:sticky;top:0;z-index:130;background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+  background:linear-gradient(90deg,var(--gold-dim),var(--gold));
   color:var(--ink);font-weight:700;font-size:12.5px;text-align:center;
   padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:8px;
 }
@@ -160,6 +161,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
   <p>چاوەڕێبە...</p>
 </div>
 
+<div class="sticky-header">
 <div class="ann-banner" id="annBanner" style="display:none">
   <i class="fa-solid fa-bullhorn"></i>
   <span id="annBannerText"></span>
@@ -175,6 +177,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
     </div>
   </div>
 </header>
+</div>
 
 <main>
 <section class="cats-wrap" aria-label="Categories">
