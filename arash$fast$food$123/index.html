@@ -144,13 +144,22 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
 }
 .ann-banner i{font-size:12px}
 
-#footerWaLink:hover{
-  background:rgba(212,175,55,.16);
-  border-color:rgba(212,175,55,.5);
-  transform:translateY(-1px);
+#footerWaLink{
+  background:linear-gradient(90deg, var(--gold), #F0C875, var(--gold-dim), var(--gold), #F0C875);
+  background-size:300% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  animation:footerShine 5s linear infinite;
+  font-weight:800;
+  transition:filter .2s;
 }
-#footerWaLink:visited, #footerWaLink:link{ color:var(--gold)!important; }
-#footerWaLink:hover{ opacity:.8; text-decoration:underline!important; }
+#footerWaLink:hover{ filter:brightness(1.25); text-decoration:underline!important; }
+@keyframes footerShine{
+  0%{background-position:0% 50%}
+  100%{background-position:300% 50%}
+}
 
 </style>
 </head>
@@ -216,7 +225,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:
    <p style="font-size:12.5px;color:var(--faint)">
     <span id="footerRights">All rights reserved</span> &copy; 2026
     <span style="margin:0 6px;opacity:.4">•</span>
-    <a href="#" id="footerWaLink" target="_blank" style="color:var(--gold)!important;text-decoration:none!important;font-weight:700">DevMuhamad.com</a>
+    <a href="#" id="footerWaLink" target="_blank" style="text-decoration:none!important">DevMuhamad.com</a>
     <i class="fa-solid fa-code" style="color:var(--gold);font-size:11px;margin-inline-start:3px"></i>
   </p>
 
