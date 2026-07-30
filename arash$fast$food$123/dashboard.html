@@ -399,7 +399,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
       <span class="status-dot" id="connStatusDot"></span>
       <span id="connStatusText" style="font-size:14px;color:var(--cream)">پشکنین...</span>
     </div>
-    <div style="margin-bottom:8px;font-size:13px;color:var(--muted)">بەکارهێنانی داتابەیس</div>
+    <div style="margin-bottom:8px;font-size:13px;color:var(--muted)" data-i18n="storageUsageLabel">بەکارهێنانی داتابەیس</div>
     <div style="background:var(--layer2);border-radius:99px;height:10px;overflow:hidden;margin-bottom:6px">
       <div id="storageBar" style="height:100%;background:var(--gold);border-radius:99px;width:0%;transition:.6s"></div>
     </div>
@@ -407,14 +407,14 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   </div>
   <div class="card">
     <h2><i class="fa-solid fa-trash"></i> سڕینەوەی هەموو داتا</h2>
-    <p class="hint" style="margin-bottom:14px;color:var(--danger)">ئەم کردارە هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە. ئەم کردارە گەڕاندنەوەی نییە.</p>
+    <p class="hint" style="margin-bottom:14px;color:var(--danger)" data-i18n="deleteAllHint">ئەم کردارە هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە. ئەم کردارە گەڕاندنەوەی نییە.</p>
     <button class="btn btn-danger" id="deleteAllBtn"><i class="fa-solid fa-triangle-exclamation"></i> سڕینەوەی هەموو داتا</button>
   </div>
   <div class="card">
   <h2><i class="fa-solid fa-eye"></i> سەردانی مێنوو</h2>
   <div style="display:flex;align-items:center;gap:12px">
     <div style="font-size:36px;font-weight:700;color:var(--gold)" id="viewCountEl">---</div>
-    <div style="font-size:13px;color:var(--faint)">کەس سەیری مێنووی کردووە</div>
+    <div style="font-size:13px;color:var(--faint)" data-i18n="viewCountSub">کەس سەیری مێنووی کردووە</div>
   </div>
 </div>
 
@@ -425,9 +425,9 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	<section class="panel" id="panel-design">
 	  <div class="card">
 		<h2><i class="fa-solid fa-signature"></i> ناوی خواردنگە و فۆنت</h2>
-		<div class="field"><label>ناوی خواردنگە (Brand Name)</label><input type="text" id="dBrand"/></div>
+		<div class="field"><label data-i18n="brandNameLabel">ناوی خواردنگە (Brand Name)</label><input type="text" id="dBrand"/></div>
 		<div class="field">
-		  <label>قەبارەی فۆنتی بنەڕەت (px)</label>
+		  <label data-i18n="fontSizeLabel">قەبارەی فۆنتی بنەڕەت (px)</label>
 		  <input type="number" id="dFont" min="12" max="22"/>
 		</div>
 	  </div>
@@ -438,24 +438,24 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	  <div class="card">
 		<h2><i class="fa-solid fa-palette"></i> پاڵێتی ڕەنگ</h2>
 		<div class="row2">
-		  <div class="field"><label>ڕەنگی پاشبنەما (Background)</label>
+		  <div class="field"><label data-i18n="bgColorLabel">ڕەنگی پاشبنەما (Background)</label>
 			<div class="color-field"><input type="color" id="cBg"/><input type="text" id="cBgT"/></div></div>
-		  <div class="field"><label>ڕەنگی کارت (Layer 1)</label>
+		  <div class="field"><label data-i18n="l1ColorLabel">ڕەنگی کارت (Layer 1)</label>
 			<div class="color-field"><input type="color" id="cL1"/><input type="text" id="cL1T"/></div></div>
-		  <div class="field"><label>ڕەنگی بەرزکراوە (Layer 2)</label>
+		  <div class="field"><label data-i18n="l2ColorLabel">ڕەنگی بەرزکراوە (Layer 2)</label>
 			<div class="color-field"><input type="color" id="cL2"/><input type="text" id="cL2T"/></div></div>
-		  <div class="field"><label>ڕەنگی هۆڤەر (Layer 3)</label>
+		  <div class="field"><label data-i18n="l3ColorLabel">ڕەنگی هۆڤەر (Layer 3)</label>
 			<div class="color-field"><input type="color" id="cL3"/><input type="text" id="cL3T"/></div></div>
-		  <div class="field"><label>ڕەنگی زێڕینی سەرەکی (Gold)</label>
+		  <div class="field"><label data-i18n="goldColorLabel">ڕەنگی زێڕینی سەرەکی (Gold)</label>
 			<div class="color-field"><input type="color" id="cGold"/><input type="text" id="cGoldT"/></div></div>
-		  <div class="field"><label>ڕەنگی نووسین (Cream)</label>
+		  <div class="field"><label data-i18n="creamColorLabel">ڕەنگی نووسین (Cream)</label>
 			<div class="color-field"><input type="color" id="cCream"/><input type="text" id="cCreamT"/></div></div>
 		</div>
 	  </div>
     	  <div class="card">
 		<h2><i class="fa-solid fa-bullhorn"></i> ئاگادارکردنەوەی گشتی (بانەر)</h2>
 		<div class="field" style="display:flex;align-items:center;justify-content:space-between;background:var(--layer2);padding:12px 14px;border-radius:var(--r-sm);margin-bottom:14px">
-				  		  <label style="margin:0;font-size:13.5px;color:var(--cream)">چالاککردنی بانەر لەسەر مێنوو</label>
+		  <label style="margin:0;font-size:13.5px;color:var(--cream)" data-i18n="annToggleLabel">چالاککردنی بانەر لەسەر مێنوو</label>
 		  		 <label style="position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0">
   <input type="checkbox" id="annActive" style="opacity:0;width:0;height:0;position:absolute">
   <span id="annToggleTrack" class="ann-track"></span>
@@ -468,10 +468,10 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 		  <button class="lang-tab" data-lt="ar">عربي</button>
 		  <button class="lang-tab" data-lt="en">English</button>
 		</div>
-		<div class="lang-pane on" data-lp="ckb"><textarea id="annCkb" rows="2" placeholder="نموونە: بۆ ئەمشەو ١٥٪ داشکاندن!"></textarea></div>
+		<div class="lang-pane on" data-lp="ckb"><textarea id="annCkb" rows="2" placeholder="نموونە: بۆ ئەمشەو ١٥٪ داشکاندن!" data-i18n-ph="annPlaceholder"></textarea></div>
 		<div class="lang-pane" data-lp="ar"><textarea id="annAr" rows="2" dir="rtl"></textarea></div>
 		<div class="lang-pane" data-lp="en"><textarea id="annEn" rows="2" dir="ltr"></textarea></div>
-		<p class="hint">ئەگەر بۆشە بۆ زمانێک، بانەر بۆ ئەو زمانە دەرناکەوێت.</p>
+		<p class="hint" data-i18n="annHint">ئەگەر بۆشە بۆ زمانێک، بانەر بۆ ئەو زمانە دەرناکەوێت.</p>
 	  </div>
 	  <button class="btn btn-gold" id="saveDesign"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی دیزاین</button>
 	</section>
@@ -513,7 +513,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
     <div class="card">
   <h2><i class="fa-solid fa-location-dot"></i> زانیاری لق</h2>
   <div class="field">
-    <label>ژمارەی مۆبایل (بۆ tel:)</label>
+    <label data-i18n="branchPhoneLabel">ژمارەی مۆبایل (بۆ tel:)</label>
     <input type="text" id="fBranchPhone" dir="ltr" placeholder="+9647509628683"/>
   </div>
   <div class="lang-tabs">
@@ -531,11 +531,11 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 		<h2><i class="fa-brands fa-whatsapp"></i> دروستکراوە لەلایەن</h2>
 		<div class="row2">
 		  <div class="field">
-  <label>دروستکراوە لەلایەن</label>
+  <label data-i18n="madeByLabel">دروستکراوە لەلایەن</label>
   <input type="text" id="fMadeBy" placeholder="@DevMuhamad - DevMuhamad.com" value="DevMuhamad.com" readonly style="opacity:.5;cursor:not-allowed"/>
 </div>
 <div class="field">
-  <label>لینکی واتساپ</label>
+  <label data-i18n="waLinkLabel">لینکی واتساپ</label>
   <input type="text" id="fWaLink" placeholder="0750 962 8683" value="https://wa.me/9647509628683" dir="ltr" readonly style="opacity:.5;cursor:not-allowed"/>
 </div>
 		</div>
@@ -547,19 +547,19 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 <section class="panel" id="panel-security">
   <div class="card">
     <h2><i class="fa-solid fa-lock"></i> گۆڕینی پین کۆدی داخستنەوە</h2>
-    <div class="field"><label>پین کۆدی ئێستا</label><input type="password" id="currentPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی ئێستا بنووسە"/></div>
+    <div class="field"><label data-i18n="currentPinLabel">پین کۆدی ئێستا</label><input type="password" id="currentPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی ئێستا بنووسە" data-i18n-ph="currentPinPh"/></div>
     <div class="row2">
-      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی نوێ"/></div>
-      <div class="field"><label>دووبارە بنووسە</label><input type="password" id="newPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە"/></div>
+      <div class="field"><label data-i18n="newPinLabel">پین کۆدی نوێ</label><input type="password" id="newPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی نوێ" data-i18n-ph="newPinPh"/></div>
+      <div class="field"><label data-i18n="confirmPinLabel">دووبارە بنووسە</label><input type="password" id="newPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە" data-i18n-ph="confirmPinPh"/></div>
     </div>
     <button class="btn btn-gold" id="savePinBtn"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی پین</button>
   </div>
   <div class="card">
     <h2><i class="fa-solid fa-shield-halved"></i> گۆڕینی پین کۆدی سڕینەوەی داتا</h2>
-    <div class="field"><label>پین کۆدی ئێستا</label><input type="password" id="currentAdminPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی ئێستا بنووسە"/></div>
+    <div class="field"><label data-i18n="currentPinLabel">پین کۆدی ئێستا</label><input type="password" id="currentAdminPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی ئێستا بنووسە" data-i18n-ph="currentPinPh"/></div>
     <div class="row2">
-      <div class="field"><label>پین کۆدی نوێ</label><input type="password" id="newAdminPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی نوێ"/></div>
-      <div class="field"><label>دووبارە بنووسە</label><input type="password" id="newAdminPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە"/></div>
+      <div class="field"><label data-i18n="newPinLabel">پین کۆدی نوێ</label><input type="password" id="newAdminPin" inputmode="numeric" maxlength="6" placeholder="پین کۆدی نوێ" data-i18n-ph="newPinPh"/></div>
+      <div class="field"><label data-i18n="confirmPinLabel">دووبارە بنووسە</label><input type="password" id="newAdminPinConfirm" inputmode="numeric" maxlength="6" placeholder="دووبارە بنووسە" data-i18n-ph="confirmPinPh"/></div>
     </div>
     <button class="btn btn-gold" id="saveAdminPinBtn"><i class="fa-solid fa-floppy-disk"></i> پاشەکەوتکردنی پین</button>
   </div>
@@ -586,16 +586,16 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   <div class="card">
     <h2><i class="fa-solid fa-palette"></i> ڕەنگەکان</h2>
     <div class="qr-controls-grid">
-      <div class="field"><label>ڕەنگی خاڵەکان</label>
+      <div class="field"><label data-i18n="qrDotsColorLabel">ڕەنگی خاڵەکان</label>
         <div class="color-field"><input type="color" id="qrDotsColor"/><input type="text" id="qrDotsColorT"/></div>
       </div>
-      <div class="field"><label>ڕەنگی پاشبنەما</label>
+      <div class="field"><label data-i18n="qrBgColorLabel">ڕەنگی پاشبنەما</label>
         <div class="color-field"><input type="color" id="qrBgColor"/><input type="text" id="qrBgColorT"/></div>
       </div>
-      <div class="field"><label>ڕەنگی چوارچێوەی گۆشە</label>
+      <div class="field"><label data-i18n="qrCornerSquareColorLabel">ڕەنگی چوارچێوەی گۆشە</label>
         <div class="color-field"><input type="color" id="qrCornerSquareColor"/><input type="text" id="qrCornerSquareColorT"/></div>
       </div>
-      <div class="field"><label>ڕەنگی ناوەوەی گۆشە</label>
+      <div class="field"><label data-i18n="qrCornerDotColorLabel">ڕەنگی ناوەوەی گۆشە</label>
         <div class="color-field"><input type="color" id="qrCornerDotColor"/><input type="text" id="qrCornerDotColorT"/></div>
       </div>
     </div>
@@ -603,27 +603,27 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 
   <div class="card">
     <h2><i class="fa-solid fa-shapes"></i> شێوازەکان</h2>
-    <div class="field"><label>شێوازی خاڵ</label>
+    <div class="field"><label data-i18n="qrDotsStyleLabel">شێوازی خاڵ</label>
       <div class="qr-style-select" id="qrDotsType" data-key="dotsType">
-        <button class="qr-style-opt" data-val="square">چوارگۆشە</button>
-        <button class="qr-style-opt" data-val="dots">خاڵ</button>
-        <button class="qr-style-opt on" data-val="rounded">گرد</button>
-        <button class="qr-style-opt" data-val="extra-rounded">زۆر گرد</button>
-        <button class="qr-style-opt" data-val="classy">کلاسیک</button>
-        <button class="qr-style-opt" data-val="classy-rounded">کلاسیکی گرد</button>
+        <button class="qr-style-opt" data-val="square" data-i18n="styleSquare">چوارگۆشە</button>
+        <button class="qr-style-opt" data-val="dots" data-i18n="styleDots">خاڵ</button>
+        <button class="qr-style-opt on" data-val="rounded" data-i18n="styleRounded">گرد</button>
+        <button class="qr-style-opt" data-val="extra-rounded" data-i18n="styleExtraRounded">زۆر گرد</button>
+        <button class="qr-style-opt" data-val="classy" data-i18n="styleClassy">کلاسیک</button>
+        <button class="qr-style-opt" data-val="classy-rounded" data-i18n="styleClassyRounded">کلاسیکی گرد</button>
       </div>
     </div>
-    <div class="field"><label>شێوازی چوارچێوەی گۆشە</label>
+    <div class="field"><label data-i18n="qrCornerSquareStyleLabel">شێوازی چوارچێوەی گۆشە</label>
       <div class="qr-style-select" id="qrCornerSquareType" data-key="cornerSquareType">
-        <button class="qr-style-opt on" data-val="square">چوارگۆشە</button>
-        <button class="qr-style-opt" data-val="dot">بازنە</button>
-        <button class="qr-style-opt" data-val="extra-rounded">گرد</button>
+        <button class="qr-style-opt on" data-val="square" data-i18n="styleSquare">چوارگۆشە</button>
+        <button class="qr-style-opt" data-val="dot" data-i18n="styleDot">بازنە</button>
+        <button class="qr-style-opt" data-val="extra-rounded" data-i18n="styleRounded">گرد</button>
       </div>
     </div>
-    <div class="field"><label>شێوازی ناوەوەی گۆشە</label>
+    <div class="field"><label data-i18n="qrCornerDotStyleLabel">شێوازی ناوەوەی گۆشە</label>
       <div class="qr-style-select" id="qrCornerDotType" data-key="cornerDotType">
-        <button class="qr-style-opt on" data-val="square">چوارگۆشە</button>
-        <button class="qr-style-opt" data-val="dot">بازنە</button>
+        <button class="qr-style-opt on" data-val="square" data-i18n="styleSquare">چوارگۆشە</button>
+        <button class="qr-style-opt" data-val="dot" data-i18n="styleDot">بازنە</button>
       </div>
     </div>
   </div>
@@ -633,18 +633,18 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
     <input type="file" id="qrLogoFile" accept="image/*" style="display:none"/>
     <input type="hidden" id="qrLogoUrl"/>
     <div id="qrLogoStatus">
-      <label for="qrLogoFile" class="upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی لۆگۆ</label>
+      <label for="qrLogoFile" class="upload-btn" data-i18n="uploadLogoBtn"><i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی لۆگۆ</label>
     </div>
-    <button class="btn btn-ghost" id="qrLogoRemove" style="margin-top:10px">سڕینەوەی لۆگۆ</button>
-    <div class="field" style="margin-top:12px"><label>ئەندازەی لۆگۆ (٪ لە گشتی QR)</label>
+    <button class="btn btn-ghost" id="qrLogoRemove" style="margin-top:10px" data-i18n="qrLogoRemoveBtn">سڕینەوەی لۆگۆ</button>
+    <div class="field" style="margin-top:12px"><label data-i18n="qrLogoSizeLabel">ئەندازەی لۆگۆ (٪ لە گشتی QR)</label>
       <input type="number" id="qrLogoSize" min="10" max="40" value="22"/>
     </div>
   </div>
 
   <div class="card">
     <h2><i class="fa-solid fa-font"></i> دەقی ژێر QR (ئارەزوومەندانە)</h2>
-    <div class="field"><label>دەق (بەتاڵی بهێڵەرەوە ئەگەر نەتەوێت دەق دەربکەوێت)</label>
-      <textarea id="qrCaption" rows="2" placeholder="بۆ نموونە: سکان بکە بۆ بینینی مێنوو"></textarea>
+     <div class="field"><label data-i18n="qrCaptionLabel">دەق (بەتاڵی بهێڵەرەوە ئەگەر نەتەوێت دەق دەربکەوێت)</label>
+      <textarea id="qrCaption" rows="2" placeholder="بۆ نموونە: سکان بکە بۆ بینینی مێنوو" data-i18n-ph="qrCaptionPh"></textarea>
     </div>
   </div>
 
@@ -665,14 +665,14 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 	<h3><span id="foodModalTitle">زیادکردنی خواردن</span><i class="fa-solid fa-xmark close" id="foodModalClose"></i></h3>
 	<input type="hidden" id="foodId"/>
 <div class="field">
-  <label>کەتەگۆری (یەک یان زیاتر هەڵبژێرە)</label>
+  <label data-i18n="foodCatLabel">کەتەگۆری (یەک یان زیاتر هەڵبژێرە)</label>
   <div id="foodCatChecks" style="display:flex;flex-wrap:wrap;gap:8px"></div>
 </div>
-<div class="field"><label>وێنە</label>
+<div class="field"><label data-i18n="foodImgLabel">وێنە</label>
   <input type="file" id="foodImgFile" accept="image/*" style="display:none"/>
   <input type="hidden" id="foodImg"/>
   <div id="foodImgStatus">
-    <label for="foodImgFile" class="upload-btn">
+    <label for="foodImgFile" class="upload-btn" data-i18n="uploadImgBtn">
       <i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە
     </label>
   </div>
@@ -680,9 +680,9 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 </div>
 
 	<div class="row3">
-	  <div class="field"><label>نرخ (دینار)</label><input type="number" id="foodPrice"/></div>
-	  <div class="field"><label>کالۆری</label><input type="number" id="foodCal"/></div>
-	  <div class="field"><label>خولەک (ئامادەکردن)</label><input type="number" id="foodPrep"/></div>
+	  <div class="field"><label data-i18n="priceLabel2">نرخ (دینار)</label><input type="number" id="foodPrice"/></div>
+	  <div class="field"><label data-i18n="calLabel">کالۆری</label><input type="number" id="foodCal"/></div>
+	  <div class="field"><label data-i18n="prepLabel">خولەک (ئامادەکردن)</label><input type="number" id="foodPrep"/></div>
 	</div>
 	<div class="lang-tabs">
 	  <button class="lang-tab on" data-flt="ckb">کوردی</button>
@@ -713,18 +713,18 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   <div class="modal">
 	<h3><span id="catModalTitle">زیادکردنی کەتەگۆری</span><i class="fa-solid fa-xmark close" id="catModalClose"></i></h3>
 	<input type="hidden" id="catRowId"/>
-<div class="field"><label>وێنەی بچووک</label>
+<div class="field"><label data-i18n="catImgLabel">وێنەی بچووک</label>
   <input type="file" id="catImgFile" accept="image/*" style="display:none"/>
   <input type="hidden" id="catImg"/>
   <div id="catImgStatus">
-    <label for="catImgFile" class="upload-btn">
+    <label for="catImgFile" class="upload-btn" data-i18n="uploadImgBtn">
       <i class="fa-solid fa-cloud-arrow-up"></i> هەڵبژاردنی وێنە
     </label>
   </div>
   <img id="catImgPreview" style="max-width:80px;border-radius:50%;margin-top:8px;display:none"/>
 </div>
 
-	<div class="field"><label>ئایکۆن Font Awesome (نموونە: fa-solid fa-fire)</label><input type="text" id="catIcon" dir="ltr"/></div>
+	<div class="field"><label data-i18n="catIconLabel">ئایکۆن Font Awesome (نموونە: fa-solid fa-fire)</label><input type="text" id="catIcon" dir="ltr"/></div>
 	<div class="lang-tabs">
 	  <button class="lang-tab on" data-clt="ckb">کوردی</button>
 	  <button class="lang-tab" data-clt="ar">عربي</button>
@@ -893,11 +893,11 @@ async function connectSupabase(url, key){
 	if(error) throw error;
 	localStorage.setItem('arash_sb_url', url);
 	localStorage.setItem('arash_sb_key', key);
-	setStatus(true, 'پەیوەندی کرا');
+	setStatus(true, dt('statusConnected'));
 	await loadAll();
 	return true;
   }catch(err){
-	setStatus(false, 'هەڵە لە پەیوەندی');
+	setStatus(false, dt('statusError'));
 	sb = null;
 	return false;
   }
@@ -1198,11 +1198,11 @@ async function checkConnection(){
     const {error} = await sb.from('site_settings').select('id').limit(1);
     if(error) throw error;
     dot.className='status-dot ok';
-    txt.textContent='پەیوەندی سەرکەوتوو';
+    txt.textContent=dt('connectedOk');
     loadStorageInfo();
   }catch(e){
     dot.className='status-dot bad';
-    txt.textContent='پەیوەندی نەکرا';
+    txt.textContent=dt('connectedBad');
   }
 }
 
@@ -1216,7 +1216,7 @@ async function loadStorageInfo(){
     document.getElementById('storageBar').style.background = mb>400 ? 'var(--danger)' : mb>300 ? '#E1A855' : 'var(--gold)';
     document.getElementById('storageText').textContent = `${mb.toFixed(2)} MB / 500 MB (${pct}%)`;
   }catch(e){
-    document.getElementById('storageText').textContent = 'زانیاری بەردەست نییە';
+    document.getElementById('storageText').textContent = dt('storageUnavailable');
   }
 }
 
@@ -1312,7 +1312,7 @@ function openFoodModal(id=null){
   if(!CATS.length){ toast('سەرەتا کەتەگۆرییەک زیاد بکە', false); return; }
   fillFoodCatSelect();
   const m = id ? MEALS.find(x=>x.id===id) : null;
-  document.getElementById('foodModalTitle').textContent = m ? 'ئیدیتکردنی خواردن' : 'زیادکردنی خواردن';
+  document.getElementById('foodModalTitle').textContent = m ? dt('foodEditTitle') : dt('foodAddTitle');
   document.getElementById('foodId').value = m ? m.id : '';
   document.getElementById('foodImg').value = m ? (m.img||'') : '';
   // ریسێتی وێنە
@@ -1439,7 +1439,7 @@ function initCatSortable(){
 
 function openCatModal(id=null){
   const c = id ? CATS.find(x=>x.id===id) : null;
-  document.getElementById('catModalTitle').textContent = c ? 'ئیدیتکردنی کەتەگۆری' : 'زیادکردنی کەتەگۆری';
+  document.getElementById('catModalTitle').textContent = c ? dt('catEditTitle') : dt('catAddTitle');
   document.getElementById('catRowId').value = c ? c.id : '';
   document.getElementById('catImg').value = c ? (c.img||'') : '';
   document.getElementById('catIcon').value = c ? (c.icon||'') : '';
@@ -1869,6 +1869,35 @@ const DASH_I18N = {
     activityEmpty:'هیچ چالاکییەک تۆمار نەکراوە',
     foodCancel:'پاشگەزبوونەوە', catCancel:'پاشگەزبوونەوە',
     foodSave:'پاشەکەوتکردن', catSave:'پاشەکەوتکردن',
+    checking:'پشکنین...', connectedOk:'پەیوەندی سەرکەوتوو', connectedBad:'پەیوەندی نەکرا',
+    statusConnected:'پەیوەندی کرا', statusError:'هەڵە لە پەیوەندی',
+    storageUsageLabel:'بەکارهێنانی داتابەیس', storageUnavailable:'زانیاری بەردەست نییە',
+    deleteAllHint:'ئەم کردارە هەموو خواردن و کەتەگۆرییەکان دەسرێتەوە. ئەم کردارە گەڕاندنەوەی نییە.',
+    viewCountSub:'کەس سەیری مێنووی کردووە',
+    brandNameLabel:'ناوی خواردنگە (Brand Name)', fontSizeLabel:'قەبارەی فۆنتی بنەڕەت (px)',
+    bgColorLabel:'ڕەنگی پاشبنەما (Background)', l1ColorLabel:'ڕەنگی کارت (Layer 1)',
+    l2ColorLabel:'ڕەنگی بەرزکراوە (Layer 2)', l3ColorLabel:'ڕەنگی هۆڤەر (Layer 3)',
+    goldColorLabel:'ڕەنگی زێڕینی سەرەکی (Gold)', creamColorLabel:'ڕەنگی نووسین (Cream)',
+    annToggleLabel:'چالاککردنی بانەر لەسەر مێنوو',
+    annHint:'ئەگەر بۆشە بۆ زمانێک، بانەر بۆ ئەو زمانە دەرناکەوێت.',
+    annPlaceholder:'نموونە: بۆ ئەمشەو ١٥٪ داشکاندن!',
+    branchPhoneLabel:'ژمارەی مۆبایل (بۆ tel:)', madeByLabel:'دروستکراوە لەلایەن', waLinkLabel:'لینکی واتساپ',
+    currentPinLabel:'پین کۆدی ئێستا', currentPinPh:'پین کۆدی ئێستا بنووسە',
+    newPinLabel:'پین کۆدی نوێ', newPinPh:'پین کۆدی نوێ',
+    confirmPinLabel:'دووبارە بنووسە', confirmPinPh:'دووبارە بنووسە',
+    qrDotsColorLabel:'ڕەنگی خاڵەکان', qrBgColorLabel:'ڕەنگی پاشبنەما',
+    qrCornerSquareColorLabel:'ڕەنگی چوارچێوەی گۆشە', qrCornerDotColorLabel:'ڕەنگی ناوەوەی گۆشە',
+    qrDotsStyleLabel:'شێوازی خاڵ', qrCornerSquareStyleLabel:'شێوازی چوارچێوەی گۆشە', qrCornerDotStyleLabel:'شێوازی ناوەوەی گۆشە',
+    styleSquare:'چوارگۆشە', styleDots:'خاڵ', styleRounded:'گرد', styleExtraRounded:'زۆر گرد',
+    styleClassy:'کلاسیک', styleClassyRounded:'کلاسیکی گرد', styleDot:'بازنە',
+    qrLogoSizeLabel:'ئەندازەی لۆگۆ (٪ لە گشتی QR)', qrLogoRemoveBtn:'سڕینەوەی لۆگۆ',
+    qrCaptionLabel:'دەق (بەتاڵی بهێڵەرەوە ئەگەر نەتەوێت دەق دەربکەوێت)', qrCaptionPh:'بۆ نموونە: سکان بکە بۆ بینینی مێنوو',
+    uploadLogoBtn:'هەڵبژاردنی لۆگۆ', uploadImgBtn:'هەڵبژاردنی وێنە',
+    foodCatLabel:'کەتەگۆری (یەک یان زیاتر هەڵبژێرە)', foodImgLabel:'وێنە',
+    priceLabel2:'نرخ (دینار)', calLabel:'کالۆری', prepLabel:'خولەک (ئامادەکردن)',
+    foodAddTitle:'زیادکردنی خواردن', foodEditTitle:'ئیدیتکردنی خواردن',
+    catImgLabel:'وێنەی بچووک', catIconLabel:'ئایکۆن Font Awesome (نموونە: fa-solid fa-fire)',
+    catAddTitle:'زیادکردنی کەتەگۆری', catEditTitle:'ئیدیتکردنی کەتەگۆری',
   },
   ar: {
     brandText:'لوحة التحكم', lockBtnText:'خروج', appGridTitle:'كل الأقسام',
@@ -1885,8 +1914,61 @@ const DASH_I18N = {
     activityEmpty:'لا يوجد أي نشاط مسجل',
     foodCancel:'إلغاء', catCancel:'إلغاء',
     foodSave:'حفظ', catSave:'حفظ',
+    checking:'جارٍ الفحص...', connectedOk:'الاتصال ناجح', connectedBad:'فشل الاتصال',
+    statusConnected:'تم الاتصال', statusError:'خطأ بالاتصال',
+    storageUsageLabel:'استخدام قاعدة البيانات', storageUnavailable:'المعلومات غير متوفرة',
+    deleteAllHint:'سيؤدي هذا الإجراء إلى حذف جميع الأطباق والفئات. لا يمكن التراجع عن هذا الإجراء.',
+    viewCountSub:'شخص شاهد المنيو',
+    brandNameLabel:'اسم المطعم (Brand Name)', fontSizeLabel:'حجم الخط الأساسي (px)',
+    bgColorLabel:'لون الخلفية (Background)', l1ColorLabel:'لون البطاقة (Layer 1)',
+    l2ColorLabel:'لون الطبقة الثانية (Layer 2)', l3ColorLabel:'لون التحويم (Layer 3)',
+    goldColorLabel:'اللون الذهبي الأساسي (Gold)', creamColorLabel:'لون النص (Cream)',
+    annToggleLabel:'تفعيل البانر على المنيو',
+    annHint:'إذا تُرك فارغًا للغة ما، لن يظهر البانر بتلك اللغة.',
+    annPlaceholder:'مثال: خصم ١٥٪ الليلة فقط!',
+    branchPhoneLabel:'رقم الهاتف (لـ tel:)', madeByLabel:'تم التطوير بواسطة', waLinkLabel:'رابط واتساب',
+    currentPinLabel:'الرمز الحالي', currentPinPh:'أدخل الرمز الحالي',
+    newPinLabel:'الرمز الجديد', newPinPh:'الرمز الجديد',
+    confirmPinLabel:'أعد الكتابة', confirmPinPh:'أعد الكتابة',
+    qrDotsColorLabel:'لون النقاط', qrBgColorLabel:'لون الخلفية',
+    qrCornerSquareColorLabel:'لون إطار الزاوية', qrCornerDotColorLabel:'لون داخل الزاوية',
+    qrDotsStyleLabel:'نمط النقاط', qrCornerSquareStyleLabel:'نمط إطار الزاوية', qrCornerDotStyleLabel:'نمط داخل الزاوية',
+    styleSquare:'مربع', styleDots:'نقاط', styleRounded:'دائري', styleExtraRounded:'دائري كثيرًا',
+    styleClassy:'كلاسيكي', styleClassyRounded:'كلاسيكي دائري', styleDot:'دائرة',
+    qrLogoSizeLabel:'حجم الشعار (٪ من QR)', qrLogoRemoveBtn:'حذف الشعار',
+    qrCaptionLabel:'النص (اتركه فارغًا إذا لا تريد ظهور نص)', qrCaptionPh:'مثال: امسح لعرض المنيو',
+    uploadLogoBtn:'اختر الشعار', uploadImgBtn:'اختر صورة',
+    foodCatLabel:'الفئة (اختر واحدة أو أكثر)', foodImgLabel:'الصورة',
+    priceLabel2:'السعر (دينار)', calLabel:'السعرات الحرارية', prepLabel:'دقيقة (التحضير)',
+    foodAddTitle:'إضافة طبق', foodEditTitle:'تعديل الطبق',
+    catImgLabel:'صورة صغيرة', catIconLabel:'أيقونة Font Awesome (مثال: fa-solid fa-fire)',
+    catAddTitle:'إضافة فئة', catEditTitle:'تعديل الفئة',
   }
 };
+
+function dt(key){
+  const lang = localStorage.getItem('arash_admin_lang') || 'ckb';
+  return (DASH_I18N[lang] && DASH_I18N[lang][key]) || DASH_I18N.ckb[key] || key;
+}
+
+function applyGenericI18n(lang){
+  const d = DASH_I18N[lang] || DASH_I18N.ckb;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    if(d[key]==null) return;
+    const icon = el.querySelector(':scope > i');
+    if(icon){
+      if(icon.nextSibling && icon.nextSibling.nodeType===3) icon.nextSibling.textContent = ' ' + d[key];
+      else icon.insertAdjacentText('afterend', ' ' + d[key]);
+    } else {
+      el.textContent = d[key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const key = el.dataset.i18nPh;
+    if(d[key]!=null) el.placeholder = d[key];
+  });
+}
 
 function setIconText(el, text){
   if(!el || !text) return;
@@ -1936,12 +2018,12 @@ function applyDashLang(lang){
   document.getElementById('activityEmpty').textContent = d.activityEmpty;
   document.getElementById('foodCancel').textContent = d.foodCancel;
   document.getElementById('catCancel').textContent = d.catCancel;
-  setIconText(document.getElementById('foodSave'), d.foodSave);
+    setIconText(document.getElementById('foodSave'), d.foodSave);
   setIconText(document.getElementById('catSave'), d.catSave);
 
   applyDashLangHeaders(lang);
+  applyGenericI18n(lang);
 }
-
 document.querySelectorAll('.lang-opt-card[data-dlang]').forEach(b=>{
   b.addEventListener('click', ()=> applyDashLang(b.dataset.dlang));
 });
