@@ -193,8 +193,8 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <div class="location-title" id="location-title">سەردانی دوکانەکەمان بکە</div>
 <div class="location-address"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-7.4 7-12.5A7 7 0 0 0 5 9.5C5 14.6 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span id="location-address">هەولێر، شەقامی ٦٠ مەتری</span></div>
 <div class="location-actions">
-<a class="loc-btn loc-btn-primary" id="location-open-btn" href="javascript:void(0)" rel="noopener noreferrer">
-<a class="loc-btn loc-btn-secondary" id="location-nav-btn" href="javascript:void(0)" rel="noopener noreferrer">
+<a class="loc-btn loc-btn-primary" id="location-open-btn" href="javascript:void(0)" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg><span id="open-maps-text">کردنەوە لە خەریتە</span></a>
+<a class="loc-btn loc-btn-secondary" id="location-nav-btn" href="javascript:void(0)" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span id="nav-text">ڕێنیشاندن</span></a>
 </div>
 </div>
 </div>
@@ -277,6 +277,7 @@ const frag=document.createDocumentFragment();
 buttons.forEach((b,i)=>{
 const a = document.createElement("a");
 a.className="sbtn reveal";a.href=b.href;a.target=b.href.startsWith("http")?"_blank":"_self";a.rel="noopener noreferrer";
+a.dataset.href=b.href;a.dataset.target=a.target;
 a.style.transitionDelay=(i*0.025)+"s";
 const textDelay=(0.1+i*0.05)+"s",iconDelay=(0.03+i*0.05)+"s";
 a.innerHTML=`<span class="sbtn-icon" style="animation-delay:${iconDelay}">${b.icon}</span><span class="sbtn-body"><span class="sbtn-title" style="animation-delay:${textDelay}">${b.title}</span><span class="sbtn-sub" style="animation-delay:${textDelay}">${b.sub}</span></span><span class="sbtn-arrow">${ARROW}</span>`;
