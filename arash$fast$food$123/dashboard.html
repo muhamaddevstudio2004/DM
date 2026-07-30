@@ -11,9 +11,9 @@
 <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
 <style>
 :root{
-  --ink:#2C0D0D; --bg:#241010; --layer1:#3A1717; --layer2:#481D1D; --layer3:#5A2424;
-  --gold:#D4AF37; --gold-dim:#B8932E; --cream:#F5E8C8; --muted:#C4A882; --faint:#8C715A;
-  --ok:#4CAF6D; --danger:#E15555;
+  --ink:#3A2E1F; --bg:#F7F3EA; --layer1:#FFFFFF; --layer2:#EFE7D6; --layer3:#E3D8C0;
+  --gold:#B8862E; --gold-dim:#9C6F24; --cream:#3A2E1F; --muted:#6B5A42; --faint:#9C8A6E;
+  --ok:#3D9A5C; --danger:#D14545;
   --r-sm:8px; --r-md:14px; --r-lg:20px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -51,8 +51,8 @@ input,textarea,select{font-family:inherit;font-size:14px}
 #app{display:none}
 .topbar{
   position:sticky;top:0;z-index:50;
-  background:rgba(36,16,16,.9);backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(212,175,55,.12);
+  background:rgba(247,243,234,.9);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(0,0,0,.08);
   padding:0 16px;height:58px;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
@@ -131,8 +131,9 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 .card{
-  background:var(--layer1);border:1px solid rgba(255,255,255,.05);
+  background:var(--layer1);border:1px solid rgba(0,0,0,.08);
   border-radius:var(--r-lg);padding:18px;margin-bottom:16px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
 }
 .card h2{font-size:15px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .field{margin-bottom:14px}
