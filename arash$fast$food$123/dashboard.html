@@ -828,9 +828,14 @@ function tryPin(){
 
 document.getElementById('pinBtn').addEventListener('click', tryPin);
 pinInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tryPin(); });
+pinInput.addEventListener('input', ()=>{
+  const remain = getLockUntil() - Date.now();
+  if(remain > 0) return; // قوفڵکراوە، چاوەڕێی lock کۆنتینت بکە
+  if(pinInput.value.length >= 4 && pinInput.value === (localStorage.getItem('arash_pin') || '1991')){
+    tryPin();
+  }
+});
 checkLockOnLoad();
-
-
 /* ═══════════════════════════════════════════════════════════
    1. TOAST
 ═══════════════════════════════════════════════════════════ */
@@ -1053,9 +1058,13 @@ document.getElementById('presetGrid').addEventListener('click', e=>{
 function fillDesignForm(){
   document.getElementById('dBrand').value = SETTINGS.brand_name || '';
   document.getElementById('dFont').value  = SETTINGS.font_size || 15;
+  const CREAM_DEFAULTS = {
+    color_bg:'#F7F0E3', color_layer1:'#FFFFFF', color_layer2:'#F0E6D2',
+    color_layer3:'#E6D8BE', color_gold:'#C9973A', color_cream:'#3A2A15'
+  };
   const map = {cBg:'color_bg',cL1:'color_layer1',cL2:'color_layer2',cL3:'color_layer3',cGold:'color_gold',cCream:'color_cream'};
   Object.entries(map).forEach(([id,col])=>{
-	const val = SETTINGS[col] || '#000000';
+	const val = SETTINGS[col] || CREAM_DEFAULTS[col];
 	document.getElementById(id).value = val;
 		document.getElementById(id+'T').value = val;
   });
