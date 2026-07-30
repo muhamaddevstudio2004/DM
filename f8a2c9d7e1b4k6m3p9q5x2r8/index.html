@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script>
+/* Instant language-known check — avoids overlay flash & speeds up repeat visits */
+(function(){ try{ var s = localStorage.getItem('km_lang'); if(s){ document.documentElement.setAttribute('data-lang-known', s); } }catch(e){} })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<title>کوردستان مۆبایل | Kurdistan Mobile</title>
+<meta name="description" content="کوردستان مۆبایل — دوکانی مۆبایل و ئامێرە ئەلیکترۆنیەکان. پەیوەندیمان پێوە بکە لە وەتساپ، ئینستاگرام و شوێنەکانی تر.">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="color-scheme" content="dark">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="کوردستان مۆبایل | Kurdistan Mobile">
+<meta property="og:description" content="دوکانی مۆبایل و ئامێرە ئەلیکترۆنیەکان">
+<meta property="og:image" content="https://placehold.co/1200x630/0f0f0f/0A84FF?text=Kurdistan+Mobile">
+
+<!-- Favicon placeholder -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230A84FF'/%3E%3C/svg%3E">
+
+<!-- Modern font for Kurdish / Arabic text -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap">
+
+<style>
+  :root{
+    --bg: #0f0f0f;
+    --bg-2: #131316;
+    --card-bg: rgba(255,255,255,0.05);
+    --card-bg-strong: rgba(255,255,255,0.08);
+    --card-border: rgba(255,255,255,0.10);
+    --text: #ffffff;
+    --text-dim: rgba(255,255,255,0.62);
+    --text-faint: rgba(255,255,255,0.38);
+    --accent: #0A84FF;
+    --accent-2: #64B5FF;
+    --radius-lg: 24px;
+    --radius-md: 20px;
+    --radius-sm: 18px;
+    --shadow: 0 8px 30px rgba(0,0,0,0.4);
+    --ease: cubic-bezier(.22,.9,.32,1);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeSpeed;
+    position:relative;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* ---------- Animated background gradient (lighter blur = faster paint) ---------- */
+  .bg-glow{ position:fixed; inset:0; z-index:-1; overflow:hidden; background: var(--bg); contain:strict; }
+  .bg-glow::before, .bg-glow::after{
+    content:""; position:absolute; width:58vmax; height:58vmax; border-radius:50%;
+    filter: blur(90px); opacity:0.22; will-change: transform;
+  }
+  .bg-glow::before{ background: radial-gradient(circle, var(--accent), transparent 70%); top:-20%; left:-15%; animation: floatA 18s ease-in-out infinite alternate; }
+  .bg-glow::after{ background: radial-gradient(circle, #5e35ff, transparent 70%); bottom:-25%; right:-15%; animation: floatB 20s ease-in-out infinite alternate; }
+  @keyframes floatA{ 0%{ transform:translate3d(0,0,0) scale(1);} 100%{ transform:translate3d(8%,10%,0) scale(1.12);} }
+  @keyframes floatB{ 0%{ transform:translate3d(0,0,0) scale(1);} 100%{ transform:translate3d(-10%,-8%,0) scale(1.15);} }
+
+  /* ---------- Language switcher (blurred preview behind it) ---------- */
+  #lang-select{
+    position:fixed; inset:0; z-index:1001;
+    background: rgba(10,10,12,0.62);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px; padding:24px;
+    transition: opacity .45s var(--ease), visibility .45s var(--ease);
+  }
+  #lang-select.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  html[data-lang-known] #lang-select{ display:none; }
+
+  .lang-title{ font-size:15px; font-weight:600; color:var(--text-dim); letter-spacing:0.01em; transition: opacity .3s var(--ease), transform .3s var(--ease); }
+  .lang-options{ display:flex; flex-direction:column; gap:14px; width:100%; max-width:320px; transition: opacity .3s var(--ease), transform .3s var(--ease); }
+  #lang-select.exiting .lang-title, #lang-select.exiting .lang-options{ opacity:0; transform:translateY(-14px); }
+
+  .lang-card{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 20px; border-radius:20px;
+    background: rgba(255,255,255,0.06); border:1px solid var(--card-border);
+    cursor:pointer; transition: transform .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+  }
+  .lang-card:active{ transform: scale(0.96); }
+  @media (hover:hover){
+    .lang-card:hover{ border-color: rgba(10,132,255,0.5); background: var(--card-bg-strong); transform: translateY(-2px); }
+  }
+  .flag{ width:38px; height:26px; border-radius:5px; flex:none; position:relative; overflow:hidden; box-shadow:0 0 0 1px rgba(255,255,255,0.12); }
+  .flag-kurdistan{ background:linear-gradient(180deg,#ED1B24 0 33.3%, #fff 33.3% 66.6%, #007A3D 66.6% 100%); }
+  .flag-kurdistan::after{
+    content:""; position:absolute; top:50%; left:50%; width:15px; height:15px; transform:translate(-50%,-50%); border-radius:50%;
+    background: repeating-conic-gradient(#FFD200 0deg 8.57deg, transparent 8.57deg 17.14deg);
+  }
+  .flag-iraq{ background:linear-gradient(180deg,#CE1126 0 33.3%, #fff 33.3% 66.6%, #000 66.6% 100%); }
+  .flag-iraq::after{
+    content:"الله أكبر"; position:absolute; top:33.3%; left:0; right:0; height:33.3%;
+    display:flex; align-items:center; justify-content:center; font-size:5px; color:#007A3D; font-weight:700;
+  }
+  .lang-label{ font-size:16px; font-weight:700; }
+
+  /* ---------- Content blur-in (shown behind the language modal, sharpens after choice) ---------- */
+  #content-wrap{
+    filter: blur(22px);
+    transform: scale(1.03);
+    transition: filter .5s var(--ease), transform .5s var(--ease);
+  }
+  #content-wrap.sharp{ filter:none; transform:scale(1); }
+  html[data-lang-known] #content-wrap{ filter:none; transform:none; transition:none; }
+
+  /* ---------- Layout ---------- */
+  .wrap{
+    max-width:520px; margin:0 auto;
+    padding: max(28px, env(safe-area-inset-top)) 20px max(40px, env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:38px;
+  }
+
+  /* ---------- Reveal-on-scroll (soft, non-jarring, GPU-cheap) ---------- */
+  .reveal{ opacity:0; transform:translateY(10px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  .glass{
+    background: var(--card-bg); border:1px solid var(--card-border); border-radius: var(--radius-lg);
+    backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{ display:flex; flex-direction:column; align-items:center; text-align:center; padding:38px 24px 32px; gap:14px; margin-top:6px; }
+  .logo-ring{
+    width:104px; height:104px; border-radius:50%; padding:3px;
+    background: linear-gradient(135deg, var(--accent), #5e35ff);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 10px 30px rgba(10,132,255,0.25);
+    animation: popIn .6s var(--ease) both;
+  }
+  .logo-ring img{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; background: var(--bg-2); }
+  @keyframes popIn{ from{ opacity:0; transform:scale(.7);} to{ opacity:1; transform:scale(1);} }
+
+  .shop-pill{
+    display:flex; align-items:center; gap:6px; padding:6px 14px; border-radius:100px;
+    background: rgba(10,132,255,0.12); border:1px solid rgba(10,132,255,0.3);
+    font-size:12px; font-weight:600; color:var(--accent-2);
+  }
+  .shop-pill svg{ width:14px; height:14px; }
+
+  .biz-name{ display:flex; align-items:center; gap:6px; font-size:24px; font-weight:800; margin-top:4px; }
+  .badge{ width:18px; height:18px; flex:none; }
+  .biz-desc{ color: var(--text-dim); font-size:14.5px; line-height:1.7; max-width:340px; font-weight:400; }
+  .hero-tag{ font-size:11.5px; letter-spacing:0.05em; color: var(--accent-2); font-weight:600; margin-top:2px; }
+
+  .section-title{ font-size:13px; font-weight:700; color: var(--text-faint); padding:0 4px; margin-bottom:12px; }
+  .section{ display:flex; flex-direction:column; }
+
+  /* ---------- Social buttons (solid tint, no per-item blur = big perf win) ---------- */
+  .buttons{ display:flex; flex-direction:column; gap:12px; }
+  .sbtn{
+    position:relative; overflow:hidden; display:flex; align-items:center; gap:14px;
+    padding:15px 18px; border-radius: var(--radius-sm); text-decoration:none; color:var(--text);
+    background: var(--card-bg); border:1px solid var(--card-border);
+    transition: transform .22s var(--ease), background .22s var(--ease), border-color .22s var(--ease), box-shadow .22s var(--ease);
+    cursor:pointer;
+  }
+  .sbtn:active{ transform: scale(0.96); }
+  @media (hover:hover){
+    .sbtn:hover{ transform: translateY(-2px) scale(1.02); border-color: rgba(10,132,255,0.45); background: var(--card-bg-strong); box-shadow: 0 10px 24px rgba(10,132,255,0.18); }
+  }
+  .sbtn-icon{
+    width:42px; height:42px; flex:none; border-radius:13px; display:flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,0.06); opacity:0; animation: iconFadeIn .5s var(--ease) forwards;
+  }
+  .sbtn-icon svg{ width:21px; height:21px; }
+  @keyframes iconFadeIn{ from{ opacity:0; transform:scale(.6);} to{ opacity:1; transform:scale(1);} }
+  .sbtn-body{ flex:1; min-width:0; overflow:hidden; }
+  .sbtn-title, .sbtn-sub{ opacity:0; transform: translateX(-20px); animation: slideInText .45s var(--ease) forwards; }
+  .sbtn-title{ font-size:15px; font-weight:600; display:block; }
+  .sbtn-sub{ font-size:12px; color:var(--text-faint); margin-top:1px; display:block; font-weight:400; }
+  @keyframes slideInText{ from{ opacity:0; transform:translateX(-20px);} to{ opacity:1; transform:translateX(0);} }
+  .sbtn-arrow{ flex:none; opacity:0.5; transition: transform .22s var(--ease), opacity .22s var(--ease); }
+  .sbtn:hover .sbtn-arrow{ transform: translateX(-3px); opacity:0.9; }
+
+  .ripple{ position:absolute; border-radius:50%; background: rgba(255,255,255,0.35); transform: scale(0); animation: rippleAnim .55s ease-out forwards; pointer-events:none; }
+  @keyframes rippleAnim{ to{ transform:scale(3.2); opacity:0; } }
+
+  /* ---------- Reviews ---------- */
+  .reviews-scroller{
+    display:flex; gap:14px; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; padding:4px 4px 14px; margin:0 -4px;
+    scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .reviews-scroller::-webkit-scrollbar{ display:none; height:0; }
+  .review-card{ flex:0 0 78%; scroll-snap-align:start; padding:20px 20px 22px; border-radius: var(--radius-md); display:flex; flex-direction:column; gap:10px; }
+  @media (min-width:420px){ .review-card{ flex-basis:70%; } }
+  .review-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .review-name{ font-weight:700; font-size:14.5px; }
+  .stars{ color: var(--accent); font-size:13px; letter-spacing:1px; white-space:nowrap; }
+  .review-comment{ font-size:13.5px; line-height:1.7; color:var(--text-dim); font-weight:400; }
+  .review-hint{ text-align:center; font-size:11px; color:var(--text-faint); margin-top:2px; }
+
+  /* ---------- About Us ---------- */
+  .about-card{ padding:30px 24px 26px; display:flex; flex-direction:column; gap:18px; }
+  .about-icon{
+    width:52px; height:52px; border-radius:16px;
+    background: linear-gradient(135deg, rgba(10,132,255,0.22), rgba(94,53,255,0.18));
+    border:1px solid rgba(10,132,255,0.3); display:flex; align-items:center; justify-content:center;
+  }
+  .about-icon svg{ width:26px; height:26px; }
+  .about-title{ font-size:19px; font-weight:800; }
+  .about-text{ font-size:14px; line-height:1.85; color:var(--text-dim); font-weight:400; }
+  .about-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:4px; }
+  .stat-chip{ text-align:center; padding:14px 8px; border-radius:16px; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); }
+  .stat-num{ font-size:18px; font-weight:800; color:var(--accent-2); }
+  .stat-label{ font-size:10.5px; color:var(--text-faint); margin-top:3px; }
+  .about-trust{ display:flex; flex-direction:column; gap:10px; margin-top:2px; }
+  .trust-row{ display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--text-dim); line-height:1.6; font-weight:400; }
+  .trust-row svg{ flex:none; margin-top:2px; width:16px; height:16px; color:var(--accent); }
+
+  /* ---------- Location ---------- */
+  .location-card{ padding:0; overflow:hidden; position:relative; border:1px solid rgba(10,132,255,0.28); box-shadow: 0 16px 40px rgba(10,132,255,0.14), var(--shadow); }
+  .location-map{ width:100%; height:220px; display:block; border:0; filter:grayscale(0.15) contrast(1.05) brightness(0.9); }
+  .location-map-wrap{ position:relative; }
+  .location-map-wrap::after{ content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(15,15,15,0) 55%, rgba(15,15,15,0.85) 100%); pointer-events:none; }
+  .location-badge{
+    position:absolute; top:14px; right:14px; display:flex; align-items:center; gap:6px;
+    background: rgba(15,15,15,0.55); border:1px solid rgba(255,255,255,0.15); padding:6px 12px; border-radius:100px;
+    font-size:11px; font-weight:600;
+  }
+  .location-badge svg{ width:13px; height:13px; color:var(--accent-2); }
+  .location-body{ padding:22px 22px 24px; display:flex; flex-direction:column; gap:16px; }
+  .location-title{ font-size:18px; font-weight:800; }
+  .location-address{ font-size:13.5px; color:var(--text-dim); line-height:1.6; display:flex; gap:8px; align-items:flex-start; font-weight:400; }
+  .location-address svg{ flex:none; width:16px; height:16px; margin-top:2px; color:var(--accent); }
+  .location-actions{ display:flex; gap:10px; }
+  .loc-btn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:13px 14px; border-radius:15px;
+    font-size:13.5px; font-weight:700; text-decoration:none; cursor:pointer; position:relative; overflow:hidden;
+    transition: transform .22s var(--ease);
+  }
+  .loc-btn:active{ transform: scale(0.95); }
+  .loc-btn-primary{ background: linear-gradient(135deg, var(--accent), #3d6fff); color:#fff; box-shadow: 0 8px 18px rgba(10,132,255,0.3); }
+  .loc-btn-secondary{ background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--text); }
+  .loc-btn svg{ width:16px; height:16px; }
+
+  /* ---------- Footer ---------- */
+  .footer{ text-align:center; padding-top:8px; display:flex; flex-direction:column; gap:6px; }
+  .footer-thanks{ font-size:15px; font-weight:700; }
+  .footer-thanks span{ color:var(--accent-2); }
+  .footer-copy{ font-size:11.5px; color:var(--text-faint); font-weight:400; }
+
+  /* ============================================
+     RESPONSIVE — tablets (iPad) & larger phones
+     ============================================ */
+  @media (min-width:640px){
+    .wrap{ max-width:640px; padding-left:32px; padding-right:32px; gap:44px; }
+    .hero{ padding:46px 24px 36px; gap:16px; }
+    .logo-ring{ width:120px; height:120px; }
+    .biz-name{ font-size:28px; }
+    .biz-desc{ font-size:15.5px; max-width:420px; }
+    .buttons{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .review-card{ flex-basis:56%; }
+    .about-card{ padding:36px 32px 32px; }
+    .location-map{ height:260px; }
+  }
+  @media (min-width:900px){
+    .wrap{ max-width:720px; }
+    .review-card{ flex-basis:40%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- Language switcher -->
+<div id="lang-select">
+  <div class="lang-title">زمانێک هەڵبژێرە · اختر اللغة</div>
+  <div class="lang-options">
+    <div class="lang-card" data-lang="ku">
+      <span class="flag flag-kurdistan"></span>
+      <span class="lang-label">کوردی</span>
+    </div>
+    <div class="lang-card" data-lang="ar">
+      <span class="flag flag-iraq"></span>
+      <span class="lang-label">عربي</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="content-wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="logo-ring">
+      <img id="biz-logo" src="https://placehold.co/200x200/131316/0A84FF?text=KM" alt="لۆگۆی دوکان" decoding="async">
+    </div>
+
+    <div class="shop-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      <span id="shop-pill-text">دوکانی مۆبایل</span>
+    </div>
+
+    <div class="biz-name">
+      <span id="biz-name">کوردستان مۆبایل</span>
+      <svg class="badge" viewBox="0 0 24 24" fill="none" aria-label="پشتڕاستکراوە">
+        <circle cx="12" cy="12" r="12" fill="#0A84FF"/>
+        <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <p class="biz-desc" id="biz-desc">دوکانێکی مۆبایلی مۆدێرن کە باشترین و نوێترین مۆبایل و ئامێرەکان بە نرخێکی گونجاو پێشکەش دەکات.</p>
+    <div class="hero-tag" id="hero-tag">سکان بکە · پەیوەندیمان پێوە بکە · بابینە</div>
+  </section>
+
+  <!-- SOCIAL BUTTONS -->
+  <section class="section">
+    <div class="section-title reveal" id="title-contact">پەیوەندیمان پێوە بکە</div>
+    <div class="buttons" id="buttons-container"></div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section">
+    <div class="section-title reveal" id="title-reviews">ڕای کڕیارەکانمان</div>
+    <div class="reviews-scroller" id="reviews-container"></div>
+    <div class="review-hint reveal" id="review-hint">← بۆ زیاتر جوڵە بدە →</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section">
+    <div class="section-title reveal" id="title-about">دەربارەی ئێمە</div>
+    <div class="about-card glass reveal" id="about-card">
+      <div class="about-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      </div>
+      <div class="about-title" id="about-title">چیرۆکی ئێمە</div>
+      <p class="about-text" id="about-text"></p>
+      <div class="about-stats">
+        <div class="stat-chip"><div class="stat-num" id="stat-years">٨+</div><div class="stat-label" id="stat-years-label">ساڵ</div></div>
+        <div class="stat-chip"><div class="stat-num" id="stat-projects">٥٠٠+</div><div class="stat-label" id="stat-projects-label">کڕیار</div></div>
+        <div class="stat-chip"><div class="stat-num" id="stat-satisfaction">٩٨%</div><div class="stat-label" id="stat-satisfaction-label">ڕەزامەندی</div></div>
+      </div>
+      <div class="about-trust" id="about-trust"></div>
+    </div>
+  </section>
+
+  <!-- LOCATION -->
+  <section class="section">
+    <div class="section-title reveal" id="title-find">شوێنمان بدۆزەرەوە</div>
+    <div class="location-card glass reveal" id="location-card">
+      <div class="location-map-wrap">
+        <iframe class="location-map" id="location-map" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="نەخشەی شوێنی دوکان"></iframe>
+        <div class="location-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          <span id="open-now-text">کراوەیە</span>
+        </div>
+      </div>
+      <div class="location-body">
+        <div class="location-title" id="location-title">سەردانی دوکانەکەمان بکە</div>
+        <div class="location-address">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-7.4 7-12.5A7 7 0 0 0 5 9.5C5 14.6 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <span id="location-address">هەولێر، شەقامی ٦٠ مەتری</span>
+        </div>
+        <div class="location-actions">
+          <a class="loc-btn loc-btn-primary" id="location-open-btn" href="#" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            <span id="open-maps-text">کردنەوە لە خەریتە</span>
+          </a>
+          <a class="loc-btn loc-btn-secondary" id="location-nav-btn" href="#" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            <span id="nav-text">ڕێنیشاندن</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer reveal">
+    <div class="footer-thanks" id="footer-thanks">سوپاس بۆ سەردانتان</div>
+    <div class="footer-copy" id="footer-copy">© ٢٠٢٦ کوردستان مۆبایل. هەموو مافەکان پارێزراون.</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================
+     EASY-TO-EDIT LINKS (shared across languages)
+     ============================================ */
+  const LINKS = {
+    whatsappSales:   "https://wa.me/9647500000001",
+    whatsappSupport: "https://wa.me/9647500000002",
+    instagram: "https://instagram.com/kurdistanmobile",
+    tiktok:    "https://tiktok.com/@kurdistanmobile",
+    snapchat:  "https://snapchat.com/add/kurdistanmobile",
+    facebook:  "https://facebook.com/kurdistanmobile",
+    website:   "https://kurdistanmobile.example.com",
+    phone:     "tel:+9647500000000",
+    maps:      "https://maps.google.com/?q=Erbil+Kurdistan+Mobile",
+    mapQuery:  "Erbil Iraq"
+  };
+
+  const ICONS = {
+    whatsapp: `<svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.42a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.79 14.1c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.81-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35.19 0 .38 0 .55.01.18.01.42-.07.65.5.24.58.81 2 .88 2.15.07.15.12.32.02.52-.1.19-.15.31-.3.48-.15.17-.31.38-.44.51-.15.15-.31.31-.13.61.17.29.77 1.28 1.66 2.07 1.15 1.02 2.11 1.34 2.4 1.49.29.15.46.13.63-.05.17-.19.72-.83.91-1.12.19-.28.39-.24.65-.14.26.1 1.68.79 1.97.93.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>`,
+    instagram: `<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig)"/><defs><linearGradient id="ig" x1="0" y1="24" x2="24" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".4" stop-color="#D62976"/><stop offset=".7" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><circle cx="12" cy="12" r="5" stroke="#fff" stroke-width="1.6" fill="none"/><circle cx="17.4" cy="6.6" r="1.2" fill="#fff"/></svg>`,
+    tiktok: `<svg viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#0f0f0f"/><path d="M16.6 8.35a4.2 4.2 0 0 1-2.53-.84v6.06a4.55 4.55 0 1 1-3.9-4.5v2.2a2.35 2.35 0 1 0 1.65 2.24V4h2.25a4.2 4.2 0 0 0 2.53 3.5v.85z" fill="#fff"/></svg>`,
+    snapchat: `<svg viewBox="0 0 24 24" fill="#FFFC00"><rect width="24" height="24" rx="6"/><path d="M12 5.5c2 0 3.4 1.55 3.4 3.55 0 .55-.03 1.15.1 1.6.1.05.4.1.75-.1.3-.15.7-.05.75.3.05.35-.35.6-.7.75-.15.05-.15.2-.05.4.35.65 1.2 1.05 2 1.2.25.05.3.35.05.5-.35.2-.85.3-1.15.4-.15.05-.2.15-.2.3-.02.35-.1.6-.5.6-.35 0-.75-.15-1.2-.15-.65 0-1.1.5-2.25.5s-1.6-.5-2.25-.5c-.45 0-.85.15-1.2.15-.4 0-.48-.25-.5-.6 0-.15-.05-.25-.2-.3-.3-.1-.8-.2-1.15-.4-.25-.15-.2-.45.05-.5.8-.15 1.65-.55 2-1.2.1-.2.1-.35-.05-.4-.35-.15-.75-.4-.7-.75.05-.35.45-.45.75-.3.35.2.65.15.75.1.13-.45.1-1.05.1-1.6C8.6 7.05 10 5.5 12 5.5z" fill="#0f0f0f"/></svg>`,
+    facebook: `<svg viewBox="0 0 24 24" fill="#1877F2"><circle cx="12" cy="12" r="12"/><path d="M15.1 12.7h-2v7.2h-3v-7.2H8.5v-2.6h1.6V8.4c0-1.5.9-2.9 3.2-2.9h2v2.4h-1.5c-.3 0-.7.15-.7.75v1.4h2.3l-.3 2.6z" fill="#fff"/></svg>`,
+    website: `<svg viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.8 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.8-3.8-9S9.5 5.6 12 3z"/></svg>`,
+    phone: `<svg viewBox="0 0 24 24" fill="#0A84FF"><path d="M6.6 10.8c1.35 2.65 3.55 4.85 6.2 6.2l2.07-2.07a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.56.57a1 1 0 0 1 1 1V19.5a1 1 0 0 1-1 1C10.6 20.5 3.5 13.4 3.5 4.75a1 1 0 0 1 1-1H7.7a1 1 0 0 1 1 1c0 1.23.2 2.44.57 3.56a1 1 0 0 1-.25 1.02L6.6 10.8z"/></svg>`
+  };
+  const ARROW = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`;
+  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+
+  /* ============================================
+     TRANSLATIONS — Kurdish (ku) and Arabic (ar)
+     ============================================ */
+  const TEXT = {
+    ku: {
+      pageTitle: "کوردستان مۆبایل | Kurdistan Mobile",
+      businessName: "کوردستان مۆبایل",
+      shopPill: "دوکانی مۆبایل",
+      description: "دوکانێکی مۆبایلی مۆدێرن کە باشترین و نوێترین مۆبایل و ئامێرەکان بە نرخێکی گونجاو پێشکەش دەکات.",
+      heroTag: "سکان بکە · پەیوەندیمان پێوە بکە · بابینە",
+      titleContact: "پەیوەندیمان پێوە بکە",
+      titleReviews: "ڕای کڕیارەکانمان",
+      swipeHint: "← بۆ زیاتر جوڵە بدە →",
+      titleAbout: "دەربارەی ئێمە",
+      titleFind: "شوێنمان بدۆزەرەوە",
+      aboutTitle: "چیرۆکی ئێمە",
+      aboutText: "کوردستان مۆبایل وەک دوکانێکی بچووک لە هەولێر دەستی پێکرد، بە خەونی ئەوەی باشترین مۆبایل و خزمەتگوزاری بگەیەنین بە هەموو کڕیارێک. ئێستا بووینەتە یەکێک لە متمانەپێکراوترین دوکانەکانی مۆبایل لە هەرێمی کوردستان، لەگەڵ ڕێزلێنانێکی گەورە بۆ ڕاستگۆیی و کوالێتی.",
+      years: "٨+", yearsLabel: "ساڵ ئەزموون",
+      projects: "٥٠٠٠+", projectsLabel: "کڕیاری دڵخۆش",
+      satisfaction: "٩٨%", satisfactionLabel: "ڕەزامەندی",
+      trust: [
+        "مۆبایلی ئۆریجینال و بەڵگەنامەی گەرەنتی بۆ هەموو بەرهەمەکان.",
+        "تیمێکی ئامادە بۆ وەڵامدانەوەی خێرا لەسەر وەتساپ.",
+        "هەزاران کڕیاری دڵخۆش کە دووبارە دێنەوە بۆ کڕین."
+      ],
+      openNow: "کراوەیە",
+      locationTitle: "سەردانی دوکانەکەمان بکە",
+      locationAddress: "هەولێر، شەقامی ٦٠ مەتری، بەرامبەر بازاڕی نیشتمان",
+      openMaps: "کردنەوە لە خەریتە",
+      navigate: "ڕێنیشاندن",
+      footerThanksPre: "سوپاس بۆ ",
+      footerThanksHi: "سەردانتان",
+      footerCopy: "© ٢٠٢٦ کوردستان مۆبایل. هەموو مافەکان پارێزراون.",
+      buttons: [
+        { title: "وەتساپی فرۆشتن", sub: "بۆ کڕین و پرسیارکردن", icon: ICONS.whatsapp, href: LINKS.whatsappSales },
+        { title: "وەتساپی پشتیوانی", sub: "یارمەتی و چاککردنەوە", icon: ICONS.whatsapp, href: LINKS.whatsappSupport },
+        { title: "ئینستاگرام", sub: "نوێترین مۆبایلەکان ببینە", icon: ICONS.instagram, href: LINKS.instagram },
+        { title: "تیک تۆک", sub: "ڤیدیۆی بەرهەمەکانمان", icon: ICONS.tiktok, href: LINKS.tiktok },
+        { title: "سنابچات", sub: "زیادمان بکە", icon: ICONS.snapchat, href: LINKS.snapchat },
+        { title: "فەیسبووک", sub: "پەیجەکەمان شوێن بکەوە", icon: ICONS.facebook, href: LINKS.facebook },
+        { title: "ماڵپەڕ", sub: "هەموو بەرهەمەکان ببینە", icon: ICONS.website, href: LINKS.website },
+        { title: "پەیوەندی تەلەفۆنی", sub: "ڕاستەوخۆ قسە بکە", icon: ICONS.phone, href: LINKS.phone }
+      ],
+      reviews: [
+        { name: "ئاراس ح.", rating: 5, comment: "مۆبایلەکەم لە کوردستان مۆبایل کڕی، کوالێتی و نرخەکە زۆر باش بوو." },
+        { name: "شنو ک.", rating: 5, comment: "خزمەتگوزاری زۆر خێرا و پرۆفیشناڵ، لە وەتساپ خێرا وەڵامیان دایەوە." },
+        { name: "هێمن ع.", rating: 4, comment: "مۆبایلێکی ئۆریجینالم کڕی و گەرەنتیشیان پێدام، زۆر ڕازیم." },
+        { name: "ڕۆژین س.", rating: 5, comment: "باشترین دوکانی مۆبایل لە هەولێر، هەموو جۆرە مۆبایلێکیان هەیە." },
+        { name: "دیلان ف.", rating: 5, comment: "نرخەکان زۆر گونجاون و فرۆشیارەکان زۆر بەڕێز بوون." },
+        { name: "ژینۆ م.", rating: 4, comment: "پرۆسەی کڕین ئاسان بوو و ڕاستەوخۆ گەیشتمە ماڵەوە." },
+        { name: "کاروان ب.", rating: 5, comment: "دووبارە دەگەڕێمەوە بۆ کڕینی مۆبایلی داهاتوو، زۆر متمانەپێکراون." },
+        { name: "ئاڤان ت.", rating: 5, comment: "خزمەتگوزاری پاش فرۆشتنیان زۆر باشە، هەمیشە ئامادەن بۆ یارمەتیدان." },
+        { name: "سۆران ن.", rating: 4, comment: "جۆرەها ئاکسیسواری مۆبایلیشیان هەیە بە نرخێکی گونجاو." },
+        { name: "لاڤین ق.", rating: 5, comment: "زۆر خۆشحاڵم بە کڕینەکەم، پێشنیاری دوکانەکەیان دەکەم." }
+      ]
+    },
+    ar: {
+      pageTitle: "موبايل كوردستان | Kurdistan Mobile",
+      businessName: "موبايل كوردستان",
+      shopPill: "متجر موبايلات",
+      description: "متجر موبايلات عصري يقدم أحدث الأجهزة وأفضل الهواتف بأسعار مناسبة للجميع.",
+      heroTag: "امسح · تواصل معنا · اكتشف",
+      titleContact: "تواصل معنا",
+      titleReviews: "آراء زبائننا",
+      swipeHint: "← اسحب لرؤية المزيد →",
+      titleAbout: "من نحن",
+      titleFind: "موقعنا",
+      aboutTitle: "قصتنا",
+      aboutText: "بدأ موبايل كوردستان كمتجر صغير في أربيل، بحلم تقديم أفضل الهواتف وأفضل خدمة لكل زبون. اليوم أصبحنا من أكثر متاجر الموبايلات موثوقية في إقليم كوردستان، مع التزام كبير بالصدق والجودة.",
+      years: "8+", yearsLabel: "سنوات خبرة",
+      projects: "5000+", projectsLabel: "زبون سعيد",
+      satisfaction: "98%", satisfactionLabel: "نسبة الرضا",
+      trust: [
+        "هواتف أصلية 100% مع ضمان لجميع المنتجات.",
+        "فريق جاهز للرد السريع على واتساب في أي وقت.",
+        "آلاف الزبائن السعداء الذين يعودون للشراء مجددًا."
+      ],
+      openNow: "مفتوح الآن",
+      locationTitle: "زوروا متجرنا",
+      locationAddress: "أربيل، شارع 60 متر، مقابل سوق نيشتمان",
+      openMaps: "فتح في الخرائط",
+      navigate: "توجيه",
+      footerThanksPre: "شكرًا ",
+      footerThanksHi: "لزيارتكم",
+      footerCopy: "© 2026 موبايل كوردستان. جميع الحقوق محفوظة.",
+      buttons: [
+        { title: "واتساب المبيعات", sub: "للشراء والاستفسار", icon: ICONS.whatsapp, href: LINKS.whatsappSales },
+        { title: "واتساب الدعم", sub: "مساعدة وصيانة", icon: ICONS.whatsapp, href: LINKS.whatsappSupport },
+        { title: "انستغرام", sub: "شاهد أحدث الهواتف", icon: ICONS.instagram, href: LINKS.instagram },
+        { title: "تيك توك", sub: "فيديوهات منتجاتنا", icon: ICONS.tiktok, href: LINKS.tiktok },
+        { title: "سناب شات", sub: "أضفنا", icon: ICONS.snapchat, href: LINKS.snapchat },
+        { title: "فيسبوك", sub: "تابع صفحتنا", icon: ICONS.facebook, href: LINKS.facebook },
+        { title: "الموقع الإلكتروني", sub: "شاهد كل المنتجات", icon: ICONS.website, href: LINKS.website },
+        { title: "اتصال هاتفي", sub: "تحدث معنا مباشرة", icon: ICONS.phone, href: LINKS.phone }
+      ],
+      reviews: [
+        { name: "أحمد ك.", rating: 5, comment: "اشتريت هاتفي من موبايل كوردستان، الجودة والسعر ممتازين جدًا." },
+        { name: "زينب ح.", rating: 5, comment: "خدمة سريعة واحترافية، ردوا علي بسرعة على واتساب." },
+        { name: "بيمان ع.", rating: 4, comment: "اشتريت هاتف أصلي وأعطوني ضمان، أنا راضٍ جدًا." },
+        { name: "روژين س.", rating: 5, comment: "أفضل متجر موبايلات في أربيل، لديهم كل الأنواع." },
+        { name: "دلان ف.", rating: 5, comment: "الأسعار مناسبة جدًا والبائعون محترمون جدًا." },
+        { name: "ژینۆ م.", rating: 4, comment: "عملية الشراء كانت سهلة ووصلني الطلب إلى المنزل مباشرة." },
+        { name: "كاروان ب.", rating: 5, comment: "سأعود مرة أخرى لشراء هاتفي القادم، متجر موثوق جدًا." },
+        { name: "آفان ت.", rating: 5, comment: "خدمة ما بعد البيع ممتازة، دائمًا جاهزون للمساعدة." },
+        { name: "سوران ن.", rating: 4, comment: "لديهم أيضًا إكسسوارات موبايل متنوعة بأسعار مناسبة." },
+        { name: "لافین ق.", rating: 5, comment: "سعيد جدًا بشرائي، أنصح بهذا المتجر بشدة." }
+      ]
+    }
+  };
+
+  const CONFIG_LOGO = "https://placehold.co/200x200/131316/0A84FF?text=KM";
+  const CONFIG_ADDRESS_MAPQUERY = LINKS.mapQuery;
+
+  /* ---------- Apply a language ---------- */
+  function applyLang(code){
+    const t = TEXT[code];
+    document.documentElement.lang = code;
+    document.documentElement.dir = "rtl";
+    document.title = t.pageTitle;
+
+    document.getElementById("biz-logo").src = CONFIG_LOGO;
+    document.getElementById("shop-pill-text").textContent = t.shopPill;
+    document.getElementById("biz-name").textContent = t.businessName;
+    document.getElementById("biz-desc").textContent = t.description;
+    document.getElementById("hero-tag").textContent = t.heroTag;
+
+    document.getElementById("title-contact").textContent = t.titleContact;
+    document.getElementById("title-reviews").textContent = t.titleReviews;
+    document.getElementById("review-hint").textContent = t.swipeHint;
+    document.getElementById("title-about").textContent = t.titleAbout;
+    document.getElementById("title-find").textContent = t.titleFind;
+
+    document.getElementById("about-title").textContent = t.aboutTitle;
+    document.getElementById("about-text").textContent = t.aboutText;
+    document.getElementById("stat-years").textContent = t.years;
+    document.getElementById("stat-years-label").textContent = t.yearsLabel;
+    document.getElementById("stat-projects").textContent = t.projects;
+    document.getElementById("stat-projects-label").textContent = t.projectsLabel;
+    document.getElementById("stat-satisfaction").textContent = t.satisfaction;
+    document.getElementById("stat-satisfaction-label").textContent = t.satisfactionLabel;
+
+    const trustEl = document.getElementById("about-trust");
+    trustEl.innerHTML = "";
+    t.trust.forEach(line => {
+      const row = document.createElement("div");
+      row.className = "trust-row";
+      row.innerHTML = `${CHECK}<span>${line}</span>`;
+      trustEl.appendChild(row);
+    });
+
+    document.getElementById("open-now-text").textContent = t.openNow;
+    document.getElementById("location-title").textContent = t.locationTitle;
+    document.getElementById("location-address").textContent = t.locationAddress;
+    document.getElementById("open-maps-text").textContent = t.openMaps;
+    document.getElementById("nav-text").textContent = t.navigate;
+    document.getElementById("location-open-btn").href = LINKS.maps;
+    document.getElementById("location-nav-btn").href = LINKS.maps;
+    document.getElementById("location-map").src = "https://www.google.com/maps?q=" + encodeURIComponent(CONFIG_ADDRESS_MAPQUERY) + "&output=embed";
+
+    document.getElementById("footer-thanks").innerHTML = `${t.footerThanksPre}<span>${t.footerThanksHi}</span>`;
+    document.getElementById("footer-copy").textContent = t.footerCopy;
+
+    renderButtons(t.buttons);
+    renderReviews(t.reviews);
+  }
+
+  /* ---------- Render social buttons ---------- */
+  function renderButtons(buttons){
+    const container = document.getElementById("buttons-container");
+    container.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    buttons.forEach((b, i) => {
+      const a = document.createElement("a");
+      a.className = "sbtn reveal";
+      a.href = b.href;
+      a.target = b.href.startsWith("http") ? "_blank" : "_self";
+      a.rel = "noopener noreferrer";
+      a.style.transitionDelay = (i * 0.025) + "s";
+      const textDelay = (0.1 + i * 0.05) + "s";
+      const iconDelay = (0.03 + i * 0.05) + "s";
+      a.innerHTML = `
+        <span class="sbtn-icon" style="animation-delay:${iconDelay}">${b.icon}</span>
+        <span class="sbtn-body">
+          <span class="sbtn-title" style="animation-delay:${textDelay}">${b.title}</span>
+          <span class="sbtn-sub" style="animation-delay:${textDelay}">${b.sub}</span>
+        </span>
+        <span class="sbtn-arrow">${ARROW}</span>
+      `;
+      a.addEventListener("click", createRipple);
+      frag.appendChild(a);
+    });
+    container.appendChild(frag);
+    container.querySelectorAll(".reveal").forEach(observeReveal);
+  }
+
+  function createRipple(e){
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    const size = Math.max(rect.width, rect.height);
+    const x = (e.clientX ?? rect.left + rect.width/2) - rect.left - size/2;
+    const y = (e.clientY ?? rect.top + rect.height/2) - rect.top - size/2;
+    ripple.className = "ripple";
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = x + "px";
+    ripple.style.top = y + "px";
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }
+
+  /* ---------- Random unique reviews (3 of 10) ---------- */
+  function pickRandomReviews(arr, count){
+    const pool = [...arr];
+    const picked = [];
+    while (picked.length < count && pool.length){
+      const idx = Math.floor(Math.random() * pool.length);
+      picked.push(pool.splice(idx, 1)[0]);
+    }
+    return picked;
+  }
+
+  function renderReviews(reviewList){
+    const container = document.getElementById("reviews-container");
+    container.innerHTML = "";
+    const chosen = pickRandomReviews(reviewList, 3);
+    const frag = document.createDocumentFragment();
+    chosen.forEach((r, i) => {
+      const card = document.createElement("div");
+      card.className = "review-card glass reveal";
+      card.style.transitionDelay = (i * 0.07) + "s";
+      card.innerHTML = `
+        <div class="review-top">
+          <span class="review-name">${escapeHTML(r.name)}</span>
+          <span class="stars">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span>
+        </div>
+        <p class="review-comment">${escapeHTML(r.comment)}</p>
+      `;
+      frag.appendChild(card);
+    });
+    container.appendChild(frag);
+    container.querySelectorAll(".reveal").forEach(observeReveal);
+  }
+
+  function escapeHTML(str){
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---------- Scroll reveal (soft, one-time, GPU-cheap) ---------- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add("in");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+
+  function observeReveal(el){ io.observe(el); }
+  document.querySelectorAll(".reveal").forEach(observeReveal);
+
+  /* ---------- Language selection flow ---------- */
+  const langSelectEl = document.getElementById("lang-select");
+  const contentWrapEl = document.getElementById("content-wrap");
+  const knownLang = document.documentElement.getAttribute("data-lang-known");
+
+  function chooseLang(code){
+    try{ localStorage.setItem("km_lang", code); }catch(e){}
+    applyLang(code);
+    langSelectEl.classList.add("exiting");
+    setTimeout(() => {
+      langSelectEl.classList.add("hidden");
+      contentWrapEl.classList.add("sharp");
+    }, 260);
+  }
+
+  if (knownLang && TEXT[knownLang]){
+    applyLang(knownLang);
+    contentWrapEl.classList.add("sharp");
+  } else {
+    document.querySelectorAll(".lang-card").forEach(card => {
+      card.addEventListener("click", () => chooseLang(card.getAttribute("data-lang")));
+    });
+  }
+})();
+</script>
+</body>
+</html>
