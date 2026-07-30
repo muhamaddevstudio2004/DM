@@ -68,6 +68,9 @@ input,textarea,select{font-family:inherit;font-size:14px}
 .status-dot.ok{background:var(--ok)}
 .status-dot.bad{background:var(--danger)}
 .lock-btn{color:var(--faint);font-size:15px;padding:8px}
+.lang-pill{display:flex;gap:2px;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.15);border-radius:99px;padding:3px}
+.lpb{padding:4px 9px;border-radius:99px;font-size:11px;font-weight:600;color:var(--faint);transition:.2s}
+.lpb.on{background:var(--gold);color:var(--ink)}
 
 .app-grid-wrap{max-width:980px;margin:0 auto;padding:24px 16px 80px}
 .app-grid-title{font-size:15px;color:var(--muted);margin-bottom:16px;font-weight:600}
@@ -260,8 +263,12 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 <!-- ═══════════ APP ═══════════ -->
 <div id="app">
   <div class="topbar">
-	<div class="brand"><i class="fa-solid fa-burger"></i> داشبۆرد </div>
+	<div class="brand"><i class="fa-solid fa-burger"></i> <span id="brandText">داشبۆرد</span></div>
 	<div style="display:flex;align-items:center;gap:10px">
+	  <div class="lang-pill">
+		<button class="lpb on" data-dlang="ckb">کوردی</button>
+		<button class="lpb" data-dlang="ar">عربي</button>
+	  </div>
 	  <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--faint)">
 		<span class="status-dot" id="statusDot"></span>
 		<span id="statusText">پەیوەندی نەکراوە</span>
@@ -270,7 +277,7 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
     <i class="fa-solid fa-house"></i> سەرەکی
   </button>
 <button class="lock-btn" id="lockBtn" title="داخستن" style="display:flex;align-items:center;gap:6px;background:rgba(225,85,85,.12);border:1px solid rgba(225,85,85,.25);color:var(--danger);padding:7px 14px;border-radius:99px;font-size:12.5px;font-weight:600;transition:.2s">
-  <i class="fa-solid fa-right-from-bracket"></i> دەرچوون
+  <i class="fa-solid fa-right-from-bracket"></i> <span id="lockBtnText">دەرچوون</span>
 </button>
 	</div>
   </div>
@@ -997,16 +1004,45 @@ whatsapp_link: 'https://wa.me/9647509628683',
 });
 
 
+function compressImage(file, maxDim=1280, quality=0.75){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > height && width > maxDim){
+        height = Math.round(height * (maxDim/width)); width = maxDim;
+      } else if(height > maxDim){
+        width = Math.round(width * (maxDim/height)); height = maxDim;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob(blob=>{
+        if(!blob){ reject(new Error('compress failed')); return; }
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {type:'image/jpeg'}));
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 async function uploadImage(file){
   if(!file) return null;
-  const ext = file.name.split('.').pop();
-  const urlRes = await adminCall('getUploadUrl', 'storage', {ext});
+  let toUpload = file;
+  try{ toUpload = await compressImage(file); }
+  catch(e){ console.error('compress failed, using original', e); }
+  const urlRes = await adminCall('getUploadUrl', 'storage', {ext:'jpg'});
   if(urlRes.error){ toast('هەڵە: '+urlRes.error, false); return null; }
   const { path, token, publicUrl } = urlRes.data;
-  const {error} = await sb.storage.from('images').uploadToSignedUrl(path, token, file);
+  const {error} = await sb.storage.from('images').uploadToSignedUrl(path, token, toUpload);
   if(error){ toast('هەڵە لە بارکردنی وێنە: '+error.message, false); return null; }
   return publicUrl;
 }
+
 
 /* ═══════════════════════════════════════════════════════════
    6. FOOD TAB
@@ -1631,7 +1667,115 @@ function boot(){
     checkConnection();
   });
 }
+const H2_LABELS = {
+  ckb: ["دۆخی داتابەیس","سڕینەوەی هەموو داتا","سەردانی مێنوو","ناوی خواردنگە و فۆنت","پاڵێتی ڕەنگ","ئاگادارکردنەوەی گشتی (بانەر)","دەربارەی خواردنگە (about)","زانیاری لق","دروستکراوە لەلایەن","گۆڕینی پین کۆدی داخستنەوە","گۆڕینی پین کۆدی سڕینەوەی داتا","مێژووی چالاکی","پیشاندان","ڕەنگەکان","شێوازەکان","لۆگۆی ناوەڕاست","دەقی ژێر QR (ئارەزوومەندانە)"],
+  ar: ["حالة قاعدة البيانات","حذف جميع البيانات","زيارات المنيو","اسم المطعم والخط","لوحة الألوان","إعلان عام (بانر)","عن المطعم","معلومات الفرع","تم التطوير بواسطة","تغيير رمز قفل الخروج","تغيير رمز حذف البيانات","سجل النشاط","المعاينة","الألوان","الأنماط","الشعار المركزي","نص أسفل QR (اختياري)"]
+};
 
+const DASH_I18N = {
+  ckb: {
+    brandText:'داشبۆرد', lockBtnText:'دەرچوون', appGridTitle:'هەموو بەشەکان',
+    tab_conn:'پەیوەندی', tab_design:'دیزاین', tab_food:'خواردن', tab_cat:'کەتەگۆری',
+    tab_footer:'فوتەر', tab_security:'پاراستن', tab_activity:'چالاکی', tab_qr:'QR کۆد',
+    deleteAllBtn:'سڕینەوەی هەموو داتا',
+    addFoodBtn:'زیادکردنی خواردن', addCatBtn:'زیادکردنی کەتەگۆری',
+    saveDesign:'پاشەکەوتکردنی دیزاین', saveFooter:'پاشەکەوتکردنی فوتەر',
+    savePinBtn:'پاشەکەوتکردنی پین', saveAdminPinBtn:'پاشەکەوتکردنی پین',
+    qrSaveSettings:'پاشەکەوتکردنی ڕێکخستن',
+    qrDownloadPng:'داونلۆد PNG', qrDownloadSvg:'داونلۆد SVG',
+    foodSearchPh:'گەڕان بەناو خواردن...',
+    foodEmpty:'هیچ خواردنێک نییە', catEmpty:'هیچ کەتەگۆرییەک نییە',
+    activityEmpty:'هیچ چالاکییەک تۆمار نەکراوە',
+    foodCancel:'پاشگەزبوونەوە', catCancel:'پاشگەزبوونەوە',
+    foodSave:'پاشەکەوتکردن', catSave:'پاشەکەوتکردن',
+  },
+  ar: {
+    brandText:'لوحة التحكم', lockBtnText:'خروج', appGridTitle:'كل الأقسام',
+    tab_conn:'الاتصال', tab_design:'التصميم', tab_food:'الأطعمة', tab_cat:'الفئات',
+    tab_footer:'الفوتر', tab_security:'الحماية', tab_activity:'النشاط', tab_qr:'رمز QR',
+    deleteAllBtn:'حذف جميع البيانات',
+    addFoodBtn:'إضافة طبق', addCatBtn:'إضافة فئة',
+    saveDesign:'حفظ التصميم', saveFooter:'حفظ الفوتر',
+    savePinBtn:'حفظ الرمز', saveAdminPinBtn:'حفظ الرمز',
+    qrSaveSettings:'حفظ الإعدادات',
+    qrDownloadPng:'تحميل PNG', qrDownloadSvg:'تحميل SVG',
+    foodSearchPh:'ابحث عن طبق...',
+    foodEmpty:'لا يوجد أي طبق', catEmpty:'لا توجد أي فئة',
+    activityEmpty:'لا يوجد أي نشاط مسجل',
+    foodCancel:'إلغاء', catCancel:'إلغاء',
+    foodSave:'حفظ', catSave:'حفظ',
+  }
+};
+
+function setIconText(el, text){
+  if(!el || !text) return;
+  const icon = el.querySelector(':scope > i');
+  if(icon){
+    if(icon.nextSibling && icon.nextSibling.nodeType===3) icon.nextSibling.textContent = ' ' + text;
+    else icon.insertAdjacentText('afterend', ' ' + text);
+  } else {
+    el.textContent = text;
+  }
+}
+
+function applyDashLangHeaders(lang){
+  document.querySelectorAll('main h2').forEach((h2,i)=>{
+    const icon = h2.querySelector('i');
+    const label = H2_LABELS[lang]?.[i];
+    if(icon && label){
+      if(icon.nextSibling && icon.nextSibling.nodeType===3) icon.nextSibling.textContent = ' ' + label;
+      else icon.insertAdjacentText('afterend', ' ' + label);
+    }
+  });
+}
+
+function applyDashLang(lang){
+  const d = DASH_I18N[lang] || DASH_I18N.ckb;
+  localStorage.setItem('arash_admin_lang', lang);
+  document.querySelectorAll('.lpb[data-dlang]').forEach(b=> b.classList.toggle('on', b.dataset.dlang===lang));
+
+  document.getElementById('brandText').textContent = d.brandText;
+  if(document.getElementById('lockBtnText')) document.getElementById('lockBtnText').textContent = d.lockBtnText;
+  document.querySelector('.app-grid-title').textContent = d.appGridTitle;
+
+  document.querySelectorAll('.app-card[data-tab]').forEach(card=>{
+    const key = 'tab_' + card.dataset.tab;
+    const label = card.querySelector('.app-card-label');
+    if(label && d[key]) label.textContent = d[key];
+  });
+  document.querySelectorAll('.tab[data-tab]').forEach(tab=>{
+    const key = 'tab_' + tab.dataset.tab;
+    if(d[key]) setIconText(tab, d[key]);
+  });
+
+  setIconText(document.getElementById('deleteAllBtn'), d.deleteAllBtn);
+  setIconText(document.getElementById('addFoodBtn'), d.addFoodBtn);
+  setIconText(document.getElementById('addCatBtn'), d.addCatBtn);
+  setIconText(document.getElementById('saveDesign'), d.saveDesign);
+  setIconText(document.getElementById('saveFooter'), d.saveFooter);
+  setIconText(document.getElementById('savePinBtn'), d.savePinBtn);
+  setIconText(document.getElementById('saveAdminPinBtn'), d.saveAdminPinBtn);
+  setIconText(document.getElementById('qrSaveSettings'), d.qrSaveSettings);
+  setIconText(document.getElementById('qrDownloadPng'), d.qrDownloadPng);
+  setIconText(document.getElementById('qrDownloadSvg'), d.qrDownloadSvg);
+
+  document.getElementById('foodSearch').placeholder = d.foodSearchPh;
+  document.getElementById('foodEmpty').textContent = d.foodEmpty;
+  document.getElementById('catEmpty').textContent = d.catEmpty;
+  document.getElementById('activityEmpty').textContent = d.activityEmpty;
+  document.getElementById('foodCancel').textContent = d.foodCancel;
+  document.getElementById('catCancel').textContent = d.catCancel;
+  setIconText(document.getElementById('foodSave'), d.foodSave);
+  setIconText(document.getElementById('catSave'), d.catSave);
+
+  applyDashLangHeaders(lang);
+}
+
+document.querySelectorAll('.lpb[data-dlang]').forEach(b=>{
+  b.addEventListener('click', ()=> applyDashLang(b.dataset.dlang));
+});
+
+applyDashLang(localStorage.getItem('arash_admin_lang') || 'ckb');
 if(sessionStorage.getItem('arash_dash_unlocked')==='1') boot();
 
 document.getElementById('savePinBtn').addEventListener('click', ()=>{
