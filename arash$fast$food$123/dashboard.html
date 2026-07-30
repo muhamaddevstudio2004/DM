@@ -146,6 +146,15 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 @media(max-width:560px){.row2,.row3{grid-template-columns:1fr}}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin-bottom:6px}
+.preset-card{position:relative;border-radius:var(--r-md);overflow:hidden;border:1.5px solid rgba(255,255,255,.06);cursor:pointer;transition:.2s;background:var(--layer2)}
+.preset-card:hover{border-color:rgba(212,175,55,.3)}
+.preset-card.on{border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,175,55,.15)}
+.preset-swatch{height:52px;display:flex}
+.preset-swatch span{flex:1}
+.preset-label{padding:7px 8px;font-size:11.5px;font-weight:600;color:var(--cream);text-align:center}
+.preset-check{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:var(--ink);display:none;align-items:center;justify-content:center;font-size:9px}
+.preset-card.on .preset-check{display:flex}
 
 .color-field{display:flex;align-items:center;gap:10px}
 .color-field input[type=color]{width:44px;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:var(--layer2);padding:2px}
@@ -422,6 +431,10 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 		  <label>قەبارەی فۆنتی بنەڕەت (px)</label>
 		  <input type="number" id="dFont" min="12" max="22"/>
 		</div>
+	  </div>
+	  <div class="card">
+		<h2><i class="fa-solid fa-swatchbook"></i> <span id="presetTitle">پاڵێتی ئامادەکراو</span></h2>
+		<div class="preset-grid" id="presetGrid"></div>
 	  </div>
 	  <div class="card">
 		<h2><i class="fa-solid fa-palette"></i> پاڵێتی ڕەنگ</h2>
@@ -970,6 +983,55 @@ function guardConnected(){
 /* ═══════════════════════════════════════════════════════════
    4. DESIGN TAB
 ═══════════════════════════════════════════════════════════ */
+const DESIGN_PRESETS = [
+  { id:'gold',   name_ckb:'زێڕین کلاسیک', name_ar:'ذهبي كلاسيكي',
+    bg:'#241010', l1:'#3A1717', l2:'#481D1D', l3:'#5A2424', gold:'#D4AF37', cream:'#F5E8C8' },
+  { id:'olive',  name_ckb:'سەوزی زەیتوونی', name_ar:'أخضر زيتوني',
+    bg:'#1C2116', l1:'#2B3320', l2:'#38412A', l3:'#465035', gold:'#B8A055', cream:'#F0EAD6' },
+  { id:'navy',   name_ckb:'شینی تاریک', name_ar:'أزرق داكن',
+    bg:'#101825', l1:'#182438', l2:'#203049', l3:'#2A3D5C', gold:'#C9A24B', cream:'#EDE8DA' },
+  { id:'burnt',  name_ckb:'پرتەقاڵی تاریک', name_ar:'برتقالي محروق',
+    bg:'#26140C', l1:'#3D2013', l2:'#4E2A18', l3:'#60351F', gold:'#E0913F', cream:'#F7E9D7' },
+  { id:'purple', name_ckb:'مۆری شاهانە', name_ar:'بنفسجي ملكي',
+    bg:'#1C1224', l1:'#2C1B38', l2:'#392347', l3:'#472C58', gold:'#C9A0DC', cream:'#F0E8F5' },
+  { id:'noir',   name_ckb:'ڕەش و زێڕین', name_ar:'أسود وذهبي',
+    bg:'#0E0E0E', l1:'#1A1A1A', l2:'#242424', l3:'#303030', gold:'#D4AF37', cream:'#F2F0E8' },
+  { id:'rose',   name_ckb:'پەمەیی تۆزاوی', name_ar:'وردي ترابي',
+    bg:'#241416', l1:'#382025', l2:'#472A30', l3:'#57343B', gold:'#D89AA0', cream:'#F7E9EA' },
+];
+
+function renderPresets(){
+  const wrap = document.getElementById('presetGrid');
+  const lang = localStorage.getItem('arash_admin_lang') || 'ckb';
+  const activeGold = (document.getElementById('cGoldT').value||'').toUpperCase();
+  wrap.innerHTML = DESIGN_PRESETS.map(p=>`
+    <div class="preset-card${p.gold.toUpperCase()===activeGold?' on':''}" data-preset="${p.id}">
+      <span class="preset-check"><i class="fa-solid fa-check"></i></span>
+      <div class="preset-swatch">
+        <span style="background:${p.bg}"></span><span style="background:${p.l2}"></span>
+        <span style="background:${p.gold}"></span><span style="background:${p.cream}"></span>
+      </div>
+      <div class="preset-label">${lang==='ar'?p.name_ar:p.name_ckb}</div>
+    </div>
+  `).join('');
+}
+
+function applyPreset(id){
+  const p = DESIGN_PRESETS.find(x=>x.id===id);
+  if(!p) return;
+  const map = {cBg:p.bg, cL1:p.l1, cL2:p.l2, cL3:p.l3, cGold:p.gold, cCream:p.cream};
+  Object.entries(map).forEach(([elId,val])=>{
+    document.getElementById(elId).value = val;
+    document.getElementById(elId+'T').value = val;
+  });
+  renderPresets();
+}
+
+document.getElementById('presetGrid').addEventListener('click', e=>{
+  const card = e.target.closest('[data-preset]');
+  if(card) applyPreset(card.dataset.preset);
+});
+
 function fillDesignForm(){
   document.getElementById('dBrand').value = SETTINGS.brand_name || '';
   document.getElementById('dFont').value  = SETTINGS.font_size || 15;
@@ -977,8 +1039,9 @@ function fillDesignForm(){
   Object.entries(map).forEach(([id,col])=>{
 	const val = SETTINGS[col] || '#000000';
 	document.getElementById(id).value = val;
-	document.getElementById(id+'T').value = val;
+		document.getElementById(id+'T').value = val;
   });
+  renderPresets();
 }
 // sync color pickers <-> text inputs
 ['Bg','L1','L2','L3','Gold','Cream'].forEach(k=>{
