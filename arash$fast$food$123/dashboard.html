@@ -886,6 +886,7 @@ async function tryPin(){
     document.getElementById('pinGate').style.display='none';
     document.getElementById('app').style.display='block';
     sessionStorage.setItem('arash_dash_unlocked','1');
+    sessionStorage.setItem('arash_pin_plain_cache', pinInput.value);
     boot();
   } else {
     const attempts = getAttempts() + 1;
@@ -949,7 +950,7 @@ async function adminCall(action, table, payload, match, needsDeletePin=false){
     if(!ok) return {error:'پین کۆدی سڕینەوە هەڵەیە'};
   } else {
     // ئەم پینە بۆ ئۆتۆریزەکردنی سێرڤەرەوەیە، دەبێت بە پلەیناسکی بنێردرێت چونکە سێرڤەر خۆی پشکنینی دەکات
-    pin = localStorage.getItem('arash_pin_plain_cache') || '';
+    pin = sessionStorage.getItem('arash_pin_plain_cache') || '';
   }
   try{
     const res = await fetch(ADMIN_FN_URL, {
