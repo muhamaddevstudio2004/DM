@@ -543,9 +543,14 @@ document.getElementById('mCat').textContent = catsOfMeal(m.id).map(catLabel).joi
   document.getElementById('mDesc').textContent = locDesc(m);
   document.getElementById('mPrice').textContent = (m.price||0).toLocaleString();
   document.getElementById('mCur').textContent = t('currency');
-  document.getElementById('mChips').innerHTML = `
-    <div class="mchip"><i class="fa-solid fa-fire"></i>${m.cal||0} ${t('calories')}</div>
-    <div class="mchip"><i class="fa-regular fa-clock"></i>${m.prep||0} ${t('prep_min')}</div>`;
+  const chipsArr = [];
+  if(m.cal){
+    chipsArr.push(`<div class="mchip"><i class="fa-solid fa-fire"></i>${esc(m.cal)} ${t('calories')}</div>`);
+  }
+  if(m.prep){
+    chipsArr.push(`<div class="mchip"><i class="fa-regular fa-clock"></i>${esc(m.prep)} ${t('prep_min')}</div>`);
+  }
+  document.getElementById('mChips').innerHTML = chipsArr.join('');
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
