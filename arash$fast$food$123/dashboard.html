@@ -67,7 +67,26 @@ input,textarea,select{font-family:inherit;font-size:14px}
 .status-dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex-shrink:0}
 .status-dot.ok{background:var(--ok)}
 .status-dot.bad{background:var(--danger)}
-.lock-btn{color:var(--faint);font-size:15px;padding:8px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.status-pill{width:34px;height:34px;border-radius:50%;background:var(--layer1);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.status-pill .status-dot{width:9px;height:9px}
+.icon-circle-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:.2s}
+.home-btn{background:var(--layer1);color:var(--gold);border:1px solid rgba(212,175,55,.18)}
+.home-btn:hover{background:var(--layer2)}
+.lock-btn{background:rgba(225,85,85,.12);border:1px solid rgba(225,85,85,.25);color:var(--danger)}
+.lock-btn:hover{background:rgba(225,85,85,.22)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.lang-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lang-opt-card{position:relative;background:var(--layer2);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--r-md);padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:3px;transition:.2s}
+.lang-opt-card:hover{border-color:rgba(212,175,55,.3)}
+.lang-opt-card.on{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.lang-opt-check{position:absolute;top:8px;left:8px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:var(--ink);display:none;align-items:center;justify-content:center;font-size:9px}
+.lang-opt-card.on .lang-opt-check{display:flex}
+.lang-opt-title{font-size:15px;font-weight:700;color:var(--cream)}
+.lang-opt-card.on .lang-opt-title{color:var(--gold)}
+.lang-opt-sub{font-size:11px;color:var(--faint);direction:ltr}
+
 .lang-pill{display:flex;gap:2px;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.15);border-radius:99px;padding:3px}
 .lpb{padding:4px 9px;border-radius:99px;font-size:11px;font-weight:600;color:var(--faint);transition:.2s}
 .lpb.on{background:var(--gold);color:var(--ink)}
@@ -264,21 +283,17 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 <div id="app">
   <div class="topbar">
 	<div class="brand"><i class="fa-solid fa-burger"></i> <span id="brandText">داشبۆرد</span></div>
-	<div style="display:flex;align-items:center;gap:10px">
-	  <div class="lang-pill">
-		<button class="lpb on" data-dlang="ckb">کوردی</button>
-		<button class="lpb" data-dlang="ar">عربي</button>
-	  </div>
-	  <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--faint)">
+	<div class="topbar-right">
+	  <span class="status-pill" id="statusPill" title="پەیوەندی نەکراوە">
 		<span class="status-dot" id="statusDot"></span>
-		<span id="statusText">پەیوەندی نەکراوە</span>
-	  </div>
-  <button class="home-btn" id="homeBtn" title="سەرەکی" style="display:none">
-    <i class="fa-solid fa-house"></i> سەرەکی
-  </button>
-<button class="lock-btn" id="lockBtn" title="داخستن" style="display:flex;align-items:center;gap:6px;background:rgba(225,85,85,.12);border:1px solid rgba(225,85,85,.25);color:var(--danger);padding:7px 14px;border-radius:99px;font-size:12.5px;font-weight:600;transition:.2s">
-  <i class="fa-solid fa-right-from-bracket"></i> <span id="lockBtnText">دەرچوون</span>
-</button>
+		<span id="statusText" class="sr-only">پەیوەندی نەکراوە</span>
+	  </span>
+	  <button class="icon-circle-btn home-btn" id="homeBtn" title="سەرەکی" style="display:none">
+		<i class="fa-solid fa-house"></i>
+	  </button>
+	  <button class="icon-circle-btn lock-btn" id="lockBtn" title="دەرچوون">
+		<i class="fa-solid fa-right-from-bracket"></i>
+	  </button>
 	</div>
   </div>
 
@@ -337,6 +352,21 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
 
 <!-- ===== CONNECTION ===== -->
 <section class="panel on" id="panel-conn">
+  <div class="card">
+    <h2><i class="fa-solid fa-language"></i> زمانی داشبۆرد</h2>
+    <div class="lang-opt-grid">
+      <button class="lang-opt-card on" data-dlang="ckb">
+        <span class="lang-opt-check"><i class="fa-solid fa-check"></i></span>
+        <span class="lang-opt-title">کوردی</span>
+        <span class="lang-opt-sub">Kurdish Sorani</span>
+      </button>
+      <button class="lang-opt-card" data-dlang="ar">
+        <span class="lang-opt-check"><i class="fa-solid fa-check"></i></span>
+        <span class="lang-opt-title">عربي</span>
+        <span class="lang-opt-sub">Arabic</span>
+      </button>
+    </div>
+  </div>
   <div class="card">
     <h2><i class="fa-solid fa-database"></i> دۆخی داتابەیس</h2>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
@@ -817,6 +847,8 @@ let SETTINGS = null;
 function setStatus(ok, text){
   document.getElementById('statusDot').className = 'status-dot ' + (ok?'ok':'bad');
   document.getElementById('statusText').textContent = text;
+  const pill = document.getElementById('statusPill');
+  if(pill) pill.title = text;
 }
 
 async function connectSupabase(url, key){
@@ -1732,7 +1764,7 @@ function applyDashLangHeaders(lang){
 function applyDashLang(lang){
   const d = DASH_I18N[lang] || DASH_I18N.ckb;
   localStorage.setItem('arash_admin_lang', lang);
-  document.querySelectorAll('.lpb[data-dlang]').forEach(b=> b.classList.toggle('on', b.dataset.dlang===lang));
+  document.querySelectorAll('.lang-opt-card[data-dlang]').forEach(b=> b.classList.toggle('on', b.dataset.dlang===lang));
 
   document.getElementById('brandText').textContent = d.brandText;
   if(document.getElementById('lockBtnText')) document.getElementById('lockBtnText').textContent = d.lockBtnText;
@@ -1771,7 +1803,7 @@ function applyDashLang(lang){
   applyDashLangHeaders(lang);
 }
 
-document.querySelectorAll('.lpb[data-dlang]').forEach(b=>{
+document.querySelectorAll('.lang-opt-card[data-dlang]').forEach(b=>{
   b.addEventListener('click', ()=> applyDashLang(b.dataset.dlang));
 });
 
