@@ -1899,17 +1899,6 @@ function setIconText(el, text){
   }
 }
 
-function applyDashLangHeaders(lang){
-  document.querySelectorAll('main h2').forEach((h2,i)=>{
-    const icon = h2.querySelector('i');
-    const label = H2_LABELS[lang]?.[i];
-    if(icon && label){
-      if(icon.nextSibling && icon.nextSibling.nodeType===3) icon.nextSibling.textContent = ' ' + label;
-      else icon.insertAdjacentText('afterend', ' ' + label);
-    }
-  });
-}
-
 function applyDashLang(lang){
   const d = DASH_I18N[lang] || DASH_I18N.ckb;
   localStorage.setItem('arash_admin_lang', lang);
