@@ -998,22 +998,39 @@ const DESIGN_PRESETS = [
     bg:'#0E0E0E', l1:'#1A1A1A', l2:'#242424', l3:'#303030', gold:'#D4AF37', cream:'#F2F0E8' },
   { id:'rose',   name_ckb:'پەمەیی تۆزاوی', name_ar:'وردي ترابي',
     bg:'#241416', l1:'#382025', l2:'#472A30', l3:'#57343B', gold:'#D89AA0', cream:'#F7E9EA' },
+  { id:'cream-light', name_ckb:'کرێمی ڕووناک', name_ar:'كريمي فاتح',
+    bg:'#F7F0E3', l1:'#FFFFFF', l2:'#F0E6D2', l3:'#E6D8BE', gold:'#C9973A', cream:'#3A2A15' },
+  { id:'mint-light',  name_ckb:'سەوزی ڕووناک', name_ar:'أخضر فاتح',
+    bg:'#F3F7F1', l1:'#FFFFFF', l2:'#E6EFE1', l3:'#D9E6D2', gold:'#5B8C5A', cream:'#22301F' },
+  { id:'sky-light',   name_ckb:'شینی ئاسمانی ڕووناک', name_ar:'أزرق سماوي فاتح',
+    bg:'#F0F5FA', l1:'#FFFFFF', l2:'#E3EDF7', l3:'#D3E2F0', gold:'#3E6FA6', cream:'#1B2A3B' },
 ];
 
 function renderPresets(){
   const wrap = document.getElementById('presetGrid');
   const lang = localStorage.getItem('arash_admin_lang') || 'ckb';
-  const activeGold = (document.getElementById('cGoldT').value||'').toUpperCase();
-  wrap.innerHTML = DESIGN_PRESETS.map(p=>`
-    <div class="preset-card${p.gold.toUpperCase()===activeGold?' on':''}" data-preset="${p.id}">
+  const active = {
+    bg: (document.getElementById('cBgT').value||'').toUpperCase(),
+    l1: (document.getElementById('cL1T').value||'').toUpperCase(),
+    l2: (document.getElementById('cL2T').value||'').toUpperCase(),
+    l3: (document.getElementById('cL3T').value||'').toUpperCase(),
+    gold: (document.getElementById('cGoldT').value||'').toUpperCase(),
+    cream: (document.getElementById('cCreamT').value||'').toUpperCase(),
+  };
+  wrap.innerHTML = DESIGN_PRESETS.map(p=>{
+    const isMatch = p.bg.toUpperCase()===active.bg && p.l1.toUpperCase()===active.l1 &&
+      p.l2.toUpperCase()===active.l2 && p.l3.toUpperCase()===active.l3 &&
+      p.gold.toUpperCase()===active.gold && p.cream.toUpperCase()===active.cream;
+    return `
+    <div class="preset-card${isMatch?' on':''}" data-preset="${p.id}">
       <span class="preset-check"><i class="fa-solid fa-check"></i></span>
       <div class="preset-swatch">
         <span style="background:${p.bg}"></span><span style="background:${p.l2}"></span>
         <span style="background:${p.gold}"></span><span style="background:${p.cream}"></span>
       </div>
       <div class="preset-label">${lang==='ar'?p.name_ar:p.name_ckb}</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function applyPreset(id){
