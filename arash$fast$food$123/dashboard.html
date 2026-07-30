@@ -1616,9 +1616,9 @@ async function logActivity(action, details){
 }
 
 async function loadActivity(){
-  const res = await adminCall('select', 'activity_log');
-  if(res.error) return;
-  const data = res.data;
+  if(!sb) return;
+  const { data, error } = await sb.from('activity_log').select('*').order('created_at', {ascending:false}).limit(50);
+  if(error){ console.error(error); toast('هەڵە لە هێنانی مێژووی چالاکی', false); return; }
   const list = document.getElementById('activityList');
   const empty = document.getElementById('activityEmpty');
   empty.style.display = (data&&data.length) ? 'none':'block';
@@ -1816,11 +1816,43 @@ const SECTION_TITLES = {
   ar:  { conn:'الاتصال', design:'التصميم', food:'الأطعمة', cat:'الفئات', footer:'الفوتر', security:'الحماية', activity:'النشاط', qr:'رمز QR' }
 };
 
-const H2_LABELS = {
-  ckb: ["دۆخی داتابەیس","سڕینەوەی هەموو داتا","سەردانی مێنوو","ناوی خواردنگە و فۆنت","پاڵێتی ڕەنگ","ئاگادارکردنەوەی گشتی (بانەر)","دەربارەی خواردنگە (about)","زانیاری لق","دروستکراوە لەلایەن","گۆڕینی پین کۆدی داخستنەوە","گۆڕینی پین کۆدی سڕینەوەی داتا","مێژووی چالاکی","پیشاندان","ڕەنگەکان","شێوازەکان","لۆگۆی ناوەڕاست","دەقی ژێر QR (ئارەزوومەندانە)"],
-  ar: ["حالة قاعدة البيانات","حذف جميع البيانات","زيارات المنيو","اسم المطعم والخط","لوحة الألوان","إعلان عام (بانر)","عن المطعم","معلومات الفرع","تم التطوير بواسطة","تغيير رمز قفل الخروج","تغيير رمز حذف البيانات","سجل النشاط","المعاينة","الألوان","الأنماط","الشعار المركزي","نص أسفل QR (اختياري)"]
+const DASH_H2 = {
+  ckb: {
+    langTitle:'زمانی داشبۆرد', dbStatus:'دۆخی داتابەیس', deleteAllTitle:'سڕینەوەی هەموو داتا',
+    viewCount:'سەردانی مێنوو', brandFont:'ناوی خواردنگە و فۆنت', presetTitle:'پاڵێتی ئامادەکراو',
+    colorPalette:'پاڵێتی ڕەنگ', announcement:'ئاگادارکردنەوەی گشتی (بانەر)',
+    footerAbout:'دەربارەی خواردنگە (about)', branchInfo:'زانیاری لق', madeBy:'دروستکراوە لەلایەن',
+    lockPinChange:'گۆڕینی پین کۆدی داخستنەوە', deletePinChange:'گۆڕینی پین کۆدی سڕینەوەی داتا',
+    activityHistory:'مێژووی چالاکی', qrPreview:'پیشاندان', qrColors:'ڕەنگەکان',
+    qrStyles:'شێوازەکان', qrLogo:'لۆگۆی ناوەڕاست', qrCaption:'دەقی ژێر QR (ئارەزوومەندانە)'
+  },
+  ar: {
+    langTitle:'لغة لوحة التحكم', dbStatus:'حالة قاعدة البيانات', deleteAllTitle:'حذف جميع البيانات',
+    viewCount:'زيارات المنيو', brandFont:'اسم المطعم والخط', presetTitle:'لوحة جاهزة',
+    colorPalette:'لوحة الألوان', announcement:'إعلان عام (بانر)',
+    footerAbout:'عن المطعم', branchInfo:'معلومات الفرع', madeBy:'تم التطوير بواسطة',
+    lockPinChange:'تغيير رمز قفل الخروج', deletePinChange:'تغيير رمز حذف البيانات',
+    activityHistory:'سجل النشاط', qrPreview:'المعاينة', qrColors:'الألوان',
+    qrStyles:'الأنماط', qrLogo:'الشعار المركزي', qrCaption:'نص أسفل QR (اختياري)'
+  }
 };
 
+function applyDashLangHeaders(lang){
+  const labels = DASH_H2[lang] || DASH_H2.ckb;
+  document.querySelectorAll('main h2[data-h2]').forEach(h2=>{
+    const label = labels[h2.dataset.h2];
+    if(!label) return;
+    const span = h2.querySelector('span[id]');
+    if(span){ span.textContent = label; return; }
+    const icon = h2.querySelector('i');
+    if(icon){
+      if(icon.nextSibling && icon.nextSibling.nodeType===3) icon.nextSibling.textContent = ' ' + label;
+      else icon.insertAdjacentText('afterend', ' ' + label);
+    } else {
+      h2.textContent = label;
+    }
+  });
+}
 const DASH_I18N = {
   ckb: {
     brandText:'داشبۆرد', lockBtnText:'دەرچوون', appGridTitle:'هەموو بەشەکان',
