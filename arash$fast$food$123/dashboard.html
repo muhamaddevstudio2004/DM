@@ -116,6 +116,16 @@ input,textarea,select{font-family:inherit;font-size:14px}
 #tabs.hidden-nav, main.hidden-nav{display:none}
 
 main{max-width:980px;margin:0 auto;padding:0 16px 80px}
+.back-bar{
+  display:flex;align-items:center;gap:10px;padding:14px 2px 6px;
+  font-size:13.5px;color:var(--faint);
+}
+.back-bar-btn{
+  display:flex;align-items:center;gap:6px;color:var(--gold);font-weight:700;
+  background:none;border:none;padding:4px 2px;
+}
+.back-bar-sep{color:var(--faint);opacity:.5}
+.back-bar-current{color:var(--muted);font-weight:600}
 .panel{display:none;animation:fade .2s ease}
 .panel.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -349,6 +359,14 @@ main{max-width:980px;margin:0 auto;padding:0 16px 80px}
   </div>
 
   <main class="hidden-nav" id="mainContent">
+	<div class="back-bar">
+	  <button class="back-bar-btn" id="backBarBtn">
+		<i class="fa-solid fa-arrow-right"></i>
+		<span id="backBarText">گەڕانەوە</span>
+	  </button>
+	  <span class="back-bar-sep">›</span>
+	  <span class="back-bar-current" id="backBarCurrent"></span>
+	</div>
 
 <!-- ===== CONNECTION ===== -->
 <section class="panel on" id="panel-conn">
@@ -898,13 +916,18 @@ function catsOfMeal(mealId){
 /* ═══════════════════════════════════════════════════════════
    3. TABS
 ═══════════════════════════════════════════════════════════ */
+let currentTab = null;
+
 function openSection(tabName){
+  currentTab = tabName;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.tab===tabName));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.getElementById('panel-'+tabName).classList.add('on');
   document.getElementById('appGridWrap').style.display='none';
   document.getElementById('mainContent').classList.remove('hidden-nav');
   document.getElementById('homeBtn').style.display='flex';
+  const lang = localStorage.getItem('arash_admin_lang') || 'ckb';
+  document.getElementById('backBarCurrent').textContent = SECTION_TITLES[lang]?.[tabName] || '';
   if(tabName==='activity') loadActivity();
 }
 
@@ -929,6 +952,7 @@ document.getElementById('appGrid').addEventListener('click', e=>{
 });
 
 document.getElementById('homeBtn').addEventListener('click', goHome);
+document.getElementById('backBarBtn').addEventListener('click', goHome);
 
 function updateAppBadges(){
   const bf = document.getElementById('badgeFood');
@@ -1699,6 +1723,11 @@ function boot(){
     checkConnection();
   });
 }
+const SECTION_TITLES = {
+  ckb: { conn:'پەیوەندی', design:'دیزاین', food:'خواردن', cat:'کەتەگۆری', footer:'فوتەر', security:'پاراستن', activity:'چالاکی', qr:'QR کۆد' },
+  ar:  { conn:'الاتصال', design:'التصميم', food:'الأطعمة', cat:'الفئات', footer:'الفوتر', security:'الحماية', activity:'النشاط', qr:'رمز QR' }
+};
+
 const H2_LABELS = {
   ckb: ["دۆخی داتابەیس","سڕینەوەی هەموو داتا","سەردانی مێنوو","ناوی خواردنگە و فۆنت","پاڵێتی ڕەنگ","ئاگادارکردنەوەی گشتی (بانەر)","دەربارەی خواردنگە (about)","زانیاری لق","دروستکراوە لەلایەن","گۆڕینی پین کۆدی داخستنەوە","گۆڕینی پین کۆدی سڕینەوەی داتا","مێژووی چالاکی","پیشاندان","ڕەنگەکان","شێوازەکان","لۆگۆی ناوەڕاست","دەقی ژێر QR (ئارەزوومەندانە)"],
   ar: ["حالة قاعدة البيانات","حذف جميع البيانات","زيارات المنيو","اسم المطعم والخط","لوحة الألوان","إعلان عام (بانر)","عن المطعم","معلومات الفرع","تم التطوير بواسطة","تغيير رمز قفل الخروج","تغيير رمز حذف البيانات","سجل النشاط","المعاينة","الألوان","الأنماط","الشعار المركزي","نص أسفل QR (اختياري)"]
@@ -1766,10 +1795,11 @@ function applyDashLang(lang){
   localStorage.setItem('arash_admin_lang', lang);
   document.querySelectorAll('.lang-opt-card[data-dlang]').forEach(b=> b.classList.toggle('on', b.dataset.dlang===lang));
 
-  document.getElementById('brandText').textContent = d.brandText;
+    document.getElementById('brandText').textContent = d.brandText;
   if(document.getElementById('lockBtnText')) document.getElementById('lockBtnText').textContent = d.lockBtnText;
   document.querySelector('.app-grid-title').textContent = d.appGridTitle;
-
+  document.getElementById('backBarText').textContent = lang==='ar' ? 'رجوع' : 'گەڕانەوە';
+  if(currentTab) document.getElementById('backBarCurrent').textContent = SECTION_TITLES[lang]?.[currentTab] || '';
   document.querySelectorAll('.app-card[data-tab]').forEach(card=>{
     const key = 'tab_' + card.dataset.tab;
     const label = card.querySelector('.app-card-label');
