@@ -3851,6 +3851,8 @@ async function savePlan() {
   const btn = document.getElementById('planSaveBtn');
   btn.disabled = true;
   try {
+    if(!isOnline) throw new Error('offline');
+
     if(editPlanId) {
       const { error } = await sb.from('plans').update({ title, content }).eq('id', editPlanId);
       if(error) throw error;
@@ -3863,11 +3865,35 @@ async function savePlan() {
 
     await loadAllData();
     closeModal('planModal'); renderPlans();
+
   } catch(err) {
-    toast('کێشە ڕوویدا: '+(err.message||err),'error');
+    console.error(err);
+    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
+
+    if(isNetworkError) {
+      if(editPlanId) {
+        const idx = CACHE.plans.findIndex(p=>p.id===editPlanId);
+        if(idx>-1) {
+          CACHE.plans[idx] = { ...CACHE.plans[idx], title, content };
+          await idbPut('plans', CACHE.plans[idx]);
+        }
+        await addToSyncQueue({ type:'update', table:'plans', id: editPlanId, data: { title, content } });
+      } else {
+        const newPlan = {
+          id: crypto.randomUUID(), title, content, status:'active',
+          createdAt: new Date().toISOString(), createdBy: currentUser?.name || null
+        };
+        CACHE.plans.unshift(newPlan);
+        await idbPut('plans', newPlan);
+        await addToSyncQueue({ type:'insert', table:'plans', data: { id: newPlan.id, title, content, status:'active', created_by: newPlan.createdBy } });
+      }
+      closeModal('planModal'); renderPlans();
+      toast('ئینتەرنێت نییە — پلانەکە پاشەکەوتکرا لە مۆبایل، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
+    } else {
+      toast('کێشە ڕوویدا: '+(err.message||err),'error');
+    }
   } finally { btn.disabled=false; }
 }
-
 async function deletePlan(id) {
   if(!can('plans','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم پلانە؟')) return;
@@ -4569,19 +4595,31 @@ async function saveProduct() {
   const sell=parseFloat(document.getElementById('pSellPrice').value)||0;
   const qty=parseInt(document.getElementById('pQty').value)||0;
   const barcode=document.getElementById('pBarcode').value.trim()||null;
+  const model = document.getElementById('pModel').value;
+  const notes = document.getElementById('pNotes').value;
   if(!name||!cat||!sell) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
-  let image_url = editProductId ? (DB.get('products').find(x=>x.id===editProductId)?.imageUrl || null) : null;
+
   const btn = document.getElementById('pSaveBtn');
   btn.disabled = true;
-  try {
-    if(selectedImageFile.product) {
-      image_url = await uploadImageToSupabase(selectedImageFile.product, 'products');
-    } else if(window._removedExistingImage_product) {
-      image_url = null;
-    }
 
-    const model = document.getElementById('pModel').value;
-    const notes = document.getElementById('pNotes').value;
+  let image_url = editProductId ? (DB.get('products').find(x=>x.id===editProductId)?.imageUrl || null) : null;
+  let imageSkippedOffline = false;
+
+  if(selectedImageFile.product) {
+    if(isOnline) {
+      try { image_url = await uploadImageToSupabase(selectedImageFile.product, 'products'); }
+      catch(e) { imageSkippedOffline = true; }
+    } else {
+      imageSkippedOffline = true;
+    }
+  } else if(window._removedExistingImage_product) {
+    image_url = null;
+  }
+
+  const dbData = { name, brand, model, category: cat, buy_price: buy, sell_price: sell, qty, notes, barcode, image_url };
+
+  try {
+    if(!isOnline) throw new Error('offline');
 
     if(editProductId) {
       const idx = CACHE.products.findIndex(p=>p.id===editProductId);
@@ -4589,19 +4627,11 @@ async function saveProduct() {
         CACHE.products[idx] = { ...CACHE.products[idx], name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url };
         renderInventory();
       }
-      const { error } = await sb.from('products').update({
-        name, brand, model, category: cat,
-        buy_price: buy, sell_price: sell, qty, 
-        notes, barcode, image_url
-      }).eq('id', editProductId);
+      const { error } = await sb.from('products').update(dbData).eq('id', editProductId);
       if(error) throw error;
       toast('کاڵاکە نوێ کرایەوە','success');
     } else {
-      const { data: inserted, error } = await sb.from('products').insert({
-        name, brand, model, category: cat,
-        buy_price: buy, sell_price: sell, qty, 
-        notes, barcode, image_url
-      }).select().single();
+      const { data: inserted, error } = await sb.from('products').insert(dbData).select().single();
       if(error) throw error;
       CACHE.products.unshift(productFromDb(inserted));
       renderInventory();
@@ -4610,17 +4640,38 @@ async function saveProduct() {
     closeModal('productModal');
     buildNotifications();
     reloadTable('products');
+
   } catch(err) {
     console.error(err);
-    toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
-    reloadTable('products');
+    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
+
+    if(isNetworkError) {
+      if(editProductId) {
+        const idx = CACHE.products.findIndex(p=>p.id===editProductId);
+        if(idx>-1) {
+          CACHE.products[idx] = { ...CACHE.products[idx], name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url };
+          await idbPut('products', CACHE.products[idx]);
+        }
+        await addToSyncQueue({ type:'update', table:'products', id: editProductId, data: dbData });
+      } else {
+        const newId = crypto.randomUUID();
+        const newProduct = { id:newId, name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url, createdAt: new Date().toISOString() };
+        CACHE.products.unshift(newProduct);
+        await idbPut('products', newProduct);
+        await addToSyncQueue({ type:'insert', table:'products', data: { id:newId, ...dbData } });
+      }
+      renderInventory();
+      toast('ئینتەرنێت نییە — کاڵاکە پاشەکەوتکرا لە مۆبایل' + (imageSkippedOffline?' (وێنە دواتر زیادبکە)':'') + '، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
+      closeModal('productModal');
+      buildNotifications();
+    } else {
+      toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+      reloadTable('products');
+    }
   } finally {
     btn.disabled = false;
   }
 }
-
-
-
 async function deleteProduct(id) {
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
   const backup = CACHE.products.find(p=>p.id===id);
@@ -5306,25 +5357,37 @@ async function saveRepair() {
   const problem=document.getElementById('rProblem').value.trim();
   if(!name||!phone||!device||!problem) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
 
+  const btn = document.getElementById('rSaveBtn');
+  btn.disabled = true;
+
   let image_url = editRepairId ? (DB.get('repairs').find(x=>x.id===editRepairId)?.imageUrl || null) : null;
+  let imageSkippedOffline = false;
+
+  // وێنە تەنها کاتێک ئۆنلاینین بار دەکرێت
   if(selectedImageFile.repair) {
-    image_url = await uploadImageToSupabase(selectedImageFile.repair, 'repairs');
+    if(isOnline) {
+      try { image_url = await uploadImageToSupabase(selectedImageFile.repair, 'repairs'); }
+      catch(e) { imageSkippedOffline = true; }
+    } else {
+      imageSkippedOffline = true;
+    }
   } else if(window._removedExistingImage_repair) {
     image_url = null;
   }
 
-  const btn = document.getElementById('rSaveBtn');
-  btn.disabled = true;
-  const data = {
-    customer_name: name, phone, device, device_type: document.getElementById('rDeviceType').value,
-    problem, cost: parseFloat(document.getElementById('rCost').value)||0,
-    status: document.getElementById('rStatus').value, notes: document.getElementById('rNotes').value,
-    image_url
-  };
+  const deviceType = document.getElementById('rDeviceType').value;
+  const cost = parseFloat(document.getElementById('rCost').value)||0;
+  const status = document.getElementById('rStatus').value;
+  const notes = document.getElementById('rNotes').value;
+
+  const data = { customer_name: name, phone, device, device_type: deviceType, problem, cost, status, notes, image_url };
+
   try {
+    if(!isOnline) throw new Error('offline');
+
     if(editRepairId) {
       const idx = CACHE.repairs.findIndex(r=>r.id===editRepairId);
-      if(idx>-1) { CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType:data.device_type, problem, cost:data.cost, status:data.status, notes:data.notes, imageUrl:image_url }; renderRepairs(); }
+      if(idx>-1) { CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType, problem, cost, status, notes, imageUrl:image_url }; renderRepairs(); }
       const { error } = await sb.from('repairs').update(data).eq('id', editRepairId);
       if(error) throw error;
       toast('چاکسازیەکە نوێ کرایەوە','success');
@@ -5337,13 +5400,39 @@ async function saveRepair() {
     }
     closeModal('repairModal'); buildNotifications();
     reloadTable('repairs');
+
   } catch(err) {
     console.error(err);
-    toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
+
+    if(isNetworkError) {
+      if(editRepairId) {
+        const idx = CACHE.repairs.findIndex(r=>r.id===editRepairId);
+        if(idx>-1) {
+          CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType, problem, cost, status, notes, imageUrl:image_url };
+          await idbPut('repairs', CACHE.repairs[idx]);
+        }
+        await addToSyncQueue({ type:'update', table:'repairs', id: editRepairId, data });
+      } else {
+        const newRepair = {
+          id: crypto.randomUUID(), customerName:name, phone, device, deviceType, problem, cost, status, notes,
+          imageUrl: image_url, createdAt: new Date().toISOString(), createdBy: currentUser?.name || null
+        };
+        CACHE.repairs.unshift(newRepair);
+        await idbPut('repairs', newRepair);
+        await addToSyncQueue({ type:'insert', table:'repairs', data: {...data, id: newRepair.id, created_by: newRepair.createdBy} });
+      }
+      renderRepairs();
+      toast('ئینتەرنێت نییە — چاکسازیەکە پاشەکەوتکرا لە مۆبایل' + (imageSkippedOffline?' (وێنە دواتر زیادبکە)':'') + '، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
+      closeModal('repairModal'); buildNotifications();
+    } else {
+      toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    }
   } finally {
     btn.disabled = false;
   }
 }
+
 
 async function deleteRepair(id) {
   if(!can('repairs','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
@@ -5486,29 +5575,70 @@ async function saveDebt() {
 
   const btn = document.getElementById('dSaveBtn');
   btn.disabled = true;
+
+  const newDebt = {
+    id: crypto.randomUUID(),
+    customerName: name, phone, amount, paidAmount: 0,
+    source: 'other',
+    notes: document.getElementById('dNotes').value,
+    dueDate: document.getElementById('dDueDate').value || null,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    createdBy: currentUser?.name || null
+  };
+
   try {
+    if(!isOnline) throw new Error('offline');
+
     const { data: inserted, error } = await sb.from('debts').insert({
+      id: newDebt.id,
       customer_name: name, phone, amount, paid_amount: 0,
-      source: 'other', notes: document.getElementById('dNotes').value,
-      due_date: document.getElementById('dDueDate').value || null,
-      status: 'pending', created_by: currentUser?.name || null
+      source: 'other', notes: newDebt.notes,
+      due_date: newDebt.dueDate,
+      status: 'pending', created_by: newDebt.createdBy
     }).select().single();
 
     if(error) throw error;
 
     CACHE.debts.unshift(debtFromDb(inserted));
+    idbPut('debts', debtFromDb(inserted));
     renderDebts();
     toast('قەرزی نوێ زیادکرا','success');
     closeModal('debtModal');
     buildNotifications();
     reloadTable('debts');
+
   } catch(err) {
     console.error(err);
-    toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+
+    // ئەگەر هۆکارەکە کێشەی ئینتەرنێت/fetch بوو، بە شێوەی ئۆفلاین پاشەکەوتی بکە
+    const isNetworkError = err.message === 'offline' ||
+      err.message === 'Failed to fetch' ||
+      err instanceof TypeError;
+
+    if(isNetworkError) {
+      await idbPut('debts', newDebt);
+      await addToSyncQueue({
+        type: 'insert', table: 'debts',
+        data: {
+          id: newDebt.id, customer_name: name, phone, amount, paid_amount: 0,
+          source: 'other', notes: newDebt.notes, due_date: newDebt.dueDate,
+          status: 'pending', created_by: newDebt.createdBy
+        }
+      });
+      CACHE.debts.unshift(newDebt);
+      renderDebts();
+      toast('ئینتەرنێت نییە — قەرزەکە پاشەکەوتکرا لە مۆبایل، کاتێک ئینتەرنێت گەڕایەوە خۆکارانە sync دەکرێت', 'info');
+      closeModal('debtModal');
+      buildNotifications();
+    } else {
+      toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    }
   } finally {
     btn.disabled = false;
   }
 }
+
 
 
 
@@ -6029,13 +6159,15 @@ async function saveExpense() {
   const btn = document.getElementById('exSaveBtn');
   btn.disabled = true;
   try {
+    if(!isOnline) throw new Error('offline');
+
     if(editExpenseId) {
       const { error } = await sb.from('expenses')
         .update({ title, amount, category, note })
         .eq('id', editExpenseId);
       if(error) throw error;
       toast('خەرجییەکە نوێ کرایەوە','success');
-} else {
+    } else {
       const { error } = await sb.from('expenses')
         .insert({ title, amount, category, note, created_by: currentUser?.name || null });
       if(error) throw error;
@@ -6046,8 +6178,35 @@ async function saveExpense() {
     closeModal('expenseModal');
     renderExpenses();
     renderDashboard();
+
   } catch(err) {
-    toast('کێشە ڕوویدا: '+(err.message||err),'error');
+    console.error(err);
+    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
+
+    if(isNetworkError) {
+      if(editExpenseId) {
+        const idx = CACHE.expenses.findIndex(e=>e.id===editExpenseId);
+        if(idx>-1) {
+          CACHE.expenses[idx] = { ...CACHE.expenses[idx], title, amount, category, note };
+          await idbPut('expenses', CACHE.expenses[idx]);
+        }
+        await addToSyncQueue({ type:'update', table:'expenses', id: editExpenseId, data: { title, amount, category, note } });
+      } else {
+        const newExpense = {
+          id: crypto.randomUUID(), title, amount, category, note,
+          createdAt: new Date().toISOString(), createdBy: currentUser?.name || null
+        };
+        CACHE.expenses.unshift(newExpense);
+        await idbPut('expenses', newExpense);
+        await addToSyncQueue({ type:'insert', table:'expenses', data: { id: newExpense.id, title, amount, category, note, created_by: newExpense.createdBy } });
+      }
+      closeModal('expenseModal');
+      renderExpenses();
+      renderDashboard();
+      toast('ئینتەرنێت نییە — خەرجییەکە پاشەکەوتکرا لە مۆبایل، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
+    } else {
+      toast('کێشە ڕوویدا: '+(err.message||err),'error');
+    }
   } finally { btn.disabled = false; }
 }
 
