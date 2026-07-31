@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
-<title>کوردستان مۆبایل | Kurdistan Mobile</title>
-<meta name="description" content="کوردستان مۆبایل — دوکانی مۆبایل و ئامێرە ئەلیکترۆنیەکان. پەیوەندیمان پێوە بکە لە وەتساپ، ئینستاگرام و شوێنەکانی تر.">
+<title>جیهانی مۆبایل | Jehane Mobile</title>
+<meta name="description" content="جیهانی مۆبایل — دوکانی مۆبایل و صیانە. پەیوەندیمان پێوە بکە لە وەتساپ، ئینستاگرام و شوێنەکانی تر.">
 <meta name="theme-color" content="#0f0f0f">
 <meta name="color-scheme" content="dark">
 <meta property="og:type" content="website">
-<meta property="og:title" content="کوردستان مۆبایل | Kurdistan Mobile">
-<meta property="og:description" content="دوکانی مۆبایل و ئامێرە ئەلیکترۆنیەکان">
+<meta property="og:title" content="جیهانی مۆبایل | Jehane Mobile">
+<meta property="og:description" content="دوکانی مۆبایل و صیانە">
 <meta property="og:image" content="https://placehold.co/1200x630/0f0f0f/0A84FF?text=Kurdistan+Mobile">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230A84FF'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap">
+<link rel="preload" as="image" href="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp" fetchpriority="high">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap"></noscript>
 <style>
 :root{--bg:#0f0f0f;--bg-2:#131316;--card-bg:rgba(255,255,255,0.05);--card-bg-strong:rgba(255,255,255,0.08);--card-border:rgba(255,255,255,0.10);--text:#ffffff;--text-dim:rgba(255,255,255,0.62);--text-faint:rgba(255,255,255,0.38);--accent:#0A84FF;--accent-2:#64B5FF;--radius-lg:24px;--radius-md:20px;--radius-sm:18px;--shadow:0 8px 30px rgba(0,0,0,0.4);--ease:cubic-bezier(.22,.9,.32,1);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -114,9 +117,10 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .loc-btn-secondary{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text);}
 .loc-btn svg{width:16px;height:16px;}
 .footer{text-align:center;padding-top:8px;display:flex;flex-direction:column;gap:6px;}
-.footer-thanks{font-size:16px;font-weight:700;}
-.footer-thanks span{color:var(--accent-2);}
-.footer-copy{font-size:12px;color:var(--text-faint);font-weight:400;}
+.footer-thanks{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;}
+.footer-label{font-size:12.5px;font-weight:400;color:var(--text-faint);}
+.footer-dev-link{font-size:15px;font-weight:700;text-decoration:none;background:linear-gradient(90deg,var(--text-dim) 20%,var(--accent-2) 50%,var(--text-dim) 80%);background-size:220% auto;background-position:150% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:footerShimmer 4s linear infinite;cursor:pointer;}
+@keyframes footerShimmer{0%{background-position:150% 0;}100%{background-position:-150% 0;}}
 .confirm-modal{position:fixed;inset:0;z-index:1002;background:rgba(10,10,12,0.66);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility .3s var(--ease);}
 .confirm-modal.show{opacity:1;visibility:visible;}
 .confirm-box{background:var(--card-bg-strong);border:1px solid var(--card-border);border-radius:22px;padding:26px 22px;max-width:320px;width:100%;text-align:center;transform:scale(.9);transition:transform .3s var(--ease);box-shadow:var(--shadow);}
@@ -153,7 +157,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 </div>
 <div class="wrap" id="content-wrap">
 <section class="hero" id="hero">
-<div class="logo-ring"><img id="biz-logo" src="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp" alt="لۆگۆی دوکان" decoding="async"></div>
+<div class="logo-ring"><img id="biz-logo" src="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp" alt="لۆگۆی دوکان" width="120" height="120" decoding="async" fetchpriority="high"></div>
 <div class="shop-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg><span id="shop-pill-text">دوکانی مۆبایل</span></div>
 <div class="biz-name"><span id="biz-name">کوردستان مۆبایل</span><svg class="badge" viewBox="0 0 24 24" fill="none" aria-label="پشتڕاستکراوە"><circle cx="12" cy="12" r="12" fill="#0A84FF"/><path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 <p class="biz-desc" id="biz-desc">دوکانێکی مۆبایلی مۆدێرن کە باشترین و نوێترین مۆبایل و ئامێرەکان بە نرخێکی گونجاو پێشکەش دەکات.</p>
@@ -200,14 +204,13 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 </div>
 </section>
 <footer class="footer reveal">
-<div class="footer-thanks" id="footer-thanks">سوپاس بۆ سەردانیتان</div>
-<div class="footer-copy" id="footer-copy">© ٢٠٢٦ کوردستان مۆبایل. هەموو مافەکان پارێزراون.</div>
+<div class="footer-thanks" id="footer-thanks"><span class="footer-label" id="footer-label">دروست کراوە لە لایەن</span> <a class="footer-dev-link" id="footer-dev-link" href="https://devmuhamad.com" target="_blank" rel="noopener noreferrer">DevMuhamad.com</a></div>
 </footer>
 </div>
 <script>
 (function(){
 "use strict";
-const LINKS={whatsappSales:"https://wa.me/9647507271567",whatsappSupport:"https://wa.me/9647507204567",instagram:"https://instagram.com/FIVEM",tiktok:"https://tiktok.com/@jehane_mobail",snapchat:"https://snapchat.com/t/TC0cqZN9",maps:"https://maps.app.goo.gl/oArtYwzbd46Z9MGu8?g_st=ic",mapQuery:"Erbil Havalan"};
+const LINKS={whatsappSales:"https://wa.me/9647507271567",whatsappSupport:"https://wa.me/9647507204567",instagram:"https://www.instagram.com/jehane_mobaile?igsh=MWppbmdra29scDgwYw%3D%3D&utm_source=qr",tiktok:"https://tiktok.com/@jehane_mobail",snapchat:"https://snapchat.com/t/TC0cqZN9",maps:"https://maps.app.goo.gl/oArtYwzbd46Z9MGu8?g_st=ic",mapQuery:"Erbil Havalan"};
 const ICONS={
 whatsapp:`<svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.42a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.79 14.1c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.81-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35.19 0 .38 0 .55.01.18.01.42-.07.65.5.24.58.81 2 .88 2.15.07.15.12.32.02.52-.1.19-.15.31-.3.48-.15.17-.31.38-.44.51-.15.15-.31.31-.13.61.17.29.77 1.28 1.66 2.07 1.15 1.02 2.11 1.34 2.4 1.49.29.15.46.13.63-.05.17-.19.72-.83.91-1.12.19-.28.39-.24.65-.14.26.1 1.68.79 1.97.93.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>`,
 instagram:`<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig)"/><defs><linearGradient id="ig" x1="0" y1="24" x2="24" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".4" stop-color="#D62976"/><stop offset=".7" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><circle cx="12" cy="12" r="5" stroke="#fff" stroke-width="1.6" fill="none"/><circle cx="17.4" cy="6.6" r="1.2" fill="#fff"/></svg>`,
@@ -220,11 +223,11 @@ phone:`<svg viewBox="0 0 24 24" fill="#0A84FF"><path d="M6.6 10.8c1.35 2.65 3.55
 const ARROW=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`;
 const CHECK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
 const TEXT={
-ku:{pageTitle:"جیهانی مۆبایل | Jehane Mobile",businessName:"جیهانی مۆبایل",shopPill:"وەستا ئەمیر",description:"بۆ فرۆشتنی مۆبایل و ئاکسسواراتی ئۆریجیناڵ بە نرخێکی گونجاو، چاکردنەوە هەموو جۆرە مۆبایلێک.",heroTag:"پەیوەندیمان پێوەبکە",titleContact:"پەیوەندی",titleReviews:"ڕای کڕیارەکان",swipeHint:"← بۆ بینینی زیاتر →",titleAbout:"دەربارەی ئێمە",titleFind:"شوێنمان",aboutTitle:"ئەزموونی ئێمە",aboutText:"جیهانی مۆبایل لە هەولێر خزمەتگوزاری فرۆشتنی مۆبایل و ئاکسسوارات پێشکەش دەکات. هەمیشە هەوڵدەدەین باشترین کوالێتی، نرخ و مامەڵە بە کڕیاران بدەین.",years:"14+",yearsLabel:"ساڵ ئەزموون",projects:"%100",projectsLabel:"گەرەنتی",satisfaction:"%98",satisfactionLabel:"کریاری رازی",trust:["هەمیشە بەخێربێن","جیهانی مۆبایل بۆ هەموو پێداویستیەکانی مۆبایل.","کوالێتی، متمانە، خزمەتگوزاری."],openNow:"ئێستا کراوەیە",locationTitle:"سەردانمان بکە",locationAddress:"هەولێر، هەڤاڵان",openMaps:"لە خەریتە بکەرەوە",navigate:"ڕێنیشاندان",footerThanksPre:" سوپاس بۆ",footerThanksHi:"سەردانیتان",footerCopy:"دروست کراوە لەلایەن DevMuhamad.com",confirmText:"دەتەوێت ئەم لینکە بکەیتەوە؟",confirmOpen:"بکەرەوە",confirmCancel:"هەڵوەشاندنەوە",
-buttons:[{title:"وەتساپ",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales},{title:"وەتساپ",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport},{title:"ئینستاگرام",sub:"username@",icon:ICONS.instagram,href:LINKS.instagram},{title:"تیک تۆک",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok},{title:"سنابچات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat}],
+ku:{pageTitle:"جیهانی مۆبایل | Jehane Mobile",businessName:"جیهانی مۆبایل",shopPill:"وەستا ئەمیر",description:"بۆ فرۆشتنی مۆبایل و ئاکسسواراتی ئۆریجیناڵ بە نرخێکی گونجاو، چاکردنەوە هەموو جۆرە مۆبایلێک.",heroTag:"پەیوەندیمان پێوەبکە",titleContact:"پەیوەندی",titleReviews:"ڕای کڕیارەکان",swipeHint:"← بۆ بینینی زیاتر →",titleAbout:"دەربارەی ئێمە",titleFind:"شوێنمان",aboutTitle:"ئەزموونی ئێمە",aboutText:"جیهانی مۆبایل لە هەولێر خزمەتگوزاری فرۆشتنی مۆبایل و ئاکسسوارات پێشکەش دەکات. هەمیشە هەوڵدەدەین باشترین کوالێتی، نرخ و مامەڵە بە کڕیاران بدەین.",years:"14+",yearsLabel:"ساڵ ئەزموون",projects:"%100",projectsLabel:"گەرەنتی",satisfaction:"%98",satisfactionLabel:"کریاری رازی",trust:["هەمیشە بەخێربێن","جیهانی مۆبایل بۆ هەموو پێداویستیەکانی مۆبایل.","کوالێتی، متمانە، خزمەتگوزاری."],openNow:"ئێستا کراوەیە",locationTitle:"سەردانمان بکە",locationAddress:"هەولێر، هەڤاڵان",openMaps:"لە خەریتە بکەرەوە",navigate:"ڕێنیشاندان",footerLabel:"دروست کراوە لە لایەن",confirmText:"دەتەوێت ئەم لینکە بکەیتەوە؟",confirmOpen:"بکەرەوە",confirmCancel:"هەڵوەشاندنەوە",
+buttons:[{title:"وەتساپ",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales},{title:"وەتساپ",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport},{title:"ئینستاگرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram},{title:"تیک تۆک",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok},{title:"سنابچات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat}],
 reviews:[{name:"ئاراس محەمەد",rating:5,comment:"زۆر لێیان رازیمە."},{name:"شنو",rating:5,comment:"دەست خۆشیان لێ دەکەم جێگایی سیقەن."},{name:"هێمن عەلی",rating:5,comment:"زەمانە🔥."},{name:"ڕۆژین",rating:5,comment:"نرخەکان زۆر گونجاون."},{name:"Dara_X",rating:5,comment:"مامەڵەیان زۆر خۆشە."},{name:"ژینۆ مستەفا",rating:5,comment:"زۆر متمانەم پێیانە و دەست خۆشیان لێ دەکەم."},{name:"Karwan",rating:5,comment:" کاک ئەمیری زەمان و سیقە ."},{name:"ئاڤان حوسێن",rating:5,comment:"سەرکەتووبن."},{name:"Soran_92",rating:5,comment:"وەستای نەمبەر وەنن."},{name:"لاڤین",rating:5,comment:"بۆ هەموو کەسێک پێشنیاری دەکەم برۆنە لایان."}]},
-ar:{pageTitle:"جهاني موبايل | Jehane Mobile",businessName:"جهاني موبايل",shopPill:"الأسطة أمير",description:"بيع موبايلات وإكسسوارات أصلية بأسعار مناسبة، وتصليح جميع أنواع الموبايلات.",heroTag:"تواصل ويانه",titleContact:"تواصل ويانه",titleReviews:"آراء الزبائن",swipeHint:"← اسحب حتى تشوف أكثر →",titleAbout:"منو إحنا",titleFind:"موقعنا",aboutTitle:"خبرتنا",aboutText:"جهاني موبايل بأربيل يوفر بيع الموبايلات والإكسسوارات الأصلية، بالإضافة إلى تصليح جميع أنواع الموبايلات. دائماً نسعى نوفر أفضل جودة، أفضل سعر، وأحسن تعامل ويا الزبائن.",years:"14+",yearsLabel:"سنة خبرة",projects:"100%",projectsLabel:"كفالة",satisfaction:"98%",satisfactionLabel:"زبائن راضين",trust:["أهلاً وسهلاً بيكم دائماً.","جهاني موبايل لكل احتياجات الموبايل.","جودة، ثقة، وخدمة مميزة."],openNow:"مفتوح هسه",locationTitle:"زورونا",locationAddress:"أربيل، هەڤالان",openMaps:"افتح بالخريطة",navigate:"ابدأ التنقل",footerThanksPre:"شكراً على",footerThanksHi:"زيارتكم",footerCopy:"تم التطوير بواسطة DevMuhamad.com",confirmText:"تريد تفتح هذا الرابط؟",confirmOpen:"فتح",confirmCancel:"إلغاء",
-buttons:[{title:"واتساب",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales},{title:"واتساب",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport},{title:"إنستغرام",sub:"username@",icon:ICONS.instagram,href:LINKS.instagram},{title:"تيك توك",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok},{title:"سناب شات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat}],
+ar:{pageTitle:"جهاني موبايل | Jehane Mobile",businessName:"جهاني موبايل",shopPill:"الأسطة أمير",description:"بيع موبايلات وإكسسوارات أصلية بأسعار مناسبة، وتصليح جميع أنواع الموبايلات.",heroTag:"تواصل ويانه",titleContact:"تواصل ويانه",titleReviews:"آراء الزبائن",swipeHint:"← اسحب حتى تشوف أكثر →",titleAbout:"منو إحنا",titleFind:"موقعنا",aboutTitle:"خبرتنا",aboutText:"جهاني موبايل بأربيل يوفر بيع الموبايلات والإكسسوارات الأصلية، بالإضافة إلى تصليح جميع أنواع الموبايلات. دائماً نسعى نوفر أفضل جودة، أفضل سعر، وأحسن تعامل ويا الزبائن.",years:"14+",yearsLabel:"سنة خبرة",projects:"100%",projectsLabel:"كفالة",satisfaction:"98%",satisfactionLabel:"زبائن راضين",trust:["أهلاً وسهلاً بيكم دائماً.","جهاني موبايل لكل احتياجات الموبايل.","جودة، ثقة، وخدمة مميزة."],openNow:"مفتوح هسه",locationTitle:"زورونا",locationAddress:"أربيل، هەڤالان",openMaps:"افتح بالخريطة",navigate:"ابدأ التنقل",footerLabel:"تم التطوير بواسطة",confirmText:"تريد تفتح هذا الرابط؟",confirmOpen:"فتح",confirmCancel:"إلغاء",
+buttons:[{title:"واتساب",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales},{title:"واتساب",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport},{title:"إنستغرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram},{title:"تيك توك",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok},{title:"سناب شات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat}],
 reviews:[{name:"علي محمد",rating:5,comment:"كلش راضي منهم."},{name:"زينب",rating:5,comment:"يعطيهم العافية، محل ثقة."},{name:"حسين علي",rating:5,comment:"فخامة 🔥."},{name:"سارة",rating:5,comment:"أسعارهم كلش مناسبة."},{name:"Dara_X",rating:5,comment:"تعاملهم كلش راقي."},{name:"زينو مصطفى",rating:5,comment:"كلش أثق بيهم، يعطيهم العافية."},{name:"Karwan",rating:5,comment:"أبو أمير خوش رجال وثقة."},{name:"آفان حسين",rating:5,comment:"الله يوفقهم."},{name:"Soran_92",rating:5,comment:"رقم واحد بصراحة."},{name:"فاطمة",rating:5,comment:"أنصح الكل يتعامل وياهم."}]}
 };
 const CONFIG_LOGO="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp";
@@ -263,8 +266,7 @@ document.getElementById("location-open-btn").dataset.target = "_blank";
 document.getElementById("location-nav-btn").dataset.href = LINKS.maps;
 document.getElementById("location-nav-btn").dataset.target = "_blank";
 document.getElementById("location-map").src="https://www.google.com/maps?q="+encodeURIComponent(LINKS.mapQuery)+"&output=embed";
-document.getElementById("footer-thanks").innerHTML=`${t.footerThanksPre}<span>${t.footerThanksHi}</span>`;
-document.getElementById("footer-copy").textContent=t.footerCopy;
+document.getElementById("footer-label").textContent=t.footerLabel;
 document.getElementById("confirm-cancel").textContent=t.confirmCancel;
 document.getElementById("confirm-open").textContent=t.confirmOpen;
 renderButtons(t.buttons);renderReviews(t.reviews);
@@ -348,4 +350,3 @@ card.addEventListener("click",()=>chooseLang(card.getAttribute("data-lang")));
 </script>
 </body>
 </html>
-
