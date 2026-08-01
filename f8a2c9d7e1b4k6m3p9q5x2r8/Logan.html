@@ -2275,16 +2275,12 @@ kbd {
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>نیشاندانی ژمارەی تەلەفۆن</label>
-            <div style="display:flex;align-items:center;gap:8px;height:44px">
-              <input type="checkbox" id="rcShowPhone" style="width:18px;height:18px"> <label for="rcShowPhone" style="font-size:13px">چالاکە</label>
-            </div>
+            <label>ژمارەی تەلەفۆن لەسەر وەصڵ</label>
+            <input class="form-control" id="rcPhoneText" placeholder="نموونە: 0750 xxx xxxx (بەتاڵ بهێڵەوە نیشان نادرێت)">
           </div>
           <div class="form-group">
-            <label>نیشاندانی ناونیشان</label>
-            <div style="display:flex;align-items:center;gap:8px;height:44px">
-              <input type="checkbox" id="rcShowAddress" style="width:18px;height:18px"> <label for="rcShowAddress" style="font-size:13px">چالاکە</label>
-            </div>
+            <label>ناونیشان لەسەر وەصڵ</label>
+            <input class="form-control" id="rcAddressText" placeholder="نموونە: سلێمانی - شار (بەتاڵ بهێڵەوە نیشان نادرێت)">
           </div>
         </div>
       </div>
@@ -4064,9 +4060,10 @@ document.querySelectorAll('.currency-label')
   updateInfoConnStatus();
 
   // ڕێکخستنی وەصڵە
+  // ڕێکخستنی وەصڵە
   document.getElementById('rcHeaderText').value = SETTINGS.receipt_header_text || '';
-  document.getElementById('rcShowPhone').checked = SETTINGS.receipt_show_phone !== false;
-  document.getElementById('rcShowAddress').checked = SETTINGS.receipt_show_address !== false;
+  document.getElementById('rcPhoneText').value = SETTINGS.receipt_phone_text || '';
+  document.getElementById('rcAddressText').value = SETTINGS.receipt_address_text || '';
   document.getElementById('rcDatePosition').value = SETTINGS.receipt_date_position || 'top';
   document.getElementById('rcShowNumber').checked = SETTINGS.receipt_show_number !== false;
   document.getElementById('rcFooterText').value = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
@@ -6366,8 +6363,8 @@ function switchHelpTab(el) {
 
 function printReceipt(items, total, isPreview) {
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.receipt_show_phone !== false ? (SETTINGS.store_phone || '') : '';
-  const address = SETTINGS.receipt_show_address !== false ? (SETTINGS.store_address || '') : '';
+  const phone = SETTINGS.receipt_phone_text || '';
+  const address = SETTINGS.receipt_address_text || '';
   const now = new Date().toLocaleString('ku');
   const profit = items.reduce((a,i)=>a+i.profit,0);
   const headerText = SETTINGS.receipt_header_text || '';
@@ -6768,8 +6765,8 @@ async function saveCurrency() {
 async function saveReceiptSettings() {
   const payload = {
     receipt_header_text: document.getElementById('rcHeaderText').value.trim(),
-    receipt_show_phone: document.getElementById('rcShowPhone').checked,
-    receipt_show_address: document.getElementById('rcShowAddress').checked,
+    receipt_phone_text: document.getElementById('rcPhoneText').value.trim(),
+    receipt_address_text: document.getElementById('rcAddressText').value.trim(),
     receipt_date_position: document.getElementById('rcDatePosition').value,
     receipt_show_number: document.getElementById('rcShowNumber').checked,
     receipt_footer_text: document.getElementById('rcFooterText').value.trim(),
