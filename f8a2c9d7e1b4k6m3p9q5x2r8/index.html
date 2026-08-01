@@ -14,6 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230A84FF'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/cover.webp" fetchpriority="high">
 <link rel="preload" as="image" href="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp" fetchpriority="high">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
@@ -24,19 +25,17 @@
 @property --lgt{syntax:'<percentage>';inherits:true;initial-value:55%;}
 :root{--bg:#0f0f0f;--bg-2:#131316;--card-bg:rgba(255,255,255,0.05);--card-bg-strong:rgba(255,255,255,0.08);--card-border:rgba(255,255,255,0.10);--text:#ffffff;--text-dim:rgba(255,255,255,0.62);--text-faint:rgba(255,255,255,0.38);--hue:210;--sat:88%;--lgt:55%;--accent:hsl(var(--hue) var(--sat) var(--lgt));--accent-2:hsl(var(--hue) calc(var(--sat) - 6%) calc(var(--lgt) + 17%));--radius-lg:24px;--radius-md:20px;--radius-sm:18px;--shadow:0 8px 30px rgba(0,0,0,0.4);--ease:cubic-bezier(.22,.9,.32,1);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{scroll-behavior:smooth;animation:accentHueShift 90s linear infinite;}
-@keyframes accentHueShift{0%{--hue:210;--sat:88%;--lgt:55%;}12%{--hue:262;--sat:76%;--lgt:58%;}24%{--hue:322;--sat:74%;--lgt:58%;}36%{--hue:355;--sat:80%;--lgt:55%;}48%{--hue:28;--sat:74%;--lgt:55%;}60%{--hue:40;--sat:30%;--lgt:66%;}70%{--hue:50;--sat:78%;--lgt:54%;}84%{--hue:152;--sat:52%;--lgt:46%;}100%{--hue:210;--sat:88%;--lgt:55%;}}
+html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative;}
 @media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}}
 .bg-grid{position:fixed;inset:0;z-index:-3;background-image:radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);background-size:28px 28px;background-position:-4px -4px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.85) 14%,rgba(0,0,0,0.85) 78%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.85) 14%,rgba(0,0,0,0.85) 78%,transparent 100%);}
 .bg-glow{position:fixed;inset:0;z-index:-2;overflow:hidden;background:var(--bg);contain:strict;}
-.bg-glow::before,.bg-glow::after{content:"";position:absolute;width:58vmax;height:58vmax;border-radius:50%;filter:blur(90px);opacity:0.22;will-change:transform;}
+.bg-glow::before,.bg-glow::after{content:"";position:absolute;width:58vmax;height:58vmax;border-radius:50%;filter:blur(60px);opacity:0.22;will-change:transform;}
 .bg-glow::before{background:radial-gradient(circle,var(--accent),transparent 70%);top:-20%;left:-15%;animation:floatA 18s ease-in-out infinite alternate;}
 .bg-glow::after{background:radial-gradient(circle,#5e35ff,transparent 70%);bottom:-25%;right:-15%;animation:floatB 20s ease-in-out infinite alternate;}
 @keyframes floatA{0%{transform:translate3d(0,0,0) scale(1);}100%{transform:translate3d(8%,10%,0) scale(1.12);}}
 @keyframes floatB{0%{transform:translate3d(0,0,0) scale(1);}100%{transform:translate3d(-10%,-8%,0) scale(1.15);}}
-.bg-noise{position:fixed;inset:0;z-index:5;opacity:0.035;mix-blend-mode:overlay;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:140px 140px;}
-#lang-select{position:fixed;inset:0;z-index:1001;background:rgba(10,10,12,0.62);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:24px;transition:opacity .45s var(--ease),visibility .45s var(--ease);}
+#lang-select{position:fixed;inset:0;z-index:1001;background:rgba(10,10,12,0.72);backdrop-filter:blur(12px) saturate(120%);-webkit-backdrop-filter:blur(12px) saturate(120%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:24px;transition:opacity .45s var(--ease),visibility .45s var(--ease);}
 #lang-select.hidden{opacity:0;visibility:hidden;pointer-events:none;}
 .lang-title{font-size:15px;font-weight:600;color:var(--text-dim);transition:opacity .3s var(--ease),transform .3s var(--ease);}
 .lang-options{display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;transition:opacity .3s var(--ease),transform .3s var(--ease);}
@@ -57,12 +56,12 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .flag-kurdistan::after{content:"";position:absolute;top:50%;left:50%;width:15px;height:15px;transform:translate(-50%,-50%);border-radius:50%;background:repeating-conic-gradient(#FFD200 0deg 8.57deg, transparent 8.57deg 17.14deg);}
 .flag-iraq{background:linear-gradient(180deg,#CE1126 0 33.3%,#fff 33.3% 66.6%,#000 66.6% 100%);}
 .flag-iraq::after{content:"الله أكبر";position:absolute;top:33.3%;left:0;right:0;height:33.3%;display:flex;align-items:center;justify-content:center;font-size:5px;color:#007A3D;font-weight:700;}
-#content-wrap{filter:blur(22px);transform:scale(1.03);transition:filter .5s var(--ease),transform .5s var(--ease);}
+#content-wrap{filter:blur(10px);transform:scale(1.02);transition:filter .4s var(--ease),transform .4s var(--ease);}
 #content-wrap.sharp{filter:none;transform:scale(1);}
 .wrap{max-width:520px;margin:0 auto;padding:0 20px max(40px, env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:38px;}
 .reveal{opacity:0;transform:translateY(10px);transition:opacity .45s var(--ease),transform .45s var(--ease);}
 .reveal.in{opacity:1;transform:translateY(0);}
-.glass{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),var(--shadow);}
+.glass{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);backdrop-filter:blur(8px) saturate(120%);-webkit-backdrop-filter:blur(8px) saturate(120%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),var(--shadow);}
 .cover-wrap{position:relative;width:100%;height:200px;margin-top:max(0px, env(safe-area-inset-top));border-radius:0 0 28px 28px;overflow:hidden;background:linear-gradient(135deg,hsl(var(--hue) var(--sat) var(--lgt) / 0.18),rgba(94,53,255,0.14));}
 .cover-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.72) saturate(1.15) contrast(1.05);transform:scale(1.02);}
 .cover-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,15,15,0) 40%,rgba(15,15,15,0.55) 78%,var(--bg) 100%);pointer-events:none;}
@@ -71,11 +70,6 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .logo-ring{position:relative;z-index:1;width:104px;height:104px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--accent),#5e35ff);box-shadow:0 0 0 4px var(--bg),0 10px 30px hsl(var(--hue) var(--sat) var(--lgt) / 0.25);animation:popIn .6s var(--ease) both;}
 .logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:var(--bg-2);}
 @keyframes popIn{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
-.floating-icons{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
-.ficon{position:absolute;bottom:-12%;opacity:0;color:var(--accent-2);will-change:transform,opacity;animation-name:ficonFloat;animation-timing-function:linear;animation-iteration-count:infinite;}
-.ficon svg{width:100%;height:100%;display:block;}
-@keyframes ficonFloat{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}10%{opacity:var(--fop,.12);}50%{transform:translateY(-58vh) translateX(var(--drift,18px)) rotate(10deg);}90%{opacity:var(--fop,.12);}100%{transform:translateY(-118vh) translateX(calc(var(--drift,18px) * -1)) rotate(-8deg);opacity:0;}}
-
 .shop-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;background:hsl(var(--hue) var(--sat) var(--lgt) / 0.12);border:1px solid hsl(var(--hue) var(--sat) var(--lgt) / 0.3);font-size:12.5px;font-weight:700;color:var(--accent-2);}
 .shop-pill svg{width:14px;height:14px;}
 .biz-name{display:flex;align-items:center;gap:6px;font-size:27px;font-weight:800;margin-top:4px;}
@@ -172,8 +166,6 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <body>
 <div class="bg-grid" aria-hidden="true"></div>
 <div class="bg-glow"></div>
-<div class="bg-noise" aria-hidden="true"></div>
-<div class="floating-icons" id="floating-icons" aria-hidden="true"></div>
 <div id="lang-select">
 <div class="lang-title">زمانێک هەڵبژێرە · اختر اللغة</div>
 <div class="lang-options">
@@ -260,7 +252,6 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <script>
 (function(){
 "use strict";
-document.documentElement.style.animationDelay=(-(Math.random()*90)).toFixed(2)+"s";
 const LINKS={whatsappSales:"https://wa.me/9647507271567",whatsappSupport:"https://wa.me/9647507204567",instagram:"https://www.instagram.com/jehane_mobaile?igsh=MWppbmdra29scDgwYw%3D%3D&utm_source=qr",tiktok:"https://tiktok.com/@jehane_mobail",snapchat:"https://snapchat.com/t/TC0cqZN9",maps:"https://maps.app.goo.gl/oArtYwzbd46Z9MGu8?g_st=ic",mapQuery:"Erbil Havalan"};
 const ICONS={
 whatsapp:`<svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.42a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.79 14.1c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.81-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35.19 0 .38 0 .55.01.18.01.42-.07.65.5.24.58.81 2 .88 2.15.07.15.12.32.02.52-.1.19-.15.31-.3.48-.15.17-.31.38-.44.51-.15.15-.31.31-.13.61.17.29.77 1.28 1.66 2.07 1.15 1.02 2.11 1.34 2.4 1.49.29.15.46.13.63-.05.17-.19.72-.83.91-1.12.19-.28.39-.24.65-.14.26.1 1.68.79 1.97.93.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>`,
@@ -273,40 +264,6 @@ phone:`<svg viewBox="0 0 24 24" fill="var(--accent)"><path d="M6.6 10.8c1.35 2.6
 };
 const ARROW=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`;
 const CHECK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
-const FLOAT_ICONS=[
-`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`,
-`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 8.5a16 16 0 0 1 20 0"/><path d="M5.5 12.5a11 11 0 0 1 13 0"/><path d="M9 16.3a6 6 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor" stroke="none"/></svg>`,
-`<svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="8" rx="1"/><rect x="8" y="10" width="3" height="12" rx="1"/><rect x="14" y="6" width="3" height="16" rx="1"/><rect x="20" y="2" width="3" height="20" rx="1"/></svg>`,
-`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 2h9l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><rect x="8" y="10" width="8" height="6" rx="1"/></svg>`,
-`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>`,
-`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>`
-];
-function initFloatingIcons(){
-const container=document.getElementById("floating-icons");
-if(!container) return;
-if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-const count=window.innerWidth<640?7:12;
-const frag=document.createDocumentFragment();
-for(let i=0;i<count;i++){
-const el=document.createElement("div");
-el.className="ficon";
-el.innerHTML=FLOAT_ICONS[Math.floor(Math.random()*FLOAT_ICONS.length)];
-const size=14+Math.random()*22;
-const left=Math.random()*94;
-const duration=16+Math.random()*14;
-const delay=-(Math.random()*duration);
-const drift=Math.round(Math.random()*40-20)+"px";
-const fop=(0.06+Math.random()*0.08).toFixed(2);
-el.style.width=size+"px";el.style.height=size+"px";
-el.style.left=left+"vw";
-el.style.setProperty("--drift",drift);
-el.style.setProperty("--fop",fop);
-el.style.animationDuration=duration+"s";
-el.style.animationDelay=delay+"s";
-frag.appendChild(el);
-}
-container.appendChild(frag);
-}
 const TEXT={
 ku:{pageTitle:"جیهانی مۆبایل | Jehane Mobile",businessName:"جیهانی مۆبایل",shopPill:"وەستا ئەمیر",description:"بۆ فرۆشتنی مۆبایل و ئاکسسواراتی ئۆریجیناڵ بە نرخێکی گونجاو، چاکردنەوە هەموو جۆرە مۆبایلێک.",heroTag:"پەیوەندیمان پێوەبکە",titleContact:"پەیوەندی",titleReviews:"ڕای کڕیارەکان",swipeHint:"← بۆ بینینی زیاتر →",titleAbout:"دەربارەی ئێمە",titleFind:"شوێنمان",aboutTitle:"ئەزموونی ئێمە",aboutText:"جیهانی مۆبایل لە هەولێر خزمەتگوزاری فرۆشتنی مۆبایل و ئاکسسوارات پێشکەش دەکات. هەمیشە هەوڵدەدەین باشترین کوالێتی، نرخ و مامەڵە بە کڕیاران بدەین.",years:"14+",yearsLabel:"ساڵ ئەزموون",projects:"%100",projectsLabel:"گەرەنتی",satisfaction:"%98",satisfactionLabel:"کریاری رازی",trust:["هەمیشە بەخێربێن","جیهانی مۆبایل بۆ هەموو پێداویستیەکانی مۆبایل.","کوالێتی، متمانە، خزمەتگوزاری."],openNow:"ئێستا کراوەیە",locationTitle:"سەردانمان بکە",locationAddress:"هەولێر، هەڤاڵان",openMaps:"لە خەریتە بکەرەوە",navigate:"ڕێنیشاندان",footerLabel:"دروست کراوە لە لایەن",confirmText:"دەتەوێت ئەم لینکە بکەیتەوە؟",confirmOpen:"بکەرەوە",confirmCancel:"هەڵوەشاندنەوە",
 buttons:[{title:"وەتساپ",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales,glow:"37,211,102"},{title:"وەتساپ",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport,glow:"37,211,102"},{title:"ئینستاگرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram,glow:"214,41,118"},{title:"تیک تۆک",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok,glow:"37,244,238"},{title:"سنابچات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat,glow:"255,220,0"}],
@@ -451,11 +408,6 @@ container.addEventListener("scroll",()=>{
 if(scrollDebounce) clearTimeout(scrollDebounce);
 scrollDebounce=setTimeout(syncIdxFromScroll,120);
 },{passive:true});
-/* FIX: scrollIntoView on the first review card could drag the whole page's
-   vertical scroll position along with it on some mobile browsers, which is
-   why the page ended up showing the middle of the content instead of the
-   top after picking a language. We now only move the horizontal scroller
-   itself (scrollLeft), never touching the page/document scroll. */
 container.scrollLeft = 0;
 updateDots();
 }
@@ -464,16 +416,11 @@ entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("in"
 },{threshold:0.08,rootMargin:"0px 0px -6% 0px"});
 function observeReveal(el){io.observe(el);}
 document.querySelectorAll(".reveal").forEach(observeReveal);
-initFloatingIcons();
 const langSelectEl=document.getElementById("lang-select");
 const contentWrapEl=document.getElementById("content-wrap");
 function chooseLang(code){
 applyLang(code);
 langSelectEl.classList.add("exiting");
-/* FIX: force the page back to the very top right when the language is
-   chosen, and again after the fade-out finishes, so the site always opens
-   at the top regardless of any scroll movement caused by rendering the
-   reviews/buttons above. */
 window.scrollTo(0,0);
 setTimeout(()=>{
 langSelectEl.classList.add("hidden");
