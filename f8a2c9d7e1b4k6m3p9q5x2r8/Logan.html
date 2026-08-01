@@ -6501,7 +6501,6 @@ function printReceipt(items, total, isPreview) {
       <div class="footer">
         <div class="thanks">${footerText}</div>
         <p>پسووڵەکەت پاراستبێت</p>
-        ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
       </div>
       ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
 
@@ -6622,10 +6621,9 @@ function printRepair(id) {
       <hr class="divider">
       <div class="row"><span class="label">هزینەی چاکسازی:</span><span class="val" style="font-size:16px">${Number(r.cost).toLocaleString()} د.ع</span></div>
       <hr class="divider">
-      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
+        ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
         <div class="thanks">${footerText}</div>
-        ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
       </div>
       ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
       <script>
