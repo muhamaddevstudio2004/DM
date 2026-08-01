@@ -1920,8 +1920,8 @@ kbd {
   <div class="settings-menu-item" data-s="receipt" onclick="openSettingsSection(this)">
     <div class="settings-menu-icon" style="background:var(--success-light);color:var(--success)"><i class="ti ti-receipt"></i></div>
     <div class="settings-menu-text">
-      <div class="settings-menu-title">ڕێکخستنی وەصڵە</div>
-      <div class="settings-menu-desc">دیزاین و ناوەڕۆکی پسووڵەی چاپکراو</div>
+      <div class="settings-menu-title">ڕێکخستنی وەصڵ</div>
+      <div class="settings-menu-desc">دیزاین و ناوەڕۆکی پسوولەی چاپکراو</div>
     </div>
     <i class="ti ti-chevron-left settings-menu-arrow"></i>
   </div>
@@ -2267,7 +2267,7 @@ kbd {
 <div class="settings-section" data-section="receipt" style="display:none">
   <div class="card mb-16">
     <div class="card-body">
-      <div style="font-size:14px;font-weight:700;margin-bottom:14px">ناوەڕۆکی سەرەوەی وەصڵە</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">ناوەڕۆکی سەرەوەی وەصڵ</div>
       <div class="form-grid">
         <div class="form-group">
           <label>دەقی سەرەوە (ئارەزوومەندانە)</label>
@@ -2289,17 +2289,17 @@ kbd {
 
   <div class="card mb-16">
     <div class="card-body">
-      <div style="font-size:14px;font-weight:700;margin-bottom:14px">بەروار و ژمارەی وەصڵە</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">بەروار و ژمارەی وەصل</div>
       <div class="form-row">
         <div class="form-group">
           <label>شوێنی بەروار</label>
           <select class="form-control" id="rcDatePosition">
-            <option value="top">سەرەوەی وەصڵە</option>
-            <option value="bottom">خوارەوەی وەصڵە</option>
+            <option value="top">سەرەوەی وەصڵ</option>
+            <option value="bottom">خوارەوەی وەصڵ</option>
           </select>
         </div>
         <div class="form-group">
-          <label>نیشاندانی ژمارەی وەصڵە</label>
+          <label>نیشاندانی ژمارەی وەصڵ</label>
           <div style="display:flex;align-items:center;gap:8px;height:44px">
             <input type="checkbox" id="rcShowNumber" style="width:18px;height:18px"> <label for="rcShowNumber" style="font-size:13px">چالاکە</label>
           </div>
@@ -2310,10 +2310,10 @@ kbd {
 
   <div class="card mb-16">
     <div class="card-body">
-      <div style="font-size:14px;font-weight:700;margin-bottom:14px">خوارەوەی وەصڵە</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">خوارەوەی وەصڵ</div>
       <div class="form-group" style="margin-bottom:14px">
         <label>دەقی سوپاسکردن</label>
-        <input class="form-control" id="rcFooterText" placeholder="سوپاس بۆ کڕینت 🙏">
+        <input class="form-control" id="rcFooterText" placeholder="سوپاس بۆ کڕینت ">
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <span style="font-size:13px;font-weight:600">نیشاندانی QR کۆد</span>
@@ -6790,7 +6790,7 @@ async function saveReceiptSettings() {
     const { error } = await sb.from('settings').update(payload).eq('id', 1);
     if(error) throw error;
     await loadAllData();
-    toast('ڕێکخستنی وەصڵە پاشەکەوتکرا', 'success');
+    toast('ڕێکخستنی وەصڵ پاشەکەوتکرا', 'success');
   } catch(err) {
     toast('کێشە: ' + (err.message||err), 'error');
   } finally {
