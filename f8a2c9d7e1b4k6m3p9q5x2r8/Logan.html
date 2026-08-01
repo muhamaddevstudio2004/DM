@@ -6374,7 +6374,7 @@ function printReceipt(items, total, isPreview) {
   const receiptNumber = 'R-' + Date.now().toString().slice(-6);
   const paperWidth = SETTINGS.receipt_paper_width === '58' ? 260 : 320;
   const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
-  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const rows = items.map(i=>`
     <tr>
@@ -6389,7 +6389,8 @@ function printReceipt(items, total, isPreview) {
     <html lang="ku" dir="rtl">
     <head>
       <meta charset="UTF-8">
-      <title>پسووڵە</title>
+      <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+      <title>پسوولە</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -6400,9 +6401,10 @@ function printReceipt(items, total, isPreview) {
           max-width: 320px;
           margin: 0 auto;
         }
+        a { color:#000 !important; text-decoration:none !important; }
         .header { text-align:center; margin-bottom:16px; }
-        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; }
-        .header p { font-size:11px; color:#444; line-height:1.6; }
+        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; letter-spacing:0.3px; }
+        .header p { font-size:11px; color:#444; line-height:1.7; }
         .divider {
           border:none;
           border-top: 1px dashed #000;
@@ -6463,10 +6465,9 @@ function printReceipt(items, total, isPreview) {
       <div class="header">
         ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
-        ${phone ? `<p>📞 ${phone}</p>` : ''}
-        ${address ? `<p>📍 ${address}</p>` : ''}
-        ${showNumber ? `<p>🧾 ${receiptNumber}</p>` : ''}
-        ${datePos === 'top' ? `<p>🗓 ${now}</p>` : ''}
+        ${phone ? `<p>${phone}</p>` : ''}
+        ${address ? `<p>${address}</p>` : ''}
+        ${showNumber || datePos === 'top' ? `<p style="font-size:10px;color:#888;margin-top:4px">${showNumber ? receiptNumber : ''}${showNumber && datePos==='top' ? '  •  ' : ''}${datePos === 'top' ? now : ''}</p>` : ''}
       </div>
 
       <hr class="divider">
@@ -6496,15 +6497,14 @@ function printReceipt(items, total, isPreview) {
 
       <hr class="divider">
 
-      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:11px;color:#444;margin-bottom:8px">🗓 ${now}</p>` : ''}
-
+      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
         <div class="thanks">${footerText}</div>
         <p>پسووڵەکەت پاراستبێت</p>
         ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
       </div>
+      ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
 
-      ${showQr ? `<div style="text-align:center;margin-top:14px"><img src="${qrImgUrl}" style="width:100px;height:100px"></div>` : ''}
 
       ${isPreview ? '' : `<script>
         window.onload = function() {
@@ -6569,27 +6569,35 @@ function printRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
-  const address = SETTINGS.store_address || '';
+  const phone = SETTINGS.receipt_phone_text || '';
+  const address = SETTINGS.receipt_address_text || '';
   const now = new Date().toLocaleString('ku');
+  const headerText = SETTINGS.receipt_header_text || '';
+  const footerText = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت';
+  const datePos = SETTINGS.receipt_date_position || 'top';
+  const showNumber = SETTINGS.receipt_show_number !== false;
+  const receiptNumber = 'RP-' + Date.now().toString().slice(-6);
+  const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const html = `
     <!DOCTYPE html>
     <html lang="ku" dir="rtl">
     <head>
       <meta charset="UTF-8">
+      <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
       <title>پسووڵەی چاکسازی</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Noto Sans Arabic',Tahoma,sans-serif; font-size:13px; color:#000; padding:20px; max-width:320px; margin:0 auto; }
+        a { color:#000 !important; text-decoration:none !important; }
         .header { text-align:center; margin-bottom:16px; }
-        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; }
-        .header p { font-size:11px; color:#444; line-height:1.6; }
+        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; letter-spacing:0.3px; }
+        .header p { font-size:11px; color:#444; line-height:1.7; }
         .divider { border:none; border-top:1px dashed #000; margin:10px 0; }
         .row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed #ddd; font-size:13px; }
         .row .label { color:#555; }
         .row .val { font-weight:700; }
-        .status-box { text-align:center; margin:14px 0; padding:10px; background:#f5f5f5; border-radius:6px; font-size:15px; font-weight:900; }
         .footer { text-align:center; margin-top:16px; font-size:11px; color:#555; line-height:1.8; }
         .footer .thanks { font-size:14px; font-weight:700; color:#000; margin-bottom:4px; }
         @media print { body { padding:10px; } @page { margin:8mm; } }
@@ -6597,13 +6605,14 @@ function printRepair(id) {
     </head>
     <body>
       <div class="header">
+        ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
-        ${phone ? `<p>📞 ${phone}</p>` : ''}
-        ${address ? `<p>📍 ${address}</p>` : ''}
-        <p>🗓 ${now}</p>
+        ${phone ? `<p>${phone}</p>` : ''}
+        ${address ? `<p>${address}</p>` : ''}
+        ${showNumber || datePos === 'top' ? `<p style="font-size:10px;color:#888;margin-top:4px">${showNumber ? receiptNumber : ''}${showNumber && datePos==='top' ? '  •  ' : ''}${datePos === 'top' ? now : ''}</p>` : ''}
       </div>
       <hr class="divider">
-      <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:12px">🔧 پسووڵەی چاکسازی</div>
+      <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:12px">پسووڵەی چاکسازی</div>
       <div class="row"><span class="label">ناوی کڕیار:</span><span class="val">${r.customerName}</span></div>
       <div class="row"><span class="label">ژمارە:</span><span class="val">${r.phone}</span></div>
       <div class="row"><span class="label">ئامێر:</span><span class="val">${r.device} (${r.deviceType})</span></div>
@@ -6613,10 +6622,12 @@ function printRepair(id) {
       <hr class="divider">
       <div class="row"><span class="label">هزینەی چاکسازی:</span><span class="val" style="font-size:16px">${Number(r.cost).toLocaleString()} د.ع</span></div>
       <hr class="divider">
+      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
-        <div class="thanks">سوپاس بۆ باوەڕت 🙏</div>
+        <div class="thanks">${footerText}</div>
         ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
       </div>
+      ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
       <script>
         window.onload = function() { window.print(); setTimeout(()=>window.close(), 1000); }
       <\/script>
@@ -6639,27 +6650,28 @@ function whatsappRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
+  const phone = SETTINGS.receipt_phone_text || SETTINGS.store_phone || '';
   const status = repairStatusLabel(r.status);
 
   const message = 
-`سڵاو ${r.customerName} 👋
+`سڵاو ${r.customerName}
 
 ${r.status === 'completed' || r.status === 'delivered' 
-  ? `ئامێرەکەت ئامادەیە وەریبگریت ✅` 
+  ? `ئامێرەکەت ئامادەیە وەریبگریت` 
   : `نوێترین زانیاری چاکسازیەکەت:`}
 
-📱 ئامێر: ${r.device}
-🔧 کێشە: ${r.problem}
-📊 ستاتوس: ${status}
-💰 هزینە: ${Number(r.cost).toLocaleString()} د.ع
+ئامێر: ${r.device}
+کێشە: ${r.problem}
+ستاتوس: ${status}
+هزینە: ${Number(r.cost).toLocaleString()} د.ع
 
-🏪 ${store}${phone ? `\n📞 ${phone}` : ''}`;
+${store}${phone ? `\n${phone}` : ''}`;
 
   const cleaned = r.phone.replace(/\D/g,'').replace(/^0/,'');
   const url = `https://wa.me/964${cleaned}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank');
 }
+
 
 function whatsappDebt(id) {
   const d = DB.get('debts').find(x=>x.id===id);
