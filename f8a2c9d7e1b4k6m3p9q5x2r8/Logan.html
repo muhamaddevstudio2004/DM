@@ -1917,6 +1917,15 @@ kbd {
     <i class="ti ti-chevron-left settings-menu-arrow"></i>
   </div>
 
+  <div class="settings-menu-item" data-s="receipt" onclick="openSettingsSection(this)">
+    <div class="settings-menu-icon" style="background:var(--success-light);color:var(--success)"><i class="ti ti-receipt"></i></div>
+    <div class="settings-menu-text">
+      <div class="settings-menu-title">ڕێکخستنی وەصڵە</div>
+      <div class="settings-menu-desc">دیزاین و ناوەڕۆکی پسووڵەی چاپکراو</div>
+    </div>
+    <i class="ti ti-chevron-left settings-menu-arrow"></i>
+  </div>
+
 </div>
 
 <!-- دوگمەی گەڕانەوە -->
@@ -2241,7 +2250,7 @@ kbd {
   </div>
 </div>
 
-<!-- ٦. کارمەندان -->
+<!-- ٦. کارمەندان --><!-- ٦. کارمەندان -->
 <div class="settings-section" data-section="employees" style="display:none">
   <div class="card mb-16">
     <div class="card-body">
@@ -2254,10 +2263,94 @@ kbd {
   </div>
 </div>
 
+<!-- ٧. ڕێکخستنی وەصڵە -->
+<div class="settings-section" data-section="receipt" style="display:none">
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">ناوەڕۆکی سەرەوەی وەصڵە</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>دەقی سەرەوە (ئارەزوومەندانە)</label>
+          <input class="form-control" id="rcHeaderText" placeholder="نموونە: بەخێربێیت بۆ دوکانمان">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>نیشاندانی ژمارەی تەلەفۆن</label>
+            <div style="display:flex;align-items:center;gap:8px;height:44px">
+              <input type="checkbox" id="rcShowPhone" style="width:18px;height:18px"> <label for="rcShowPhone" style="font-size:13px">چالاکە</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>نیشاندانی ناونیشان</label>
+            <div style="display:flex;align-items:center;gap:8px;height:44px">
+              <input type="checkbox" id="rcShowAddress" style="width:18px;height:18px"> <label for="rcShowAddress" style="font-size:13px">چالاکە</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">بەروار و ژمارەی وەصڵە</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>شوێنی بەروار</label>
+          <select class="form-control" id="rcDatePosition">
+            <option value="top">سەرەوەی وەصڵە</option>
+            <option value="bottom">خوارەوەی وەصڵە</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>نیشاندانی ژمارەی وەصڵە</label>
+          <div style="display:flex;align-items:center;gap:8px;height:44px">
+            <input type="checkbox" id="rcShowNumber" style="width:18px;height:18px"> <label for="rcShowNumber" style="font-size:13px">چالاکە</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">خوارەوەی وەصڵە</div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>دەقی سوپاسکردن</label>
+        <input class="form-control" id="rcFooterText" placeholder="سوپاس بۆ کڕینت 🙏">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:600">نیشاندانی QR کۆد</span>
+        <div class="toggle-switch" id="rcShowQrToggle" onclick="toggleRcQr()">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ناوەڕۆکی QR (لینک/ژمارە/سۆشیال میدیا)</label>
+        <input class="form-control" id="rcQrData" placeholder="نموونە: https://wa.me/9647xxxxxxxx">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">قەبارەی کاغەز</div>
+      <div class="form-group">
+        <select class="form-control" id="rcPaperWidth">
+          <option value="58">58mm (پرینتەری بچووک)</option>
+          <option value="80">80mm (پرینتەری ئاسایی)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-primary" id="saveReceiptBtn" onclick="saveReceiptSettings()"><i class="ti ti-check"></i> پاشەکەوتکردن</button>
+    <button class="btn btn-ghost" onclick="previewReceiptSettings()"><i class="ti ti-eye"></i> پێشبینین</button>
+  </div>
 </div>
 
-
+</div>
 	<!-- ═══════════════════════ REPORTS ═══════════════════════ -->
 	<div class="page" id="page-reports">
 	  <div class="page-title">
@@ -3969,6 +4062,21 @@ document.querySelectorAll('.currency-label')
   renderCategoryList();  
   updateAutoPrintUI();
   updateInfoConnStatus();
+
+  // ڕێکخستنی وەصڵە
+  document.getElementById('rcHeaderText').value = SETTINGS.receipt_header_text || '';
+  document.getElementById('rcShowPhone').checked = SETTINGS.receipt_show_phone !== false;
+  document.getElementById('rcShowAddress').checked = SETTINGS.receipt_show_address !== false;
+  document.getElementById('rcDatePosition').value = SETTINGS.receipt_date_position || 'top';
+  document.getElementById('rcShowNumber').checked = SETTINGS.receipt_show_number !== false;
+  document.getElementById('rcFooterText').value = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
+  document.getElementById('rcQrData').value = SETTINGS.receipt_qr_data || '';
+  document.getElementById('rcPaperWidth').value = SETTINGS.receipt_paper_width || '80';
+  document.getElementById('rcShowQrToggle').classList.toggle('on', !!SETTINGS.receipt_show_qr);
+}
+
+function toggleRcQr() {
+  document.getElementById('rcShowQrToggle').classList.toggle('on');
 }
 
 async function saveStoreInfo() {
@@ -6256,12 +6364,20 @@ function switchHelpTab(el) {
   document.getElementById('help-' + el.dataset.tab).style.display='block';
 }
 
-function printReceipt(items, total) {
+function printReceipt(items, total, isPreview) {
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
-  const address = SETTINGS.store_address || '';
+  const phone = SETTINGS.receipt_show_phone !== false ? (SETTINGS.store_phone || '') : '';
+  const address = SETTINGS.receipt_show_address !== false ? (SETTINGS.store_address || '') : '';
   const now = new Date().toLocaleString('ku');
   const profit = items.reduce((a,i)=>a+i.profit,0);
+  const headerText = SETTINGS.receipt_header_text || '';
+  const footerText = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
+  const datePos = SETTINGS.receipt_date_position || 'top';
+  const showNumber = SETTINGS.receipt_show_number !== false;
+  const receiptNumber = 'R-' + Date.now().toString().slice(-6);
+  const paperWidth = SETTINGS.receipt_paper_width === '58' ? 260 : 320;
+  const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const rows = items.map(i=>`
     <tr>
@@ -6348,10 +6464,12 @@ function printReceipt(items, total) {
     </head>
     <body>
       <div class="header">
+        ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
         ${phone ? `<p>📞 ${phone}</p>` : ''}
         ${address ? `<p>📍 ${address}</p>` : ''}
-        <p>🗓 ${now}</p>
+        ${showNumber ? `<p>🧾 ${receiptNumber}</p>` : ''}
+        ${datePos === 'top' ? `<p>🗓 ${now}</p>` : ''}
       </div>
 
       <hr class="divider">
@@ -6381,20 +6499,25 @@ function printReceipt(items, total) {
 
       <hr class="divider">
 
+      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:11px;color:#444;margin-bottom:8px">🗓 ${now}</p>` : ''}
+
       <div class="footer">
-        <div class="thanks">سوپاس بۆ کڕینت 🙏</div>
+        <div class="thanks">${footerText}</div>
         <p>پسووڵەکەت پاراستبێت</p>
         ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
       </div>
 
-      <script>
+      ${showQr ? `<div style="text-align:center;margin-top:14px"><img src="${qrImgUrl}" style="width:100px;height:100px"></div>` : ''}
+
+      ${isPreview ? '' : `<script>
         window.onload = function() {
           window.print();
           setTimeout(()=>window.close(), 1000);
         }
-      <\/script>
+      <\/script>`}
     </body>
     </html>`;
+
 
 // مۆبایل — پرینت دەکرێت بەبێ popup
 if(/Mobi|Android/i.test(navigator.userAgent)) {
@@ -6640,6 +6763,42 @@ async function saveCurrency() {
     toast('کێشە: ' + (err.message||err), 'error');
   }
   renderSettings();
+}
+
+async function saveReceiptSettings() {
+  const payload = {
+    receipt_header_text: document.getElementById('rcHeaderText').value.trim(),
+    receipt_show_phone: document.getElementById('rcShowPhone').checked,
+    receipt_show_address: document.getElementById('rcShowAddress').checked,
+    receipt_date_position: document.getElementById('rcDatePosition').value,
+    receipt_show_number: document.getElementById('rcShowNumber').checked,
+    receipt_footer_text: document.getElementById('rcFooterText').value.trim(),
+    receipt_show_qr: document.getElementById('rcShowQrToggle').classList.contains('on'),
+    receipt_qr_data: document.getElementById('rcQrData').value.trim(),
+    receipt_paper_width: document.getElementById('rcPaperWidth').value
+  };
+  const btn = document.getElementById('saveReceiptBtn');
+  btn.disabled = true;
+  try {
+    const { error } = await sb.from('settings').update(payload).eq('id', 1);
+    if(error) throw error;
+    await loadAllData();
+    toast('ڕێکخستنی وەصڵە پاشەکەوتکرا', 'success');
+  } catch(err) {
+    toast('کێشە: ' + (err.message||err), 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function previewReceiptSettings() {
+  printReceipt([{
+    product_name: 'کاڵای نموونە',
+    qty: 2,
+    unit_price: 15000,
+    total: 30000,
+    profit: 5000
+  }], 30000, true);
 }
 
 // ══════════════════════════════════════════
