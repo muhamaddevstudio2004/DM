@@ -1917,6 +1917,15 @@ kbd {
     <i class="ti ti-chevron-left settings-menu-arrow"></i>
   </div>
 
+  <div class="settings-menu-item" data-s="receipt" onclick="openSettingsSection(this)">
+    <div class="settings-menu-icon" style="background:var(--success-light);color:var(--success)"><i class="ti ti-receipt"></i></div>
+    <div class="settings-menu-text">
+      <div class="settings-menu-title">ڕێکخستنی وەصڵ</div>
+      <div class="settings-menu-desc">دیزاین و ناوەڕۆکی پسوولەی چاپکراو</div>
+    </div>
+    <i class="ti ti-chevron-left settings-menu-arrow"></i>
+  </div>
+
 </div>
 
 <!-- دوگمەی گەڕانەوە -->
@@ -2241,7 +2250,7 @@ kbd {
   </div>
 </div>
 
-<!-- ٦. کارمەندان -->
+<!-- ٦. کارمەندان --><!-- ٦. کارمەندان -->
 <div class="settings-section" data-section="employees" style="display:none">
   <div class="card mb-16">
     <div class="card-body">
@@ -2254,10 +2263,90 @@ kbd {
   </div>
 </div>
 
+<!-- ٧. ڕێکخستنی وەصڵە -->
+<div class="settings-section" data-section="receipt" style="display:none">
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">ناوەڕۆکی سەرەوەی وەصڵ</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>دەقی سەرەوە (ئارەزوومەندانە)</label>
+          <input class="form-control" id="rcHeaderText" placeholder="نموونە: بەخێربێیت بۆ دوکانمان">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ژمارەی تەلەفۆن لەسەر وەصڵ</label>
+            <input class="form-control" id="rcPhoneText" placeholder="نموونە: 0750 xxx xxxx (بەتاڵ بهێڵەوە نیشان نادرێت)">
+          </div>
+          <div class="form-group">
+            <label>ناونیشان لەسەر وەصڵ</label>
+            <input class="form-control" id="rcAddressText" placeholder="نموونە: سلێمانی - شار (بەتاڵ بهێڵەوە نیشان نادرێت)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">بەروار و ژمارەی وەصل</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>شوێنی بەروار</label>
+          <select class="form-control" id="rcDatePosition">
+            <option value="top">سەرەوەی وەصڵ</option>
+            <option value="bottom">خوارەوەی وەصڵ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>نیشاندانی ژمارەی وەصڵ</label>
+          <div style="display:flex;align-items:center;gap:8px;height:44px">
+            <input type="checkbox" id="rcShowNumber" style="width:18px;height:18px"> <label for="rcShowNumber" style="font-size:13px">چالاکە</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">خوارەوەی وەصڵ</div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>دەقی سوپاسکردن</label>
+        <input class="form-control" id="rcFooterText" placeholder="سوپاس بۆ کڕینت ">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:600">نیشاندانی QR کۆد</span>
+        <div class="toggle-switch" id="rcShowQrToggle" onclick="toggleRcQr()">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ناوەڕۆکی QR (لینک/ژمارە/سۆشیال میدیا)</label>
+        <input class="form-control" id="rcQrData" placeholder="نموونە: https://wa.me/9647xxxxxxxx">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">قەبارەی کاغەز</div>
+      <div class="form-group">
+        <select class="form-control" id="rcPaperWidth">
+          <option value="58">58mm (پرینتەری بچووک)</option>
+          <option value="80">80mm (پرینتەری ئاسایی)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-primary" id="saveReceiptBtn" onclick="saveReceiptSettings()"><i class="ti ti-check"></i> پاشەکەوتکردن</button>
+    <button class="btn btn-ghost" onclick="previewReceiptSettings()"><i class="ti ti-eye"></i> پێشبینین</button>
+  </div>
 </div>
 
-
+</div>
 	<!-- ═══════════════════════ REPORTS ═══════════════════════ -->
 	<div class="page" id="page-reports">
 	  <div class="page-title">
@@ -3851,8 +3940,6 @@ async function savePlan() {
   const btn = document.getElementById('planSaveBtn');
   btn.disabled = true;
   try {
-    if(!isOnline) throw new Error('offline');
-
     if(editPlanId) {
       const { error } = await sb.from('plans').update({ title, content }).eq('id', editPlanId);
       if(error) throw error;
@@ -3865,35 +3952,11 @@ async function savePlan() {
 
     await loadAllData();
     closeModal('planModal'); renderPlans();
-
   } catch(err) {
-    console.error(err);
-    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
-
-    if(isNetworkError) {
-      if(editPlanId) {
-        const idx = CACHE.plans.findIndex(p=>p.id===editPlanId);
-        if(idx>-1) {
-          CACHE.plans[idx] = { ...CACHE.plans[idx], title, content };
-          await idbPut('plans', CACHE.plans[idx]);
-        }
-        await addToSyncQueue({ type:'update', table:'plans', id: editPlanId, data: { title, content } });
-      } else {
-        const newPlan = {
-          id: crypto.randomUUID(), title, content, status:'active',
-          createdAt: new Date().toISOString(), createdBy: currentUser?.name || null
-        };
-        CACHE.plans.unshift(newPlan);
-        await idbPut('plans', newPlan);
-        await addToSyncQueue({ type:'insert', table:'plans', data: { id: newPlan.id, title, content, status:'active', created_by: newPlan.createdBy } });
-      }
-      closeModal('planModal'); renderPlans();
-      toast('ئینتەرنێت نییە — پلانەکە پاشەکەوتکرا لە مۆبایل، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
-    } else {
-      toast('کێشە ڕوویدا: '+(err.message||err),'error');
-    }
+    toast('کێشە ڕوویدا: '+(err.message||err),'error');
   } finally { btn.disabled=false; }
 }
+
 async function deletePlan(id) {
   if(!can('plans','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم پلانە؟')) return;
@@ -3995,6 +4058,22 @@ document.querySelectorAll('.currency-label')
   renderCategoryList();  
   updateAutoPrintUI();
   updateInfoConnStatus();
+
+  // ڕێکخستنی وەصڵە
+  // ڕێکخستنی وەصڵە
+  document.getElementById('rcHeaderText').value = SETTINGS.receipt_header_text || '';
+  document.getElementById('rcPhoneText').value = SETTINGS.receipt_phone_text || '';
+  document.getElementById('rcAddressText').value = SETTINGS.receipt_address_text || '';
+  document.getElementById('rcDatePosition').value = SETTINGS.receipt_date_position || 'top';
+  document.getElementById('rcShowNumber').checked = SETTINGS.receipt_show_number !== false;
+  document.getElementById('rcFooterText').value = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
+  document.getElementById('rcQrData').value = SETTINGS.receipt_qr_data || '';
+  document.getElementById('rcPaperWidth').value = SETTINGS.receipt_paper_width || '80';
+  document.getElementById('rcShowQrToggle').classList.toggle('on', !!SETTINGS.receipt_show_qr);
+}
+
+function toggleRcQr() {
+  document.getElementById('rcShowQrToggle').classList.toggle('on');
 }
 
 async function saveStoreInfo() {
@@ -4595,31 +4674,19 @@ async function saveProduct() {
   const sell=parseFloat(document.getElementById('pSellPrice').value)||0;
   const qty=parseInt(document.getElementById('pQty').value)||0;
   const barcode=document.getElementById('pBarcode').value.trim()||null;
-  const model = document.getElementById('pModel').value;
-  const notes = document.getElementById('pNotes').value;
   if(!name||!cat||!sell) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
-
+  let image_url = editProductId ? (DB.get('products').find(x=>x.id===editProductId)?.imageUrl || null) : null;
   const btn = document.getElementById('pSaveBtn');
   btn.disabled = true;
-
-  let image_url = editProductId ? (DB.get('products').find(x=>x.id===editProductId)?.imageUrl || null) : null;
-  let imageSkippedOffline = false;
-
-  if(selectedImageFile.product) {
-    if(isOnline) {
-      try { image_url = await uploadImageToSupabase(selectedImageFile.product, 'products'); }
-      catch(e) { imageSkippedOffline = true; }
-    } else {
-      imageSkippedOffline = true;
-    }
-  } else if(window._removedExistingImage_product) {
-    image_url = null;
-  }
-
-  const dbData = { name, brand, model, category: cat, buy_price: buy, sell_price: sell, qty, notes, barcode, image_url };
-
   try {
-    if(!isOnline) throw new Error('offline');
+    if(selectedImageFile.product) {
+      image_url = await uploadImageToSupabase(selectedImageFile.product, 'products');
+    } else if(window._removedExistingImage_product) {
+      image_url = null;
+    }
+
+    const model = document.getElementById('pModel').value;
+    const notes = document.getElementById('pNotes').value;
 
     if(editProductId) {
       const idx = CACHE.products.findIndex(p=>p.id===editProductId);
@@ -4627,11 +4694,19 @@ async function saveProduct() {
         CACHE.products[idx] = { ...CACHE.products[idx], name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url };
         renderInventory();
       }
-      const { error } = await sb.from('products').update(dbData).eq('id', editProductId);
+      const { error } = await sb.from('products').update({
+        name, brand, model, category: cat,
+        buy_price: buy, sell_price: sell, qty, 
+        notes, barcode, image_url
+      }).eq('id', editProductId);
       if(error) throw error;
       toast('کاڵاکە نوێ کرایەوە','success');
     } else {
-      const { data: inserted, error } = await sb.from('products').insert(dbData).select().single();
+      const { data: inserted, error } = await sb.from('products').insert({
+        name, brand, model, category: cat,
+        buy_price: buy, sell_price: sell, qty, 
+        notes, barcode, image_url
+      }).select().single();
       if(error) throw error;
       CACHE.products.unshift(productFromDb(inserted));
       renderInventory();
@@ -4640,38 +4715,17 @@ async function saveProduct() {
     closeModal('productModal');
     buildNotifications();
     reloadTable('products');
-
   } catch(err) {
     console.error(err);
-    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
-
-    if(isNetworkError) {
-      if(editProductId) {
-        const idx = CACHE.products.findIndex(p=>p.id===editProductId);
-        if(idx>-1) {
-          CACHE.products[idx] = { ...CACHE.products[idx], name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url };
-          await idbPut('products', CACHE.products[idx]);
-        }
-        await addToSyncQueue({ type:'update', table:'products', id: editProductId, data: dbData });
-      } else {
-        const newId = crypto.randomUUID();
-        const newProduct = { id:newId, name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url, createdAt: new Date().toISOString() };
-        CACHE.products.unshift(newProduct);
-        await idbPut('products', newProduct);
-        await addToSyncQueue({ type:'insert', table:'products', data: { id:newId, ...dbData } });
-      }
-      renderInventory();
-      toast('ئینتەرنێت نییە — کاڵاکە پاشەکەوتکرا لە مۆبایل' + (imageSkippedOffline?' (وێنە دواتر زیادبکە)':'') + '، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
-      closeModal('productModal');
-      buildNotifications();
-    } else {
-      toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
-      reloadTable('products');
-    }
+    toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    reloadTable('products');
   } finally {
     btn.disabled = false;
   }
 }
+
+
+
 async function deleteProduct(id) {
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
   const backup = CACHE.products.find(p=>p.id===id);
@@ -5357,37 +5411,25 @@ async function saveRepair() {
   const problem=document.getElementById('rProblem').value.trim();
   if(!name||!phone||!device||!problem) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
 
-  const btn = document.getElementById('rSaveBtn');
-  btn.disabled = true;
-
   let image_url = editRepairId ? (DB.get('repairs').find(x=>x.id===editRepairId)?.imageUrl || null) : null;
-  let imageSkippedOffline = false;
-
-  // وێنە تەنها کاتێک ئۆنلاینین بار دەکرێت
   if(selectedImageFile.repair) {
-    if(isOnline) {
-      try { image_url = await uploadImageToSupabase(selectedImageFile.repair, 'repairs'); }
-      catch(e) { imageSkippedOffline = true; }
-    } else {
-      imageSkippedOffline = true;
-    }
+    image_url = await uploadImageToSupabase(selectedImageFile.repair, 'repairs');
   } else if(window._removedExistingImage_repair) {
     image_url = null;
   }
 
-  const deviceType = document.getElementById('rDeviceType').value;
-  const cost = parseFloat(document.getElementById('rCost').value)||0;
-  const status = document.getElementById('rStatus').value;
-  const notes = document.getElementById('rNotes').value;
-
-  const data = { customer_name: name, phone, device, device_type: deviceType, problem, cost, status, notes, image_url };
-
+  const btn = document.getElementById('rSaveBtn');
+  btn.disabled = true;
+  const data = {
+    customer_name: name, phone, device, device_type: document.getElementById('rDeviceType').value,
+    problem, cost: parseFloat(document.getElementById('rCost').value)||0,
+    status: document.getElementById('rStatus').value, notes: document.getElementById('rNotes').value,
+    image_url
+  };
   try {
-    if(!isOnline) throw new Error('offline');
-
     if(editRepairId) {
       const idx = CACHE.repairs.findIndex(r=>r.id===editRepairId);
-      if(idx>-1) { CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType, problem, cost, status, notes, imageUrl:image_url }; renderRepairs(); }
+      if(idx>-1) { CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType:data.device_type, problem, cost:data.cost, status:data.status, notes:data.notes, imageUrl:image_url }; renderRepairs(); }
       const { error } = await sb.from('repairs').update(data).eq('id', editRepairId);
       if(error) throw error;
       toast('چاکسازیەکە نوێ کرایەوە','success');
@@ -5400,39 +5442,13 @@ async function saveRepair() {
     }
     closeModal('repairModal'); buildNotifications();
     reloadTable('repairs');
-
   } catch(err) {
     console.error(err);
-    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
-
-    if(isNetworkError) {
-      if(editRepairId) {
-        const idx = CACHE.repairs.findIndex(r=>r.id===editRepairId);
-        if(idx>-1) {
-          CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType, problem, cost, status, notes, imageUrl:image_url };
-          await idbPut('repairs', CACHE.repairs[idx]);
-        }
-        await addToSyncQueue({ type:'update', table:'repairs', id: editRepairId, data });
-      } else {
-        const newRepair = {
-          id: crypto.randomUUID(), customerName:name, phone, device, deviceType, problem, cost, status, notes,
-          imageUrl: image_url, createdAt: new Date().toISOString(), createdBy: currentUser?.name || null
-        };
-        CACHE.repairs.unshift(newRepair);
-        await idbPut('repairs', newRepair);
-        await addToSyncQueue({ type:'insert', table:'repairs', data: {...data, id: newRepair.id, created_by: newRepair.createdBy} });
-      }
-      renderRepairs();
-      toast('ئینتەرنێت نییە — چاکسازیەکە پاشەکەوتکرا لە مۆبایل' + (imageSkippedOffline?' (وێنە دواتر زیادبکە)':'') + '، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
-      closeModal('repairModal'); buildNotifications();
-    } else {
-      toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
-    }
+    toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
   } finally {
     btn.disabled = false;
   }
 }
-
 
 async function deleteRepair(id) {
   if(!can('repairs','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
@@ -6159,15 +6175,13 @@ async function saveExpense() {
   const btn = document.getElementById('exSaveBtn');
   btn.disabled = true;
   try {
-    if(!isOnline) throw new Error('offline');
-
     if(editExpenseId) {
       const { error } = await sb.from('expenses')
         .update({ title, amount, category, note })
         .eq('id', editExpenseId);
       if(error) throw error;
       toast('خەرجییەکە نوێ کرایەوە','success');
-    } else {
+} else {
       const { error } = await sb.from('expenses')
         .insert({ title, amount, category, note, created_by: currentUser?.name || null });
       if(error) throw error;
@@ -6178,35 +6192,8 @@ async function saveExpense() {
     closeModal('expenseModal');
     renderExpenses();
     renderDashboard();
-
   } catch(err) {
-    console.error(err);
-    const isNetworkError = err.message === 'offline' || err instanceof TypeError;
-
-    if(isNetworkError) {
-      if(editExpenseId) {
-        const idx = CACHE.expenses.findIndex(e=>e.id===editExpenseId);
-        if(idx>-1) {
-          CACHE.expenses[idx] = { ...CACHE.expenses[idx], title, amount, category, note };
-          await idbPut('expenses', CACHE.expenses[idx]);
-        }
-        await addToSyncQueue({ type:'update', table:'expenses', id: editExpenseId, data: { title, amount, category, note } });
-      } else {
-        const newExpense = {
-          id: crypto.randomUUID(), title, amount, category, note,
-          createdAt: new Date().toISOString(), createdBy: currentUser?.name || null
-        };
-        CACHE.expenses.unshift(newExpense);
-        await idbPut('expenses', newExpense);
-        await addToSyncQueue({ type:'insert', table:'expenses', data: { id: newExpense.id, title, amount, category, note, created_by: newExpense.createdBy } });
-      }
-      closeModal('expenseModal');
-      renderExpenses();
-      renderDashboard();
-      toast('ئینتەرنێت نییە — خەرجییەکە پاشەکەوتکرا لە مۆبایل، کاتێک ئینتەرنێت گەڕایەوە sync دەکرێت', 'info');
-    } else {
-      toast('کێشە ڕوویدا: '+(err.message||err),'error');
-    }
+    toast('کێشە ڕوویدا: '+(err.message||err),'error');
   } finally { btn.disabled = false; }
 }
 
@@ -6374,12 +6361,20 @@ function switchHelpTab(el) {
   document.getElementById('help-' + el.dataset.tab).style.display='block';
 }
 
-function printReceipt(items, total) {
+function printReceipt(items, total, isPreview) {
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
-  const address = SETTINGS.store_address || '';
+  const phone = SETTINGS.receipt_phone_text || '';
+  const address = SETTINGS.receipt_address_text || '';
   const now = new Date().toLocaleString('ku');
   const profit = items.reduce((a,i)=>a+i.profit,0);
+  const headerText = SETTINGS.receipt_header_text || '';
+  const footerText = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
+  const datePos = SETTINGS.receipt_date_position || 'top';
+  const showNumber = SETTINGS.receipt_show_number !== false;
+  const receiptNumber = 'R-' + Date.now().toString().slice(-6);
+  const paperWidth = SETTINGS.receipt_paper_width === '58' ? 260 : 320;
+  const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const rows = items.map(i=>`
     <tr>
@@ -6394,7 +6389,8 @@ function printReceipt(items, total) {
     <html lang="ku" dir="rtl">
     <head>
       <meta charset="UTF-8">
-      <title>پسووڵە</title>
+      <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+      <title>پسوولە</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -6405,9 +6401,10 @@ function printReceipt(items, total) {
           max-width: 320px;
           margin: 0 auto;
         }
+        a { color:#000 !important; text-decoration:none !important; }
         .header { text-align:center; margin-bottom:16px; }
-        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; }
-        .header p { font-size:11px; color:#444; line-height:1.6; }
+        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; letter-spacing:0.3px; }
+        .header p { font-size:11px; color:#444; line-height:1.7; }
         .divider {
           border:none;
           border-top: 1px dashed #000;
@@ -6466,10 +6463,11 @@ function printReceipt(items, total) {
     </head>
     <body>
       <div class="header">
+        ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
-        ${phone ? `<p>📞 ${phone}</p>` : ''}
-        ${address ? `<p>📍 ${address}</p>` : ''}
-        <p>🗓 ${now}</p>
+        ${phone ? `<p>${phone}</p>` : ''}
+        ${address ? `<p>${address}</p>` : ''}
+        ${showNumber || datePos === 'top' ? `<p style="font-size:10px;color:#888;margin-top:4px">${showNumber ? receiptNumber : ''}${showNumber && datePos==='top' ? '  •  ' : ''}${datePos === 'top' ? now : ''}</p>` : ''}
       </div>
 
       <hr class="divider">
@@ -6499,20 +6497,23 @@ function printReceipt(items, total) {
 
       <hr class="divider">
 
+      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
-        <div class="thanks">سوپاس بۆ کڕینت 🙏</div>
+        <div class="thanks">${footerText}</div>
         <p>پسووڵەکەت پاراستبێت</p>
-        ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
       </div>
+      ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
 
-      <script>
+
+      ${isPreview ? '' : `<script>
         window.onload = function() {
           window.print();
           setTimeout(()=>window.close(), 1000);
         }
-      <\/script>
+      <\/script>`}
     </body>
     </html>`;
+
 
 // مۆبایل — پرینت دەکرێت بەبێ popup
 if(/Mobi|Android/i.test(navigator.userAgent)) {
@@ -6567,27 +6568,35 @@ function printRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
-  const address = SETTINGS.store_address || '';
+  const phone = SETTINGS.receipt_phone_text || '';
+  const address = SETTINGS.receipt_address_text || '';
   const now = new Date().toLocaleString('ku');
+  const headerText = SETTINGS.receipt_header_text || '';
+  const footerText = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت';
+  const datePos = SETTINGS.receipt_date_position || 'top';
+  const showNumber = SETTINGS.receipt_show_number !== false;
+  const receiptNumber = 'RP-' + Date.now().toString().slice(-6);
+  const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const html = `
     <!DOCTYPE html>
     <html lang="ku" dir="rtl">
     <head>
       <meta charset="UTF-8">
+      <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
       <title>پسووڵەی چاکسازی</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Noto Sans Arabic',Tahoma,sans-serif; font-size:13px; color:#000; padding:20px; max-width:320px; margin:0 auto; }
+        a { color:#000 !important; text-decoration:none !important; }
         .header { text-align:center; margin-bottom:16px; }
-        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; }
-        .header p { font-size:11px; color:#444; line-height:1.6; }
+        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; letter-spacing:0.3px; }
+        .header p { font-size:11px; color:#444; line-height:1.7; }
         .divider { border:none; border-top:1px dashed #000; margin:10px 0; }
         .row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed #ddd; font-size:13px; }
         .row .label { color:#555; }
         .row .val { font-weight:700; }
-        .status-box { text-align:center; margin:14px 0; padding:10px; background:#f5f5f5; border-radius:6px; font-size:15px; font-weight:900; }
         .footer { text-align:center; margin-top:16px; font-size:11px; color:#555; line-height:1.8; }
         .footer .thanks { font-size:14px; font-weight:700; color:#000; margin-bottom:4px; }
         @media print { body { padding:10px; } @page { margin:8mm; } }
@@ -6595,13 +6604,14 @@ function printRepair(id) {
     </head>
     <body>
       <div class="header">
+        ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
-        ${phone ? `<p>📞 ${phone}</p>` : ''}
-        ${address ? `<p>📍 ${address}</p>` : ''}
-        <p>🗓 ${now}</p>
+        ${phone ? `<p>${phone}</p>` : ''}
+        ${address ? `<p>${address}</p>` : ''}
+        ${showNumber || datePos === 'top' ? `<p style="font-size:10px;color:#888;margin-top:4px">${showNumber ? receiptNumber : ''}${showNumber && datePos==='top' ? '  •  ' : ''}${datePos === 'top' ? now : ''}</p>` : ''}
       </div>
       <hr class="divider">
-      <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:12px">🔧 پسووڵەی چاکسازی</div>
+      <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:12px">پسووڵەی چاکسازی</div>
       <div class="row"><span class="label">ناوی کڕیار:</span><span class="val">${r.customerName}</span></div>
       <div class="row"><span class="label">ژمارە:</span><span class="val">${r.phone}</span></div>
       <div class="row"><span class="label">ئامێر:</span><span class="val">${r.device} (${r.deviceType})</span></div>
@@ -6611,10 +6621,11 @@ function printRepair(id) {
       <hr class="divider">
       <div class="row"><span class="label">هزینەی چاکسازی:</span><span class="val" style="font-size:16px">${Number(r.cost).toLocaleString()} د.ع</span></div>
       <hr class="divider">
+        ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
-        <div class="thanks">سوپاس بۆ باوەڕت 🙏</div>
-        ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
+        <div class="thanks">${footerText}</div>
       </div>
+      ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
       <script>
         window.onload = function() { window.print(); setTimeout(()=>window.close(), 1000); }
       <\/script>
@@ -6637,27 +6648,28 @@ function whatsappRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
+  const phone = SETTINGS.receipt_phone_text || SETTINGS.store_phone || '';
   const status = repairStatusLabel(r.status);
 
   const message = 
-`سڵاو ${r.customerName} 👋
+`سڵاو ${r.customerName}
 
 ${r.status === 'completed' || r.status === 'delivered' 
-  ? `ئامێرەکەت ئامادەیە وەریبگریت ✅` 
+  ? `ئامێرەکەت ئامادەیە وەریبگریت` 
   : `نوێترین زانیاری چاکسازیەکەت:`}
 
-📱 ئامێر: ${r.device}
-🔧 کێشە: ${r.problem}
-📊 ستاتوس: ${status}
-💰 هزینە: ${Number(r.cost).toLocaleString()} د.ع
+ئامێر: ${r.device}
+کێشە: ${r.problem}
+ستاتوس: ${status}
+هزینە: ${Number(r.cost).toLocaleString()} د.ع
 
-🏪 ${store}${phone ? `\n📞 ${phone}` : ''}`;
+${store}${phone ? `\n${phone}` : ''}`;
 
   const cleaned = r.phone.replace(/\D/g,'').replace(/^0/,'');
   const url = `https://wa.me/964${cleaned}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank');
 }
+
 
 function whatsappDebt(id) {
   const d = DB.get('debts').find(x=>x.id===id);
@@ -6758,6 +6770,42 @@ async function saveCurrency() {
     toast('کێشە: ' + (err.message||err), 'error');
   }
   renderSettings();
+}
+
+async function saveReceiptSettings() {
+  const payload = {
+    receipt_header_text: document.getElementById('rcHeaderText').value.trim(),
+    receipt_phone_text: document.getElementById('rcPhoneText').value.trim(),
+    receipt_address_text: document.getElementById('rcAddressText').value.trim(),
+    receipt_date_position: document.getElementById('rcDatePosition').value,
+    receipt_show_number: document.getElementById('rcShowNumber').checked,
+    receipt_footer_text: document.getElementById('rcFooterText').value.trim(),
+    receipt_show_qr: document.getElementById('rcShowQrToggle').classList.contains('on'),
+    receipt_qr_data: document.getElementById('rcQrData').value.trim(),
+    receipt_paper_width: document.getElementById('rcPaperWidth').value
+  };
+  const btn = document.getElementById('saveReceiptBtn');
+  btn.disabled = true;
+  try {
+    const { error } = await sb.from('settings').update(payload).eq('id', 1);
+    if(error) throw error;
+    await loadAllData();
+    toast('ڕێکخستنی وەصڵ پاشەکەوتکرا', 'success');
+  } catch(err) {
+    toast('کێشە: ' + (err.message||err), 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function previewReceiptSettings() {
+  printReceipt([{
+    product_name: 'کاڵای نموونە',
+    qty: 2,
+    unit_price: 15000,
+    total: 30000,
+    profit: 5000
+  }], 30000, true);
 }
 
 // ══════════════════════════════════════════
