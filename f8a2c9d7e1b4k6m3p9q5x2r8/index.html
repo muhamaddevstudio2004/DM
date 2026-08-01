@@ -19,46 +19,64 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap"></noscript>
 <style>
-:root{--bg:#0f0f0f;--bg-2:#131316;--card-bg:rgba(255,255,255,0.05);--card-bg-strong:rgba(255,255,255,0.08);--card-border:rgba(255,255,255,0.10);--text:#ffffff;--text-dim:rgba(255,255,255,0.62);--text-faint:rgba(255,255,255,0.38);--accent:#0A84FF;--accent-2:#64B5FF;--radius-lg:24px;--radius-md:20px;--radius-sm:18px;--shadow:0 8px 30px rgba(0,0,0,0.4);--ease:cubic-bezier(.22,.9,.32,1);}
+@property --hue{syntax:'<number>';inherits:true;initial-value:210;}
+@property --sat{syntax:'<percentage>';inherits:true;initial-value:88%;}
+@property --lgt{syntax:'<percentage>';inherits:true;initial-value:55%;}
+:root{--bg:#0f0f0f;--bg-2:#131316;--card-bg:rgba(255,255,255,0.05);--card-bg-strong:rgba(255,255,255,0.08);--card-border:rgba(255,255,255,0.10);--text:#ffffff;--text-dim:rgba(255,255,255,0.62);--text-faint:rgba(255,255,255,0.38);--hue:210;--sat:88%;--lgt:55%;--accent:hsl(var(--hue) var(--sat) var(--lgt));--accent-2:hsl(var(--hue) calc(var(--sat) - 6%) calc(var(--lgt) + 17%));--radius-lg:24px;--radius-md:20px;--radius-sm:18px;--shadow:0 8px 30px rgba(0,0,0,0.4);--ease:cubic-bezier(.22,.9,.32,1);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;animation:accentHueShift 90s linear infinite;}
+@keyframes accentHueShift{0%{--hue:210;--sat:88%;--lgt:55%;}12%{--hue:262;--sat:76%;--lgt:58%;}24%{--hue:322;--sat:74%;--lgt:58%;}36%{--hue:355;--sat:80%;--lgt:55%;}48%{--hue:28;--sat:74%;--lgt:55%;}60%{--hue:40;--sat:30%;--lgt:66%;}70%{--hue:50;--sat:78%;--lgt:54%;}84%{--hue:152;--sat:52%;--lgt:46%;}100%{--hue:210;--sat:88%;--lgt:55%;}}
 body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative;}
 @media (prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}}
-.bg-glow{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg);contain:strict;}
+.bg-grid{position:fixed;inset:0;z-index:-3;background-image:radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);background-size:28px 28px;background-position:-4px -4px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.85) 14%,rgba(0,0,0,0.85) 78%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.85) 14%,rgba(0,0,0,0.85) 78%,transparent 100%);}
+.bg-glow{position:fixed;inset:0;z-index:-2;overflow:hidden;background:var(--bg);contain:strict;}
 .bg-glow::before,.bg-glow::after{content:"";position:absolute;width:58vmax;height:58vmax;border-radius:50%;filter:blur(90px);opacity:0.22;will-change:transform;}
 .bg-glow::before{background:radial-gradient(circle,var(--accent),transparent 70%);top:-20%;left:-15%;animation:floatA 18s ease-in-out infinite alternate;}
 .bg-glow::after{background:radial-gradient(circle,#5e35ff,transparent 70%);bottom:-25%;right:-15%;animation:floatB 20s ease-in-out infinite alternate;}
 @keyframes floatA{0%{transform:translate3d(0,0,0) scale(1);}100%{transform:translate3d(8%,10%,0) scale(1.12);}}
 @keyframes floatB{0%{transform:translate3d(0,0,0) scale(1);}100%{transform:translate3d(-10%,-8%,0) scale(1.15);}}
+.bg-noise{position:fixed;inset:0;z-index:5;opacity:0.035;mix-blend-mode:overlay;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:140px 140px;}
 #lang-select{position:fixed;inset:0;z-index:1001;background:rgba(10,10,12,0.62);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:24px;transition:opacity .45s var(--ease),visibility .45s var(--ease);}
 #lang-select.hidden{opacity:0;visibility:hidden;pointer-events:none;}
 .lang-title{font-size:15px;font-weight:600;color:var(--text-dim);transition:opacity .3s var(--ease),transform .3s var(--ease);}
-.lang-options{display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px;transition:opacity .3s var(--ease),transform .3s var(--ease);}
+.lang-options{display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;transition:opacity .3s var(--ease),transform .3s var(--ease);}
 #lang-select.exiting .lang-title,#lang-select.exiting .lang-options{opacity:0;transform:translateY(-14px);}
-.lang-card{display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);cursor:pointer;transition:transform .2s var(--ease),border-color .2s var(--ease),background .2s var(--ease);}
+.lang-card{--glow:10,132,255;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:15px 18px;padding-inline-start:22px;border-radius:20px;text-decoration:none;color:var(--text);background:linear-gradient(160deg,rgba(var(--glow),0.15),rgba(var(--glow),0.03) 62%),rgba(255,255,255,0.05);border:1px solid rgba(var(--glow),0.22);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);transition:transform .2s var(--ease),border-color .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease);cursor:pointer;}
+.lang-card::before{content:"";position:absolute;inset-inline-start:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:rgb(var(--glow));opacity:.6;}
 .lang-card:active{transform:scale(0.96);}
-@media (hover:hover){.lang-card:hover{border-color:rgba(10,132,255,0.5);background:var(--card-bg-strong);transform:translateY(-2px);}}
-.flag{width:38px;height:26px;border-radius:5px;flex:none;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.12);}
+@media (hover:hover){.lang-card:hover{transform:translateY(-2px) scale(1.02);border-color:rgba(var(--glow),0.45);background:linear-gradient(160deg,rgba(var(--glow),0.22),rgba(var(--glow),0.05) 62%),rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 12px 26px rgba(var(--glow),0.22);}}
+.lang-icon{width:46px;height:46px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(var(--glow),0.14);border:1px solid rgba(var(--glow),0.2);overflow:hidden;}
+.lang-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.lang-title2{font-size:16.5px;font-weight:800;color:rgb(var(--glow));}
+.lang-sub{font-size:12px;color:var(--text-faint);font-weight:400;}
+.lang-arrow{flex:none;display:flex;opacity:.55;color:var(--text-dim);transition:transform .2s var(--ease),opacity .2s var(--ease);}
+.lang-arrow svg{width:18px;height:18px;display:block;}
+.lang-card:hover .lang-arrow{transform:translateX(-3px);opacity:.9;}
+.flag{width:32px;height:22px;border-radius:5px;flex:none;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.15);}
 .flag-kurdistan{background:linear-gradient(180deg,#ED1B24 0 33.3%,#fff 33.3% 66.6%,#007A3D 66.6% 100%);}
 .flag-kurdistan::after{content:"";position:absolute;top:50%;left:50%;width:15px;height:15px;transform:translate(-50%,-50%);border-radius:50%;background:repeating-conic-gradient(#FFD200 0deg 8.57deg, transparent 8.57deg 17.14deg);}
 .flag-iraq{background:linear-gradient(180deg,#CE1126 0 33.3%,#fff 33.3% 66.6%,#000 66.6% 100%);}
 .flag-iraq::after{content:"الله أكبر";position:absolute;top:33.3%;left:0;right:0;height:33.3%;display:flex;align-items:center;justify-content:center;font-size:5px;color:#007A3D;font-weight:700;}
-.lang-label{font-size:17px;font-weight:800;}
 #content-wrap{filter:blur(22px);transform:scale(1.03);transition:filter .5s var(--ease),transform .5s var(--ease);}
 #content-wrap.sharp{filter:none;transform:scale(1);}
 .wrap{max-width:520px;margin:0 auto;padding:0 20px max(40px, env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:38px;}
 .reveal{opacity:0;transform:translateY(10px);transition:opacity .45s var(--ease),transform .45s var(--ease);}
 .reveal.in{opacity:1;transform:translateY(0);}
-.glass{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);box-shadow:var(--shadow);}
-.cover-wrap{position:relative;width:100%;height:200px;margin-top:max(0px, env(safe-area-inset-top));border-radius:0 0 28px 28px;overflow:hidden;background:linear-gradient(135deg,rgba(10,132,255,0.18),rgba(94,53,255,0.14));}
+.glass{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius-lg);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),var(--shadow);}
+.cover-wrap{position:relative;width:100%;height:200px;margin-top:max(0px, env(safe-area-inset-top));border-radius:0 0 28px 28px;overflow:hidden;background:linear-gradient(135deg,hsl(var(--hue) var(--sat) var(--lgt) / 0.18),rgba(94,53,255,0.14));}
 .cover-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.72) saturate(1.15) contrast(1.05);transform:scale(1.02);}
 .cover-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,15,15,0) 40%,rgba(15,15,15,0.55) 78%,var(--bg) 100%);pointer-events:none;}
 .cover-wrap::before{content:"";position:absolute;inset:0;box-shadow:inset 0 -1px 0 rgba(255,255,255,0.06);pointer-events:none;z-index:1;}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 24px 32px;gap:14px;margin-top:-56px;position:relative;z-index:2;}
-.logo-ring{width:104px;height:104px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--accent),#5e35ff);box-shadow:0 0 0 4px var(--bg),0 10px 30px rgba(10,132,255,0.25);animation:popIn .6s var(--ease) both;}
+.logo-ring{position:relative;z-index:1;width:104px;height:104px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--accent),#5e35ff);box-shadow:0 0 0 4px var(--bg),0 10px 30px hsl(var(--hue) var(--sat) var(--lgt) / 0.25);animation:popIn .6s var(--ease) both;}
 .logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:var(--bg-2);}
 @keyframes popIn{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
-.shop-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;background:rgba(10,132,255,0.12);border:1px solid rgba(10,132,255,0.3);font-size:12.5px;font-weight:700;color:var(--accent-2);}
+.floating-icons{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
+.ficon{position:absolute;bottom:-12%;opacity:0;color:var(--accent-2);will-change:transform,opacity;animation-name:ficonFloat;animation-timing-function:linear;animation-iteration-count:infinite;}
+.ficon svg{width:100%;height:100%;display:block;}
+@keyframes ficonFloat{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}10%{opacity:var(--fop,.12);}50%{transform:translateY(-58vh) translateX(var(--drift,18px)) rotate(10deg);}90%{opacity:var(--fop,.12);}100%{transform:translateY(-118vh) translateX(calc(var(--drift,18px) * -1)) rotate(-8deg);opacity:0;}}
+
+.shop-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;background:hsl(var(--hue) var(--sat) var(--lgt) / 0.12);border:1px solid hsl(var(--hue) var(--sat) var(--lgt) / 0.3);font-size:12.5px;font-weight:700;color:var(--accent-2);}
 .shop-pill svg{width:14px;height:14px;}
 .biz-name{display:flex;align-items:center;gap:6px;font-size:27px;font-weight:800;margin-top:4px;}
 .badge{width:19px;height:19px;flex:none;}
@@ -67,14 +85,16 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .section-title{font-size:14px;font-weight:800;color:var(--text-faint);padding:0 4px;margin-bottom:12px;}
 .section{display:flex;flex-direction:column;}
 .buttons{display:flex;flex-direction:column;gap:12px;}
-.sbtn{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:var(--radius-sm);text-decoration:none;color:var(--text);background:var(--card-bg);border:1px solid var(--card-border);transition:transform .22s var(--ease),background .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease);cursor:pointer;}
+.sbtn{--glow:10,132,255;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:16px 18px;padding-inline-start:24px;border-radius:var(--radius-sm);text-decoration:none;color:var(--text);background:linear-gradient(160deg,rgba(var(--glow),0.13),rgba(var(--glow),0.025) 62%),var(--card-bg);border:1px solid rgba(var(--glow),0.18);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);transition:transform .22s var(--ease),background .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease);cursor:pointer;}
+.sbtn::before{content:"";position:absolute;inset-inline-start:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:rgb(var(--glow));opacity:.55;}
 .sbtn:active{transform:scale(0.96);}
-@media (hover:hover){.sbtn:hover{transform:translateY(-2px) scale(1.02);border-color:rgba(10,132,255,0.45);background:var(--card-bg-strong);box-shadow:0 10px 24px rgba(10,132,255,0.18);}}
-.sbtn-icon{width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);opacity:0;animation:iconFadeIn .5s var(--ease) forwards;}
+@media (hover:hover){.sbtn:hover{transform:translateY(-2px) scale(1.02);border-color:rgba(var(--glow),0.42);background:linear-gradient(160deg,rgba(var(--glow),0.2),rgba(var(--glow),0.04) 62%),var(--card-bg-strong);box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 12px 26px rgba(var(--glow),0.2);}}
+.sbtn-icon{width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;background:rgba(var(--glow),0.14);border:1px solid rgba(var(--glow),0.2);opacity:0;animation:iconFadeIn .5s var(--ease) forwards;transition:transform .22s var(--ease),background .22s var(--ease);}
+.sbtn:hover .sbtn-icon{transform:scale(1.06);background:rgba(var(--glow),0.22);}
 .sbtn-icon svg{width:22px;height:22px;}
 @keyframes iconFadeIn{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
 .sbtn-body{flex:1;min-width:0;overflow:hidden;}
-.sbtn-title{font-size:16px;font-weight:700;display:block;opacity:0;transform:translateX(-20px);background:linear-gradient(90deg,var(--text) 30%,var(--accent-2) 50%,var(--text) 70%);background-size:220% auto;background-position:150% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:slideInTitle .45s var(--ease) forwards,shimmer 3.2s linear .6s infinite;}
+.sbtn-title{font-size:16px;font-weight:700;display:block;opacity:0;transform:translateX(-20px);color:rgb(var(--glow));animation:slideInTitle .45s var(--ease) forwards;}
 .sbtn-sub{font-size:12.5px;color:var(--text-faint);margin-top:2px;display:block;font-weight:400;opacity:0;transform:translateX(-20px);animation:slideInText .45s var(--ease) forwards;}
 @keyframes slideInTitle{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
 @keyframes slideInText{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
@@ -83,9 +103,12 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .sbtn:hover .sbtn-arrow{transform:translateX(-3px);opacity:0.9;}
 .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.35);transform:scale(0);animation:rippleAnim .55s ease-out forwards;pointer-events:none;}
 @keyframes rippleAnim{to{transform:scale(3.2);opacity:0;}}
-.reviews-scroller{display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:4px 4px 14px;margin:0 -4px;scrollbar-width:none;-ms-overflow-style:none;}
+.reviews-scroller{display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:4px 4px 14px;margin:0 -4px;scrollbar-width:none;-ms-overflow-style:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 3%,#000 97%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 3%,#000 97%,transparent 100%);}
 .reviews-scroller::-webkit-scrollbar{display:none;height:0;}
-.review-card{flex:0 0 78%;scroll-snap-align:start;padding:20px 20px 22px;border-radius:var(--radius-md);display:flex;flex-direction:column;gap:10px;}
+.review-dots{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:2px;}
+.review-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.18);transition:background .25s var(--ease),transform .25s var(--ease),width .25s var(--ease);}
+.review-dot.active{background:var(--accent-2);width:16px;border-radius:4px;}
+.review-card{flex:0 0 78%;scroll-snap-align:center;padding:20px 20px 22px;border-radius:var(--radius-md);display:flex;flex-direction:column;gap:10px;}
 @media (min-width:420px){.review-card{flex-basis:70%;}}
 .review-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .review-name{font-weight:700;font-size:15px;}
@@ -93,7 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .review-comment{font-size:14.5px;line-height:1.75;color:var(--text-dim);font-weight:400;}
 .review-hint{text-align:center;font-size:12px;color:var(--text-faint);margin-top:2px;}
 .about-card{padding:30px 24px 26px;display:flex;flex-direction:column;gap:18px;}
-.about-icon{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(10,132,255,0.22),rgba(94,53,255,0.18));border:1px solid rgba(10,132,255,0.3);display:flex;align-items:center;justify-content:center;}
+.about-icon{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,hsl(var(--hue) var(--sat) var(--lgt) / 0.22),rgba(94,53,255,0.18));border:1px solid hsl(var(--hue) var(--sat) var(--lgt) / 0.3);display:flex;align-items:center;justify-content:center;}
 .about-icon svg{width:26px;height:26px;}
 .about-title{font-size:20px;font-weight:800;}
 .about-text{font-size:15px;line-height:1.9;color:var(--text-dim);font-weight:400;}
@@ -104,12 +127,18 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .about-trust{display:flex;flex-direction:column;gap:10px;margin-top:2px;}
 .trust-row{display:flex;align-items:flex-start;gap:10px;font-size:14.5px;color:var(--text-dim);line-height:1.65;font-weight:400;}
 .trust-row svg{flex:none;margin-top:2px;width:16px;height:16px;color:var(--accent);}
-.location-card{padding:0;overflow:hidden;position:relative;border:1px solid rgba(10,132,255,0.28);box-shadow:0 16px 40px rgba(10,132,255,0.14),var(--shadow);}
+.location-card{padding:0;overflow:hidden;position:relative;border:1px solid hsl(var(--hue) var(--sat) var(--lgt) / 0.28);box-shadow:0 16px 40px hsl(var(--hue) var(--sat) var(--lgt) / 0.14),var(--shadow);}
 .location-map{width:100%;height:220px;display:block;border:0;filter:grayscale(0.15) contrast(1.05) brightness(0.9);}
 .location-map-wrap{position:relative;}
 .location-map-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,15,15,0) 55%,rgba(15,15,15,0.85) 100%);pointer-events:none;}
 .location-badge{position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:6px;background:rgba(15,15,15,0.55);border:1px solid rgba(255,255,255,0.15);padding:6px 12px;border-radius:100px;font-size:11.5px;font-weight:700;}
 .location-badge svg{width:13px;height:13px;color:var(--accent-2);}
+.live-dot{position:relative;width:7px;height:7px;border-radius:50%;background:#3ddc73;flex:none;}
+.live-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;background:#3ddc73;opacity:.55;animation:liveDotPulse 1.8s ease-out infinite;}
+@keyframes liveDotPulse{0%{transform:scale(0.4);opacity:.55;}100%{transform:scale(2.1);opacity:0;}}
+.review-card{position:relative;flex:0 0 78%;scroll-snap-align:center;padding:20px 20px 22px;border-radius:var(--radius-md);display:flex;flex-direction:column;gap:10px;}
+.review-quote{position:absolute;top:14px;left:16px;opacity:.14;color:var(--accent-2);pointer-events:none;}
+.review-quote svg{width:26px;height:26px;}
 .location-body{padding:22px 22px 24px;display:flex;flex-direction:column;gap:16px;}
 .location-title{font-size:19px;font-weight:800;}
 .location-address{font-size:14.5px;color:var(--text-dim);line-height:1.65;display:flex;gap:8px;align-items:flex-start;font-weight:400;}
@@ -117,7 +146,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .location-actions{display:flex;gap:10px;}
 .loc-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 14px;border-radius:15px;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .22s var(--ease);}
 .loc-btn:active{transform:scale(0.95);}
-.loc-btn-primary{background:linear-gradient(135deg,var(--accent),#3d6fff);color:#fff;box-shadow:0 8px 18px rgba(10,132,255,0.3);}
+.loc-btn-primary{background:linear-gradient(135deg,var(--accent),#3d6fff);color:#fff;box-shadow:0 8px 18px hsl(var(--hue) var(--sat) var(--lgt) / 0.3);}
 .loc-btn-secondary{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text);}
 .loc-btn svg{width:16px;height:16px;}
 .footer{text-align:center;padding-top:8px;display:flex;flex-direction:column;gap:6px;}
@@ -129,7 +158,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 .confirm-modal.show{opacity:1;visibility:visible;}
 .confirm-box{background:var(--card-bg-strong);border:1px solid var(--card-border);border-radius:22px;padding:26px 22px;max-width:320px;width:100%;text-align:center;transform:scale(.9);transition:transform .3s var(--ease);box-shadow:var(--shadow);}
 .confirm-modal.show .confirm-box{transform:scale(1);}
-.confirm-icon{width:48px;height:48px;border-radius:14px;margin:0 auto;display:flex;align-items:center;justify-content:center;background:rgba(10,132,255,0.14);border:1px solid rgba(10,132,255,0.3);}
+.confirm-icon{width:48px;height:48px;border-radius:14px;margin:0 auto;display:flex;align-items:center;justify-content:center;background:hsl(var(--hue) var(--sat) var(--lgt) / 0.14);border:1px solid hsl(var(--hue) var(--sat) var(--lgt) / 0.3);}
 .confirm-icon svg{width:24px;height:24px;}
 .confirm-text{font-size:15.5px;font-weight:700;margin:14px 0 20px;line-height:1.65;}
 .confirm-actions{display:flex;gap:10px;}
@@ -141,17 +170,28 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 </style>
 </head>
 <body>
+<div class="bg-grid" aria-hidden="true"></div>
 <div class="bg-glow"></div>
+<div class="bg-noise" aria-hidden="true"></div>
+<div class="floating-icons" id="floating-icons" aria-hidden="true"></div>
 <div id="lang-select">
 <div class="lang-title">زمانێک هەڵبژێرە · اختر اللغة</div>
 <div class="lang-options">
-<div class="lang-card" data-lang="ku"><span class="flag flag-kurdistan"></span><span class="lang-label">کوردی</span></div>
-<div class="lang-card" data-lang="ar"><span class="flag flag-iraq"></span><span class="lang-label">عربي</span></div>
+<div class="lang-card" data-lang="ku" style="--glow:237,27,36">
+<span class="lang-icon"><span class="flag flag-kurdistan"></span></span>
+<span class="lang-body"><span class="lang-title2">کوردی</span><span class="lang-sub">Kurdî · وێبگەڕ بە زمانی کوردی</span></span>
+<span class="lang-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+</div>
+<div class="lang-card" data-lang="ar" style="--glow:0,122,61">
+<span class="lang-icon"><span class="flag flag-iraq"></span></span>
+<span class="lang-body"><span class="lang-title2">عربي</span><span class="lang-sub">العربية · تصفح الموقع بالعربية</span></span>
+<span class="lang-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+</div>
 </div>
 </div>
 <div class="confirm-modal" id="confirm-modal">
 <div class="confirm-box">
-<div class="confirm-icon" id="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg></div>
+<div class="confirm-icon" id="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg></div>
 <div class="confirm-text" id="confirm-text">دەتەوێت ئەم لینکە بکەیتەوە؟</div>
 <div class="confirm-actions">
 <button class="confirm-btn confirm-cancel" id="confirm-cancel">هەڵوەشاندنەوە</button>
@@ -167,7 +207,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <section class="hero" id="hero">
 <div class="logo-ring"><img id="biz-logo" src="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp" alt="لۆگۆی دوکان" width="120" height="120" decoding="async" fetchpriority="high"></div>
 <div class="shop-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg><span id="shop-pill-text">دوکانی مۆبایل</span></div>
-<div class="biz-name"><span id="biz-name">کوردستان مۆبایل</span><svg class="badge" viewBox="0 0 24 24" fill="none" aria-label="پشتڕاستکراوە"><circle cx="12" cy="12" r="12" fill="#0A84FF"/><path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<div class="biz-name"><span id="biz-name">کوردستان مۆبایل</span><svg class="badge" viewBox="0 0 24 24" fill="none" aria-label="پشتڕاستکراوە"><circle cx="12" cy="12" r="12" fill="var(--accent)"/><path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 <p class="biz-desc" id="biz-desc">دوکانێکی مۆبایلی مۆدێرن کە باشترین و نوێترین مۆبایل و ئامێرەکان بە نرخێکی گونجاو پێشکەش دەکات.</p>
 <div class="hero-tag" id="hero-tag">سکان بکە · پەیوەندیمان پێوە بکە · بابینە</div>
 </section>
@@ -178,12 +218,13 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <section class="section">
 <div class="section-title reveal" id="title-reviews">ڕای کڕیارەکانمان</div>
 <div class="reviews-scroller" id="reviews-container"></div>
+<div class="review-dots" id="review-dots"></div>
 <div class="review-hint reveal" id="review-hint">← بۆ زیاتر جوڵە بدە →</div>
 </section>
 <section class="section">
 <div class="section-title reveal" id="title-about">دەربارەی ئێمە</div>
 <div class="about-card glass reveal" id="about-card">
-<div class="about-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
+<div class="about-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
 <div class="about-title" id="about-title">چیرۆکی ئێمە</div>
 <p class="about-text" id="about-text"></p>
 <div class="about-stats">
@@ -199,7 +240,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <div class="location-card glass reveal" id="location-card">
 <div class="location-map-wrap">
 <iframe class="location-map" id="location-map" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="نەخشەی شوێنی دوکان"></iframe>
-<div class="location-badge"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg><span id="open-now-text">کراوەیە</span></div>
+<div class="location-badge"><span class="live-dot"></span><span id="open-now-text">کراوەیە</span></div>
 </div>
 <div class="location-body">
 <div class="location-title" id="location-title">سەردانی دوکانەکەمان بکە</div>
@@ -219,6 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Sego
 <script>
 (function(){
 "use strict";
+document.documentElement.style.animationDelay=(-(Math.random()*90)).toFixed(2)+"s";
 const LINKS={whatsappSales:"https://wa.me/9647507271567",whatsappSupport:"https://wa.me/9647507204567",instagram:"https://www.instagram.com/jehane_mobaile?igsh=MWppbmdra29scDgwYw%3D%3D&utm_source=qr",tiktok:"https://tiktok.com/@jehane_mobail",snapchat:"https://snapchat.com/t/TC0cqZN9",maps:"https://maps.app.goo.gl/oArtYwzbd46Z9MGu8?g_st=ic",mapQuery:"Erbil Havalan"};
 const ICONS={
 whatsapp:`<svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.42a9.87 9.87 0 0 0 4.62 1.15h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.79 14.1c-.24.68-1.4 1.32-1.93 1.4-.5.08-1.12.11-1.81-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35.19 0 .38 0 .55.01.18.01.42-.07.65.5.24.58.81 2 .88 2.15.07.15.12.32.02.52-.1.19-.15.31-.3.48-.15.17-.31.38-.44.51-.15.15-.31.31-.13.61.17.29.77 1.28 1.66 2.07 1.15 1.02 2.11 1.34 2.4 1.49.29.15.46.13.63-.05.17-.19.72-.83.91-1.12.19-.28.39-.24.65-.14.26.1 1.68.79 1.97.93.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>`,
@@ -226,17 +268,51 @@ instagram:`<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" hei
 tiktok:`<svg viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#0f0f0f"/><path d="M16.6 8.35a4.2 4.2 0 0 1-2.53-.84v6.06a4.55 4.55 0 1 1-3.9-4.5v2.2a2.35 2.35 0 1 0 1.65 2.24V4h2.25a4.2 4.2 0 0 0 2.53 3.5v.85z" fill="#fff"/></svg>`,
 snapchat:`<svg viewBox="0 0 24 24" fill="#FFFC00"><rect width="24" height="24" rx="6"/><path d="M12 5.5c2 0 3.4 1.55 3.4 3.55 0 .55-.03 1.15.1 1.6.1.05.4.1.75-.1.3-.15.7-.05.75.3.05.35-.35.6-.7.75-.15.05-.15.2-.05.4.35.65 1.2 1.05 2 1.2.25.05.3.35.05.5-.35.2-.85.3-1.15.4-.15.05-.2.15-.2.3-.02.35-.1.6-.5.6-.35 0-.75-.15-1.2-.15-.65 0-1.1.5-2.25.5s-1.6-.5-2.25-.5c-.45 0-.85.15-1.2.15-.4 0-.48-.25-.5-.6 0-.15-.05-.25-.2-.3-.3-.1-.8-.2-1.15-.4-.25-.15-.2-.45.05-.5.8-.15 1.65-.55 2-1.2.1-.2.1-.35-.05-.4-.35-.15-.75-.4-.7-.75.05-.35.45-.45.75-.3.35.2.65.15.75.1.13-.45.1-1.05.1-1.6C8.6 7.05 10 5.5 12 5.5z" fill="#0f0f0f"/></svg>`,
 facebook:`<svg viewBox="0 0 24 24" fill="#1877F2"><circle cx="12" cy="12" r="12"/><path d="M15.1 12.7h-2v7.2h-3v-7.2H8.5v-2.6h1.6V8.4c0-1.5.9-2.9 3.2-2.9h2v2.4h-1.5c-.3 0-.7.15-.7.75v1.4h2.3l-.3 2.6z" fill="#fff"/></svg>`,
-website:`<svg viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.8 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.8-3.8-9S9.5 5.6 12 3z"/></svg>`,
-phone:`<svg viewBox="0 0 24 24" fill="#0A84FF"><path d="M6.6 10.8c1.35 2.65 3.55 4.85 6.2 6.2l2.07-2.07a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.56.57a1 1 0 0 1 1 1V19.5a1 1 0 0 1-1 1C10.6 20.5 3.5 13.4 3.5 4.75a1 1 0 0 1 1-1H7.7a1 1 0 0 1 1 1c0 1.23.2 2.44.57 3.56a1 1 0 0 1-.25 1.02L6.6 10.8z"/></svg>`
+website:`<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.8 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.8-3.8-9S9.5 5.6 12 3z"/></svg>`,
+phone:`<svg viewBox="0 0 24 24" fill="var(--accent)"><path d="M6.6 10.8c1.35 2.65 3.55 4.85 6.2 6.2l2.07-2.07a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.56.57a1 1 0 0 1 1 1V19.5a1 1 0 0 1-1 1C10.6 20.5 3.5 13.4 3.5 4.75a1 1 0 0 1 1-1H7.7a1 1 0 0 1 1 1c0 1.23.2 2.44.57 3.56a1 1 0 0 1-.25 1.02L6.6 10.8z"/></svg>`
 };
 const ARROW=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`;
 const CHECK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+const FLOAT_ICONS=[
+`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`,
+`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 8.5a16 16 0 0 1 20 0"/><path d="M5.5 12.5a11 11 0 0 1 13 0"/><path d="M9 16.3a6 6 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor" stroke="none"/></svg>`,
+`<svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="8" rx="1"/><rect x="8" y="10" width="3" height="12" rx="1"/><rect x="14" y="6" width="3" height="16" rx="1"/><rect x="20" y="2" width="3" height="20" rx="1"/></svg>`,
+`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 2h9l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><rect x="8" y="10" width="8" height="6" rx="1"/></svg>`,
+`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>`,
+`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>`
+];
+function initFloatingIcons(){
+const container=document.getElementById("floating-icons");
+if(!container) return;
+if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+const count=window.innerWidth<640?7:12;
+const frag=document.createDocumentFragment();
+for(let i=0;i<count;i++){
+const el=document.createElement("div");
+el.className="ficon";
+el.innerHTML=FLOAT_ICONS[Math.floor(Math.random()*FLOAT_ICONS.length)];
+const size=14+Math.random()*22;
+const left=Math.random()*94;
+const duration=16+Math.random()*14;
+const delay=-(Math.random()*duration);
+const drift=Math.round(Math.random()*40-20)+"px";
+const fop=(0.06+Math.random()*0.08).toFixed(2);
+el.style.width=size+"px";el.style.height=size+"px";
+el.style.left=left+"vw";
+el.style.setProperty("--drift",drift);
+el.style.setProperty("--fop",fop);
+el.style.animationDuration=duration+"s";
+el.style.animationDelay=delay+"s";
+frag.appendChild(el);
+}
+container.appendChild(frag);
+}
 const TEXT={
 ku:{pageTitle:"جیهانی مۆبایل | Jehane Mobile",businessName:"جیهانی مۆبایل",shopPill:"وەستا ئەمیر",description:"بۆ فرۆشتنی مۆبایل و ئاکسسواراتی ئۆریجیناڵ بە نرخێکی گونجاو، چاکردنەوە هەموو جۆرە مۆبایلێک.",heroTag:"پەیوەندیمان پێوەبکە",titleContact:"پەیوەندی",titleReviews:"ڕای کڕیارەکان",swipeHint:"← بۆ بینینی زیاتر →",titleAbout:"دەربارەی ئێمە",titleFind:"شوێنمان",aboutTitle:"ئەزموونی ئێمە",aboutText:"جیهانی مۆبایل لە هەولێر خزمەتگوزاری فرۆشتنی مۆبایل و ئاکسسوارات پێشکەش دەکات. هەمیشە هەوڵدەدەین باشترین کوالێتی، نرخ و مامەڵە بە کڕیاران بدەین.",years:"14+",yearsLabel:"ساڵ ئەزموون",projects:"%100",projectsLabel:"گەرەنتی",satisfaction:"%98",satisfactionLabel:"کریاری رازی",trust:["هەمیشە بەخێربێن","جیهانی مۆبایل بۆ هەموو پێداویستیەکانی مۆبایل.","کوالێتی، متمانە، خزمەتگوزاری."],openNow:"ئێستا کراوەیە",locationTitle:"سەردانمان بکە",locationAddress:"هەولێر، هەڤاڵان",openMaps:"لە خەریتە بکەرەوە",navigate:"ڕێنیشاندان",footerLabel:"دروست کراوە لە لایەن",confirmText:"دەتەوێت ئەم لینکە بکەیتەوە؟",confirmOpen:"بکەرەوە",confirmCancel:"هەڵوەشاندنەوە",
-buttons:[{title:"وەتساپ",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales},{title:"وەتساپ",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport},{title:"ئینستاگرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram},{title:"تیک تۆک",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok},{title:"سنابچات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat}],
+buttons:[{title:"وەتساپ",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales,glow:"37,211,102"},{title:"وەتساپ",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport,glow:"37,211,102"},{title:"ئینستاگرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram,glow:"214,41,118"},{title:"تیک تۆک",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok,glow:"37,244,238"},{title:"سنابچات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat,glow:"255,220,0"}],
 reviews:[{name:"ئاراس محەمەد",rating:5,comment:"زۆر لێیان رازیمە."},{name:"شنو",rating:5,comment:"دەست خۆشیان لێ دەکەم جێگایی سیقەن."},{name:"هێمن عەلی",rating:5,comment:"زەمانە🔥."},{name:"ڕۆژین",rating:5,comment:"نرخەکان زۆر گونجاون."},{name:"Dara_X",rating:5,comment:"مامەڵەیان زۆر خۆشە."},{name:"ژینۆ مستەفا",rating:5,comment:"زۆر متمانەم پێیانە و دەست خۆشیان لێ دەکەم."},{name:"Karwan",rating:5,comment:" کاک ئەمیری زەمان و سیقە ."},{name:"ئاڤان حوسێن",rating:5,comment:"سەرکەتووبن."},{name:"Soran_92",rating:5,comment:"وەستای نەمبەر وەنن."},{name:"لاڤین",rating:5,comment:"بۆ هەموو کەسێک پێشنیاری دەکەم برۆنە لایان."}]},
 ar:{pageTitle:"جهاني موبايل | Jehane Mobile",businessName:"جهاني موبايل",shopPill:"الأسطة أمير",description:"بيع موبايلات وإكسسوارات أصلية بأسعار مناسبة، وتصليح جميع أنواع الموبايلات.",heroTag:"تواصل ويانه",titleContact:"تواصل ويانه",titleReviews:"آراء الزبائن",swipeHint:"← اسحب حتى تشوف أكثر →",titleAbout:"منو إحنا",titleFind:"موقعنا",aboutTitle:"خبرتنا",aboutText:"جهاني موبايل بأربيل يوفر بيع الموبايلات والإكسسوارات الأصلية، بالإضافة إلى تصليح جميع أنواع الموبايلات. دائماً نسعى نوفر أفضل جودة، أفضل سعر، وأحسن تعامل ويا الزبائن.",years:"14+",yearsLabel:"سنة خبرة",projects:"100%",projectsLabel:"كفالة",satisfaction:"98%",satisfactionLabel:"زبائن راضين",trust:["أهلاً وسهلاً بيكم دائماً.","جهاني موبايل لكل احتياجات الموبايل.","جودة، ثقة، وخدمة مميزة."],openNow:"مفتوح هسه",locationTitle:"زورونا",locationAddress:"أربيل، هەڤالان",openMaps:"افتح بالخريطة",navigate:"ابدأ التنقل",footerLabel:"تم التطوير بواسطة",confirmText:"تريد تفتح هذا الرابط؟",confirmOpen:"فتح",confirmCancel:"إلغاء",
-buttons:[{title:"واتساب",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales},{title:"واتساب",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport},{title:"إنستغرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram},{title:"تيك توك",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok},{title:"سناب شات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat}],
+buttons:[{title:"واتساب",sub:"1567 727 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSales,glow:"37,211,102"},{title:"واتساب",sub:"4567 720 0750",icon:ICONS.whatsapp,href:LINKS.whatsappSupport,glow:"37,211,102"},{title:"إنستغرام",sub:"jehane_mobaile@",icon:ICONS.instagram,href:LINKS.instagram,glow:"214,41,118"},{title:"تيك توك",sub:"jehane_mobail@",icon:ICONS.tiktok,href:LINKS.tiktok,glow:"37,244,238"},{title:"سناب شات",sub:"Jehane_Mobaile@",icon:ICONS.snapchat,href:LINKS.snapchat,glow:"255,220,0"}],
 reviews:[{name:"علي محمد",rating:5,comment:"كلش راضي منهم."},{name:"زينب",rating:5,comment:"يعطيهم العافية، محل ثقة."},{name:"حسين علي",rating:5,comment:"فخامة 🔥."},{name:"سارة",rating:5,comment:"أسعارهم كلش مناسبة."},{name:"Dara_X",rating:5,comment:"تعاملهم كلش راقي."},{name:"زينو مصطفى",rating:5,comment:"كلش أثق بيهم، يعطيهم العافية."},{name:"Karwan",rating:5,comment:"أبو أمير خوش رجال وثقة."},{name:"آفان حسين",rating:5,comment:"الله يوفقهم."},{name:"Soran_92",rating:5,comment:"رقم واحد بصراحة."},{name:"فاطمة",rating:5,comment:"أنصح الكل يتعامل وياهم."}]}
 };
 const CONFIG_LOGO="https://devmuhamad.com/f8a2c9d7e1b4k6m3p9q5x2r8/jehan.webp";
@@ -292,6 +368,7 @@ const a = document.createElement("a");
 a.className="sbtn reveal";a.href=b.href;a.target=b.href.startsWith("http")?"_blank":"_self";a.rel="noopener noreferrer";
 a.dataset.href=b.href;a.dataset.target=a.target;
 a.style.transitionDelay=(i*0.025)+"s";
+if(b.glow){a.style.setProperty("--glow",b.glow);}
 const textDelay=(0.1+i*0.05)+"s",iconDelay=(0.03+i*0.05)+"s";
 a.innerHTML=`<span class="sbtn-icon" style="animation-delay:${iconDelay}">${b.icon}</span><span class="sbtn-body"><span class="sbtn-title" style="animation-delay:${textDelay}">${b.title}</span><span class="sbtn-sub" style="animation-delay:${textDelay}">${b.sub}</span></span><span class="sbtn-arrow">${ARROW}</span>`;
 attachConfirm(a);
@@ -325,37 +402,87 @@ btn.appendChild(ripple);setTimeout(()=>ripple.remove(),600);
 }
 function pickRandomReviews(arr,count){
 const pool=[...arr],picked=[];
-while(picked.length<count&&pool.length){const idx=Math.floor(Math.random()*pool.length);picked.push(pool.splice(idx,1)[0]);}
+const n=Math.min(count,pool.length);
+while(picked.length<n&&pool.length){const idx=Math.floor(Math.random()*pool.length);picked.push(pool.splice(idx,1)[0]);}
 return picked;
 }
 function renderReviews(reviewList){
 const container=document.getElementById("reviews-container");container.innerHTML="";
-const chosen=pickRandomReviews(reviewList,3);
+const dotsEl=document.getElementById("review-dots");dotsEl.innerHTML="";
+const chosen=pickRandomReviews(reviewList,5);
 const frag=document.createDocumentFragment();
 chosen.forEach((r,i)=>{
 const card=document.createElement("div");
 card.className="review-card glass reveal";card.style.transitionDelay=(i*0.07)+"s";
-card.innerHTML=`<div class="review-top"><span class="review-name">${escapeHTML(r.name)}</span><span class="stars">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</span></div><p class="review-comment">${escapeHTML(r.comment)}</p>`;
+card.innerHTML=`<span class="review-quote"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 8c-2.5 0-4.5 2-4.5 4.5S7 17 9.5 17c.3 0 .5 0 .8-.1-.5 1.6-1.8 2.9-3.3 3.4l.6 1.5c3-1 5.4-3.9 5.4-7.3V12c0-2.2-1.8-4-4-4zm9 0c-2.5 0-4.5 2-4.5 4.5S16 17 18.5 17c.3 0 .5 0 .8-.1-.5 1.6-1.8 2.9-3.3 3.4l.6 1.5c3-1 5.4-3.9 5.4-7.3V12c0-2.2-1.8-4-4-4z"/></svg></span><div class="review-top"><span class="review-name">${escapeHTML(r.name)}</span><span class="stars">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</span></div><p class="review-comment">${escapeHTML(r.comment)}</p>`;
 frag.appendChild(card);
+const dot=document.createElement("span");
+dot.className="review-dot"+(i===0?" active":"");
+dotsEl.appendChild(dot);
 });
 container.appendChild(frag);
 container.querySelectorAll(".reveal").forEach(observeReveal);
+initReviewsDots(container);
 }
 function escapeHTML(str){const div=document.createElement("div");div.textContent=str;return div.innerHTML;}
+function initReviewsDots(container){
+const dotsEl=document.getElementById("review-dots");
+const cards=Array.from(container.children);
+if(!cards.length) return;
+let idx=0,scrollDebounce=null;
+function updateDots(){
+if(!dotsEl) return;
+const dots=dotsEl.children;if(!dots.length) return;
+for(let i=0;i<dots.length;i++){dots[i].classList.toggle("active",i===idx);}
+}
+function syncIdxFromScroll(){
+const cRect=container.getBoundingClientRect();
+const centerX=cRect.left+cRect.width/2;
+let closest=0,minDist=Infinity;
+cards.forEach((c,i)=>{
+const r=c.getBoundingClientRect();
+const dist=Math.abs((r.left+r.width/2)-centerX);
+if(dist<minDist){minDist=dist;closest=i;}
+});
+idx=closest;
+updateDots();
+}
+container.addEventListener("scroll",()=>{
+if(scrollDebounce) clearTimeout(scrollDebounce);
+scrollDebounce=setTimeout(syncIdxFromScroll,120);
+},{passive:true});
+/* FIX: scrollIntoView on the first review card could drag the whole page's
+   vertical scroll position along with it on some mobile browsers, which is
+   why the page ended up showing the middle of the content instead of the
+   top after picking a language. We now only move the horizontal scroller
+   itself (scrollLeft), never touching the page/document scroll. */
+container.scrollLeft = 0;
+updateDots();
+}
 const io=new IntersectionObserver(entries=>{
 entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("in");io.unobserve(entry.target);}});
 },{threshold:0.08,rootMargin:"0px 0px -6% 0px"});
 function observeReveal(el){io.observe(el);}
 document.querySelectorAll(".reveal").forEach(observeReveal);
+initFloatingIcons();
 const langSelectEl=document.getElementById("lang-select");
 const contentWrapEl=document.getElementById("content-wrap");
 function chooseLang(code){
 applyLang(code);
 langSelectEl.classList.add("exiting");
-setTimeout(()=>{langSelectEl.classList.add("hidden");contentWrapEl.classList.add("sharp");},260);
+/* FIX: force the page back to the very top right when the language is
+   chosen, and again after the fade-out finishes, so the site always opens
+   at the top regardless of any scroll movement caused by rendering the
+   reviews/buttons above. */
+window.scrollTo(0,0);
+setTimeout(()=>{
+langSelectEl.classList.add("hidden");
+contentWrapEl.classList.add("sharp");
+window.scrollTo(0,0);
+},260);
 }
 document.querySelectorAll(".lang-card").forEach(card=>{
-card.addEventListener("click",()=>chooseLang(card.getAttribute("data-lang")));
+card.addEventListener("click",e=>{createRipple(e);chooseLang(card.getAttribute("data-lang"));});
 });
 })();
 </script>
