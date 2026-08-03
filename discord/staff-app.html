@@ -261,14 +261,37 @@ return true;
 function buildState(){
 state={settings:{sysName:'سیستەمی ستافی دیسکۆرد',serverName:'Kurdistan Community',initStaff:50},records:[],logs:[],meetingHeld:true,activeReportTab:'today',reportFilter:'all',sortDir:'desc',currentUser:{name:authedUser.name,role:authedUser.role}};
 }
-function fmtDate(d){return d.toLocaleDateString('en-GB')}
-function seedDemo(){
-const today=new Date();
-for(let i=29;i>=0;i--){
-const d=new Date(today);d.setDate(d.getDate()-i);
-const held=Math.random()>0.4;
-state.records.push({id:recIdSeq++,date:fmtDate(d),newStaff:Math.floor(Math.random()*4),fired:Math.floor(Math.random()*2),reports:Math.floor(Math.random()*8),notes:i===0?'':'ڕۆژی ئاسایی، هیچ کێشەیەک نەبوو',meetingHeld:held,meetingTitle:held?'کۆبوونەوەی هەفتانەی ستاف':'',meetingRep:held?'ئاراس محەمەد':'',attend:held?Math.floor(Math.random()*10)+8:0,absent:held?Math.floor(Math.random()*4):0,locked:i!==0});
+async function loadRecords(){
+const {data,error}=await sb.from('staff_records').select('*').order('date',{ascending:true});
+if(error){toast('هەڵە لە هێنانی تۆمارەکان','error');return}
+state.records=(data||[]).map(r=>({
+id:r.id,date:r.date,newStaff:r.new_staff,fired:r.fired,reports:r.reports,notes:r.notes||'',
+meetingHeld:r.meeting_held,meetingTitle:r.meeting_title||'',meetingRep:r.meeting_rep||'',
+attend:r.attend,absent:r.absent,locked:r.locked
+}));
 }
+
+async function loadSettings(){
+const {data,error}=await sb.from('app_settings').select('*').eq('id',1).single();
+if(!error&&data){
+state.settings={sysName:data.sys_name,serverName:data.server_name||'',initStaff:data.init_staff||0};
+}
+}
+
+async function loadLogs(){
+const {data,error}=await sb.from('activity_logs').select('*').order('created_at',{ascending:false}).limit(50);
+if(!error)state.logs=(data||[]).reverse().map(l=>({
+time:new Date(l.created_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),
+user:l.user_name,role:l.role,device:l.device,browser:l.browser,os:l.os,ip:l.ip,action:l.action
+}));
+}
+
+async function addLog(action){
+await sb.from('activity_logs').insert({user_name:authedUser.name,role:authedUser.role,device:'Web Browser',browser:'-',os:'-',ip:'-',action});
+await loadLogs();
+}
+function fmtDate(d){return d.toLocaleDateString('en-GB')}
+
 state.logs=[
 {time:'01:00',user:state.currentUser.name,role:state.currentUser.role,device:'iPhone 11',browser:'Safari',os:'iOS 17',ip:'192.168.1.12',action:'چوونەژوورەوە بۆ سیستەم'},
 {time:'01:08',user:state.currentUser.name,role:state.currentUser.role,device:'iPhone 11',browser:'Safari',os:'iOS 17',ip:'192.168.1.12',action:'زیادکردنی ستافی نوێ: 2'},
@@ -277,7 +300,15 @@ state.logs=[
 }
 function currentStaffCount(){let c=state.settings.initStaff;state.records.forEach(r=>c+=r.newStaff-r.fired);return c}
 function todayRecord(){const t=fmtDate(new Date());return state.records.find(r=>r.date===t)}
-function ensureTodayRecord(){if(!todayRecord())state.records.push({id:recIdSeq++,date:fmtDate(new Date()),newStaff:0,fired:0,reports:0,notes:'',meetingHeld:false,meetingTitle:'',meetingRep:'',attend:0,absent:0,locked:false})}
+async function ensureTodayRecord(){
+if(todayRecord())return;
+const {data,error}=await sb.from('staff_records').insert({
+date:fmtDate(new Date()),new_staff:0,fired:0,reports:0,notes:'',
+meeting_held:false,meeting_title:'',meeting_rep:'',attend:0,absent:0,locked:false
+}).select().single();
+if(error){toast('هەڵە لە دروستکردنی تۆماری ئەمڕۆ','error');return}
+state.records.push({id:data.id,date:data.date,newStaff:0,fired:0,reports:0,notes:'',meetingHeld:false,meetingTitle:'',meetingRep:'',attend:0,absent:0,locked:false});
+}
 function toast(msg,type){
 type=type||'success';
 const icons={success:'fa-circle-check',error:'fa-circle-xmark',warning:'fa-triangle-exclamation',info:'fa-circle-info'};
@@ -347,7 +378,7 @@ document.getElementById('mHeldBtn').classList.toggle('active',held);
 document.getElementById('mNotBtn').classList.toggle('active',!held);
 document.getElementById('meetingFields').classList.toggle('show',held);
 }
-function saveRecord(){
+async function saveRecord(){
 const t=todayRecord();
 t.newStaff=+document.getElementById('rNew').value||0;
 t.fired=+document.getElementById('rFired').value||0;
@@ -358,8 +389,15 @@ t.meetingTitle=state.meetingHeld?document.getElementById('mTitle').value:'';
 t.meetingRep=state.meetingHeld?document.getElementById('mRep').value:'';
 t.attend=state.meetingHeld?(+document.getElementById('mAttend').value||0):0;
 t.absent=state.meetingHeld?(+document.getElementById('mAbsent').value||0):0;
-if(sb&&!DEMO){sb.from('records').upsert(t).then(()=>{})}
-state.logs.push({time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),user:state.currentUser.name,role:state.currentUser.role,device:'Web Browser',browser:'Chrome',os:'-',ip:'-',action:'تۆمارکردنی داتای ڕۆژانە'});
+
+const {error}=await sb.from('staff_records').update({
+new_staff:t.newStaff,fired:t.fired,reports:t.reports,notes:t.notes,
+meeting_held:t.meetingHeld,meeting_title:t.meetingTitle,meeting_rep:t.meetingRep,
+attend:t.attend,absent:t.absent
+}).eq('id',t.id);
+if(error){toast('هەڵە لە پاشەکەوتکردن','error');return}
+
+await addLog('تۆمارکردنی داتای ڕۆژانە');
 closeModal('recordModal');
 toast('ئامارەکە تۆمار کرا','success');
 renderRecordsHistory();
@@ -431,15 +469,20 @@ document.getElementById('valSysName').textContent=state.settings.sysName;
 document.getElementById('valServerName').textContent=state.settings.serverName;
 document.getElementById('valInitStaff').textContent=state.settings.initStaff;
 }
-function editSetting(key,label){
+async function editSetting(key,label){
 const val=prompt(label,state.settings[key]);
 if(val===null||val.trim()==='')return;
+const dbKey=key==='sysName'?'sys_name':'server_name';
+const {error}=await sb.from('app_settings').update({[dbKey]:val.trim()}).eq('id',1);
+if(error){toast('هەڵە لە نوێکردنەوە','error');return}
 state.settings[key]=val.trim();loadSettingsToUI();toast('ڕێکخستن نوێکرایەوە','success');
 }
-function editInitialStaff(){
+async function editInitialStaff(){
 if(state.records.length>1){toast('کۆی سەرەتایی تەنها یەک جار دیاریدەکرێت','warning');return}
 const val=prompt('کۆی سەرەتایی ستاف',state.settings.initStaff);
 if(val===null||isNaN(+val))return;
+const {error}=await sb.from('app_settings').update({init_staff:+val}).eq('id',1);
+if(error){toast('هەڵە لە نوێکردنەوە','error');return}
 state.settings.initStaff=+val;loadSettingsToUI();toast('کۆی سەرەتایی دانرا','success');
 }
 function renderLogs(){
@@ -459,9 +502,12 @@ toast('تۆماری ڕۆژانەی نوێ دروستکرا','info');
 }
 },60000);
 }
-function init(){
-buildState();
-seedDemo();ensureTodayRecord();loadSettingsToUI();
+async function init(){
+await loadSettings();
+await loadRecords();
+await ensureTodayRecord();
+await loadLogs();
+loadSettingsToUI();
 document.getElementById('homeGreeting').textContent='بەخێربێیت، '+state.currentUser.name;
 document.getElementById('avatarInitial').textContent=(state.currentUser.name||'M').charAt(0).toUpperCase();
 document.getElementById('homeDate').textContent=new Date().toLocaleDateString('ckb',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
@@ -471,7 +517,9 @@ scheduleAutoRecord();
 (async()=>{
 const ok=await checkAuth();
 if(!ok)return;
-init();
+buildState();
+await init();
+})();
 })();
 </script>
 </body>
