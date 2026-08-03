@@ -141,8 +141,8 @@ body.modal-open{overflow:hidden}
 <div class="stat-grid">
 <div class="stat-card"><div class="stat-icon" style="background:var(--blue)"><i class="fa-solid fa-users"></i></div><div class="stat-val" id="statCurrent">0</div><div class="stat-label">ستافی ئێستا</div></div>
 <div class="stat-card"><div class="stat-icon" style="background:var(--green)"><i class="fa-solid fa-user-plus"></i></div><div class="stat-val" id="statNew">0</div><div class="stat-label">ستافی نوێی ئەمڕۆ</div></div>
-<div class="stat-card"><div class="stat-icon" style="background:var(--danger)"><i class="fa-solid fa-user-minus"></i></div><div class="stat-val" id="statFired">0</div><div class="stat-label">ئەخراجکراوی ئەمڕۆ</div></div>
-<div class="stat-card"><div class="stat-icon" style="background:var(--amber)"><i class="fa-solid fa-file-lines"></i></div><div class="stat-val" id="statReports">0</div><div class="stat-label">ڕاپۆرتی ئەمڕۆ</div></div>
+<div class="stat-card"><div class="stat-icon" style="background:var(--danger)"><i class="fa-solid fa-user-minus"></i></div><div class="stat-val" id="statFired">0</div><div class="stat-label"> دەرکراوەکانی ئەمرۆ</div></div>
+<div class="stat-card"><div class="stat-icon" style="background:var(--amber)"><i class="fa-solid fa-file-lines"></i></div><div class="stat-val" id="statReports">0</div><div class="stat-label">گلەیەکانی ئەمرۆ</div></div>
 <div class="stat-card"><div class="stat-icon" style="background:var(--violet)"><i class="fa-solid fa-people-group"></i></div><div class="stat-val" id="statMeeting">-</div><div class="stat-label">کۆبوونەوە</div></div>
 <div class="stat-card"><div class="stat-icon" style="background:var(--info)"><i class="fa-solid fa-user-check"></i></div><div class="stat-val" id="statAttend">0</div><div class="stat-label">ئامادەبوون</div></div>
 <div class="stat-card"><div class="stat-icon" style="background:var(--warn)"><i class="fa-solid fa-user-xmark"></i></div><div class="stat-val" id="statAbsent">0</div><div class="stat-label">غیاب</div></div>
@@ -168,7 +168,7 @@ body.modal-open{overflow:hidden}
 <button onclick="setReportTab('year',this)">ساڵانە</button>
 </div>
 <div class="kpi-grid">
-<div class="kpi-card"><div class="kpi-top"><div class="kpi-ic" style="background:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i></div><span class="stat-trend" id="kpiGrowthTrend"></span></div><div class="kpi-val" id="kpiGrowth">0</div><div class="kpi-label">گەشەی ستاف (خاوی)</div></div>
+<div class="kpi-card"><div class="kpi-top"><div class="kpi-ic" style="background:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i></div><span class="stat-trend" id="kpiGrowthTrend"></span></div><div class="kpi-val" id="kpiGrowth">0</div><div class="kpi-label">گەشەی ستاف (پوختە)</div></div>
 <div class="kpi-card"><div class="kpi-top"><div class="kpi-ic" style="background:var(--amber)"><i class="fa-solid fa-file-lines"></i></div></div><div class="kpi-val" id="kpiReports">0</div><div class="kpi-label">کۆی ڕاپۆرت</div></div>
 <div class="kpi-card"><div class="kpi-top"><div class="kpi-ic" style="background:var(--violet)"><i class="fa-solid fa-people-group"></i></div></div><div class="kpi-val" id="kpiMeetings">0</div><div class="kpi-label">کۆبوونەوەی بەڕێوەچوو</div></div>
 <div class="kpi-card"><div class="kpi-top"><div class="kpi-ic" style="background:var(--info)"><i class="fa-solid fa-percent"></i></div></div><div class="kpi-val" id="kpiAttendRate">0%</div><div class="kpi-label">ڕێژەی ئامادەبوون</div></div>
@@ -187,7 +187,7 @@ body.modal-open{overflow:hidden}
 <button class="icon-btn" onclick="exportPDF()" title="PDF"><i class="fa-solid fa-file-pdf"></i></button>
 </div>
 <div class="table-wrap"><table id="reportsTable"><thead><tr>
-<th onclick="toggleSort()">بەروار <i class="fa-solid fa-sort"></i></th><th>نوێ</th><th>ئەخراج</th><th>خاوی</th><th>ڕاپۆرت</th><th>کۆبوونەوە</th><th>ئامادە</th><th>غیاب</th><th>دۆخ</th>
+<th onclick="toggleSort()">بەروار <i class="fa-solid fa-sort"></i></th><th>نوێ</th><th>دەرکراو</th><th>پوختە</th><th>ڕاپۆرت</th><th>کۆبوونەوە</th><th>ئامادە</th><th>غیاب</th><th>دۆخ</th>
 </tr></thead><tbody id="reportsBody"></tbody></table></div>
 <div style="font-size:11px;color:var(--sub);margin-top:10px;text-align:center">کرتە لەسەر هەر ڕیزێک بکە بۆ بینینی وردەکاری تەواو</div>
 </div>
@@ -215,7 +215,7 @@ body.modal-open{overflow:hidden}
 <div class="field"><label>بەروار</label><input type="text" id="rDate" disabled></div>
 <div class="row2">
 <div class="field"><label>ستافی نوێ</label><input type="number" id="rNew" min="0" value="0"></div>
-<div class="field"><label>ستافی ئەخراجکراو</label><input type="number" id="rFired" min="0" value="0"></div>
+<div class="field"><label>ستافی دەرکراو</label><input type="number" id="rFired" min="0" value="0"></div>
 </div>
 <div class="field"><label>ژمارەی ڕاپۆرت</label><input type="number" id="rReports" min="0" value="0"></div>
 <div class="field"><label>تێبینی</label><textarea id="rNotes" rows="2" placeholder="تێبینی زیادکە..."></textarea></div>
@@ -344,7 +344,7 @@ document.getElementById('statMonthly').textContent=monthTotal;
 const last7=state.records.slice(-7);
 const labels=last7.map(r=>r.date.slice(0,5));
 if(staffChartRef)staffChartRef.destroy();
-staffChartRef=new Chart(document.getElementById('staffChart'),{type:'line',data:{labels,datasets:[{label:'نوێ',data:last7.map(r=>r.newStaff),borderColor:'#0ea472',backgroundColor:'rgba(14,164,114,.1)',tension:.35,fill:true},{label:'ئەخراج',data:last7.map(r=>r.fired),borderColor:'#e0472e',backgroundColor:'rgba(224,71,46,.08)',tension:.35,fill:true}]},options:{plugins:{legend:{labels:{font:{family:"IBM Plex Sans Arabic"}}}},scales:{x:{ticks:{font:{family:"IBM Plex Sans Arabic"}}},y:{beginAtZero:true}}}});
+staffChartRef=new Chart(document.getElementById('staffChart'),{type:'line',data:{labels,datasets:[{label:'نوێ',data:last7.map(r=>r.newStaff),borderColor:'#0ea472',backgroundColor:'rgba(14,164,114,.1)',tension:.35,fill:true},{label:'دەرکراو',data:last7.map(r=>r.fired),borderColor:'#e0472e',backgroundColor:'rgba(224,71,46,.08)',tension:.35,fill:true}]},options:{plugins:{legend:{labels:{font:{family:"IBM Plex Sans Arabic"}}}},scales:{x:{ticks:{font:{family:"IBM Plex Sans Arabic"}}},y:{beginAtZero:true}}}});
 if(meetChartRef)meetChartRef.destroy();
 meetChartRef=new Chart(document.getElementById('meetChart'),{type:'bar',data:{labels,datasets:[{label:'ئامادە',data:last7.map(r=>r.attend),backgroundColor:'#2f6fed',borderRadius:6},{label:'غیاب',data:last7.map(r=>r.absent),backgroundColor:'#e0a51e',borderRadius:6}]},options:{plugins:{legend:{labels:{font:{family:"IBM Plex Sans Arabic"}}}},scales:{x:{ticks:{font:{family:"IBM Plex Sans Arabic"}}},y:{beginAtZero:true}}}});
 const acts=state.logs.slice(-5).reverse();
@@ -352,7 +352,7 @@ document.getElementById('activityList').innerHTML=acts.map(l=>'<div class="activ
 }
 function renderRecordsHistory(){
 const list=state.records.slice().reverse();
-document.getElementById('recordsHistory').innerHTML=list.map(r=>'<div class="log-item"><div class="log-ic"><i class="fa-solid fa-calendar-day"></i></div><div style="flex:1"><div class="log-user">'+r.date+(r.locked?' <span class="readonly-tag"><i class="fa-solid fa-lock"></i>تەنها خوێندنەوە</span>':'')+'</div><div class="log-action">نوێ: '+r.newStaff+' • ئەخراج: '+r.fired+' • ڕاپۆرت: '+r.reports+'</div><div class="log-meta">کۆبوونەوە: '+(r.meetingHeld?'بەڕێوەچوو':'نەبوو')+'</div></div></div>').join('');
+document.getElementById('recordsHistory').innerHTML=list.map(r=>'<div class="log-item"><div class="log-ic"><i class="fa-solid fa-calendar-day"></i></div><div style="flex:1"><div class="log-user">'+r.date+(r.locked?' <span class="readonly-tag"><i class="fa-solid fa-lock"></i>تەنها خوێندنەوە</span>':'')+'</div><div class="log-action">نوێ: '+r.newStaff+' • دەرکراو: '+r.fired+' • ڕاپۆرت: '+r.reports+'</div><div class="log-meta">کۆبوونەوە: '+(r.meetingHeld?'بەڕێوەچوو':'نەبوو')+'</div></div></div>').join('');
 }
 function openRecordModal(){
 const t=todayRecord();
@@ -441,8 +441,8 @@ document.getElementById('detailTitle').textContent='تۆماری '+r.date;
 document.getElementById('detailBody').innerHTML=
 '<div class="detail-row"><span>دۆخ</span><span>'+(r.locked?'داخراو (تەنها خوێندنەوە)':'چالاک')+'</span></div>'+
 '<div class="detail-row"><span>ستافی نوێ</span><span>'+r.newStaff+'</span></div>'+
-'<div class="detail-row"><span>ستافی ئەخراجکراو</span><span>'+r.fired+'</span></div>'+
-'<div class="detail-row"><span>خاوی گۆڕان</span><span>'+(r.newStaff-r.fired>=0?'+':'')+(r.newStaff-r.fired)+'</span></div>'+
+'<div class="detail-row"><span>ستافی دەرکراو</span><span>'+r.fired+'</span></div>'+
+'<div class="detail-row"><span>پوختەی گۆڕان</span><span>'+(r.newStaff-r.fired>=0?'+':'')+(r.newStaff-r.fired)+'</span></div>'+
 '<div class="detail-row"><span>ژمارەی ڕاپۆرت</span><span>'+r.reports+'</span></div>'+
 '<div class="detail-row"><span>کۆبوونەوە</span><span>'+(r.meetingHeld?'بەڕێوەچوو':'نەبوو')+'</span></div>'+
 (r.meetingHeld?('<div class="detail-row"><span>ناونیشانی کۆبوونەوە</span><span>'+(r.meetingTitle||'-')+'</span></div>'+
@@ -456,7 +456,7 @@ document.body.classList.add('modal-open');
 function printReports(){window.print()}
 function exportCSV(){
 const list=filteredReportRecords();
-let csv='بەروار,نوێ,ئەخراج,خاوی,ڕاپۆرت,کۆبوونەوە,ناونیشان,نوێنەر,ئامادە,غیاب,تێبینی\n';
+let csv='بەروار,نوێ,دەرکراو,پوختە,ڕاپۆرت,کۆبوونەوە,ناونیشان,نوێنەر,ئامادە,غیاب,تێبینی\n';
 list.forEach(r=>csv+=r.date+','+r.newStaff+','+r.fired+','+(r.newStaff-r.fired)+','+r.reports+','+(r.meetingHeld?'بەڵێ':'نەخێر')+','+(r.meetingTitle||'')+','+(r.meetingRep||'')+','+r.attend+','+r.absent+',"'+(r.notes||'').replace(/"/g,'""')+'"\n');
 const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
 const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='raport.csv';a.click();
