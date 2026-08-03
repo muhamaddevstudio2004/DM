@@ -128,6 +128,13 @@ tr.rowclick:active{background:#f7f8fc}
 .notif-item.danger i{color:var(--danger)}
 .notif-item span{font-size:12.5px;line-height:1.5}
 .notif-empty{padding:20px;text-align:center;font-size:12.5px;color:var(--sub)}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:20px 0}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);transition:.15s}
+.pin-dot.filled{background:var(--blue);border-color:var(--blue)}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pin-key{padding:16px;border-radius:14px;border:1.5px solid var(--border);background:#fafbfd;font-family:inherit;font-size:19px;font-weight:700;cursor:pointer}
+.pin-key:active{background:#eef1fa}
+.pin-key.pin-back{color:var(--danger);font-size:16px}
 ::-webkit-scrollbar{height:6px;width:6px}::-webkit-scrollbar-thumb{background:#d5dae5;border-radius:10px}
 body.modal-open{overflow:hidden}
 .notice-box{display:flex;gap:10px;align-items:flex-start;background:#fff4e5;border:1px solid #f5d9a8;border-radius:14px;padding:12px 14px;margin-top:14px;font-size:12.5px;line-height:1.6;color:var(--amber-d)}
@@ -214,7 +221,8 @@ body.modal-open{overflow:hidden}
 <div id="settingsScreen" class="screen">
 <div class="topbar"><button class="back-btn" onclick="nav('home')"><i class="fa-solid fa-arrow-right"></i></button><div><div class="page-title">ڕێکخستنەکان</div><div class="page-sub">ڕێکخستنی سیستەم</div></div></div>
 <div class="settings-list">
-<div class="settings-item" onclick="editSetting('sysName','ناوی سیستەم')"><div class="si-l"><div class="si-icon"><i class="fa-solid fa-heading"></i></div><div><div class="si-name">ناوی سیستەم</div><div class="si-val" id="valSysName">-</div></div></div><i class="fa-solid fa-chevron-left" style="color:var(--sub);font-size:12px"></i></div>
+<div class="settings-item" onclick="editAccountName()"><div class="si-l"><div class="si-icon" style="color:var(--blue)"><i class="fa-solid fa-id-badge"></i></div><div><div class="si-name">ناوی هەژمار</div><div class="si-val" id="valAccountName">-</div></div></div><i class="fa-solid fa-chevron-left" style="color:var(--sub);font-size:12px"></i></div>
+<div class="settings-item" onclick="editSetting('sysName','ناوی سیستەم')">
 <div class="settings-item" onclick="editSetting('serverName','ناوی سێرڤەری دیسکۆرد')"><div class="si-l"><div class="si-icon"><i class="fa-brands fa-discord"></i></div><div><div class="si-name">ناوی سێرڤەری دیسکۆرد</div><div class="si-val" id="valServerName">-</div></div></div><i class="fa-solid fa-chevron-left" style="color:var(--sub);font-size:12px"></i></div>
 <div class="settings-item" onclick="editInitialStaff()"><div class="si-l"><div class="si-icon"><i class="fa-solid fa-users-gear"></i></div><div><div class="si-name">کۆی سەرەتایی ستاف</div><div class="si-val" id="valInitStaff">-</div></div></div><i class="fa-solid fa-chevron-left" style="color:var(--sub);font-size:12px"></i></div>
 <div class="settings-item" onclick="nav('logs')"><div class="si-l"><div class="si-icon"><i class="fa-solid fa-clock-rotate-left"></i></div><div><div class="si-name">تۆماری سیستەم (Logs)</div><div class="si-val">بینینی هەموو چالاکییەکان</div></div></div><i class="fa-solid fa-chevron-left" style="color:var(--sub);font-size:12px"></i></div>
@@ -260,7 +268,21 @@ body.modal-open{overflow:hidden}
 <div id="detailBody"></div>
 </div>
 </div>
-
+<div class="modal-overlay" id="pinModal">
+<div class="modal-box">
+<div class="modal-head"><h3>کۆدی چوونەژوورەوە</h3><button class="modal-close" onclick="cancelPin()"><i class="fa-solid fa-xmark"></i></button></div>
+<div style="text-align:center;font-size:13px;color:var(--sub)">پیناکۆدی چوارژمارەیی بنووسە بۆ چوونە ناو ڕێکخستنەکان</div>
+<div class="pin-dots" id="pinDots">
+<div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+</div>
+<div class="pin-keypad">
+<button class="pin-key" onclick="pinPress('1')">1</button><button class="pin-key" onclick="pinPress('2')">2</button><button class="pin-key" onclick="pinPress('3')">3</button>
+<button class="pin-key" onclick="pinPress('4')">4</button><button class="pin-key" onclick="pinPress('5')">5</button><button class="pin-key" onclick="pinPress('6')">6</button>
+<button class="pin-key" onclick="pinPress('7')">7</button><button class="pin-key" onclick="pinPress('8')">8</button><button class="pin-key" onclick="pinPress('9')">9</button>
+<div></div><button class="pin-key" onclick="pinPress('0')">0</button><button class="pin-key pin-back" onclick="pinBack()"><i class="fa-solid fa-delete-left"></i></button>
+</div>
+</div>
+</div>
 <script>
 const SUPABASE_URL='https://fhqcgnocjnpiovsrhcfa.supabase.co';
 const SUPABASE_KEY='sb_publishable_mA781IfMBeZdl7n_xj3iZg_55DcwZ6-';
@@ -378,7 +400,83 @@ document.getElementById('notifPanel').innerHTML=alerts.length?
 alerts.map(a=>'<div class="notif-item '+a.type+'"><i class="fa-solid '+a.icon+'"></i><span>'+a.text+'</span></div>').join(''):
 '<div class="notif-empty">هیچ ئاگادارییەک نییە</div>';
 }
+let settingsUnlocked=false;
+let pinBuffer='';
+const APP_PIN='2626';
 
+function nav(name){
+if(name==='settings'&&!settingsUnlocked){
+openPinModal();
+return;
+}
+doNav(name);
+}
+
+function doNav(name){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(name+'Screen').classList.add('active');
+if(name==='home'){document.getElementById('homeDate').textContent=new Date().toLocaleDateString('ckb',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+if(name==='dashboard')renderDashboard();
+if(name==='records')renderRecordsHistory();
+if(name==='reports')renderReports();
+if(name==='logs')renderLogs();
+if(name==='settings')loadSettingsToUI();
+}
+
+function openPinModal(){
+pinBuffer='';
+updatePinDots();
+document.getElementById('pinModal').classList.add('active');
+document.body.classList.add('modal-open');
+}
+
+function cancelPin(){
+pinBuffer='';
+document.getElementById('pinModal').classList.remove('active');
+document.body.classList.remove('modal-open');
+}
+
+function updatePinDots(){
+const dots=document.querySelectorAll('#pinDots .pin-dot');
+dots.forEach((d,i)=>d.classList.toggle('filled',i<pinBuffer.length));
+}
+
+function pinPress(digit){
+if(pinBuffer.length>=4)return;
+pinBuffer+=digit;
+updatePinDots();
+if(pinBuffer.length===4){
+setTimeout(()=>{
+if(pinBuffer===APP_PIN){
+settingsUnlocked=true;
+cancelPin();
+doNav('settings');
+}else{
+toast('کۆدەکە هەڵەیە','error');
+pinBuffer='';
+updatePinDots();
+}
+},150);
+}
+}
+
+function pinBack(){
+pinBuffer=pinBuffer.slice(0,-1);
+updatePinDots();
+}
+
+async function editAccountName(){
+const val=prompt('ناوی هەژمار',authedUser.name);
+if(val===null||val.trim()==='')return;
+const {error}=await sb.auth.updateUser({data:{name:val.trim()}});
+if(error){toast('هەڵە لە نوێکردنەوەی ناو','error');return}
+authedUser.name=val.trim();
+state.currentUser.name=val.trim();
+document.getElementById('valAccountName').textContent=authedUser.name;
+document.getElementById('homeGreeting').textContent='بەخێربێیت، '+authedUser.name;
+document.getElementById('avatarInitial').textContent=authedUser.name.charAt(0).toUpperCase();
+toast('ناوی هەژمار نوێکرایەوە','success');
+}
 function toggleNotifPanel(){
 document.getElementById('notifPanel').classList.toggle('show');
 }
@@ -395,15 +493,6 @@ sb.auth.signOut().then(()=>{
 toast('چوونەدەرەوە سەرکەوتوو بوو','info');
 setTimeout(()=>location.href='index.html',600);
 });
-}
-function nav(name){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById(name+'Screen').classList.add('active');
-if(name==='home'){document.getElementById('homeDate').textContent=new Date().toLocaleDateString('ckb',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
-if(name==='dashboard')renderDashboard();
-if(name==='records')renderRecordsHistory();
-if(name==='reports')renderReports();
-if(name==='logs')renderLogs();
 }
 let staffChartRef=null,meetChartRef=null;
 function renderDashboard(){
@@ -542,6 +631,7 @@ toast('فایلی Excel دابەزێنرا','success');
 }
 function exportPDF(){toast('بۆ دەرهێنانی PDF، چاپکردن بەکاربهێنە و "Save as PDF" هەڵبژێرە','info');window.print()}
 function loadSettingsToUI(){
+document.getElementById('valAccountName').textContent=authedUser?authedUser.name:'-';
 document.getElementById('valSysName').textContent=state.settings.sysName;
 document.getElementById('valServerName').textContent=state.settings.serverName;
 document.getElementById('valInitStaff').textContent=state.settings.initStaff;
