@@ -291,13 +291,6 @@ await sb.from('activity_logs').insert({user_name:authedUser.name,role:authedUser
 await loadLogs();
 }
 function fmtDate(d){return d.toLocaleDateString('en-GB')}
-
-state.logs=[
-{time:'01:00',user:state.currentUser.name,role:state.currentUser.role,device:'iPhone 11',browser:'Safari',os:'iOS 17',ip:'192.168.1.12',action:'چوونەژوورەوە بۆ سیستەم'},
-{time:'01:08',user:state.currentUser.name,role:state.currentUser.role,device:'iPhone 11',browser:'Safari',os:'iOS 17',ip:'192.168.1.12',action:'زیادکردنی ستافی نوێ: 2'},
-{time:'01:12',user:'ئاراس',role:'سوپەرڤایزەر',device:'Windows PC',browser:'Chrome',os:'Windows 11',ip:'192.168.1.20',action:'نوێکردنەوەی ڕاپۆرتی ئەمڕۆ'},
-{time:'01:20',user:state.currentUser.name,role:state.currentUser.role,device:'iPhone 11',browser:'Safari',os:'iOS 17',ip:'192.168.1.12',action:'نوێکردنەوەی زانیاری کۆبوونەوە'}];
-}
 function currentStaffCount(){let c=state.settings.initStaff;state.records.forEach(r=>c+=r.newStaff-r.fired);return c}
 function todayRecord(){const t=fmtDate(new Date());return state.records.find(r=>r.date===t)}
 async function ensureTodayRecord(){
@@ -519,7 +512,6 @@ const ok=await checkAuth();
 if(!ok)return;
 buildState();
 await init();
-})();
 })();
 </script>
 </body>
