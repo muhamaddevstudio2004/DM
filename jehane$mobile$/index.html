@@ -2902,10 +2902,11 @@ kbd {
         <span class="sale-total-val" id="a4TotalVal">0</span>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('invoiceA4Modal')">داخستن</button>
-      <button class="btn btn-primary" onclick="printA4Invoice()"><i class="ti ti-printer"></i> چاپکردنی A4</button>
-    </div>
+ <div class="modal-footer">
+  <button class="btn btn-ghost" onclick="closeModal('invoiceA4Modal')">داخستن</button>
+  <button class="btn btn-success" onclick="saveA4Changes()"><i class="ti ti-device-floppy"></i> پاشەکەوتکردن</button>
+  <button class="btn btn-primary" onclick="printA4Invoice()"><i class="ti ti-printer"></i> چاپکردنی A4</button>
+</div>
   </div>
 </div>
 <!-- TOAST -->
@@ -5190,14 +5191,15 @@ function renderSales() {
 
   body.innerHTML = groups.map((g, gi) => {
     const items = g.items;
-    const isMulti = items.length > 1;
-    const isOpen = openSaleGroups.has(g.gid);
-    const groupTotal = items.reduce((a,s)=>a+s.total,0);
-    const groupProfit = items.reduce((a,s)=>a+(s.profit||0),0);
-    const groupQty = items.reduce((a,s)=>a+s.qty,0);
-    const anyReturned = items.some(s=>s.returned);
-    const allReturned = items.every(s=>s.returned);
-    const first = items[0];
+const isMulti = items.length > 1;
+const isOpen = openSaleGroups.has(g.gid);
+const activeItems = items.filter(s=>!s.returned);
+const groupTotal = activeItems.reduce((a,s)=>a+s.total,0);
+const groupProfit = activeItems.reduce((a,s)=>a+(s.profit||0),0);
+const groupQty = activeItems.reduce((a,s)=>a+s.qty,0);
+const anyReturned = items.some(s=>s.returned);
+const allReturned = items.every(s=>s.returned);
+const first = items[0];
 
     const headerRow = `
       <tr style="${allReturned?'opacity:0.5':''}${isMulti?';cursor:pointer':''}" ${isMulti?`onclick="toggleSaleGroup('${g.gid}')"`:''}>
@@ -5229,7 +5231,7 @@ function renderSales() {
 
     if(!isMulti || !isOpen) return headerRow;
 
-    const detailRows = items.map(s => `
+const detailRows = items.map(s => `
       <tr style="background:var(--bg);${s.returned?'opacity:0.5':''}">
         <td data-label="#"></td>
         <td data-label="کاڵا" style="padding-right:24px">↳ ${s.productName} ${s.returned?'<span class="badge badge-red">گەڕاوەتەوە</span>':''}
@@ -5239,11 +5241,10 @@ function renderSales() {
         <td data-label="نرخی یەکە" class="text-mono td-muted">${fmt(s.unitPrice)}</td>
         <td data-label="کۆی نرخ" class="text-mono">${fmt(s.total)}</td>
         <td data-label="قازانج" class="text-mono color-green">${fmt(s.profit)}</td>
-        <td data-label="کارمەند" class="td-muted">—</td>
-        <td data-label="بەروار" class="td-muted">—</td>
+        <td data-label="کارمەند" class="td-muted">${s.createdBy||'—'}</td>
+        <td data-label="بەروار" class="td-muted">${dateStr(s.createdAt)}</td>
         <td data-label="کردار">
           <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm btn-icon" onclick="reprintSale('${s.id}')" title="چاپی خێرا"><i class="ti ti-printer"></i></button>
             ${!s.returned ? `<button class="btn btn-danger btn-sm" onclick="returnSale('${s.id}')">گەڕاندنەوە</button>` : ''}
           </div>
         </td>
@@ -5432,9 +5433,6 @@ toast(`فرۆشتن تۆمارکرا — کۆی: ${fmt(totalSold)}`,'success');
 if(SETTINGS.auto_print) {
   printReceipt(saleRows, totalSold);
 }
-
-openA4InvoiceModal(saleRows, {});
-
 saleCart=[];
 updateSaleStickyBar();
 renderSales();
@@ -6955,13 +6953,12 @@ function renderA4ItemsList() {
   el.innerHTML = a4Items.map((item, idx) => `
     <div class="cart-item">
       <div class="cart-item-name">${item.name}</div>
-      <input class="form-control" style="max-width:60px;padding:6px 8px" type="number" min="1" value="${item.qty}" onchange="updateA4Item(${idx},'qty',this.value)">
+      <div class="text-mono td-muted" style="min-width:40px;text-align:center">${item.qty} دانە</div>
       <input class="form-control" style="max-width:110px;padding:6px 8px" type="number" min="0" value="${item.unitPrice}" onchange="updateA4Item(${idx},'unitPrice',this.value)">
       <div class="text-mono" style="min-width:90px;text-align:left" id="a4LineTotal-${idx}">${fmt(item.qty*item.unitPrice)}</div>
     </div>`).join('');
   updateA4Total();
 }
-
 function updateA4Item(idx, field, val) {
   a4Items[idx][field] = parseFloat(val)||0;
   document.getElementById('a4LineTotal-'+idx).textContent = fmt(a4Items[idx].qty*a4Items[idx].unitPrice);
@@ -6975,7 +6972,7 @@ function updateA4Total() {
 
 async function syncA4PriceChangesToDB() {
   const changed = a4Items.filter(i => i.id && (i.unitPrice !== i.originalUnitPrice));
-  if(!changed.length) return;
+  if(!changed.length) return false;
   for(const item of changed) {
     const newTotal = item.qty * item.unitPrice;
     const newProfit = (item.unitPrice - (item.buyPrice||0)) * item.qty;
@@ -6993,7 +6990,18 @@ async function syncA4PriceChangesToDB() {
   }
   renderSales();
   renderDashboard();
-  toast('نرخی نوێ و قازانج لە سیستەم نوێکرایەوە', 'success');
+  return true;
+}
+
+async function saveA4Changes() {
+  try {
+    const hadChanges = await syncA4PriceChangesToDB();
+    toast(hadChanges ? 'نرخ و زانیارییەکان پاشەکەوتکران' : 'هیچ گۆڕانکارییەک نەکراوە', hadChanges ? 'success' : 'info');
+    closeModal('invoiceA4Modal');
+  } catch(err) {
+    console.error(err);
+    toast('کێشە: ' + (err.message||err), 'error');
+  }
 }
 
 async function printA4Invoice() {
