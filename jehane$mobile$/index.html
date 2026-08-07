@@ -13,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
 :root {
   --bg: #080d1a;
@@ -92,99 +93,9 @@ body::before {
 
 /* ── LAYOUT ── */
 .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
-
-/* ── SIDEBAR ── */
-.sidebar {
-  position: fixed;
-  right: 0; top: 0; bottom: 0;
-  width: var(--sidebar-w);
-  background: var(--sidebar);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-left: 1px solid var(--card-border);
-  display: flex; flex-direction: column;
-  z-index: 100;
-  transition: transform var(--transition), background var(--transition);
-}
-.sidebar-logo {
-  padding: 24px 20px 16px;
-  display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-logo-icon {
-  width: 38px; height: 38px;
-  background: linear-gradient(135deg, var(--primary), #9C88FF);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; color: #fff;
-  box-shadow: 0 4px 16px var(--primary-glow);
-}
-.sidebar-logo-text { flex: 1; }
-.sidebar-logo-text h1 { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
-.sidebar-logo-text p { font-size: 11px; color: var(--text2); }
-
-.sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 10px; }
-.nav-section { margin-bottom: 8px; }
-.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; padding: 8px 10px 4px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--text2);
-  font-size: 13.5px;
-  font-weight: 500;
-  transition: all var(--transition);
-  position: relative;
-  margin-bottom: 2px;
-}
-.nav-item:hover { background: var(--card); color: var(--text); }
-.nav-item.active { background: var(--primary-light); color: var(--primary); }
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 3px; height: 20px;
-  background: var(--primary);
-  border-radius: 0 3px 3px 0;
-}
-.nav-item i { font-size: 18px; flex-shrink: 0; }
-.nav-badge {
-  margin-right: auto;
-  background: var(--danger);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 20px;
-  min-width: 20px;
-  text-align: center;
-}
-
-.sidebar-footer {
-  padding: 12px 10px;
-  border-top: 1px solid var(--border);
-  display: flex; gap: 8px;
-}
-.footer-btn {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 9px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--text2);
-  font-size: 12px;
-  font-weight: 500;
-  transition: all var(--transition);
-  border: none; background: transparent;
-}
-.footer-btn:hover { background: var(--card); color: var(--text); }
-.footer-btn i { font-size: 16px; }
-
 /* ── MAIN ── */
 .main {
-  margin-right: var(--sidebar-w);
+  margin-right: 0;
   flex: 1;
   min-height: 100vh;
   display: flex; flex-direction: column;
@@ -205,17 +116,6 @@ body::before {
   transition: background var(--transition);
 }
 .light .header { background: rgba(240,244,255,0.85); }
-.menu-btn {
-  display: none;
-  width: 36px; height: 36px;
-  border: none; background: var(--card);
-  border-radius: 8px; cursor: pointer;
-  color: var(--text2);
-  align-items: center; justify-content: center;
-  font-size: 18px;
-  transition: all var(--transition);
-}
-.menu-btn:hover { background: var(--card-hover); color: var(--text); }
 .header-search {
   flex: 1;
   max-width: 400px;
@@ -631,6 +531,56 @@ select.filter-input { cursor: pointer; }
 .sale-total-label { font-size: 13px; color: var(--text2); }
 .sale-total-val { font-size: 20px; font-weight: 700; color: var(--primary); font-family: 'Space Grotesk', sans-serif; }
 
+/* ── SCANNER MODE (USB/Bluetooth) ── */
+.scan-mode-btn.active {
+  background: var(--success-light);
+  color: var(--success);
+  border-color: rgba(0,217,166,0.35);
+}
+.scan-mode-status {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--success);
+  background: var(--success-light);
+  border: 1px solid rgba(0,217,166,0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.scan-mode-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+  animation: scanPulse 1.2s infinite;
+}
+@keyframes scanPulse {
+  0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(0,217,166,0.5); }
+  50% { opacity:0.6; transform:scale(1.25); box-shadow:0 0 0 6px rgba(0,217,166,0); }
+}
+#quickSaleSearch.scan-flash-success {
+  border-color: var(--success) !important;
+  box-shadow: 0 0 0 3px var(--success-light) !important;
+  background: var(--success-light) !important;
+  transition: all 0.15s ease;
+}
+#quickSaleSearch.scan-flash-error {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-light) !important;
+  background: var(--danger-light) !important;
+  transition: all 0.15s ease;
+  animation: scanShake 0.3s ease;
+}
+@keyframes scanShake {
+  0%,100% { transform:translateX(0); }
+  25% { transform:translateX(-4px); }
+  75% { transform:translateX(4px); }
+}
+
 /* ── REPAIR STATUS TIMELINE ── */
 .status-steps {
   display: flex;
@@ -741,14 +691,6 @@ select.filter-input { cursor: pointer; }
 /* ── LOW STOCK TABLE ── */
 .low-stock-row td:first-child { border-right: 3px solid var(--danger); }
 
-/* ── OVERLAY for mobile ── */
-.sidebar-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 99;
-}
-
 /* ── CONNECTION STATUS ── */
 .conn-status {
   display: inline-flex; align-items: center; gap: 6px;
@@ -780,12 +722,7 @@ select.filter-input { cursor: pointer; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-  .sidebar { transform: translateX(100%); }
-  .sidebar.open { transform: translateX(0); }
-  .sidebar-overlay { display: block; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-  .sidebar-overlay.open { opacity: 1; pointer-events: all; }
   .main { margin-right: 0; }
-  .menu-btn { display: flex; }
   .form-row { grid-template-columns: 1fr; }
   .charts-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2,1fr); }
@@ -1006,6 +943,14 @@ body.bg-none::before { background: none; }
 .fab-menu-item i {
   font-size: 18px;
 }
+.fab-conn-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--success);
+  display: inline-block;
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
 
 /* ── MOBILE RESPONSIVE ── */
 @media (max-width: 768px) {
@@ -1119,10 +1064,6 @@ body.bg-none::before { background: none; }
     padding: 0 12px;
     gap: 8px;
   }
-
-  /* sidebar logo */
-  .sidebar-logo { padding: 16px 14px; }
-
   /* notif panel */
   .notif-panel {
     left: 8px;
@@ -1329,7 +1270,136 @@ kbd {
   .content { padding-bottom: 130px; }
 }
 
+/* ── APPS HOME LAUNCHER ── */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.app-launch-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.app-launch-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+  border-color: var(--app-color);
+}
+.app-launch-icon {
+  position: relative;
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--app-color);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; color: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+.app-launch-name {
+  font-size: 13px; font-weight: 700;
+  color: var(--text); text-align: center;
+  display: flex; align-items: center; gap: 6px; justify-content: center;
+}
+.app-launch-badge {
+  background: var(--app-color);
+  color: #fff;
+  font-size: 10.5px; font-weight: 800;
+  min-width: 20px; height: 20px;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 6px;
+  line-height: 1;
+}
+@media (max-width: 480px) {
+  .apps-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+.home-btn {
+  width: 36px; height: 36px;
+  border: none;
+  border: 1px solid var(--card-border);
+  border-radius: 10px; cursor: pointer;
+  color: var(--text2);
+  display: none; align-items: center; justify-content: center;
+  font-size: 18px;
+  transition: all var(--transition);
+}
+.home-btn.show {
+  display: flex;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: rgba(108,99,255,0.25);
+}
+.home-btn:hover { background: var(--card-hover); color: var(--text); }
+.home-btn.show:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+/* ── BARCODE PAGE ── */
+.barcode-settings-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.barcode-opt-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.barcode-opt-check {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; cursor: pointer;
+}
+.barcode-opt-check input { width: 16px; height: 16px; cursor: pointer; }
 
+.barcode-list-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.barcode-list-item img {
+  width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+}
+.barcode-list-info { flex: 1; min-width: 0; }
+.barcode-list-name { font-size: 13.5px; font-weight: 600; }
+.barcode-list-code { font-size: 11.5px; color: var(--text3); font-family: 'Space Grotesk', monospace; margin-top: 2px; }
+.barcode-no-code { font-size: 11.5px; color: var(--danger); margin-top: 2px; }
+
+.barcode-preview-grid {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 10px;
+}
+.barcode-label-item {
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+  background: #fff;
+}
+.barcode-label-item svg { max-width: 100%; }
+.barcode-label-text { font-size: 11px; color: #000; margin-top: 4px; line-height: 1.4; }
+
+.barcode-select-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
 </style>
 </head>
 <body>
@@ -1349,80 +1419,13 @@ kbd {
   <div class="loading-spinner"></div>
 </div>
 
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-	<div class="sidebar-logo-icon"><i class="ti ti-device-mobile"></i></div>
-	<div class="sidebar-logo-text">
-<h1 id="sidebarStoreName">Mobile Store</h1>
-
-	  <p>سیستەمی بەڕێوەبردن</p>
-	</div>
-  </div>
-  <nav class="sidebar-nav">
-	<div class="nav-section">
-	  <div class="nav-item active" data-page="dashboard" onclick="navigate(this)">
-		<i class="ti ti-layout-dashboard"></i> داشبۆرد
-	  </div>
-	</div>
-	<div class="nav-section">
-	  <div class="nav-item" data-page="inventory" onclick="navigate(this)">
-		<i class="ti ti-package"></i> کاڵا
-	  </div>
-	  <div class="nav-item" data-page="sales" onclick="navigate(this)">
-		<i class="ti ti-shopping-cart"></i> فرۆشتن
-	  </div>
-<div class="nav-item" data-page="repairs" onclick="navigate(this)">
-		<i class="ti ti-tool"></i> صیانە
-		<span class="nav-badge" id="repairBadge">0</span>
-	  </div>
-	  <div class="nav-item" data-page="debts" onclick="navigate(this)">
-		<i class="ti ti-credit-card"></i> قەرزەکان
-		<span class="nav-badge" id="debtBadge">0</span>
-	  </div>
-	</div>
-	<div class="nav-section">
-
-
-	  <div class="nav-item" data-page="reports" onclick="navigate(this)">
-		<i class="ti ti-chart-bar"></i> ڕاپۆرتەکان
-	  </div>
-    
-      <div class="nav-item" data-page="plans" onclick="navigate(this)">
-  <i class="ti ti-notebook"></i> پلانەکان
-</div>
-
-<div class="nav-item" data-page="expenses" onclick="navigate(this)">
-  <i class="ti ti-wallet"></i> خەرجییەکان
-</div>
-
-   <div class="nav-item" data-page="settings" onclick="navigate(this)">
-  <i class="ti ti-settings"></i> ڕێکخستن
-</div>
-
-	</div>
-  </nav>
-
-<div class="sidebar-footer" style="flex-direction:column;gap:10px;align-items:stretch">
-  <div class="flex items-center" style="justify-content:center">
-    <span class="conn-status loading" id="connStatus"><span class="conn-dot"></span> پەیوەندی...</span>
-  </div>
-  <button class="footer-btn" onclick="openHelpModal()">
-    <i class="ti ti-help-circle"></i> چۆن بەکاربێنم؟
-  </button>
-</div>
-
-
-  </div>
-</div>
-
 <!-- MAIN -->
 <div class="main">
   <!-- HEADER -->
   <header class="header">
-	<button class="menu-btn" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+	<button class="home-btn" id="homeBtn" onclick="navigate(null,'apps')" title="گەڕانەوە بۆ سەرەکی">
+	  <i class="ti ti-home"></i>
+	</button>
 	<div class="header-search">
 	  <i class="ti ti-search"></i>
 <input type="text" placeholder="گەرانی گشتی..." id="globalSearch" oninput="globalSearchFn(this.value)" onfocus="globalSearchFn('')" onblur="setTimeout(()=>closeSearch(),200)">
@@ -1452,13 +1455,166 @@ kbd {
   <i class="ti ti-wifi-off"></i>
   ئۆفلاین مۆدچالاک کرا - لەگەل گەرانەوە ئینتەرنێت گۆرانکاریەکان بۆ داتا دەنێردرێت
 </div>
-
-
   <!-- CONTENT -->
   <div class="content">
+<!-- ═══════════════════════ BARCODE ═══════════════════════ -->
+<div class="page" id="page-barcode">
+  <div class="page-title">
+    <div><h2>بارکۆد</h2><p>دروستکردن و چاپکردنی بارکۆدی کاڵاکان</p></div>
+  </div>
+
+  <!-- ڕێکخستنی چاپکردن -->
+  <div class="barcode-settings-card">
+    <div style="font-size:13.5px;font-weight:700;margin-bottom:4px">ڕێکخستنی لەیبڵ</div>
+    <div class="barcode-opt-row">
+      <label class="barcode-opt-check"><input type="checkbox" id="bcShowName" checked> ناوی کاڵا</label>
+      <label class="barcode-opt-check"><input type="checkbox" id="bcShowPrice" checked> نرخی فرۆشتن</label>
+      <label class="barcode-opt-check"><input type="checkbox" id="bcShowBrand"> براند/کاتیگۆری</label>
+    </div>
+    <div class="barcode-opt-row">
+      <div class="form-group" style="min-width:140px">
+        <label>قەبارەی لەیبڵ</label>
+        <select class="form-control" id="bcLabelSize">
+          <option value="small">بچووک</option>
+          <option value="medium" selected>مامناوەند</option>
+          <option value="large">گەورە</option>
+        </select>
+      </div>
+      <div class="form-group" style="min-width:140px">
+        <label>ستوون لە هەر ڕیزێک</label>
+        <select class="form-control" id="bcCols">
+          <option value="2">٢</option>
+          <option value="3" selected>٣</option>
+          <option value="4">٤</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- فلتەر و گەڕان -->
+  <div class="filters-bar">
+    <input class="filter-input" style="min-width:220px" type="text" placeholder="گەڕان..." id="bcSearch" oninput="renderBarcodePage()">
+    <select class="filter-input" id="bcFilter" onchange="renderBarcodePage()">
+      <option value="">هەموو کاڵاکان</option>
+      <option value="has">تەنها ئەوانەی بارکۆدیان هەیە</option>
+      <option value="missing">تەنها ئەوانەی بارکۆدیان نییە</option>
+    </select>
+  </div>
+
+  <div class="barcode-select-bar">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="selectAllBarcodes(true)">هەڵبژاردنی هەموو</button>
+      <button class="btn btn-ghost btn-sm" onclick="selectAllBarcodes(false)">لابردنی هەڵبژاردن</button>
+      <button class="btn btn-primary btn-sm" onclick="bulkGenerateBarcodes()"><i class="ti ti-barcode"></i> بارکۆدکردنی هەموو کاڵای بێ بارکۆد</button>
+      <button class="btn btn-ghost btn-sm" onclick="openStocktakeModal()"><i class="ti ti-camera"></i> ڕاستکردنەوەی کۆگا</button>
+    </div>
+    <span id="bcSelectedCount" style="font-size:12.5px;color:var(--text2)">٠ کاڵا هەڵبژێردراوە</span>
+  </div>
+
+  <div class="card">
+    <div class="card-body" id="barcodeListBody" style="padding:12px"></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="previewBarcodeLabels()"><i class="ti ti-eye"></i> پێشبینین</button>
+    <button class="btn btn-success" onclick="printBarcodeLabels()"><i class="ti ti-printer"></i> چاپکردن</button>
+  </div>
+</div>
+
+<!-- GENERATE BARCODE MODAL -->
+<div class="modal-overlay" id="genBarcodeModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3>دروستکردنی بارکۆد</h3>
+      <button class="modal-close" onclick="closeModal('genBarcodeModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px" id="genBarcodeProductName"></div>
+      <div class="form-group">
+        <label>شێوازی دروستکردن</label>
+        <select class="form-control" id="genBarcodeMethod">
+          <option value="auto">بارکۆدی نوێی خۆکار</option>
+          <option value="id">بەکارهێنانی ژمارەی کاڵا (ID)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('genBarcodeModal')">هەڵوەشاندنەوە</button>
+      <button class="btn btn-primary" id="genBarcodeBtn" onclick="confirmGenerateBarcode()"><i class="ti ti-check"></i> دروستکردن</button>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW BARCODE MODAL -->
+<div class="modal-overlay" id="previewBarcodeModal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h3>پێشبینینی لەیبڵەکان</h3>
+      <button class="modal-close" onclick="closeModal('previewBarcodeModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="barcode-preview-grid" id="barcodePreviewGrid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('previewBarcodeModal')">داخستن</button>
+      <button class="btn btn-success" onclick="printBarcodeLabels()"><i class="ti ti-printer"></i> چاپکردن</button>
+    </div>
+  </div>
+</div>
+
+<div class="page active" id="page-apps">
+  <div class="page-title">
+    <div>
+      <h2 id="appsGreetName">بەخێربێیت</h2>
+      <p id="appsGreetDate"></p>
+    </div>
+  </div>
+  <div class="apps-grid">
+<div class="app-launch-card" id="appCard-inventory" style="--app-color:#6C63FF" onclick="navigate(null,'inventory')">
+<div class="app-launch-icon"><i class="ti ti-package"></i></div>
+<div class="app-launch-name">کاڵا <span class="app-launch-badge" id="appBadge-inventory">0</span></div>
+    </div>
+<div class="app-launch-card" id="appCard-sales" style="--app-color:#00D9A6" onclick="navigate(null,'sales')">
+  <div class="app-launch-icon"><i class="ti ti-shopping-cart"></i></div>
+  <div class="app-launch-name">فرۆشتن <span class="app-launch-badge" id="appBadge-sales">0</span></div>
+</div>
+<div class="app-launch-card" id="appCard-repairs" style="--app-color:#F7B731" onclick="navigate(null,'repairs')">
+  <div class="app-launch-icon"><i class="ti ti-tool"></i></div>
+  <div class="app-launch-name">چاکسازی <span class="app-launch-badge" id="appBadge-repairs">0</span></div>
+</div>
+<div class="app-launch-card" id="appCard-debts" style="--app-color:#FF6B6B" onclick="navigate(null,'debts')">
+  <div class="app-launch-icon"><i class="ti ti-credit-card"></i></div>
+  <div class="app-launch-name">قەرزەکان <span class="app-launch-badge" id="appBadge-debts">0</span></div>
+</div>
+<div class="app-launch-card" id="appCard-expenses" style="--app-color:#38BDF8" onclick="navigate(null,'expenses')">
+  <div class="app-launch-icon"><i class="ti ti-wallet"></i></div>
+  <div class="app-launch-name">خەرجییەکان <span class="app-launch-badge" id="appBadge-expenses">0</span></div>
+</div>
+<div class="app-launch-card" id="appCard-plans" style="--app-color:#A78BFA" onclick="navigate(null,'plans')">
+  <div class="app-launch-icon"><i class="ti ti-notebook"></i></div>
+  <div class="app-launch-name">پلانەکان <span class="app-launch-badge" id="appBadge-plans">0</span></div>
+</div>
+<div class="app-launch-card" id="appCard-reports" style="--app-color:#6C63FF" onclick="navigate(null,'reports')">
+      <div class="app-launch-icon"><i class="ti ti-chart-bar"></i></div>
+      <div class="app-launch-name">ڕاپۆرتەکان</div>
+    </div>
+<div class="app-launch-card" id="appCard-dashboard" style="--app-color:#9AA3B5" onclick="navigate(null,'dashboard')">
+      <div class="app-launch-icon"><i class="ti ti-layout-dashboard"></i></div>
+      <div class="app-launch-name">داشبۆرد</div>
+    </div>
+ <div class="app-launch-card" id="appCard-barcode" style="--app-color:#FB923C" onclick="navigate(null,'barcode')">
+  <div class="app-launch-icon"><i class="ti ti-barcode"></i></div>
+  <div class="app-launch-name">بارکۆد</div>
+</div>
+<div class="app-launch-card" id="appCard-settings" style="--app-color:#8B95A5" onclick="navigate(null,'settings')">
+  <div class="app-launch-icon"><i class="ti ti-settings"></i></div>
+  <div class="app-launch-name">ڕێکخستن</div>
+</div>
+  </div>
+</div>
 
 	<!-- ═══════════════════════ DASHBOARD ═══════════════════════ -->
-	<div class="page active" id="page-dashboard">
+<div class="page" id="page-dashboard">
 	 <div class="page-title">
   <div>
     <h2>داشبۆرد</h2>
@@ -1588,12 +1744,18 @@ kbd {
 	  </div>
 
 <!-- QUICK SALE SEARCH -->
+<div class="scan-mode-status" id="scanModeStatus">
+  <span class="scan-mode-dot"></span> ئامادەیە بۆ سکانکردن — بارکۆد سکان بکە
+</div>
 <div class="filters-bar">
  <input class="filter-input" style="min-width:220px" type="text"
   placeholder="گەڕان بۆ زیادکردنی کاڵا بۆ فرۆشتن..." id="quickSaleSearch"
-  oninput="applySaleFilters()">
+  oninput="applySaleFilters()" onkeydown="handleSaleSearchKeydown(event)">
+  <button class="btn btn-ghost scan-mode-btn" id="scanModeBtn" onclick="toggleScanMode()">
+    <i class="ti ti-barcode"></i> دۆخی سکانەری USB/Bluetooth
+  </button>
   <button class="btn btn-ghost" onclick="openBarcodeScanner('sale')">
-    <i class="ti ti-camera"></i> سکانکردنی بارکۆد
+    <i class="ti ti-camera"></i> سکانکردن بە کامێرا
   </button>
 </div>
 <div class="sale-cat-pills" id="quickSaleCatPills"></div>
@@ -1619,8 +1781,8 @@ kbd {
 		<div class="table-wrap">
 		  <table>
 <thead><tr>
-			  <th>#</th><th>کاڵا</th><th>بڕ</th><th>نرخی یەکە</th><th>کۆی نرخ</th><th>قازانج</th><th>بەروار</th><th>کردار</th>
-			</tr></thead>
+  <th>#</th><th>کاڵا</th><th>بڕ</th><th>نرخی یەکە</th><th>کۆی نرخ</th><th>قازانج</th><th>کارمەند</th><th>بەروار</th><th>کردار</th>
+</tr></thead>
 			<tbody id="saleBody"></tbody>
 
 		  </table>
@@ -1746,6 +1908,24 @@ kbd {
     </div>
     <i class="ti ti-chevron-left settings-menu-arrow"></i>
   </div>
+    <div class="settings-menu-item" data-s="employees" onclick="openSettingsSection(this)">
+    <div class="settings-menu-icon" style="background:var(--primary-light);color:var(--primary)"><i class="ti ti-users"></i></div>
+    <div class="settings-menu-text">
+      <div class="settings-menu-title">کارمەندان</div>
+      <div class="settings-menu-desc">دروستکردنی هەژمار و دەسەڵات</div>
+    </div>
+    <i class="ti ti-chevron-left settings-menu-arrow"></i>
+  </div>
+
+  <div class="settings-menu-item" data-s="receipt" onclick="openSettingsSection(this)">
+    <div class="settings-menu-icon" style="background:var(--success-light);color:var(--success)"><i class="ti ti-receipt"></i></div>
+    <div class="settings-menu-text">
+      <div class="settings-menu-title">ڕێکخستنی وەصڵ</div>
+      <div class="settings-menu-desc">دیزاین و ناوەڕۆکی پسوولەی چاپکراو</div>
+    </div>
+    <i class="ti ti-chevron-left settings-menu-arrow"></i>
+  </div>
+
 </div>
 
 <!-- دوگمەی گەڕانەوە -->
@@ -2070,9 +2250,103 @@ kbd {
   </div>
 </div>
 
+<!-- ٦. کارمەندان --><!-- ٦. کارمەندان -->
+<div class="settings-section" data-section="employees" style="display:none">
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700">لیستی کارمەندان</div>
+        <button class="btn btn-primary btn-sm" onclick="openEmployeeModal()"><i class="ti ti-plus"></i> کارمەندی نوێ</button>
+      </div>
+      <div id="employeesList"></div>
+    </div>
+  </div>
 </div>
 
+<!-- ٧. ڕێکخستنی وەصڵە -->
+<div class="settings-section" data-section="receipt" style="display:none">
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">ناوەڕۆکی سەرەوەی وەصڵ</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>دەقی سەرەوە (ئارەزوومەندانە)</label>
+          <input class="form-control" id="rcHeaderText" placeholder="نموونە: بەخێربێیت بۆ دوکانمان">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ژمارەی تەلەفۆن لەسەر وەصڵ</label>
+            <input class="form-control" id="rcPhoneText" placeholder="نموونە: 0750 xxx xxxx (بەتاڵ بهێڵەوە نیشان نادرێت)">
+          </div>
+          <div class="form-group">
+            <label>ناونیشان لەسەر وەصڵ</label>
+            <input class="form-control" id="rcAddressText" placeholder="نموونە: سلێمانی - شار (بەتاڵ بهێڵەوە نیشان نادرێت)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">بەروار و ژمارەی وەصل</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>شوێنی بەروار</label>
+          <select class="form-control" id="rcDatePosition">
+            <option value="top">سەرەوەی وەصڵ</option>
+            <option value="bottom">خوارەوەی وەصڵ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>نیشاندانی ژمارەی وەصڵ</label>
+          <div style="display:flex;align-items:center;gap:8px;height:44px">
+            <input type="checkbox" id="rcShowNumber" style="width:18px;height:18px"> <label for="rcShowNumber" style="font-size:13px">چالاکە</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">خوارەوەی وەصڵ</div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>دەقی سوپاسکردن</label>
+        <input class="form-control" id="rcFooterText" placeholder="سوپاس بۆ کڕینت ">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:600">نیشاندانی QR کۆد</span>
+        <div class="toggle-switch" id="rcShowQrToggle" onclick="toggleRcQr()">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ناوەڕۆکی QR (لینک/ژمارە/سۆشیال میدیا)</label>
+        <input class="form-control" id="rcQrData" placeholder="نموونە: https://wa.me/9647xxxxxxxx">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-16">
+    <div class="card-body">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px">قەبارەی کاغەز</div>
+      <div class="form-group">
+        <select class="form-control" id="rcPaperWidth">
+          <option value="58">58mm (پرینتەری بچووک)</option>
+          <option value="80">80mm (پرینتەری ئاسایی)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-primary" id="saveReceiptBtn" onclick="saveReceiptSettings()"><i class="ti ti-check"></i> پاشەکەوتکردن</button>
+    <button class="btn btn-ghost" onclick="previewReceiptSettings()"><i class="ti ti-eye"></i> پێشبینین</button>
+  </div>
+</div>
+
+</div>
 	<!-- ═══════════════════════ REPORTS ═══════════════════════ -->
 	<div class="page" id="page-reports">
 	  <div class="page-title">
@@ -2893,26 +3167,68 @@ kbd {
   </div>
 </div>
 
+<!-- EMPLOYEE MODAL -->
+<div class="modal-overlay" id="employeeModal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <h3 id="employeeModalTitle">کارمەندی نوێ</h3>
+      <button class="modal-close" onclick="closeModal('employeeModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="form-group">
+            <label>ناوی کارمەند *</label>
+            <input class="form-control" id="empName" placeholder="ناوی کارمەند">
+          </div>
+          <div class="form-group">
+            <label>پینکۆد (٤ ژمارە) *</label>
+            <input class="form-control" id="empPin" type="password" maxlength="4" inputmode="numeric" placeholder="••••">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ڕۆڵ</label>
+            <select class="form-control" id="empRole">
+              <option value="employee">کارمەند</option>
+              <option value="admin">بەڕێوەبەر (دەسەڵاتی تەواو)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>دۆخ</label>
+            <div style="display:flex;align-items:center;gap:8px;height:44px">
+              <input type="checkbox" id="empActive" checked style="width:18px;height:18px">
+              <label for="empActive" style="font-size:13px">چالاکە</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>دەسەڵاتەکان (بۆ ڕۆڵی کارمەند)</label>
+          <div id="empPermGrid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('employeeModal')">هەڵوەشاندنەوە</button>
+      <button class="btn btn-primary" id="empSaveBtn" onclick="saveEmployee()"><i class="ti ti-check"></i> پاشەکەوتکردن</button>
+    </div>
+  </div>
+</div>
+
 <!-- FAB -->
 <button class="fab" id="fabBtn" onclick="toggleFab()">
-  <i class="ti ti-plus" id="fabIcon"></i>
+  <i class="ti ti-dots-vertical" id="fabIcon"></i>
 </button>
 <div class="fab-menu" id="fabMenu">
-  <div class="fab-menu-item" onclick="fabAction('sale')">
-    <i class="ti ti-shopping-cart-plus"></i> فرۆشتنی نوێ
+  <div class="fab-menu-item" onclick="fabAction('help')">
+    <i class="ti ti-help-circle"></i> چۆن بەکاربێنم؟
   </div>
-  <div class="fab-menu-item" onclick="fabAction('repair')">
-    <i class="ti ti-tool"></i> چاکسازی نوێ
+  <div class="fab-menu-item" onclick="fabAction('conn')">
+    <span class="fab-conn-dot" id="fabConnDot"></span> دۆخی داتا
   </div>
-  <div class="fab-menu-item" onclick="fabAction('debt')">
-    <i class="ti ti-credit-card"></i> قەرزی نوێ
+  <div class="fab-menu-item" style="color:var(--danger)" onclick="fabAction('logout')">
+    <i class="ti ti-logout"></i> دەرچوون
   </div>
-  <div class="fab-menu-item" onclick="fabAction('product')">
-    <i class="ti ti-package"></i> کاڵای نوێ
-  </div>
-  <div class="fab-menu-item" onclick="fabAction('expense')">
-  <i class="ti ti-wallet"></i> خەرجی نوێ
-</div>
 </div>
 
 <!-- BARCODE SCANNER MODAL -->
@@ -2939,12 +3255,34 @@ kbd {
     </div>
   </div>
 </div>
+<!-- STOCKTAKE MODAL -->
+<div class="modal-overlay" id="stocktakeModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3><i class="ti ti-clipboard-check"></i> ڕاستکردنەوەی کۆگا</h3>
+      <button class="modal-close" onclick="closeStocktakeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="padding:16px">
+      <div style="position:relative;border-radius:12px;overflow:hidden;background:#000;margin-bottom:14px">
+        <video id="stocktakeVideo" style="width:100%;height:200px;object-fit:cover;display:block"></video>
+        <div style="position:absolute;top:50%;left:10%;right:10%;height:2px;background:rgba(108,99,255,0.8);transform:translateY(-50%)"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;text-align:center">
+        هەر کاڵایەک سکان بکرێت زیاد دەکرێت بۆ ژماردن — دووبارە سکانی بکە بۆ زیادکردنی بڕ
+      </div>
+      <div id="stocktakeList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeStocktakeModal()">داخستن بەبێ گۆڕین</button>
+      <button class="btn btn-success" onclick="finishStocktake()"><i class="ti ti-check"></i> تەواوکردن و ڕاستکردنەوە</button>
+    </div>
+  </div>
+</div>
 
 <!-- IMAGE FULLSCREEN MODAL -->
 <div class="modal-overlay" id="imageFullscreenModal" onclick="closeModal('imageFullscreenModal')" style="background:rgba(0,0,0,0.9)">
   <img id="fullscreenImg" src="" style="max-width:95%;max-height:95vh;border-radius:8px;object-fit:contain">
 </div>
-
 
 </div>
 
@@ -2958,11 +3296,12 @@ if('serviceWorker' in navigator) {
 //  INDEXEDDB — ئۆفلاین پاشەکەوتکردن
 // ══════════════════════════════════════════════════════════════
 const IDB_NAME = 'MobileStoreDB';
-const IDB_VERSION = 1;
+const IDB_VERSION = 2;
 const IDB_STORES = [
   'products','sales','repairs','debts',
-  'plans','expenses','settings','categories','sync_queue'
+  'plans','expenses','settings','categories','sync_queue','users'
 ];
+
 
 
 let idb = null;
@@ -3118,10 +3457,37 @@ function subscribeRealtime() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses' }, scheduleRealtimeRefresh)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, scheduleRealtimeRefresh)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, scheduleRealtimeRefresh)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, handleUserRealtimeChange) // ✅ نوێ
     .subscribe();
 }
 
+// ✅ فەنکشنی نوێ — لای هەر شوێنێک زیادی بکە (نزیک applyRolePermissions باشترە)
+function handleUserRealtimeChange(payload) {
+  scheduleRealtimeRefresh(); // بۆ نوێکردنەوەی لیستی کارمەندان لای بەڕێوەبەر
+
+  if(!currentUser) return;
+  const row = payload.new || payload.old;
+  if(!row || row.id !== currentUser.id) return; // تەنها ئەگەر خۆیەتی
+
+  if(payload.eventType === 'DELETE' || row.active === false) {
+    toast('هەژمارەکەت لابرا یان ناچالاک کرا', 'error');
+    logoutUser();
+    return;
+  }
+
+  const updated = { id: row.id, name: row.name, role: row.role, permissions: row.permissions || {} };
+  const changed = updated.role !== currentUser.role ||
+                  JSON.stringify(updated.permissions) !== JSON.stringify(currentUser.permissions);
+  currentUser = updated;
+  sessionStorage.setItem('ms_current_user', JSON.stringify(currentUser));
+  applyRolePermissions();
+  if(changed) toast('دەسەڵاتەکانت نوێکرانەوە', 'info');
+}
+
+
 function getCurrentPage() {
+  const activePage = document.querySelector('.page.active');
+  if(activePage) return activePage.id.replace('page-','');
   const active = document.querySelector('.nav-item.active');
   return active ? active.dataset.page : 'dashboard';
 }
@@ -3156,8 +3522,8 @@ async function processSyncQueue() {
 // ══════════════════════════════════════════════════════════════
 //  SUPABASE CONNECTION
 // ══════════════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://rbwaynlgbstnbgkduxbq.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_n-SgbF92hOzRpSYtIMqz2A_xTSk4O3H';
+const SUPABASE_URL = 'https://kusewzjkdbjpyyeloxlh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_bRFZSyHoSewSuxqIKUGwWA_l18kjF36';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   global: {
     fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' })
@@ -3171,18 +3537,59 @@ let SETTINGS = { store_name:'Mobile Store', store_phone:'', store_address:'', pr
 
 
 function setConnStatus(state) {
-  const el = document.getElementById('connStatus');
-  if (!el) return;
-  if (state === 'online') { el.className = 'conn-status online'; el.innerHTML = '<span class="conn-dot"></span> DevMuhamad@ '; }
-  else if (state === 'offline') { el.className = 'conn-status offline'; el.innerHTML = '<span class="conn-dot"></span> پەیوەندی نیە'; }
-  else { el.className = 'conn-status loading'; el.innerHTML = '<span class="conn-dot"></span> پەیوەندی...'; }
+  const dot = document.getElementById('fabConnDot');
+  if(dot) {
+    dot.style.background = state === 'online' ? 'var(--success)'
+      : state === 'offline' ? 'var(--danger)' : 'var(--warning)';
+  }
+  updateInfoConnStatus();
 }
 
 // Map DB row (snake_case) <-> App object (camelCase)
 function productFromDb(r) { return { id: r.id, name: r.name, brand: r.brand, model: r.model, category: r.category, buyPrice: Number(r.buy_price), sellPrice: Number(r.sell_price), qty: r.qty, notes: r.notes, barcode: r.barcode || null, imageUrl: r.image_url || null, createdAt: r.created_at }; }
-function saleFromDb(r) { return { id: r.id, productId: r.product_id, productName: r.product_name, unitPrice: Number(r.unit_price), qty: r.qty, total: Number(r.total), profit: Number(r.profit), returned: r.returned||false, returnedAt: r.returned_at, createdAt: r.created_at }; }
-function debtFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, amount: Number(r.amount), paidAmount: Number(r.paid_amount), source: r.source, notes: r.notes, dueDate: r.due_date, status: r.status, createdAt: r.created_at }; }
-function repairFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, device: r.device, deviceType: r.device_type, problem: r.problem, cost: Number(r.cost), status: r.status, notes: r.notes, imageUrl: r.image_url || null, createdAt: r.created_at }; }
+function saleFromDb(r) { return { id: r.id, productId: r.product_id, productName: r.product_name, unitPrice: Number(r.unit_price), qty: r.qty, total: Number(r.total), profit: Number(r.profit), returned: r.returned||false, returnedAt: r.returned_at, createdAt: r.created_at, createdBy: r.created_by }; }
+function debtFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, amount: Number(r.amount), paidAmount: Number(r.paid_amount), source: r.source, notes: r.notes, dueDate: r.due_date, status: r.status, createdAt: r.created_at, createdBy: r.created_by }; }
+function repairFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, device: r.device, deviceType: r.device_type, problem: r.problem, cost: Number(r.cost), status: r.status, notes: r.notes, imageUrl: r.image_url || null, createdAt: r.created_at, createdBy: r.created_by }; }
+
+async function reloadTable(table) {
+  try {
+    let query;
+    switch(table) {
+      case 'products': query = sb.from('products').select('*').order('created_at',{ascending:false}); break;
+      case 'repairs': query = sb.from('repairs').select('*').order('created_at',{ascending:false}); break;
+      case 'debts': query = sb.from('debts').select('*').order('created_at',{ascending:false}); break;
+      case 'plans': query = sb.from('plans').select('*').order('created_at',{ascending:false}); break;
+      case 'expenses': query = sb.from('expenses').select('*').order('created_at',{ascending:false}); break;
+      case 'categories': query = sb.from('categories').select('*').order('name',{ascending:true}); break;
+      case 'users': query = sb.from('users').select('*').order('created_at',{ascending:false}); break;
+      case 'settings': query = sb.from('settings').select('*').eq('id',1).single(); break;
+      default: return false;
+    }
+    const { data, error } = await query;
+    if(error) throw error;
+
+    if(table==='products') CACHE.products = (data||[]).map(productFromDb);
+    else if(table==='repairs') CACHE.repairs = (data||[]).map(repairFromDb);
+    else if(table==='debts') CACHE.debts = (data||[]).map(debtFromDb);
+    else if(table==='plans') CACHE.plans = (data||[]).map(r=>({id:r.id,title:r.title,content:r.content,status:r.status,createdAt:r.created_at,createdBy:r.created_by}));
+    else if(table==='expenses') CACHE.expenses = (data||[]).map(r=>({id:r.id,title:r.title,amount:Number(r.amount),category:r.category,note:r.note,createdAt:r.created_at,createdBy:r.created_by}));
+    else if(table==='categories') CACHE.categories = data||[];
+    else if(table==='users') { CACHE.users = data||[]; USERS = CACHE.users; }
+    else if(table==='settings') { CACHE.settings = data || SETTINGS; SETTINGS = CACHE.settings; }
+
+    // sync لە IDB بکە لە پشتەوە بەبێ چاوەڕوانی (خێراترە)
+    if(table==='settings') {
+      idbClear('settings').then(()=>idbPut('settings', SETTINGS));
+    } else {
+      idbClear(table).then(()=>idbPutAll(table, CACHE[table]));
+    }
+    return true;
+  } catch(err) {
+    console.error(`reloadTable(${table}) error:`, err);
+    return false;
+  }
+}
+
 
 async function loadAllData() {
   setConnStatus('loading');
@@ -3197,6 +3604,7 @@ async function loadAllData() {
       CACHE.debts = await idbGetAll('debts');
       CACHE.plans = await idbGetAll('plans');
       CACHE.categories = await idbGetAll('categories');
+      CACHE.users = await idbGetAll('users');
       const settingsArr = await idbGetAll('settings');
       if(settingsArr.length) { SETTINGS = settingsArr[0]; }
       setConnStatus('offline');
@@ -3210,7 +3618,7 @@ async function loadAllData() {
 
   // ئۆنلاینە — لە Supabase بخوێنەرەوە
   try {
-    const [pRes, sRes, rRes, dRes, plRes, stRes, exRes, catRes] = await Promise.all([
+const [pRes, sRes, rRes, dRes, plRes, stRes, exRes, catRes, usrRes] = await Promise.all([
   sb.from('products').select('*').order('created_at', { ascending: false }),
   sb.from('sales').select('*').order('created_at', { ascending: false }),
   sb.from('repairs').select('*').order('created_at', { ascending: false }),
@@ -3218,14 +3626,18 @@ async function loadAllData() {
   sb.from('plans').select('*').order('created_at', { ascending: false }),
   sb.from('settings').select('*').eq('id',1).single(),
   sb.from('expenses').select('*').order('created_at', { ascending: false }),
-  sb.from('categories').select('*').order('name', { ascending: true })
+    sb.from('categories').select('*').order('name', { ascending: true }),
+  sb.from('users').select('*').order('created_at', { ascending: false })
 ]);
+
+
 
 
     if(pRes.error) throw pRes.error;
     if(sRes.error) throw sRes.error;
     if(rRes.error) throw rRes.error;
     if(plRes.error) throw plRes.error;
+    if(usrRes.error) throw usrRes.error;
 
     CACHE.products = (pRes.data || []).map(productFromDb);
     CACHE.sales = (sRes.data || []).map(saleFromDb);
@@ -3233,16 +3645,20 @@ async function loadAllData() {
     CACHE.debts = (dRes.data || []).map(debtFromDb);
     CACHE.plans = (plRes.data || []).map(r => ({
       id: r.id, title: r.title, content: r.content,
-      status: r.status, createdAt: r.created_at
+      status: r.status, createdAt: r.created_at, createdBy: r.created_by
     }));
-    CACHE.expenses = (exRes.data || []).map(r => ({
+
+CACHE.expenses = (exRes.data || []).map(r => ({
   id: r.id, title: r.title, amount: Number(r.amount),
-  category: r.category, note: r.note, createdAt: r.created_at
+  category: r.category, note: r.note, createdAt: r.created_at, createdBy: r.created_by
 }));
+
 
     CACHE.settings = stRes.data || SETTINGS;
     SETTINGS = CACHE.settings;
     if(catRes.error) throw catRes.error;
+        CACHE.users = usrRes.data || [];
+    USERS = CACHE.users;
     CACHE.categories = catRes.data || [];
 
     // پاشەکەوتکردن لە IDB بۆ ئۆفلاین
@@ -3252,6 +3668,7 @@ async function loadAllData() {
     await idbClear('debts'); await idbPutAll('debts', CACHE.debts);
     await idbClear('plans'); await idbPutAll('plans', CACHE.plans);
     await idbClear('categories'); await idbPutAll('categories', CACHE.categories);
+        await idbClear('users'); await idbPutAll('users', CACHE.users);
     await idbClear('settings'); await idbPut('settings', SETTINGS);
     await idbClear('expenses'); 
 await idbPutAll('expenses', CACHE.expenses);
@@ -3271,6 +3688,7 @@ await idbPutAll('expenses', CACHE.expenses);
       CACHE.debts = await idbGetAll('debts');
       CACHE.plans = await idbGetAll('plans');
       CACHE.categories = await idbGetAll('categories');
+      CACHE.users = await idbGetAll('users');
       const settingsArr = await idbGetAll('settings');
       if(settingsArr.length) { SETTINGS = settingsArr[0]; }
       setConnStatus('offline');
@@ -3297,13 +3715,10 @@ const DB = {
 // ══════════════════════════════════════════
 
 const pageNames = { 
-  dashboard:'داشبۆرد', inventory:'کاڵا', sales:'فرۆشتن', 
+  apps:'سەرەکی', dashboard:'داشبۆرد', inventory:'کاڵا', sales:'فرۆشتن', 
   repairs:'چاکسازی', debts:'قەرزەکان', reports:'ڕاپۆرتەکان', 
-  plans:'پلانەکان', expenses:'خەرجییەکان', settings:'ڕێکخستن'
+  plans:'پلانەکان', expenses:'خەرجییەکان', barcode:'بارکۆد', settings:'ڕێکخستن'
 };
-
-
-
 function navigate(el, page) {
   page = page || el.dataset.page;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -3312,17 +3727,21 @@ function navigate(el, page) {
   if(ni) ni.classList.add('active');
   document.getElementById('page-'+page)?.classList.add('active');
   document.getElementById('headerPageTitle').textContent = pageNames[page]||'';
+  document.getElementById('homeBtn').classList.toggle('show', page !== 'apps');
   closeSidebar();
  if(page === 'sales') {
     saleCatFilter = '';
     const searchBox = document.getElementById('quickSaleSearch');
     if(searchBox) searchBox.value = '';
+  } else if(scanModeOn) {
+    toggleScanMode();
   }
 
   renderPage(page);
 }
 function renderPage(p) {
-  if(p==='dashboard') renderDashboard();
+  if(p==='apps') renderAppsHome();
+  else if(p==='dashboard') renderDashboard();
   else if(p==='inventory') renderInventory();
   else if(p==='sales') renderSales();
   else if(p==='repairs') renderRepairs();
@@ -3331,21 +3750,15 @@ function renderPage(p) {
   else if(p==='plans') renderPlans();
   else if(p==='settings') renderSettings();
   else if(p==='expenses') renderExpenses();
+  else if(p==='barcode') renderBarcodePage();
 
 }
-
-
-
 // ══════════════════════════════════════════
 //  SIDEBAR / THEME
 // ══════════════════════════════════════════
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarOverlay').classList.toggle('open');
-}
 function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.getElementById('sidebar')?.classList.remove('open');
+  document.getElementById('sidebarOverlay')?.classList.remove('open');
 }
 let isDark = true;
 async function toggleTheme() {
@@ -3407,11 +3820,17 @@ function buildNotifications() {
   document.getElementById('notifDot').style.display = notifs.length ? 'block' : 'none';
   // badges
   const pendingRepairs = repairs.filter(r=>!['completed','delivered'].includes(r.status)).length;
-  document.getElementById('repairBadge').textContent = pendingRepairs;
-  document.getElementById('repairBadge').style.display = pendingRepairs ? 'inline-flex' : 'none';
+  const repairBadgeEl = document.getElementById('repairBadge');
+  if(repairBadgeEl) {
+    repairBadgeEl.textContent = pendingRepairs;
+    repairBadgeEl.style.display = pendingRepairs ? 'inline-flex' : 'none';
+  }
   const pendingDebts = debts.filter(d=>d.status==='pending').length;
-  document.getElementById('debtBadge').textContent = pendingDebts;
-  document.getElementById('debtBadge').style.display = pendingDebts ? 'inline-flex' : 'none';
+  const debtBadgeEl = document.getElementById('debtBadge');
+  if(debtBadgeEl) {
+    debtBadgeEl.textContent = pendingDebts;
+    debtBadgeEl.style.display = pendingDebts ? 'inline-flex' : 'none';
+  }
   const hasNotifs = notifs.length > 0;
   if(hasNotifs && !hadNotifs) playAlert();
 
@@ -3514,6 +3933,7 @@ function openPlanModal(id) {
 }
 
 async function savePlan() {
+  if(!can('plans', editPlanId ? 'edit' : 'add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const title = document.getElementById('planTitle').value.trim();
   const content = document.getElementById('planContent').value.trim();
   if(!title||!content) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
@@ -3524,11 +3944,12 @@ async function savePlan() {
       const { error } = await sb.from('plans').update({ title, content }).eq('id', editPlanId);
       if(error) throw error;
       toast('پلانەکە نوێ کرایەوە','success');
-    } else {
-      const { error } = await sb.from('plans').insert({ title, content, status:'active' });
+   } else {
+      const { error } = await sb.from('plans').insert({ title, content, status:'active', created_by: currentUser?.name || null });
       if(error) throw error;
       toast('پلانی نوێ زیادکرا','success');
     }
+
     await loadAllData();
     closeModal('planModal'); renderPlans();
   } catch(err) {
@@ -3537,6 +3958,7 @@ async function savePlan() {
 }
 
 async function deletePlan(id) {
+  if(!can('plans','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم پلانە؟')) return;
   try {
     const { error } = await sb.from('plans').delete().eq('id', id);
@@ -3599,7 +4021,9 @@ function openSettingsSection(el) {
   });
   if(tab === 'info') setTimeout(() => updateInfoConnStatus(), 80);
   if(tab === 'backup') setTimeout(() => renderDataUsage(), 80);
+  if(tab === 'employees') setTimeout(() => renderEmployees(), 80);
 }
+
 
 
 function closeSettingsSection() {
@@ -3634,6 +4058,22 @@ document.querySelectorAll('.currency-label')
   renderCategoryList();  
   updateAutoPrintUI();
   updateInfoConnStatus();
+
+  // ڕێکخستنی وەصڵە
+  // ڕێکخستنی وەصڵە
+  document.getElementById('rcHeaderText').value = SETTINGS.receipt_header_text || '';
+  document.getElementById('rcPhoneText').value = SETTINGS.receipt_phone_text || '';
+  document.getElementById('rcAddressText').value = SETTINGS.receipt_address_text || '';
+  document.getElementById('rcDatePosition').value = SETTINGS.receipt_date_position || 'top';
+  document.getElementById('rcShowNumber').checked = SETTINGS.receipt_show_number !== false;
+  document.getElementById('rcFooterText').value = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
+  document.getElementById('rcQrData').value = SETTINGS.receipt_qr_data || '';
+  document.getElementById('rcPaperWidth').value = SETTINGS.receipt_paper_width || '80';
+  document.getElementById('rcShowQrToggle').classList.toggle('on', !!SETTINGS.receipt_show_qr);
+}
+
+function toggleRcQr() {
+  document.getElementById('rcShowQrToggle').classList.toggle('on');
 }
 
 async function saveStoreInfo() {
@@ -3900,6 +4340,24 @@ const estKB = (estBytes / 1024).toFixed(1).toLocaleString('en');
 // ══════════════════════════════════════════
 let chartInstances = {};
 function destroyChart(id) { if(chartInstances[id]){ chartInstances[id].destroy(); delete chartInstances[id]; } }
+function renderAppsHome() {
+  document.getElementById('appsGreetDate').textContent = new Date().toLocaleDateString('ku',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('appsGreetName').textContent = 'بەخێربێیت' + (currentUser ? ' ' + currentUser.name : '');
+
+  const products = DB.get('products');
+  const sales = DB.get('sales');
+  const repairs = DB.get('repairs');
+  const debts = DB.get('debts');
+  const plans = CACHE.plans || [];
+  const expenses = CACHE.expenses || [];
+
+  document.getElementById('appBadge-inventory').textContent = fmtN(products.length);
+  document.getElementById('appBadge-sales').textContent = fmtN(sales.filter(s=>isInPeriod(s.createdAt,'today')).length);
+  document.getElementById('appBadge-repairs').textContent = fmtN(repairs.filter(r=>!['completed','delivered'].includes(r.status)).length);
+  document.getElementById('appBadge-debts').textContent = fmtN(debts.filter(d=>d.status==='pending').length);
+  document.getElementById('appBadge-expenses').textContent = fmtN(expenses.filter(e=>isInPeriod(e.createdAt,'month')).length);
+  document.getElementById('appBadge-plans').textContent = fmtN(plans.filter(p=>p.status!=='done').length);
+}
 function renderDashboard() {
   document.getElementById('dashDate').textContent = new Date().toLocaleDateString('ku',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const products = DB.get('products');
@@ -4208,65 +4666,80 @@ function suggestProductInfo(name) {
 
 function editProduct(id) { openProductModal(id); }
 async function saveProduct() {
+  if(!can('inventory','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   const name=document.getElementById('pName').value.trim();
   const brand=document.getElementById('pBrand').value.trim();
   const cat=document.getElementById('pCategory').value;
   const buy=parseFloat(document.getElementById('pBuyPrice').value)||0;
   const sell=parseFloat(document.getElementById('pSellPrice').value)||0;
   const qty=parseInt(document.getElementById('pQty').value)||0;
-  const barcode=document.getElementById('pBarcode').value.trim()||null; // ✅ زیادکرا
+  const barcode=document.getElementById('pBarcode').value.trim()||null;
   if(!name||!cat||!sell) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
-let image_url = editProductId ? (DB.get('products').find(x=>x.id===editProductId)?.imageUrl || null) : null;
+  let image_url = editProductId ? (DB.get('products').find(x=>x.id===editProductId)?.imageUrl || null) : null;
   const btn = document.getElementById('pSaveBtn');
   btn.disabled = true;
   try {
     if(selectedImageFile.product) {
-  image_url = await uploadImageToSupabase(selectedImageFile.product, 'products');
-} else if(window._removedExistingImage_product) {
-  image_url = null;
-}
+      image_url = await uploadImageToSupabase(selectedImageFile.product, 'products');
+    } else if(window._removedExistingImage_product) {
+      image_url = null;
+    }
+
+    const model = document.getElementById('pModel').value;
+    const notes = document.getElementById('pNotes').value;
 
     if(editProductId) {
+      const idx = CACHE.products.findIndex(p=>p.id===editProductId);
+      if(idx>-1) {
+        CACHE.products[idx] = { ...CACHE.products[idx], name, brand, model, category:cat, buyPrice:buy, sellPrice:sell, qty, notes, barcode, imageUrl:image_url };
+        renderInventory();
+      }
       const { error } = await sb.from('products').update({
-        name, brand, model: document.getElementById('pModel').value, category: cat,
+        name, brand, model, category: cat,
         buy_price: buy, sell_price: sell, qty, 
-        notes: document.getElementById('pNotes').value,
-        barcode,  // ✅ زیادکرا
-        image_url
+        notes, barcode, image_url
       }).eq('id', editProductId);
       if(error) throw error;
       toast('کاڵاکە نوێ کرایەوە','success');
     } else {
-      const { error } = await sb.from('products').insert({
-        name, brand, model: document.getElementById('pModel').value, category: cat,
+      const { data: inserted, error } = await sb.from('products').insert({
+        name, brand, model, category: cat,
         buy_price: buy, sell_price: sell, qty, 
-        notes: document.getElementById('pNotes').value,
-        barcode,  // ✅ زیادکرا
-        image_url
-      });
+        notes, barcode, image_url
+      }).select().single();
       if(error) throw error;
+      CACHE.products.unshift(productFromDb(inserted));
+      renderInventory();
       toast('کاڵای نوێ زیادکرا','success');
     }
-    await loadAllData();
-    closeModal('productModal'); renderInventory(); buildNotifications();
+    closeModal('productModal');
+    buildNotifications();
+    reloadTable('products');
   } catch(err) {
     console.error(err);
     toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    reloadTable('products');
   } finally {
     btn.disabled = false;
   }
 }
 
+
+
 async function deleteProduct(id) {
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+  const backup = CACHE.products.find(p=>p.id===id);
+  CACHE.products = CACHE.products.filter(p=>p.id!==id);
+  renderInventory();
   try {
-	const { error } = await sb.from('products').delete().eq('id', id);
-	if(error) throw error;
-	await loadAllData();
-	toast('کاڵاکە سڕایەوە','info'); renderInventory();
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if(error) throw error;
+    toast('کاڵاکە سڕایەوە','info');
+    reloadTable('products');
   } catch(err) {
-	console.error(err);
-	toast('کێشە لە سڕینەوە: ' + (err.message||err), 'error');
+    console.error(err);
+    toast('کێشە لە سڕینەوە: ' + (err.message||err), 'error');
+    if(backup) { CACHE.products.unshift(backup); renderInventory(); }
   }
 }
 
@@ -4450,6 +4923,98 @@ function applySaleFilters() {
   }
 }
 
+// ══════════════════════════════════════════
+//  USB / BLUETOOTH BARCODE SCANNER MODE
+// ══════════════════════════════════════════
+let scanModeOn = false;
+
+function toggleScanMode() {
+  scanModeOn = !scanModeOn;
+  const btn = document.getElementById('scanModeBtn');
+  const status = document.getElementById('scanModeStatus');
+  const input = document.getElementById('quickSaleSearch');
+  btn.classList.toggle('active', scanModeOn);
+  if(scanModeOn) {
+    status.style.display = 'flex';
+    input.placeholder = 'چاوەڕوانی سکانی بارکۆدە...';
+    input.focus();
+    toast('دۆخی سکانەر چالاککرا', 'success');
+  } else {
+    status.style.display = 'none';
+    input.placeholder = 'گەڕان بۆ زیادکردنی کاڵا بۆ فرۆشتن...';
+  }
+}
+
+function playScanBeep(success) {
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = success ? 1500 : 260;
+    gain.gain.setValueAtTime(0.16, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (success?0.12:0.22));
+    osc.start();
+    osc.stop(ctx.currentTime + (success?0.12:0.22));
+    if(!success && navigator.vibrate) navigator.vibrate(120);
+  } catch(e) {}
+}
+
+function flashSaleSearch(success) {
+  const input = document.getElementById('quickSaleSearch');
+  input.classList.remove('scan-flash-success','scan-flash-error');
+  void input.offsetWidth;
+  input.classList.add(success ? 'scan-flash-success' : 'scan-flash-error');
+  setTimeout(()=>input.classList.remove('scan-flash-success','scan-flash-error'), 350);
+}
+
+function handleSaleSearchKeydown(e) {
+  if(e.key !== 'Enter') return;
+  const raw = e.target.value.trim();
+  if(!raw) return;
+
+  // تەنها ئەگەر شێوازەکە وەک بارکۆد بێت کار دەکات، ئەگینا وەک گەڕانی ئاسایی بەجێدەهێڵرێت
+  const isBarcodeLike = /^[0-9A-Za-z\-]{4,}$/.test(raw) && /\d/.test(raw);
+  if(!isBarcodeLike) return;
+
+  e.preventDefault();
+  const product = CACHE.products.find(p => p.barcode === raw);
+
+  if(!product) {
+    flashSaleSearch(false);
+    playScanBeep(false);
+    toast('بارکۆد نەدۆزرایەوە: ' + raw, 'error');
+  } else if(product.qty <= 0) {
+    flashSaleSearch(false);
+    playScanBeep(false);
+    toast('کاڵا لە کۆگا نەماوە: ' + product.name, 'error');
+  } else {
+    const added = addToCart(product.id, true);
+    if(added) {
+      flashSaleSearch(true);
+      playScanBeep(true);
+      toast('✓ ' + product.name + ' زیادکرا', 'success');
+    } else {
+      flashSaleSearch(false);
+      playScanBeep(false);
+      toast('⚠ زیاتر لە بڕی بەردەست هەڵناگیرێت: ' + product.name + ' (' + product.qty + ' دانە بەردەستە)', 'error');
+    }
+  }
+  e.target.value = '';
+  applySaleFilters();
+  if(scanModeOn) e.target.focus();
+}
+
+document.addEventListener('click', function(e) {
+  if(!scanModeOn) return;
+  if(getCurrentPage() !== 'sales') return;
+  if(e.target.closest('.modal-overlay.open')) return;
+  const input = document.getElementById('quickSaleSearch');
+  if(input && document.activeElement !== input) {
+    setTimeout(()=>input.focus(), 60);
+  }
+});
 
 function updateSaleCardUI(id) {
   const card = document.querySelector(`.sale-product-card[data-id="${id}"]`);
@@ -4547,6 +5112,7 @@ function renderSales() {
   <td data-label="نرخی یەکە" class="text-mono td-muted">${fmt(s.unitPrice)}</td>
   <td data-label="کۆی نرخ" class="text-mono fw-700 color-primary">${fmt(s.total)}</td>
   <td data-label="قازانج" class="text-mono color-green">${fmt(s.profit)}</td>
+  <td data-label="کارمەند" class="td-muted">${s.createdBy||'—'}</td>
   <td data-label="بەروار" class="td-muted">${dateStr(s.createdAt)}</td>
 <td data-label="کردار">
   <div style="display:flex;gap:6px">
@@ -4557,7 +5123,7 @@ function renderSales() {
   </div>
 </td>
 
-</tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="ti ti-shopping-cart"></i><p>هیچ فرۆشتنێک نیە</p></div></td></tr>`;
+</tr>`).join('') : `<tr><td colspan="9"><div class="empty-state"><i class="ti ti-shopping-cart"></i><p>هیچ فرۆشتنێک نیە</p></div></td></tr>`;
 }
 
 function openSaleModal() {
@@ -4583,16 +5149,18 @@ function renderSaleProducts() {
 	</div>`;
   }).join('') || '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px">هیچ کاڵایەک نەدۆزرایەوە</div>';
 }
-function addToCart(id) {
+function addToCart(id, silent) {
   const p = DB.get('products').find(x=>x.id===id);
-  if(!p) return;
+  if(!p) return false;
   const ex = saleCart.find(c=>c.id===id);
-  if(ex) { if(ex.qty<p.qty) ex.qty++; else { toast('کاڵا بەسەر چووە','error'); return; } }
-else saleCart.push({id, name:p.name, model:p.model||'', qty:1, unitPrice:p.sellPrice, buyPrice:p.buyPrice, maxQty:p.qty});
+  if(ex) {
+    if(ex.qty<p.qty) { ex.qty++; }
+    else { if(!silent) toast('کاڵا بەسەر چووە','error'); return false; }
+  }
+  else saleCart.push({id, name:p.name, model:p.model||'', qty:1, unitPrice:p.sellPrice, buyPrice:p.buyPrice, maxQty:p.qty});
   updateSaleCardUI(id); updateSaleStickyBar();
+  return true;
 }
-
-
 function renderSaleCart() {
   const c = document.getElementById('saleCart');
   if(!saleCart.length) { c.innerHTML=''; document.getElementById('saleTotalBox').style.display='none'; return; }
@@ -4632,6 +5200,7 @@ function removeFromCart(id) {
 
 
 async function completeSale() {
+  if(!can('sales','add')) { toast('دەسەڵاتت نیە بۆ فرۆشتن','error'); return; }
   if(!saleCart.length) { toast('تکایە کاڵایەک هەڵبژێرە','error'); return; }
   const btn = document.getElementById('saleCompleteBtn');
   btn.disabled = true;
@@ -4654,13 +5223,14 @@ product_model: item.model||'',
     }));
 
 if(isOnline) {
-  const { error: saleErr } = await sb.from('sales').insert(
+ const { error: saleErr } = await sb.from('sales').insert(
     saleRows.map(r => ({
       id: r.id, product_id: r.product_id, product_name: r.product_name,
       unit_price: r.unit_price, qty: r.qty, total: r.total,
-      profit: r.profit, returned: false
+      profit: r.profit, returned: false, created_by: currentUser?.name || null
     }))
   );
+
   if(saleErr) throw saleErr;
 
   // ✅ بە یەکجار (parallel) نەک یەک لەدوای یەک
@@ -4750,6 +5320,7 @@ buildNotifications();
 
 
 async function returnSale(id) {
+  if(!can('sales','edit')) { toast('دەسەڵاتت نیە بۆ گەڕاندنەوە','error'); return; }
   const s = DB.get('sales').find(x=>x.id===id);
   if(!s) return;
   if(!confirm(`دڵنیایت لە گەڕاندنەوەی "${s.productName}"؟ کاڵاکە دەگەڕێتەوە دوکان.`)) return;
@@ -4833,58 +5404,69 @@ function openRepairModal(id) {
 }
 function editRepair(id) { openRepairModal(id); }
 async function saveRepair() {
+  if(!can('repairs', editRepairId ? 'edit' : 'add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const name=document.getElementById('rName').value.trim();
   const phone=document.getElementById('rPhone').value.trim();
   const device=document.getElementById('rDevice').value.trim();
   const problem=document.getElementById('rProblem').value.trim();
   if(!name||!phone||!device||!problem) { toast('تکایە خانەی پێویستەکان پڕبکەرەوە','error'); return; }
 
-let image_url = editRepairId ? (DB.get('repairs').find(x=>x.id===editRepairId)?.imageUrl || null) : null;
-if(selectedImageFile.repair) {
-  image_url = await uploadImageToSupabase(selectedImageFile.repair, 'repairs');
-} else if(window._removedExistingImage_repair) {
-  image_url = null;
-}
+  let image_url = editRepairId ? (DB.get('repairs').find(x=>x.id===editRepairId)?.imageUrl || null) : null;
+  if(selectedImageFile.repair) {
+    image_url = await uploadImageToSupabase(selectedImageFile.repair, 'repairs');
+  } else if(window._removedExistingImage_repair) {
+    image_url = null;
+  }
 
   const btn = document.getElementById('rSaveBtn');
   btn.disabled = true;
   const data = {
-	customer_name: name, phone, device, device_type: document.getElementById('rDeviceType').value,
-	problem, cost: parseFloat(document.getElementById('rCost').value)||0,
-	status: document.getElementById('rStatus').value, notes: document.getElementById('rNotes').value,
-  image_url
+    customer_name: name, phone, device, device_type: document.getElementById('rDeviceType').value,
+    problem, cost: parseFloat(document.getElementById('rCost').value)||0,
+    status: document.getElementById('rStatus').value, notes: document.getElementById('rNotes').value,
+    image_url
   };
   try {
-	if(editRepairId) {
-	  const { error } = await sb.from('repairs').update(data).eq('id', editRepairId);
-	  if(error) throw error;
-	  toast('چاکسازیەکە نوێ کرایەوە','success');
-	} else {
-	  const { error } = await sb.from('repairs').insert(data);
-	  if(error) throw error;
-	  toast('چاکسازی نوێ زیادکرا','success');
-	}
-	await loadAllData();
-	closeModal('repairModal'); renderRepairs(); buildNotifications();
+    if(editRepairId) {
+      const idx = CACHE.repairs.findIndex(r=>r.id===editRepairId);
+      if(idx>-1) { CACHE.repairs[idx] = { ...CACHE.repairs[idx], customerName:name, phone, device, deviceType:data.device_type, problem, cost:data.cost, status:data.status, notes:data.notes, imageUrl:image_url }; renderRepairs(); }
+      const { error } = await sb.from('repairs').update(data).eq('id', editRepairId);
+      if(error) throw error;
+      toast('چاکسازیەکە نوێ کرایەوە','success');
+    } else {
+      const { data: inserted, error } = await sb.from('repairs').insert({...data, created_by: currentUser?.name || null}).select().single();
+      if(error) throw error;
+      CACHE.repairs.unshift(repairFromDb(inserted));
+      renderRepairs();
+      toast('چاکسازی نوێ زیادکرا','success');
+    }
+    closeModal('repairModal'); buildNotifications();
+    reloadTable('repairs');
   } catch(err) {
-	console.error(err);
-	toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    console.error(err);
+    toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
   } finally {
-	btn.disabled = false;
+    btn.disabled = false;
   }
 }
+
 async function deleteRepair(id) {
+  if(!can('repairs','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم چاکسازییە؟')) return;
+  const backup = CACHE.repairs.find(r=>r.id===id);
+  CACHE.repairs = CACHE.repairs.filter(r=>r.id!==id);
+  renderRepairs();
   try {
-	const { error } = await sb.from('repairs').delete().eq('id', id);
-	if(error) throw error;
-	await loadAllData();
-	toast('چاکسازیەکە سڕایەوە','info'); renderRepairs(); buildNotifications();
+    const { error } = await sb.from('repairs').delete().eq('id', id);
+    if(error) throw error;
+    toast('چاکسازیەکە سڕایەوە','info'); buildNotifications();
+    reloadTable('repairs');
   } catch(err) {
-	console.error(err);
-	toast('کێشە لە سڕینەوە: ' + (err.message||err), 'error');
+    toast('کێشە لە سڕینەوە: ' + (err.message||err), 'error');
+    if(backup) { CACHE.repairs.unshift(backup); renderRepairs(); }
   }
 }
+
 function viewRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
@@ -5001,6 +5583,7 @@ function openDebtModal() {
 }
 
 async function saveDebt() {
+  if(!can('debts','add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const name = document.getElementById('dName').value.trim();
   const phone = document.getElementById('dPhone').value.trim();
   const amount = parseFloat(document.getElementById('dAmount').value)||0;
@@ -5008,24 +5591,71 @@ async function saveDebt() {
 
   const btn = document.getElementById('dSaveBtn');
   btn.disabled = true;
+
+  const newDebt = {
+    id: crypto.randomUUID(),
+    customerName: name, phone, amount, paidAmount: 0,
+    source: 'other',
+    notes: document.getElementById('dNotes').value,
+    dueDate: document.getElementById('dDueDate').value || null,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    createdBy: currentUser?.name || null
+  };
+
   try {
-	const { error } = await sb.from('debts').insert({
-	  customer_name: name, phone, amount, paid_amount: 0,
-	  source: 'other', notes: document.getElementById('dNotes').value,
-	  due_date: document.getElementById('dDueDate').value || null,
-	  status: 'pending'
-	});
-	if(error) throw error;
-	toast('قەرزی نوێ زیادکرا','success');
-	await loadAllData();
-	closeModal('debtModal'); renderDebts(); buildNotifications();
+    if(!isOnline) throw new Error('offline');
+
+    const { data: inserted, error } = await sb.from('debts').insert({
+      id: newDebt.id,
+      customer_name: name, phone, amount, paid_amount: 0,
+      source: 'other', notes: newDebt.notes,
+      due_date: newDebt.dueDate,
+      status: 'pending', created_by: newDebt.createdBy
+    }).select().single();
+
+    if(error) throw error;
+
+    CACHE.debts.unshift(debtFromDb(inserted));
+    idbPut('debts', debtFromDb(inserted));
+    renderDebts();
+    toast('قەرزی نوێ زیادکرا','success');
+    closeModal('debtModal');
+    buildNotifications();
+    reloadTable('debts');
+
   } catch(err) {
-	console.error(err);
-	toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    console.error(err);
+
+    // ئەگەر هۆکارەکە کێشەی ئینتەرنێت/fetch بوو، بە شێوەی ئۆفلاین پاشەکەوتی بکە
+    const isNetworkError = err.message === 'offline' ||
+      err.message === 'Failed to fetch' ||
+      err instanceof TypeError;
+
+    if(isNetworkError) {
+      await idbPut('debts', newDebt);
+      await addToSyncQueue({
+        type: 'insert', table: 'debts',
+        data: {
+          id: newDebt.id, customer_name: name, phone, amount, paid_amount: 0,
+          source: 'other', notes: newDebt.notes, due_date: newDebt.dueDate,
+          status: 'pending', created_by: newDebt.createdBy
+        }
+      });
+      CACHE.debts.unshift(newDebt);
+      renderDebts();
+      toast('ئینتەرنێت نییە — قەرزەکە پاشەکەوتکرا لە مۆبایل، کاتێک ئینتەرنێت گەڕایەوە خۆکارانە sync دەکرێت', 'info');
+      closeModal('debtModal');
+      buildNotifications();
+    } else {
+      toast('کێشە ڕوویدا: ' + (err.message||err), 'error');
+    }
   } finally {
-	btn.disabled = false;
+    btn.disabled = false;
   }
 }
+
+
 
 
 document.addEventListener('fullscreenchange', function() {
@@ -5141,6 +5771,7 @@ function openPayDebtModal(id) {
 }
 
 async function confirmPayDebt() {
+  if(!can('debts','edit')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const d = DB.get('debts').find(x=>x.id===payDebtId);
   if(!d) return;
   const payAmt = parseFloat(document.getElementById('payAmount').value)||0;
@@ -5166,6 +5797,7 @@ async function confirmPayDebt() {
 }
 
 async function deleteDebt(id) {
+  if(!can('debts','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم قەرزە؟')) return;
   try {
 	const { error } = await sb.from('debts').delete().eq('id', id);
@@ -5328,6 +5960,9 @@ async function init() {
       CACHE.expenses = await idbGetAll('expenses');
       const settingsArr = await idbGetAll('settings');
       if(settingsArr.length) SETTINGS = settingsArr[0];
+            CACHE.users = await idbGetAll('users');
+      if(CACHE.users.length) USERS = CACHE.users;
+
 
       updateStoreName();
       applyDesignSettings();
@@ -5341,6 +5976,7 @@ async function init() {
   updateStoreName();
   renderPage(getCurrentPage());
   buildNotifications();
+    applyRolePermissions();
   document.getElementById('loadingOverlay').style.display = 'none';
   if (!ok) {
     toast('نەتوانرا پەیوەندی بە داتابەیس بکرێت. تکایە بەستنەوەی Supabase و خشتەکان بپشکنە.', 'error');
@@ -5349,26 +5985,110 @@ async function init() {
   }
 }
 
+const PERM_SECTIONS = ['dashboard','inventory','sales','repairs','debts','plans','expenses','reports','barcode'];
+const PERM_LABELS = {dashboard:'داشبۆرد',inventory:'کاڵا',sales:'فرۆشتن',repairs:'چاکسازی',debts:'قەرزەکان',plans:'پلانەکان',expenses:'خەرجییەکان',reports:'ڕاپۆرتەکان',barcode:'بارکۆد'};
 
-const SESSION_KEY = 'ms_unlocked';
+function can(section, action) {
+  if(!currentUser) return false;
+  if(currentUser.role === 'admin') return true;
+  return !!(currentUser.permissions && currentUser.permissions[section] && currentUser.permissions[section][action]);
+}
 
-function checkPin(val) {
-  if(val.length < 4) { document.getElementById('pinError').textContent = ''; return; }
-  if(val === SETTINGS.app_pin) {
+function applyRolePermissions() {
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  const settingsNav = document.querySelector('.nav-item[data-page="settings"]');
+  if(settingsNav) settingsNav.style.display = isAdmin ? '' : 'none';
+  const settingsCard = document.getElementById('appCard-settings');
+  if(settingsCard) settingsCard.style.display = isAdmin ? '' : 'none';
+
+  PERM_SECTIONS.forEach(sec => {
+    const nav = document.querySelector('.nav-item[data-page="'+sec+'"]');
+    if(nav) nav.style.display = can(sec,'view') ? '' : 'none';
+    const card = document.getElementById('appCard-'+sec);
+    if(card) card.style.display = can(sec,'view') ? '' : 'none';
+  });
+  const label = document.getElementById('sidebarUserLabel');
+  if(label) {
+    if(currentUser) {
+      const icon = currentUser.role === 'admin' ? 'ti-shield-star' : 'ti-user';
+      const roleLabel = currentUser.role === 'admin' ? 'بەڕێوەبەر' : 'کارمەند';
+      label.innerHTML = `<i class="ti ${icon}" style="margin-left:4px;font-size:12px;vertical-align:-1px"></i> ${currentUser.name} (${roleLabel})`;
+    } else {
+      label.textContent = 'سیستەمی بەڕێوەبردن';
+    }
+  }
+
+  // ✅ ئەگەر بەشی چالاک شاراوەیە، بگۆڕە بۆ یەکەم بەشی دیارە
+  const activeNav = document.querySelector('.nav-item.active');
+  if(activeNav && activeNav.style.display === 'none') {
+    const firstVisible = document.querySelector('.sidebar-nav .nav-item:not([style*="display: none"])');
+    if(firstVisible) navigate(firstVisible);
+  }
+
+  // ئەگەر داشبۆرد دووبارە دیار بووەوە، دووبارە ڕێندەری بکە بۆ نیشاندان/شاردنەوەی قازانج
+  if(document.getElementById('page-dashboard')?.classList.contains('active')) {
+    renderDashboard();
+  }
+}
+
+let USERS = [];
+let currentUser = null;
+
+// ئەگەر پێشتر چوونەژوورەوە کراوە لەم session-دا، دیسان پینکۆد نەخوازێت
+(function restoreSession(){
+  const saved = sessionStorage.getItem('ms_current_user');
+  if(saved) {
+    currentUser = JSON.parse(saved);
     document.getElementById('lockOverlay').style.display = 'none';
-    document.documentElement.requestFullscreen().catch(()=>{});
+    applyRolePermissions(); // ✅ زوو جێبەجێی بکە — پێش چوونەژوورەوەی داتا، بۆ لابردنی گلیچ
+  }
+})();
+
+
+async function checkPin(val) {
+  if(val.length < 4) { document.getElementById('pinError').textContent = ''; return; }
+
+  let user = USERS.find(u => u.pin === val && u.active !== false);
+
+  // ئەگەر لە یادگاری خۆیدا نەدۆزرایەوە، ڕاستەوخۆ لە Supabase بگەڕێ
+  if(!user) {
+    try {
+      const { data } = await sb.from('users').select('*').eq('pin', val).eq('active', true).single();
+      if(data) user = data;
+    } catch(e) { /* نەدۆزرایەوە */ }
+  }
+
+  if(user) {
+    currentUser = { id: user.id, name: user.name, role: user.role, permissions: user.permissions || {} };
+    sessionStorage.setItem('ms_current_user', JSON.stringify(currentUser));
+    console.log('چوونەژوورەوە کرا وەک:', currentUser);
+document.getElementById('lockOverlay').style.display = 'none';
+applyRolePermissions();
+try { document.documentElement.requestFullscreen().catch(()=>{}); } catch(e) {}
+
   } else {
     document.getElementById('pinError').textContent = 'پینکۆد هەڵەیە';
     document.getElementById('pinInput').value = '';
   }
 }
 
+
+function logoutUser() {
+  sessionStorage.removeItem('ms_current_user');
+  currentUser = null;
+  location.reload();
+}
+
+
 (async function preload(){
   try {
     const { data } = await sb.from('settings').select('*').eq('id',1).single();
     if(data) SETTINGS = data;
     applyDesignSettings();
-  } catch(e) { console.error('preload settings error', e); }
+    const { data: uData } = await sb.from('users').select('*').eq('active', true);
+    if(uData) USERS = uData;
+    applyRolePermissions();
+  } catch(e) { console.error('preload error', e); }
 })();
 
 // ── FAB ──
@@ -5376,19 +6096,32 @@ let fabOpen = false;
 function toggleFab() {
   fabOpen = !fabOpen;
   document.getElementById('fabMenu').classList.toggle('open', fabOpen);
-  document.getElementById('fabIcon').className = fabOpen ? 'ti ti-x' : 'ti ti-plus';
+  document.getElementById('fabIcon').className = fabOpen ? 'ti ti-x' : 'ti ti-dots-vertical';
 }
 function fabAction(type) {
   toggleFab();
-if(type === 'sale') { navigate(null,'sales'); setTimeout(()=>document.getElementById('quickSaleSearch').focus(),300); }
-  else if(type === 'repair') { navigate(null,'repairs'); setTimeout(()=>openRepairModal(),300); }
-  else if(type === 'debt') { navigate(null,'debts'); setTimeout(()=>openDebtModal(),300); }
-  else if(type === 'product') { navigate(null,'inventory'); setTimeout(()=>openProductModal(),300); }
-  else if(type === 'expense') { 
-  navigate(null,'expenses'); 
-  setTimeout(()=>openExpenseModal(),300); 
+  if(type === 'help') {
+    openHelpModal();
+  } else if(type === 'conn') {
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    if(isAdmin) {
+      navigate(null,'settings');
+      setTimeout(()=>{
+        const el = document.querySelector('.settings-menu-item[data-s="info"]');
+        if(el) openSettingsSection(el);
+      }, 250);
+    } else {
+      showConnQuickStatus();
+    }
+  } else if(type === 'logout') {
+    if(confirm('دڵنیایت لە دەرچوون؟')) logoutUser();
+  }
 }
 
+function showConnQuickStatus() {
+  const label = isOnline ? 'پەیوەستە ✓ — هەموو داتاکان sync دەکرێن' : 'ئۆفلاین ✗ — داتاکان کاتێک ئینتەرنێت گەڕایەوە sync دەکرێن';
+  const type = isOnline ? 'success' : 'error';
+  toast(label, type);
 }
 // داخستنی FAB کاتێک دەرەوەی کلیک دەکرێت
 document.addEventListener('click', e => {
@@ -5396,7 +6129,6 @@ document.addEventListener('click', e => {
     toggleFab();
   }
 });
-
 // ══════════════════════════════════════════
 //  EXPENSES
 // ══════════════════════════════════════════
@@ -5433,6 +6165,7 @@ function openExpenseModal(id) {
 }
 
 async function saveExpense() {
+  if(!can('expenses', editExpenseId ? 'edit' : 'add')) { toast('دەسەڵاتت نیە بۆ ئەم کردارە','error'); return; }
   const title = document.getElementById('exTitle').value.trim();
   const amount = parseFloat(document.getElementById('exAmount').value)||0;
   const category = document.getElementById('exCategory').value;
@@ -5448,12 +6181,13 @@ async function saveExpense() {
         .eq('id', editExpenseId);
       if(error) throw error;
       toast('خەرجییەکە نوێ کرایەوە','success');
-    } else {
+} else {
       const { error } = await sb.from('expenses')
-        .insert({ title, amount, category, note });
+        .insert({ title, amount, category, note, created_by: currentUser?.name || null });
       if(error) throw error;
       toast('خەرجی نوێ زیادکرا','success');
     }
+
     await loadAllData();
     closeModal('expenseModal');
     renderExpenses();
@@ -5464,6 +6198,7 @@ async function saveExpense() {
 }
 
 async function deleteExpense(id) {
+  if(!can('expenses','delete')) { toast('دەسەڵاتت نیە بۆ سڕینەوە','error'); return; }
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم خەرجییە؟')) return;
   try {
     const { error } = await sb.from('expenses').delete().eq('id', id);
@@ -5626,12 +6361,20 @@ function switchHelpTab(el) {
   document.getElementById('help-' + el.dataset.tab).style.display='block';
 }
 
-function printReceipt(items, total) {
+function printReceipt(items, total, isPreview) {
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
-  const address = SETTINGS.store_address || '';
+  const phone = SETTINGS.receipt_phone_text || '';
+  const address = SETTINGS.receipt_address_text || '';
   const now = new Date().toLocaleString('ku');
   const profit = items.reduce((a,i)=>a+i.profit,0);
+  const headerText = SETTINGS.receipt_header_text || '';
+  const footerText = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت 🙏';
+  const datePos = SETTINGS.receipt_date_position || 'top';
+  const showNumber = SETTINGS.receipt_show_number !== false;
+  const receiptNumber = 'R-' + Date.now().toString().slice(-6);
+  const paperWidth = SETTINGS.receipt_paper_width === '58' ? 260 : 320;
+  const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const rows = items.map(i=>`
     <tr>
@@ -5646,7 +6389,8 @@ function printReceipt(items, total) {
     <html lang="ku" dir="rtl">
     <head>
       <meta charset="UTF-8">
-      <title>پسووڵە</title>
+      <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+      <title>پسوولە</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -5657,9 +6401,10 @@ function printReceipt(items, total) {
           max-width: 320px;
           margin: 0 auto;
         }
+        a { color:#000 !important; text-decoration:none !important; }
         .header { text-align:center; margin-bottom:16px; }
-        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; }
-        .header p { font-size:11px; color:#444; line-height:1.6; }
+        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; letter-spacing:0.3px; }
+        .header p { font-size:11px; color:#444; line-height:1.7; }
         .divider {
           border:none;
           border-top: 1px dashed #000;
@@ -5718,10 +6463,11 @@ function printReceipt(items, total) {
     </head>
     <body>
       <div class="header">
+        ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
-        ${phone ? `<p>📞 ${phone}</p>` : ''}
-        ${address ? `<p>📍 ${address}</p>` : ''}
-        <p>🗓 ${now}</p>
+        ${phone ? `<p>${phone}</p>` : ''}
+        ${address ? `<p>${address}</p>` : ''}
+        ${showNumber || datePos === 'top' ? `<p style="font-size:10px;color:#888;margin-top:4px">${showNumber ? receiptNumber : ''}${showNumber && datePos==='top' ? '  •  ' : ''}${datePos === 'top' ? now : ''}</p>` : ''}
       </div>
 
       <hr class="divider">
@@ -5751,20 +6497,23 @@ function printReceipt(items, total) {
 
       <hr class="divider">
 
+      ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
-        <div class="thanks">سوپاس بۆ کڕینت 🙏</div>
-        <p>پسووڵەکەت پاراستبێت</p>
-        ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
+        <div class="thanks">${footerText}</div>
+        <p>پسوولەکە بپارێزە</p>
       </div>
+      ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
 
-      <script>
+
+      ${isPreview ? '' : `<script>
         window.onload = function() {
           window.print();
           setTimeout(()=>window.close(), 1000);
         }
-      <\/script>
+      <\/script>`}
     </body>
     </html>`;
+
 
 // مۆبایل — پرینت دەکرێت بەبێ popup
 if(/Mobi|Android/i.test(navigator.userAgent)) {
@@ -5819,27 +6568,35 @@ function printRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
-  const address = SETTINGS.store_address || '';
+  const phone = SETTINGS.receipt_phone_text || '';
+  const address = SETTINGS.receipt_address_text || '';
   const now = new Date().toLocaleString('ku');
+  const headerText = SETTINGS.receipt_header_text || '';
+  const footerText = SETTINGS.receipt_footer_text || 'سوپاس بۆ کڕینت';
+  const datePos = SETTINGS.receipt_date_position || 'top';
+  const showNumber = SETTINGS.receipt_show_number !== false;
+  const receiptNumber = 'RP-' + Date.now().toString().slice(-6);
+  const showQr = !!SETTINGS.receipt_show_qr && SETTINGS.receipt_qr_data;
+  const qrImgUrl = showQr ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=0&data=${encodeURIComponent(SETTINGS.receipt_qr_data)}` : '';
 
   const html = `
     <!DOCTYPE html>
     <html lang="ku" dir="rtl">
     <head>
       <meta charset="UTF-8">
+      <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
       <title>پسووڵەی چاکسازی</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Noto Sans Arabic',Tahoma,sans-serif; font-size:13px; color:#000; padding:20px; max-width:320px; margin:0 auto; }
+        a { color:#000 !important; text-decoration:none !important; }
         .header { text-align:center; margin-bottom:16px; }
-        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; }
-        .header p { font-size:11px; color:#444; line-height:1.6; }
+        .header h1 { font-size:18px; font-weight:900; margin-bottom:4px; letter-spacing:0.3px; }
+        .header p { font-size:11px; color:#444; line-height:1.7; }
         .divider { border:none; border-top:1px dashed #000; margin:10px 0; }
         .row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed #ddd; font-size:13px; }
         .row .label { color:#555; }
         .row .val { font-weight:700; }
-        .status-box { text-align:center; margin:14px 0; padding:10px; background:#f5f5f5; border-radius:6px; font-size:15px; font-weight:900; }
         .footer { text-align:center; margin-top:16px; font-size:11px; color:#555; line-height:1.8; }
         .footer .thanks { font-size:14px; font-weight:700; color:#000; margin-bottom:4px; }
         @media print { body { padding:10px; } @page { margin:8mm; } }
@@ -5847,13 +6604,14 @@ function printRepair(id) {
     </head>
     <body>
       <div class="header">
+        ${headerText ? `<p style="font-size:13px;font-weight:700;margin-bottom:8px">${headerText}</p>` : ''}
         <h1>${store}</h1>
-        ${phone ? `<p>📞 ${phone}</p>` : ''}
-        ${address ? `<p>📍 ${address}</p>` : ''}
-        <p>🗓 ${now}</p>
+        ${phone ? `<p>${phone}</p>` : ''}
+        ${address ? `<p>${address}</p>` : ''}
+        ${showNumber || datePos === 'top' ? `<p style="font-size:10px;color:#888;margin-top:4px">${showNumber ? receiptNumber : ''}${showNumber && datePos==='top' ? '  •  ' : ''}${datePos === 'top' ? now : ''}</p>` : ''}
       </div>
       <hr class="divider">
-      <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:12px">🔧 پسووڵەی چاکسازی</div>
+      <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:12px">پسووڵەی چاکسازی</div>
       <div class="row"><span class="label">ناوی کڕیار:</span><span class="val">${r.customerName}</span></div>
       <div class="row"><span class="label">ژمارە:</span><span class="val">${r.phone}</span></div>
       <div class="row"><span class="label">ئامێر:</span><span class="val">${r.device} (${r.deviceType})</span></div>
@@ -5863,10 +6621,11 @@ function printRepair(id) {
       <hr class="divider">
       <div class="row"><span class="label">هزینەی چاکسازی:</span><span class="val" style="font-size:16px">${Number(r.cost).toLocaleString()} د.ع</span></div>
       <hr class="divider">
+        ${datePos === 'bottom' ? `<p style="text-align:center;font-size:10px;color:#888;margin-bottom:8px">${now}</p>` : ''}
       <div class="footer">
-        <div class="thanks">سوپاس بۆ باوەڕت 🙏</div>
-        ${phone ? `<p>پەیوەندی: ${phone}</p>` : ''}
+        <div class="thanks">${footerText}</div>
       </div>
+      ${showQr ? `<div style="text-align:center;margin-top:12px"><img src="${qrImgUrl}" style="width:64px;height:64px"></div>` : ''}
       <script>
         window.onload = function() { window.print(); setTimeout(()=>window.close(), 1000); }
       <\/script>
@@ -5889,27 +6648,28 @@ function whatsappRepair(id) {
   const r = DB.get('repairs').find(x=>x.id===id);
   if(!r) return;
   const store = SETTINGS.store_name || 'Mobile Store';
-  const phone = SETTINGS.store_phone || '';
+  const phone = SETTINGS.receipt_phone_text || SETTINGS.store_phone || '';
   const status = repairStatusLabel(r.status);
 
   const message = 
-`سڵاو ${r.customerName} 👋
+`سڵاو ${r.customerName}
 
 ${r.status === 'completed' || r.status === 'delivered' 
-  ? `ئامێرەکەت ئامادەیە وەریبگریت ✅` 
+  ? `ئامێرەکەت ئامادەیە وەریبگریت` 
   : `نوێترین زانیاری چاکسازیەکەت:`}
 
-📱 ئامێر: ${r.device}
-🔧 کێشە: ${r.problem}
-📊 ستاتوس: ${status}
-💰 هزینە: ${Number(r.cost).toLocaleString()} د.ع
+ئامێر: ${r.device}
+کێشە: ${r.problem}
+ستاتوس: ${status}
+هزینە: ${Number(r.cost).toLocaleString()} د.ع
 
-🏪 ${store}${phone ? `\n📞 ${phone}` : ''}`;
+${store}${phone ? `\n${phone}` : ''}`;
 
   const cleaned = r.phone.replace(/\D/g,'').replace(/^0/,'');
   const url = `https://wa.me/964${cleaned}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank');
 }
+
 
 function whatsappDebt(id) {
   const d = DB.get('debts').find(x=>x.id===id);
@@ -6010,6 +6770,42 @@ async function saveCurrency() {
     toast('کێشە: ' + (err.message||err), 'error');
   }
   renderSettings();
+}
+
+async function saveReceiptSettings() {
+  const payload = {
+    receipt_header_text: document.getElementById('rcHeaderText').value.trim(),
+    receipt_phone_text: document.getElementById('rcPhoneText').value.trim(),
+    receipt_address_text: document.getElementById('rcAddressText').value.trim(),
+    receipt_date_position: document.getElementById('rcDatePosition').value,
+    receipt_show_number: document.getElementById('rcShowNumber').checked,
+    receipt_footer_text: document.getElementById('rcFooterText').value.trim(),
+    receipt_show_qr: document.getElementById('rcShowQrToggle').classList.contains('on'),
+    receipt_qr_data: document.getElementById('rcQrData').value.trim(),
+    receipt_paper_width: document.getElementById('rcPaperWidth').value
+  };
+  const btn = document.getElementById('saveReceiptBtn');
+  btn.disabled = true;
+  try {
+    const { error } = await sb.from('settings').update(payload).eq('id', 1);
+    if(error) throw error;
+    await loadAllData();
+    toast('ڕێکخستنی وەصڵ پاشەکەوتکرا', 'success');
+  } catch(err) {
+    toast('کێشە: ' + (err.message||err), 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function previewReceiptSettings() {
+  printReceipt([{
+    product_name: 'کاڵای نموونە',
+    qty: 2,
+    unit_price: 15000,
+    total: 30000,
+    profit: 5000
+  }], 30000, true);
 }
 
 // ══════════════════════════════════════════
@@ -6162,6 +6958,470 @@ document.addEventListener('click', function(e) {
   }
 }, true);
 
+let editEmployeeId = null;
+
+function openEmployeeModal(id) {
+  editEmployeeId = id || null;
+  document.getElementById('employeeModalTitle').textContent = id ? 'دەستکاریکردنی کارمەند' : 'کارمەندی نوێ';
+  let perms = {};
+  if(id) {
+    const u = CACHE.users.find(x=>x.id===id);
+    if(u) {
+      document.getElementById('empName').value = u.name;
+      document.getElementById('empPin').value = u.pin;
+      document.getElementById('empRole').value = u.role;
+      document.getElementById('empActive').checked = u.active !== false;
+      perms = u.permissions || {};
+    }
+  } else {
+    document.getElementById('empName').value = '';
+    document.getElementById('empPin').value = '';
+    document.getElementById('empRole').value = 'employee';
+    document.getElementById('empActive').checked = true;
+  }
+  document.getElementById('empPermGrid').innerHTML = PERM_SECTIONS.map(sec=>{
+    const p = perms[sec] || {};
+    if(sec === 'dashboard') {
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border:1px solid var(--card-border);border-radius:8px;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:13px;font-weight:600;min-width:70px">${PERM_LABELS[sec]}</span>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:4px;font-size:11.5px"><input type="checkbox" data-sec="${sec}" data-act="view" ${p.view?'checked':''}> بینین</label>
+        </div>
+      </div>`;
+    }
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border:1px solid var(--card-border);border-radius:8px;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:13px;font-weight:600;min-width:70px">${PERM_LABELS[sec]}</span>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:4px;font-size:11.5px"><input type="checkbox" data-sec="${sec}" data-act="view" ${p.view?'checked':''}> بینین</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11.5px"><input type="checkbox" data-sec="${sec}" data-act="add" ${p.add?'checked':''}> زیادکردن</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11.5px"><input type="checkbox" data-sec="${sec}" data-act="edit" ${p.edit?'checked':''}> دەستکاری</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11.5px"><input type="checkbox" data-sec="${sec}" data-act="delete" ${p.delete?'checked':''}> سڕینەوە</label>
+      </div>
+    </div>`;
+  }).join('');
+
+  openModal('employeeModal');
+}
+
+async function saveEmployee() {
+  const name = document.getElementById('empName').value.trim();
+  const pin = document.getElementById('empPin').value.trim();
+  const role = document.getElementById('empRole').value;
+  const active = document.getElementById('empActive').checked;
+  if(!name || pin.length !== 4) { toast('ناو و پینکۆدی ٤ ژمارە پێویستە','error'); return; }
+
+  const dup = (CACHE.users||[]).find(u=>u.pin===pin && u.id!==editEmployeeId);
+  if(dup) { toast('ئەم پینکۆدە پێشتر بەکارهاتووە','error'); return; }
+
+  const permissions = {};
+  document.querySelectorAll('#empPermGrid input[type=checkbox]').forEach(cb=>{
+    const sec = cb.dataset.sec, act = cb.dataset.act;
+    if(!permissions[sec]) permissions[sec] = {};
+    permissions[sec][act] = cb.checked;
+  });
+
+  const btn = document.getElementById('empSaveBtn');
+  btn.disabled = true;
+  try {
+    if(editEmployeeId) {
+      const { error } = await sb.from('users').update({ name, pin, role, active, permissions }).eq('id', editEmployeeId);
+      if(error) throw error;
+      toast('کارمەندەکە نوێ کرایەوە','success');
+    } else {
+      const { error } = await sb.from('users').insert({ name, pin, role, active, permissions });
+      if(error) throw error;
+      toast('کارمەندی نوێ زیادکرا','success');
+    }
+    await loadAllData();
+    closeModal('employeeModal');
+    renderEmployees();
+  } catch(err) {
+    toast('کێشە ڕوویدا: '+(err.message||err),'error');
+  } finally { btn.disabled=false; }
+}
+
+async function deleteEmployee(id) {
+  if(!confirm('دڵنیایت لە سڕینەوەی ئەم کارمەندە؟')) return;
+  try {
+    const { error } = await sb.from('users').delete().eq('id', id);
+    if(error) throw error;
+    await loadAllData();
+    toast('کارمەندەکە سڕایەوە','info');
+    renderEmployees();
+  } catch(err) { toast('کێشە: '+(err.message||err),'error'); }
+}
+
+function renderEmployees() {
+  const users = CACHE.users || [];
+  const el = document.getElementById('employeesList');
+  if(!el) return;
+  if(!users.length) { el.innerHTML = '<div style="font-size:12.5px;color:var(--text3)">هیچ کارمەندێک نیە</div>'; return; }
+  el.innerHTML = users.map(u=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--card-border);border-radius:10px;margin-bottom:8px">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--primary)"><i class="ti ti-user"></i></div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px">${u.name} ${u.role==='admin'?'<span class="badge badge-purple">بەڕێوەبەر</span>':''} ${u.active===false?'<span class="badge badge-red">ناچالاک</span>':''}</div>
+        <div style="font-size:11px;color:var(--text3)">پینکۆد: ${u.pin}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="openEmployeeModal('${u.id}')"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteEmployee('${u.id}')"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  BARCODE
+// ══════════════════════════════════════════
+let bcSelected = new Set();
+let bcCurrentGenId = null;
+
+function renderBarcodePage() {
+  const products = DB.get('products');
+  const q = document.getElementById('bcSearch').value.toLowerCase();
+  const filter = document.getElementById('bcFilter').value;
+
+  const filtered = products.filter(p => {
+    const matchQ = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q);
+    const matchF = !filter || (filter==='has' ? !!p.barcode : !p.barcode);
+    return matchQ && matchF;
+  });
+
+  const body = document.getElementById('barcodeListBody');
+  if(!filtered.length) {
+    body.innerHTML = '<div class="empty-state"><i class="ti ti-barcode"></i><p>هیچ کاڵایەک نەدۆزرایەوە</p></div>';
+    updateBcSelectedCount();
+    return;
+  }
+
+  body.innerHTML = filtered.map(p => `
+    <div class="barcode-list-item">
+      <input type="checkbox" class="bc-check" data-id="${p.id}" 
+        ${bcSelected.has(p.id) ? 'checked' : ''} 
+        onchange="toggleBarcodeSelect('${p.id}', this.checked)"
+        style="width:18px;height:18px;cursor:pointer;flex-shrink:0">
+      ${p.imageUrl ? `<img src="${p.imageUrl}">` : `<div style="width:40px;height:40px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-photo" style="color:var(--text3)"></i></div>`}
+      <div class="barcode-list-info">
+        <div class="barcode-list-name">${p.name} <span class="td-muted" style="font-weight:400">${p.brand}</span></div>
+        ${p.barcode 
+          ? `<div class="barcode-list-code">${p.barcode}</div>` 
+          : `<div class="barcode-no-code">هیچ بارکۆدێکی نییە</div>`}
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openGenBarcodeModal('${p.id}')">
+        <i class="ti ${p.barcode ? 'ti-refresh' : 'ti-plus'}"></i> ${p.barcode ? 'گۆڕین' : 'دروستکردن'}
+      </button>
+    </div>`).join('');
+
+  updateBcSelectedCount();
+}
+
+function toggleBarcodeSelect(id, checked) {
+  if(checked) bcSelected.add(id);
+  else bcSelected.delete(id);
+  updateBcSelectedCount();
+}
+
+function selectAllBarcodes(select) {
+  const checks = document.querySelectorAll('.bc-check');
+  checks.forEach(cb => {
+    const id = cb.dataset.id;
+    cb.checked = select;
+    if(select) bcSelected.add(id);
+    else bcSelected.delete(id);
+  });
+  updateBcSelectedCount();
+}
+
+function updateBcSelectedCount() {
+  document.getElementById('bcSelectedCount').textContent = `${bcSelected.size} کاڵا هەڵبژێردراوە`;
+}
+
+function openGenBarcodeModal(id) {
+  bcCurrentGenId = id;
+  const p = DB.get('products').find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('genBarcodeProductName').textContent = `${p.name} — ${p.brand}`;
+  document.getElementById('genBarcodeMethod').value = 'auto';
+  openModal('genBarcodeModal');
+}
+
+function isBarcodeTaken(code, excludeId) {
+  return CACHE.products.some(p => p.barcode === code && p.id !== excludeId);
+}
+
+function generateAutoBarcode(excludeId) {
+  // کۆدێکی ١٢ ژمارەیی بەپێی کات و ژمارەی هەڕەمەکی — دووبارە هەوڵ دەدات ئەگەر پێشتر بەکارهاتبێت
+  let code, attempts = 0;
+  do {
+    const ts = Date.now().toString().slice(-9);
+    const rnd = Math.floor(Math.random()*900+100);
+    code = `2${ts}${rnd}`.slice(0,13);
+    attempts++;
+  } while(isBarcodeTaken(code, excludeId) && attempts < 10);
+  return code;
+}
+async function confirmGenerateBarcode() {
+  const method = document.getElementById('genBarcodeMethod').value;
+  const p = DB.get('products').find(x=>x.id===bcCurrentGenId);
+  if(!p) return;
+
+  const newBarcode = method === 'id' ? p.id.replace(/-/g,'').slice(0,13) : generateAutoBarcode(p.id);
+
+  if(isBarcodeTaken(newBarcode, p.id)) {
+    toast('ئەم بارکۆدە پێشتر بۆ کاڵایەکی تر بەکارهاتووە', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('genBarcodeBtn');
+  btn.disabled = true;
+  try {
+    const { error } = await sb.from('products').update({ barcode: newBarcode }).eq('id', p.id);
+    if(error) throw error;
+    const idx = CACHE.products.findIndex(x=>x.id===p.id);
+    if(idx>-1) CACHE.products[idx].barcode = newBarcode;
+    toast('بارکۆد دروستکرا: ' + newBarcode, 'success');
+    closeModal('genBarcodeModal');
+    renderBarcodePage();
+    reloadTable('products');
+  } catch(err) {
+    toast('کێشە: ' + (err.message||err), 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+async function bulkGenerateBarcodes() {
+  const missing = CACHE.products.filter(p => !p.barcode);
+  if(!missing.length) { toast('هەموو کاڵاکان بارکۆدیان هەیە', 'info'); return; }
+  if(!confirm(`بارکۆد بۆ ${missing.length} کاڵا دروست بکرێت؟`)) return;
+
+  let successCount = 0;
+  for(const p of missing) {
+    const code = generateAutoBarcode(p.id);
+    try {
+      const { error } = await sb.from('products').update({ barcode: code }).eq('id', p.id);
+      if(error) throw error;
+      p.barcode = code; // نوێکردنەوەی CACHE بۆ ئەوەی هەمان کۆد دووبارە بەکارنەهێنرێتەوە لە پاشماوەی loop
+      successCount++;
+    } catch(err) {
+      console.error('bulk barcode error for', p.id, err);
+    }
+  }
+  toast(`${successCount} بارکۆد دروستکرا`, 'success');
+  renderBarcodePage();
+  reloadTable('products');
+}
+
+function getBcSelectedProducts() {
+  return DB.get('products').filter(p => bcSelected.has(p.id) && p.barcode);
+}
+
+function buildBarcodeLabelHTML(p, forPrint) {
+  const showName = document.getElementById('bcShowName').checked;
+  const showPrice = document.getElementById('bcShowPrice').checked;
+  const showBrand = document.getElementById('bcShowBrand').checked;
+  const svgId = `bc-svg-${p.id}${forPrint?'-print':''}`;
+  let textLines = '';
+  if(showName) textLines += `<div>${p.name}</div>`;
+  if(showBrand) textLines += `<div>${p.brand}${p.category?' • '+p.category:''}</div>`;
+  if(showPrice) textLines += `<div><b>${fmt(p.sellPrice)}</b></div>`;
+  return `<div class="barcode-label-item">
+    <svg id="${svgId}"></svg>
+    <div class="barcode-label-text">${textLines}</div>
+  </div>`;
+}
+
+function renderBarcodeSVGs(products, forPrint) {
+  products.forEach(p => {
+    const svgId = `bc-svg-${p.id}${forPrint?'-print':''}`;
+    const el = document.getElementById(svgId);
+    if(!el) return;
+    try {
+      JsBarcode(el, p.barcode, {
+        format: 'CODE128', width: 1.6, height: 40,
+        displayValue: true, fontSize: 12, margin: 4
+      });
+    } catch(e) { console.error('barcode render error', e); }
+  });
+}
+
+function previewBarcodeLabels() {
+  const selected = getBcSelectedProducts();
+  if(!selected.length) { toast('تکایە کاڵایەک هەڵبژێرە کە بارکۆدی هەبێت', 'error'); return; }
+
+  const cols = document.getElementById('bcCols').value;
+  const grid = document.getElementById('barcodePreviewGrid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.innerHTML = selected.map(p => buildBarcodeLabelHTML(p, false)).join('');
+  openModal('previewBarcodeModal');
+  setTimeout(() => renderBarcodeSVGs(selected, false), 50);
+}
+
+function printBarcodeLabels() {
+  const selected = getBcSelectedProducts();
+  if(!selected.length) { toast('تکایە کاڵایەک هەڵبژێرە کە بارکۆدی هەبێت', 'error'); return; }
+
+  const cols = document.getElementById('bcCols').value;
+  const size = document.getElementById('bcLabelSize').value;
+  const showName = document.getElementById('bcShowName').checked;
+  const showPrice = document.getElementById('bcShowPrice').checked;
+  const showBrand = document.getElementById('bcShowBrand').checked;
+
+  const barH = size==='small' ? 30 : size==='large' ? 55 : 42;
+  const fontSize = size==='small' ? 10 : size==='large' ? 14 : 12;
+
+  // دروستکردنی بارکۆدەکان وەک وێنە (base64) پێش کردنەوەی پەنجەرەی چاپ
+  const tempSvgs = selected.map(p => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    JsBarcode(svg, p.barcode, { format:'CODE128', width:1.6, height:barH, displayValue:true, fontSize, margin:4 });
+    return { id: p.id, svgHtml: svg.outerHTML };
+  });
+
+  const labelsHTML = selected.map((p) => {
+    const svgObj = tempSvgs.find(s=>s.id===p.id);
+    let textLines = '';
+    if(showName) textLines += `<div>${p.name}</div>`;
+    if(showBrand) textLines += `<div>${p.brand}${p.category?' • '+p.category:''}</div>`;
+    if(showPrice) textLines += `<div style="font-weight:700">${fmt(p.sellPrice)}</div>`;
+    return `<div class="lbl">
+      ${svgObj.svgHtml}
+      <div class="lbl-text">${textLines}</div>
+    </div>`;
+  }).join('');
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="ku" dir="rtl">
+    <head>
+      <meta charset="UTF-8">
+      <title>چاپکردنی بارکۆد</title>
+      <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: Tahoma, sans-serif; padding:10px; }
+        .grid {
+          display:grid;
+          grid-template-columns: repeat(${cols}, 1fr);
+          gap:8px;
+        }
+        .lbl {
+          border:1px dashed #999;
+          border-radius:4px;
+          padding:8px;
+          text-align:center;
+          page-break-inside: avoid;
+        }
+        .lbl svg { max-width:100%; }
+        .lbl-text { font-size:${fontSize}px; color:#000; margin-top:4px; line-height:1.4; }
+        @media print { @page { margin:8mm; } }
+      </style>
+    </head>
+    <body>
+      <div class="grid">${labelsHTML}</div>
+      <script>
+        window.onload = function() { window.print(); setTimeout(()=>window.close(), 1000); }
+      <\/script>
+    </body>
+    </html>`;
+
+  if(/Mobi|Android/i.test(navigator.userAgent)) {
+    const w = window.open('about:blank');
+    if(w) { w.document.write(html); w.document.close(); }
+    return;
+  }
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank', 'width=500,height=700');
+  if(!win) { toast('تکایە popup بلۆکەکە غەیری چالاک بکە', 'error'); return; }
+  setTimeout(()=> URL.revokeObjectURL(url), 5000);
+}
+// ══════════════════════════════════════════
+//  STOCKTAKING
+// ══════════════════════════════════════════
+let stocktakeReader = null;
+let stocktakeCounts = {};
+
+function openStocktakeModal() {
+  stocktakeCounts = {};
+  renderStocktakeList();
+  openModal('stocktakeModal');
+  startStocktakeScanner();
+}
+
+function closeStocktakeModal() {
+  stopStocktakeScanner();
+  closeModal('stocktakeModal');
+}
+
+function startStocktakeScanner() {
+  const video = document.getElementById('stocktakeVideo');
+  try {
+    stocktakeReader = new ZXing.BrowserMultiFormatReader();
+    stocktakeReader.decodeFromVideoDevice(null, video, (result, err) => {
+      if(result) handleStocktakeScan(result.getText());
+    });
+  } catch(err) {
+    toast('کامێرا نەکرایەوە: ' + err.message, 'error');
+  }
+}
+
+function stopStocktakeScanner() {
+  if(stocktakeReader) { stocktakeReader.reset(); stocktakeReader = null; }
+}
+
+function handleStocktakeScan(code) {
+  const product = CACHE.products.find(p => p.barcode === code);
+  if(!product) { toast('بارکۆد نەدۆزرایەوە: ' + code, 'error'); return; }
+  stocktakeCounts[product.id] = (stocktakeCounts[product.id]||0) + 1;
+  renderStocktakeList();
+  toast('✓ ' + product.name + ' (' + stocktakeCounts[product.id] + ')', 'success');
+}
+
+function renderStocktakeList() {
+  const ids = Object.keys(stocktakeCounts);
+  const el = document.getElementById('stocktakeList');
+  if(!ids.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:12.5px;padding:20px">هێشتا هیچ کاڵایەک سکان نەکراوە</div>';
+    return;
+  }
+  el.innerHTML = ids.map(id => {
+    const p = CACHE.products.find(x=>x.id===id);
+    if(!p) return '';
+    const counted = stocktakeCounts[id];
+    const diff = counted - p.qty;
+    const diffColor = diff===0 ? 'var(--success)' : diff>0 ? 'var(--info)' : 'var(--danger)';
+    const diffLabel = diff===0 ? 'وەک خۆی ✓' : diff>0 ? '+'+diff+' زیادە' : diff+' کەمە';
+    return `<div class="barcode-list-item">
+      <div class="barcode-list-info">
+        <div class="barcode-list-name">${p.name}</div>
+        <div class="td-muted" style="font-size:11.5px">سیستەم: ${p.qty} — ژماردن: ${counted}</div>
+      </div>
+      <span class="badge" style="background:${diffColor}20;color:${diffColor}">${diffLabel}</span>
+    </div>`;
+  }).join('');
+}
+
+async function finishStocktake() {
+  stopStocktakeScanner();
+  const ids = Object.keys(stocktakeCounts);
+  if(!ids.length) { toast('هیچ کاڵایەک سکان نەکراوە','error'); return; }
+
+  const diffs = ids.filter(id => {
+    const p = CACHE.products.find(x=>x.id===id);
+    return p && stocktakeCounts[id] !== p.qty;
+  });
+
+  if(!diffs.length) { toast('هیچ کەموکووڕیەک نەدۆزرایەوە — کۆگا ڕاستە','success'); closeModal('stocktakeModal'); return; }
+  if(!confirm(`${diffs.length} کاڵا جیاوازیان هەیە. بڕی سیستەم بگۆڕدرێت بۆ ژمارەی ڕاستەقینەی سکانکراو؟`)) return;
+
+  try {
+    for(const id of diffs) {
+      await sb.from('products').update({ qty: stocktakeCounts[id] }).eq('id', id);
+    }
+    await loadAllData();
+    toast('کۆگا ڕاستکرایەوە','success');
+    closeModal('stocktakeModal');
+    renderInventory();
+  } catch(err) {
+    toast('کێشە: '+(err.message||err),'error');
+  }
+}
 init();
 </script>
 </body>
