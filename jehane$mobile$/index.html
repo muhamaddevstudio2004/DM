@@ -3587,7 +3587,7 @@ function setConnStatus(state) {
 
 // Map DB row (snake_case) <-> App object (camelCase)
 function productFromDb(r) { return { id: r.id, name: r.name, brand: r.brand, model: r.model, category: r.category, buyPrice: Number(r.buy_price), sellPrice: Number(r.sell_price), qty: r.qty, notes: r.notes, barcode: r.barcode || null, imageUrl: r.image_url || null, createdAt: r.created_at }; }
-function saleFromDb(r) { return { id: r.id, productId: r.product_id, productName: r.product_name, unitPrice: Number(r.unit_price), qty: r.qty, total: Number(r.total), profit: Number(r.profit), returned: r.returned||false, returnedAt: r.returned_at, createdAt: r.created_at, createdBy: r.created_by }; }
+function saleFromDb(r) { return { id: r.id, saleGroupId: r.sale_group_id || null, productId: r.product_id, productName: r.product_name, unitPrice: Number(r.unit_price), buyPrice: Number(r.buy_price||0), qty: r.qty, total: Number(r.total), profit: Number(r.profit), returned: r.returned||false, returnedAt: r.returned_at, createdAt: r.created_at, createdBy: r.created_by }; }
 function debtFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, amount: Number(r.amount), paidAmount: Number(r.paid_amount), source: r.source, notes: r.notes, dueDate: r.due_date, status: r.status, createdAt: r.created_at, createdBy: r.created_by }; }
 function repairFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, device: r.device, deviceType: r.device_type, problem: r.problem, cost: Number(r.cost), status: r.status, notes: r.notes, imageUrl: r.image_url || null, createdAt: r.created_at, createdBy: r.created_by }; }
 
@@ -5126,6 +5126,43 @@ function setSalePeriod(el) {
   salePeriod = el.dataset.p;
   renderSales();
 }
+let openSaleGroups = new Set();
+
+function toggleSaleGroup(gid) {
+  if(openSaleGroups.has(gid)) openSaleGroups.delete(gid);
+  else openSaleGroups.add(gid);
+  renderSales();
+}
+
+function groupSalesRows(list) {
+  const map = {};
+  list.forEach(s => {
+    const gid = s.saleGroupId || s.id;
+    if(!map[gid]) map[gid] = [];
+    map[gid].push(s);
+  });
+  return Object.entries(map)
+    .map(([gid, items]) => ({ gid, items }))
+    .sort((a,b)=> new Date(b.items[0].createdAt) - new Date(a.items[0].createdAt));
+}
+
+function printGroupReceipt(gid) {
+  const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid);
+  if(!items.length) return;
+  const total = items.reduce((a,s)=>a+s.total,0);
+  printReceipt(items.map(s=>({
+    product_name: s.productName, qty: s.qty, unit_price: s.unitPrice, total: s.total, profit: s.profit
+  })), total);
+}
+
+function printGroupA4(gid) {
+  const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid);
+  if(!items.length) return;
+  openA4InvoiceModal(items.map(s=>({
+    id: s.id, product_name: s.productName, qty: s.qty, unit_price: s.unitPrice, buy_price: s.buyPrice
+  })), {});
+}
+
 function renderSales() {
   syncSaleGrid();
   const sales = DB.get('sales');
@@ -5142,31 +5179,80 @@ function renderSales() {
 	<div class="stat-card blue"><div class="stat-icon"><i class="ti ti-trending-up"></i></div><div class="stat-value text-mono" style="font-size:20px">${fmtN(totalProf)}</div><div class="stat-label">کۆی قازانج</div></div>
 	<div class="stat-card purple"><div class="stat-icon"><i class="ti ti-shopping-cart"></i></div><div class="stat-value text-mono">${active.length}</div><div class="stat-label">ژمارەی فرۆشتن</div></div>
 	<div class="stat-card yellow"><div class="stat-icon"><i class="ti ti-package"></i></div><div class="stat-value text-mono">${fmtN(totalQty)}</div><div class="stat-label">کۆی کاڵای فرۆشراو</div></div>`;
-  const body = document.getElementById('saleBody');
-  const sorted = [...shown].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  body.innerHTML = sorted.length ? sorted.map((s,i)=>`<tr style="${s.returned?'opacity:0.5':''}">
-  <td data-label="#" class="td-muted">${i+1}</td>
-<td data-label="کاڵا"><b>${s.productName}</b> ${s.returned?'<span class="badge badge-red">گەڕاوەتەوە</span>':''}<div class="td-muted" style="font-size:11.5px">${(()=>{const p=DB.get('products').find(x=>x.id===s.productId);return p&&p.model?p.model:'';})()}</div>
-  <td data-label="بڕ" class="td-muted">${s.qty}</td>
-  <td data-label="نرخی یەکە" class="text-mono td-muted">${fmt(s.unitPrice)}</td>
-  <td data-label="کۆی نرخ" class="text-mono fw-700 color-primary">${fmt(s.total)}</td>
-  <td data-label="قازانج" class="text-mono color-green">${fmt(s.profit)}</td>
-  <td data-label="کارمەند" class="td-muted">${s.createdBy||'—'}</td>
-  <td data-label="بەروار" class="td-muted">${dateStr(s.createdAt)}</td>
-<td data-label="کردار">
-  <div style="display:flex;gap:6px">
-    <button class="btn btn-ghost btn-sm btn-icon" onclick="reprintSale('${s.id}')" title="چاپی خێرا">
-      <i class="ti ti-printer"></i>
-    </button>
-    <button class="btn btn-ghost btn-sm btn-icon" onclick="reprintSaleA4('${s.id}')" title="وەصڵی A4">
-      <i class="ti ti-file-invoice"></i>
-    </button>
-    ${!s.returned ? `<button class="btn btn-danger btn-sm" onclick="returnSale('${s.id}')">گەڕاندنەوە</button>` : ''}
-  </div>
-</td>
 
-</tr>`).join('') : `<tr><td colspan="9"><div class="empty-state"><i class="ti ti-shopping-cart"></i><p>هیچ فرۆشتنێک نیە</p></div></td></tr>`;
+  const body = document.getElementById('saleBody');
+  const groups = groupSalesRows(shown);
+
+  if(!groups.length) {
+    body.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="ti ti-shopping-cart"></i><p>هیچ فرۆشتنێک نیە</p></div></td></tr>`;
+    return;
+  }
+
+  body.innerHTML = groups.map((g, gi) => {
+    const items = g.items;
+    const isMulti = items.length > 1;
+    const isOpen = openSaleGroups.has(g.gid);
+    const groupTotal = items.reduce((a,s)=>a+s.total,0);
+    const groupProfit = items.reduce((a,s)=>a+(s.profit||0),0);
+    const groupQty = items.reduce((a,s)=>a+s.qty,0);
+    const anyReturned = items.some(s=>s.returned);
+    const allReturned = items.every(s=>s.returned);
+    const first = items[0];
+
+    const headerRow = `
+      <tr style="${allReturned?'opacity:0.5':''}${isMulti?';cursor:pointer':''}" ${isMulti?`onclick="toggleSaleGroup('${g.gid}')"`:''}>
+        <td data-label="#" class="td-muted">${gi+1}</td>
+        <td data-label="کاڵا">
+          ${isMulti ? `<i class="ti ti-chevron-${isOpen?'down':'left'}" style="margin-left:6px;color:var(--text3)"></i>` : ''}
+          <b>${isMulti ? `پسووڵە (${items.length} کاڵا)` : first.productName}</b>
+          ${anyReturned ? '<span class="badge badge-red">گەڕاوەتەوە</span>' : ''}
+          ${!isMulti ? `<div class="td-muted" style="font-size:11.5px">${(()=>{const p=DB.get('products').find(x=>x.id===first.productId);return p&&p.model?p.model:'';})()}</div>` : ''}
+        </td>
+        <td data-label="بڕ" class="td-muted">${groupQty}</td>
+        <td data-label="نرخی یەکە" class="text-mono td-muted">${isMulti ? '—' : fmt(first.unitPrice)}</td>
+        <td data-label="کۆی نرخ" class="text-mono fw-700 color-primary">${fmt(groupTotal)}</td>
+        <td data-label="قازانج" class="text-mono color-green">${fmt(groupProfit)}</td>
+        <td data-label="کارمەند" class="td-muted">${first.createdBy||'—'}</td>
+        <td data-label="بەروار" class="td-muted">${dateStr(first.createdAt)}</td>
+        <td data-label="کردار">
+          <div style="display:flex;gap:6px" onclick="event.stopPropagation()">
+            <button class="btn btn-ghost btn-sm btn-icon" onclick="printGroupReceipt('${g.gid}')" title="چاپی خێرا">
+              <i class="ti ti-printer"></i>
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="printGroupA4('${g.gid}')" title="وەصڵی A4" style="padding:6px 10px">
+              <i class="ti ti-file-invoice"></i> A4
+            </button>
+            ${!isMulti && !first.returned ? `<button class="btn btn-danger btn-sm" onclick="returnSale('${first.id}')">گەڕاندنەوە</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+
+    if(!isMulti || !isOpen) return headerRow;
+
+    const detailRows = items.map(s => `
+      <tr style="background:var(--bg);${s.returned?'opacity:0.5':''}">
+        <td data-label="#"></td>
+        <td data-label="کاڵا" style="padding-right:24px">↳ ${s.productName} ${s.returned?'<span class="badge badge-red">گەڕاوەتەوە</span>':''}
+          <div class="td-muted" style="font-size:11.5px">${(()=>{const p=DB.get('products').find(x=>x.id===s.productId);return p&&p.model?p.model:'';})()}</div>
+        </td>
+        <td data-label="بڕ" class="td-muted">${s.qty}</td>
+        <td data-label="نرخی یەکە" class="text-mono td-muted">${fmt(s.unitPrice)}</td>
+        <td data-label="کۆی نرخ" class="text-mono">${fmt(s.total)}</td>
+        <td data-label="قازانج" class="text-mono color-green">${fmt(s.profit)}</td>
+        <td data-label="کارمەند" class="td-muted">—</td>
+        <td data-label="بەروار" class="td-muted">—</td>
+        <td data-label="کردار">
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm btn-icon" onclick="reprintSale('${s.id}')" title="چاپی خێرا"><i class="ti ti-printer"></i></button>
+            ${!s.returned ? `<button class="btn btn-danger btn-sm" onclick="returnSale('${s.id}')">گەڕاندنەوە</button>` : ''}
+          </div>
+        </td>
+      </tr>`).join('');
+
+    return headerRow + detailRows;
+  }).join('');
 }
+
 
 function openSaleModal() {
   saleCart = [];
@@ -5247,8 +5333,11 @@ async function completeSale() {
   const btn = document.getElementById('saleCompleteBtn');
   btn.disabled = true;
   try {
+    const groupId = crypto.randomUUID();
     const saleRows = saleCart.map(item => ({
       id: crypto.randomUUID(),
+      sale_group_id: groupId,
+      saleGroupId: groupId,
       productId: item.id,
       product_id: item.id,
       productName: item.name,
@@ -5256,6 +5345,8 @@ product_name: item.name,
 product_model: item.model||'',
       unit_price: item.unitPrice,
       unitPrice: item.unitPrice,
+      buy_price: item.buyPrice,
+      buyPrice: item.buyPrice,
       qty: item.qty,
       total: item.unitPrice * item.qty,
       profit: (item.unitPrice - item.buyPrice) * item.qty,
@@ -5267,8 +5358,8 @@ product_model: item.model||'',
 if(isOnline) {
  const { error: saleErr } = await sb.from('sales').insert(
     saleRows.map(r => ({
-      id: r.id, product_id: r.product_id, product_name: r.product_name,
-      unit_price: r.unit_price, qty: r.qty, total: r.total,
+      id: r.id, sale_group_id: r.sale_group_id, product_id: r.product_id, product_name: r.product_name,
+      unit_price: r.unit_price, buy_price: r.buy_price, qty: r.qty, total: r.total,
       profit: r.profit, returned: false, created_by: currentUser?.name || null
     }))
   );
@@ -5284,8 +5375,8 @@ if(isOnline) {
 
   // ✅ نوێکردنەوەی cache خۆماڵی — بەبێ loadAllData
   CACHE.sales = [...saleRows.map(r=>({
-    id:r.id, productId:r.product_id, productName:r.product_name,
-    unitPrice:r.unit_price, qty:r.qty, total:r.total, profit:r.profit,
+    id:r.id, saleGroupId:r.sale_group_id, productId:r.product_id, productName:r.product_name,
+    unitPrice:r.unit_price, buyPrice:r.buy_price, qty:r.qty, total:r.total, profit:r.profit,
     returned:false, createdAt:r.createdAt
   })), ...CACHE.sales];
 
@@ -5314,8 +5405,8 @@ if(isOnline) {
 
   for(const row of saleRows) {
     await addToSyncQueue({ type:'insert', table:'sales', data: {
-      id: row.id, product_id: row.product_id, product_name: row.product_name,
-      unit_price: row.unit_price, qty: row.qty, total: row.total,
+      id: row.id, sale_group_id: row.sale_group_id, product_id: row.product_id, product_name: row.product_name,
+      unit_price: row.unit_price, buy_price: row.buy_price, qty: row.qty, total: row.total,
       profit: row.profit, returned: false
     }});
   }
@@ -5335,10 +5426,6 @@ if(isOnline) {
   btn.disabled = false;
   return;
 }
-
-
-
-
 const totalSold = saleCart.reduce((a,i)=>a+i.unitPrice*i.qty,0);
 toast(`فرۆشتن تۆمارکرا — کۆی: ${fmt(totalSold)}`,'success');
 
@@ -5359,8 +5446,6 @@ buildNotifications();
     btn.disabled = false;
   }
 }
-
-
 async function returnSale(id) {
   if(!can('sales','edit')) { toast('دەسەڵاتت نیە بۆ گەڕاندنەوە','error'); return; }
   const s = DB.get('sales').find(x=>x.id===id);
@@ -6590,9 +6675,11 @@ function reprintSaleA4(id) {
   const s = DB.get('sales').find(x=>x.id===id);
   if(!s) return;
   openA4InvoiceModal([{
+    id: s.id,
     product_name: s.productName,
     qty: s.qty,
-    unit_price: s.unitPrice
+    unit_price: s.unitPrice,
+    buy_price: s.buyPrice
   }], {});
 }
 async function toggleAutoPrint() {
@@ -6849,9 +6936,12 @@ async function saveReceiptSettings() {
 }
 function openA4InvoiceModal(items, prefill) {
   a4Items = items.map(i => ({
+    id: i.id || null,
     name: i.product_name || i.productName,
     qty: i.qty,
-    unitPrice: i.unit_price != null ? i.unit_price : i.unitPrice
+    unitPrice: i.unit_price != null ? i.unit_price : i.unitPrice,
+    buyPrice: i.buy_price != null ? i.buy_price : (i.buyPrice || 0),
+    originalUnitPrice: i.unit_price != null ? i.unit_price : i.unitPrice
   }));
   document.getElementById('a4CustomerName').value = (prefill && prefill.customerName) || '';
   document.getElementById('a4CustomerPhone').value = (prefill && prefill.customerPhone) || '';
@@ -6860,7 +6950,6 @@ function openA4InvoiceModal(items, prefill) {
   renderA4ItemsList();
   openModal('invoiceA4Modal');
 }
-
 function renderA4ItemsList() {
   const el = document.getElementById('a4ItemsList');
   el.innerHTML = a4Items.map((item, idx) => `
@@ -6884,7 +6973,44 @@ function updateA4Total() {
   document.getElementById('a4TotalVal').textContent = fmt(total);
 }
 
-function printA4Invoice() {
+async function syncA4PriceChangesToDB() {
+  const changed = a4Items.filter(i => i.id && (i.unitPrice !== i.originalUnitPrice));
+  if(!changed.length) return;
+  for(const item of changed) {
+    const newTotal = item.qty * item.unitPrice;
+    const newProfit = (item.unitPrice - (item.buyPrice||0)) * item.qty;
+    const { error } = await sb.from('sales').update({
+      unit_price: item.unitPrice, total: newTotal, profit: newProfit
+    }).eq('id', item.id);
+    if(error) { console.error('sync price error', error); continue; }
+    const idx = CACHE.sales.findIndex(s=>s.id===item.id);
+    if(idx>-1) {
+      CACHE.sales[idx].unitPrice = item.unitPrice;
+      CACHE.sales[idx].total = newTotal;
+      CACHE.sales[idx].profit = newProfit;
+    }
+    item.originalUnitPrice = item.unitPrice;
+  }
+  renderSales();
+  renderDashboard();
+  toast('نرخی نوێ و قازانج لە سیستەم نوێکرایەوە', 'success');
+}
+
+async function printA4Invoice() {
+  const win = window.open('about:blank', '_blank', 'width=800,height=900');
+  if(!win) { toast('تکایە popup بلۆکەکە غەیری چالاک بکە','error'); return; }
+  try {
+    win.document.write('<div style="font-family:sans-serif;padding:40px;text-align:center;color:#666">چاوەڕوانبە، وەصڵ ئامادە دەکرێت...</div>');
+    win.document.close();
+  } catch(e) {}
+
+  try {
+    await syncA4PriceChangesToDB();
+  } catch(err) {
+    console.error(err);
+    toast('کێشە لە نوێکردنەوەی نرخ: ' + (err.message||err), 'error');
+  }
+
   const store = SETTINGS.store_name || 'Mobile Store';
   const phone = SETTINGS.receipt_phone_text || SETTINGS.store_phone || '';
   const address = SETTINGS.receipt_address_text || SETTINGS.store_address || '';
@@ -6983,16 +7109,12 @@ function printA4Invoice() {
     </body>
     </html>`;
 
-  if(/Mobi|Android/i.test(navigator.userAgent)) {
-    const w = window.open('about:blank');
-    if(w) { w.document.write(html); w.document.close(); }
-  } else {
-    const blob = new Blob([html], {type:'text/html'});
-    const url = URL.createObjectURL(blob);
-    const win = window.open(url, '_blank', 'width=800,height=900');
-    if(!win) { toast('تکایە popup بلۆکەکە غەیری چالاک بکە','error'); return; }
-    setTimeout(()=> URL.revokeObjectURL(url), 5000);
-  }
+  try {
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+  } catch(e) { console.error(e); }
+
   closeModal('invoiceA4Modal');
 }
 function previewReceiptSettings() {
