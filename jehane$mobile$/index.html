@@ -1781,7 +1781,7 @@ kbd {
 		<div class="table-wrap">
 		  <table>
 <thead><tr>
-  <th>#</th><th>کاڵا</th><th>بڕ</th><th>نرخی یەکە</th><th>کۆی نرخ</th><th>قازانج</th><th>کارمەند</th><th>بەروار</th><th>کردار</th>
+  <th>#</th><th>کاڵا</th><th>بڕ</th><th>نرخی یەکە</th><th>کۆی نرخ</th><th>کارمەند</th><th>بەروار</th><th>کردار</th>
 </tr></thead>
 			<tbody id="saleBody"></tbody>
 
@@ -5179,7 +5179,6 @@ function renderSalesTableOnly() {
   const totalQty = active.reduce((a,s)=>a+s.qty,0);
   document.getElementById('saleStats').innerHTML = `
 	<div class="stat-card green"><div class="stat-icon"><i class="ti ti-cash"></i></div><div class="stat-value text-mono" style="font-size:20px">${fmtN(totalRev)}</div><div class="stat-label">کۆی فرۆشتن</div></div>
-	<div class="stat-card blue"><div class="stat-icon"><i class="ti ti-trending-up"></i></div><div class="stat-value text-mono" style="font-size:20px">${fmtN(totalProf)}</div><div class="stat-label">کۆی قازانج</div></div>
 	<div class="stat-card purple"><div class="stat-icon"><i class="ti ti-shopping-cart"></i></div><div class="stat-value text-mono">${active.length}</div><div class="stat-label">ژمارەی فرۆشتن</div></div>
 	<div class="stat-card yellow"><div class="stat-icon"><i class="ti ti-package"></i></div><div class="stat-value text-mono">${fmtN(totalQty)}</div><div class="stat-label">کۆی کاڵای فرۆشراو</div></div>`;
 
@@ -5215,7 +5214,6 @@ const first = items[0];
         <td data-label="بڕ" class="td-muted">${groupQty}</td>
         <td data-label="نرخی یەکە" class="text-mono td-muted">${isMulti ? '—' : fmt(first.unitPrice)}</td>
         <td data-label="کۆی نرخ" class="text-mono fw-700 color-primary">${fmt(groupTotal)}</td>
-        <td data-label="قازانج" class="text-mono color-green">${fmt(groupProfit)}</td>
         <td data-label="کارمەند" class="td-muted">${first.createdBy||'—'}</td>
         <td data-label="بەروار" class="td-muted">${dateStr(first.createdAt)}</td>
         <td data-label="کردار">
@@ -5230,7 +5228,6 @@ const first = items[0];
           </div>
         </td>
       </tr>`;
-
     if(!isMulti || !isOpen) return headerRow;
 
 const detailRows = items.map(s => `
@@ -5242,7 +5239,6 @@ const detailRows = items.map(s => `
         <td data-label="بڕ" class="td-muted">${s.qty}</td>
         <td data-label="نرخی یەکە" class="text-mono td-muted">${fmt(s.unitPrice)}</td>
         <td data-label="کۆی نرخ" class="text-mono">${fmt(s.total)}</td>
-        <td data-label="قازانج" class="text-mono color-green">${fmt(s.profit)}</td>
         <td data-label="کارمەند" class="td-muted">${s.createdBy||'—'}</td>
         <td data-label="بەروار" class="td-muted">${dateStr(s.createdAt)}</td>
         <td data-label="کردار">
@@ -5251,7 +5247,6 @@ const detailRows = items.map(s => `
           </div>
         </td>
       </tr>`).join('');
-
     return headerRow + detailRows;
   }).join('');
 }
