@@ -3588,7 +3588,7 @@ function setConnStatus(state) {
 
 // Map DB row (snake_case) <-> App object (camelCase)
 function productFromDb(r) { return { id: r.id, name: r.name, brand: r.brand, model: r.model, category: r.category, buyPrice: Number(r.buy_price), sellPrice: Number(r.sell_price), qty: r.qty, notes: r.notes, barcode: r.barcode || null, imageUrl: r.image_url || null, createdAt: r.created_at }; }
-function saleFromDb(r) { return { id: r.id, saleGroupId: r.sale_group_id || null, productId: r.product_id, productName: r.product_name, unitPrice: Number(r.unit_price), buyPrice: Number(r.buy_price||0), qty: r.qty, total: Number(r.total), profit: Number(r.profit), returned: r.returned||false, returnedAt: r.returned_at, createdAt: r.created_at, createdBy: r.created_by }; }
+function saleFromDb(r) { return { id: r.id, saleGroupId: r.sale_group_id || null, productId: r.product_id, productName: r.product_name, unitPrice: Number(r.unit_price), buyPrice: Number(r.buy_price||0), qty: r.qty, total: Number(r.total), profit: Number(r.profit), returned: r.returned||false, returnedAt: r.returned_at, customerName: r.customer_name||'', customerPhone: r.customer_phone||'', warranty: r.warranty||'', invoiceNotes: r.invoice_notes||'', createdAt: r.created_at, createdBy: r.created_by }; }
 function debtFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, amount: Number(r.amount), paidAmount: Number(r.paid_amount), source: r.source, notes: r.notes, dueDate: r.due_date, status: r.status, createdAt: r.created_at, createdBy: r.created_by }; }
 function repairFromDb(r) { return { id: r.id, customerName: r.customer_name, phone: r.phone, device: r.device, deviceType: r.device_type, problem: r.problem, cost: Number(r.cost), status: r.status, notes: r.notes, imageUrl: r.image_url || null, createdAt: r.created_at, createdBy: r.created_by }; }
 
@@ -5159,7 +5159,8 @@ function printGroupA4(gid) {
   const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid && !s.returned);
   if(!items.length) { toast('هەموو کاڵاکانی ئەم پسووڵەیە گەڕاونەتەوە','error'); return; }
   openA4InvoiceModal(items.map(s=>({
-    id: s.id, product_name: s.productName, qty: s.qty, unit_price: s.unitPrice, buy_price: s.buyPrice
+    id: s.id, product_name: s.productName, qty: s.qty, unit_price: s.unitPrice, buy_price: s.buyPrice,
+    customerName: s.customerName, customerPhone: s.customerPhone, warranty: s.warranty, invoiceNotes: s.invoiceNotes
   })), {});
 }
 function renderSales() {
@@ -6678,7 +6679,8 @@ function reprintSaleA4(id) {
     product_name: s.productName,
     qty: s.qty,
     unit_price: s.unitPrice,
-    buy_price: s.buyPrice
+    buy_price: s.buyPrice,
+    customerName: s.customerName, customerPhone: s.customerPhone, warranty: s.warranty, invoiceNotes: s.invoiceNotes
   }], {});
 }
 async function toggleAutoPrint() {
@@ -6942,10 +6944,18 @@ function openA4InvoiceModal(items, prefill) {
     buyPrice: i.buy_price != null ? i.buy_price : (i.buyPrice || 0),
     originalUnitPrice: i.unit_price != null ? i.unit_price : i.unitPrice
   }));
-  document.getElementById('a4CustomerName').value = (prefill && prefill.customerName) || '';
-  document.getElementById('a4CustomerPhone').value = (prefill && prefill.customerPhone) || '';
-  document.getElementById('a4Warranty').value = '';
-  document.getElementById('a4Notes').value = '';
+
+  // ئەگەر پێشتر زانیاری کڕیار بۆ ئەم فرۆشتنە پاشەکەوتکرابوو، خۆکارانە پڕی بکەرەوە
+  const savedItem = items.find(i => i.customer_name || i.customerName || i.customer_phone || i.customerPhone);
+  const savedCustomerName = savedItem ? (savedItem.customer_name || savedItem.customerName || '') : '';
+  const savedCustomerPhone = savedItem ? (savedItem.customer_phone || savedItem.customerPhone || '') : '';
+  const savedWarranty = savedItem ? (savedItem.warranty || '') : '';
+  const savedNotes = savedItem ? (savedItem.invoice_notes || savedItem.invoiceNotes || '') : '';
+
+  document.getElementById('a4CustomerName').value = (prefill && prefill.customerName) || savedCustomerName;
+  document.getElementById('a4CustomerPhone').value = (prefill && prefill.customerPhone) || savedCustomerPhone;
+  document.getElementById('a4Warranty').value = savedWarranty;
+  document.getElementById('a4Notes').value = savedNotes;
   renderA4ItemsList();
   openModal('invoiceA4Modal');
 }
@@ -6971,27 +6981,65 @@ function updateA4Total() {
   document.getElementById('a4TotalVal').textContent = fmt(total);
 }
 
+async function syncA4CustomerInfoToDB() {
+  const customerName = document.getElementById('a4CustomerName').value.trim();
+  const customerPhone = document.getElementById('a4CustomerPhone').value.trim();
+  const warranty = document.getElementById('a4Warranty').value.trim();
+  const invoiceNotes = document.getElementById('a4Notes').value.trim();
+
+  const ids = a4Items.filter(i => i.id).map(i => i.id);
+  if(!ids.length) return false;
+
+  const { error } = await sb.from('sales').update({
+    customer_name: customerName || null,
+    customer_phone: customerPhone || null,
+    warranty: warranty || null,
+    invoice_notes: invoiceNotes || null
+  }).in('id', ids);
+
+  if(error) { console.error('sync customer info error', error); return false; }
+
+  ids.forEach(id => {
+    const idx = CACHE.sales.findIndex(s=>s.id===id);
+    if(idx>-1) {
+      CACHE.sales[idx].customerName = customerName;
+      CACHE.sales[idx].customerPhone = customerPhone;
+      CACHE.sales[idx].warranty = warranty;
+      CACHE.sales[idx].invoiceNotes = invoiceNotes;
+    }
+  });
+  return true;
+}
+
 async function syncA4PriceChangesToDB() {
   const changed = a4Items.filter(i => i.id && (i.unitPrice !== i.originalUnitPrice));
-  if(!changed.length) return false;
-  for(const item of changed) {
-    const newTotal = item.qty * item.unitPrice;
-    const newProfit = (item.unitPrice - (item.buyPrice||0)) * item.qty;
-    const { error } = await sb.from('sales').update({
-      unit_price: item.unitPrice, total: newTotal, profit: newProfit
-    }).eq('id', item.id);
-    if(error) { console.error('sync price error', error); continue; }
-    const idx = CACHE.sales.findIndex(s=>s.id===item.id);
-    if(idx>-1) {
-      CACHE.sales[idx].unitPrice = item.unitPrice;
-      CACHE.sales[idx].total = newTotal;
-      CACHE.sales[idx].profit = newProfit;
+  let priceChanged = false;
+  if(changed.length) {
+    for(const item of changed) {
+      const newTotal = item.qty * item.unitPrice;
+      const newProfit = (item.unitPrice - (item.buyPrice||0)) * item.qty;
+      const { error } = await sb.from('sales').update({
+        unit_price: item.unitPrice, total: newTotal, profit: newProfit
+      }).eq('id', item.id);
+      if(error) { console.error('sync price error', error); continue; }
+      const idx = CACHE.sales.findIndex(s=>s.id===item.id);
+      if(idx>-1) {
+        CACHE.sales[idx].unitPrice = item.unitPrice;
+        CACHE.sales[idx].total = newTotal;
+        CACHE.sales[idx].profit = newProfit;
+      }
+      item.originalUnitPrice = item.unitPrice;
     }
-    item.originalUnitPrice = item.unitPrice;
+    priceChanged = true;
   }
-  renderSales();
-  renderDashboard();
-  return true;
+
+  const customerInfoChanged = await syncA4CustomerInfoToDB();
+
+  if(priceChanged || customerInfoChanged) {
+    renderSales();
+    renderDashboard();
+  }
+  return priceChanged || customerInfoChanged;
 }
 async function saveA4Changes() {
   const priceChanged = a4Items.some(i => i.id && i.unitPrice !== i.originalUnitPrice);
