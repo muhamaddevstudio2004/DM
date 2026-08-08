@@ -5132,9 +5132,8 @@ let openSaleGroups = new Set();
 function toggleSaleGroup(gid) {
   if(openSaleGroups.has(gid)) openSaleGroups.delete(gid);
   else openSaleGroups.add(gid);
-  renderSales();
+  renderSalesTableOnly();
 }
-
 function groupSalesRows(list) {
   const map = {};
   list.forEach(s => {
@@ -5148,8 +5147,8 @@ function groupSalesRows(list) {
 }
 
 function printGroupReceipt(gid) {
-  const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid);
-  if(!items.length) return;
+  const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid && !s.returned);
+  if(!items.length) { toast('هەموو کاڵاکانی ئەم پسووڵەیە گەڕاونەتەوە','error'); return; }
   const total = items.reduce((a,s)=>a+s.total,0);
   printReceipt(items.map(s=>({
     product_name: s.productName, qty: s.qty, unit_price: s.unitPrice, total: s.total, profit: s.profit
@@ -5157,17 +5156,19 @@ function printGroupReceipt(gid) {
 }
 
 function printGroupA4(gid) {
-  const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid);
-  if(!items.length) return;
+  const items = DB.get('sales').filter(s => (s.saleGroupId||s.id) === gid && !s.returned);
+  if(!items.length) { toast('هەموو کاڵاکانی ئەم پسووڵەیە گەڕاونەتەوە','error'); return; }
   openA4InvoiceModal(items.map(s=>({
     id: s.id, product_name: s.productName, qty: s.qty, unit_price: s.unitPrice, buy_price: s.buyPrice
   })), {});
 }
-
 function renderSales() {
   syncSaleGrid();
-  const sales = DB.get('sales');
+  renderSalesTableOnly();
+}
 
+function renderSalesTableOnly() {
+  const sales = DB.get('sales');
   const filtered = sales.filter(s=>isInPeriod(s.createdAt,salePeriod));
   const q = document.getElementById('saleSearch').value.toLowerCase();
   const shown = filtered.filter(s=>!q||s.productName.toLowerCase().includes(q));
@@ -5334,7 +5335,8 @@ async function completeSale() {
   const btn = document.getElementById('saleCompleteBtn');
   btn.disabled = true;
   try {
-    const groupId = crypto.randomUUID();
+        const groupId = crypto.randomUUID();
+    const creatorName = currentUser?.name || null;
     const saleRows = saleCart.map(item => ({
       id: crypto.randomUUID(),
       sale_group_id: groupId,
@@ -5352,10 +5354,11 @@ product_model: item.model||'',
       total: item.unitPrice * item.qty,
       profit: (item.unitPrice - item.buyPrice) * item.qty,
       returned: false,
+      createdBy: creatorName,
+      created_by: creatorName,
       createdAt: new Date().toISOString(),
       created_at: new Date().toISOString()
     }));
-
 if(isOnline) {
  const { error: saleErr } = await sb.from('sales').insert(
     saleRows.map(r => ({
@@ -5373,14 +5376,12 @@ if(isOnline) {
     const newQty = Math.max(0, (p?p.qty:0) - item.qty);
     return sb.from('products').update({ qty: newQty }).eq('id', item.id);
   }));
-
-  // ✅ نوێکردنەوەی cache خۆماڵی — بەبێ loadAllData
+    // ✅ نوێکردنەوەی cache خۆماڵی — بەبێ loadAllData
   CACHE.sales = [...saleRows.map(r=>({
     id:r.id, saleGroupId:r.sale_group_id, productId:r.product_id, productName:r.product_name,
     unitPrice:r.unit_price, buyPrice:r.buy_price, qty:r.qty, total:r.total, profit:r.profit,
-    returned:false, createdAt:r.createdAt
+    returned:false, createdBy:r.created_by, createdAt:r.createdAt
   })), ...CACHE.sales];
-
   saleCart.forEach(item=>{
     const p = CACHE.products.find(x=>x.id===item.id);
     if(p) p.qty = Math.max(0, p.qty - item.qty);
@@ -5404,11 +5405,11 @@ if(isOnline) {
     }
   }
 
-  for(const row of saleRows) {
+    for(const row of saleRows) {
     await addToSyncQueue({ type:'insert', table:'sales', data: {
       id: row.id, sale_group_id: row.sale_group_id, product_id: row.product_id, product_name: row.product_name,
       unit_price: row.unit_price, buy_price: row.buy_price, qty: row.qty, total: row.total,
-      profit: row.profit, returned: false
+      profit: row.profit, returned: false, created_by: row.created_by
     }});
   }
   for(const item of saleCart) {
@@ -6992,8 +6993,12 @@ async function syncA4PriceChangesToDB() {
   renderDashboard();
   return true;
 }
-
 async function saveA4Changes() {
+  const priceChanged = a4Items.some(i => i.id && i.unitPrice !== i.originalUnitPrice);
+  if(priceChanged && !can('sales','edit')) {
+    toast('دەسەڵاتت نیە بۆ گۆڕینی نرخی فرۆشتن','error');
+    return;
+  }
   try {
     const hadChanges = await syncA4PriceChangesToDB();
     toast(hadChanges ? 'نرخ و زانیارییەکان پاشەکەوتکران' : 'هیچ گۆڕانکارییەک نەکراوە', hadChanges ? 'success' : 'info');
@@ -7003,8 +7008,12 @@ async function saveA4Changes() {
     toast('کێشە: ' + (err.message||err), 'error');
   }
 }
-
 async function printA4Invoice() {
+  const priceChanged = a4Items.some(i => i.id && i.unitPrice !== i.originalUnitPrice);
+  if(priceChanged && !can('sales','edit')) {
+    toast('دەسەڵاتت نیە بۆ گۆڕینی نرخی فرۆشتن','error');
+    return;
+  }
   const win = window.open('about:blank', '_blank', 'width=800,height=900');
   if(!win) { toast('تکایە popup بلۆکەکە غەیری چالاک بکە','error'); return; }
   try {
@@ -7018,7 +7027,6 @@ async function printA4Invoice() {
     console.error(err);
     toast('کێشە لە نوێکردنەوەی نرخ: ' + (err.message||err), 'error');
   }
-
   const store = SETTINGS.store_name || 'Mobile Store';
   const phone = SETTINGS.receipt_phone_text || SETTINGS.store_phone || '';
   const address = SETTINGS.receipt_address_text || SETTINGS.store_address || '';
