@@ -605,6 +605,13 @@
 			</div>
 		  </div>
 		</div>
+
+		<div class="settings-card">
+		  <div class="settings-card-header"><i class="ri-contrast-2-line"></i><div class="settings-card-title">رەنگی وێبسایت (index.html)</div></div>
+		  <div class="settings-card-body">
+			<div id="theme-swatches" style="display:flex;flex-wrap:wrap;gap:12px"></div>
+		  </div>
+		</div>
 	  </div>
 	</div>
 
@@ -788,7 +795,9 @@ async function initApp(){
   renderReports('daily');
 		startRealtime();
 		checkDbConnection();
+		loadThemeSettings();
 }
+
 
 /* ── REALTIME ── */
 function startRealtime() {
@@ -1897,6 +1906,64 @@ function showToast(msg){
   t.textContent=msg; t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ══════════════════════════════════════════
+   WEBSITE THEME (index.html)
+══════════════════════════════════════════ */
+const THEMES = {
+  orange:  { label:'گەرمی بۆری',   c1:'#E07B2A', c2:'#F5A623' },
+  mono:    { label:'رەش و سپی',    c1:'#1A1A1A', c2:'#4A4A4A' },
+  pink:    { label:'پەمەیی کچانە', c1:'#FF6FA5', c2:'#FFB6C9' },
+  ocean:   { label:'شینی زەریا',   c1:'#1F7A8C', c2:'#3FA7C4' },
+  nature:  { label:'سەوزی سروشت',  c1:'#2E8B57', c2:'#6FCF97' }
+};
+let currentThemeKey = 'orange';
+
+async function loadThemeSettings(){
+  try{
+	const res = await fetch(`${SUPABASE_URL}/rest/v1/store_settings?select=theme&id=eq.1`, {
+	  headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+	});
+	const rows = await res.json();
+	if(rows && rows[0]) currentThemeKey = rows[0].theme;
+  }catch(e){ console.error('Theme load failed:', e); }
+  renderThemeSwatches();
+}
+
+function renderThemeSwatches(){
+  const con = document.getElementById('theme-swatches');
+  if(!con) return;
+  con.innerHTML = Object.entries(THEMES).map(([key,th])=>`
+	<button onclick="selectTheme('${key}')" style="
+	  display:flex;flex-direction:column;align-items:center;gap:8px;
+	  padding:12px;border-radius:14px;
+	  border:2px solid ${currentThemeKey===key ? 'var(--accent)' : 'var(--card-border)'};
+	  background:${currentThemeKey===key ? 'var(--accent-light)' : 'transparent'};
+	  cursor:pointer;min-width:88px">
+	  <span style="width:36px;height:36px;border-radius:50%;
+		background:linear-gradient(135deg,${th.c1},${th.c2});
+		box-shadow:0 2px 8px rgba(0,0,0,0.15)"></span>
+	  <span style="font-size:0.78rem;font-weight:700;color:var(--text-primary)">${th.label}</span>
+	  ${currentThemeKey===key ? '<i class="ri-check-line" style="color:var(--accent)"></i>' : ''}
+	</button>`).join('');
+}
+
+async function selectTheme(key){
+  currentThemeKey = key;
+  renderThemeSwatches();
+  try{
+	const res = await fetch(`${SUPABASE_URL}/rest/v1/store_settings?id=eq.1`, {
+	  method:'PATCH',
+	  headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+	  body: JSON.stringify({ theme:key })
+	});
+	if(!res.ok) throw new Error(await res.text());
+	showToast('ڕەنگی وێبسایت گۆڕدرا ✓');
+  }catch(e){
+	console.error('SAVE THEME ERROR:', e);
+	showToast('هەڵەیەک ڕوویدا لە پاشەکەوتکردن');
+  }
 }
 </script>
 </body>
