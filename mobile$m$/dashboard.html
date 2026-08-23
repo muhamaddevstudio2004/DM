@@ -315,14 +315,17 @@
 	#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(44,24,16,0.45);z-index:199}
 
 /* ── LOCKED PAGE ── */
-.page{position:relative}
 .locked-overlay{
-  position:absolute; inset:0; z-index:50;
+  position:fixed;
+  top:var(--header-h); right:0; bottom:0; left:0;
+  z-index:150;
   background:rgba(253,246,236,0.97);
   backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:16px; text-align:center; padding:40px 24px;
-  border-radius:var(--radius-card);
+}
+@media(min-width:769px){
+  .locked-overlay{ right:var(--sidebar-w); }
 }
 .locked-icon{
   width:76px;height:76px;border-radius:50%;
@@ -625,35 +628,10 @@
 		  </div>
 		</div>
 		<div class="settings-card">
-		  <div class="settings-card-header"><i class="ri-notification-3-line"></i><div class="settings-card-title">ئاگادارکردنەوەکان</div></div>
-		  <div class="settings-card-body">
-			<div class="toggle-row">
-			  <div><div class="toggle-label">ئاگادارکردنەوەی داواکاری نوێ</div><div class="toggle-sub">دەنگی ئاگادارکردنەوە لەکاتی داواکاری نوێدا</div></div>
-			  <button class="toggle on" onclick="this.classList.toggle('on')"></button>
-			</div>
-			<div class="toggle-row">
-			  <div><div class="toggle-label">داواکارییە گواستراوەکان</div><div class="toggle-sub">ئاگادارکردنەوەی گۆڕینی دۆخی داواکاری</div></div>
-			  <button class="toggle" onclick="this.classList.toggle('on')"></button>
-			</div>
-		  </div>
-		</div>
-		<div class="settings-card">
 		  <div class="settings-card-header"><i class="ri-lock-password-line"></i><div class="settings-card-title">گۆڕینی پین کۆد</div></div>
 		  <div class="settings-card-body">
 			<div class="form-group"><label class="form-label">پین کۆدی نوێ (4 ژمارە)</label><input type="password" class="form-input" maxlength="4" placeholder="••••" id="new-pin-input"/></div>
 			<button class="save-btn" onclick="changePin()"><i class="ri-key-line"></i>گۆڕینی پین کۆد</button>
-		  </div>
-		</div>
-		<div class="settings-card">
-		  <div class="settings-card-header"><i class="ri-palette-line"></i><div class="settings-card-title">ڕووکار</div></div>
-		  <div class="settings-card-body">
-			<div class="form-group"><label class="form-label">زمان</label>
-			  <select class="form-input form-select"><option>کوردی سۆرانی</option><option>عربي</option></select>
-			</div>
-			<div class="toggle-row">
-			  <div><div class="toggle-label">دۆخی شەو</div><div class="toggle-sub">گۆڕین بۆ تەما تاریک (بەزوودی)</div></div>
-			  <button class="toggle" onclick="this.classList.toggle('on')"></button>
-			</div>
 		  </div>
 		</div>
 
@@ -693,10 +671,13 @@ const LOCKED_PAGES = {
 };
 
 function applyPageLock(key){
+  // هەموو overlay‌ەکان بشارەوە یەکەم جار (چونکە ئێستا fixed‌ن و دەکەونە سەر یەکتری)
+  document.querySelectorAll('.locked-overlay').forEach(o => o.classList.add('hidden'));
   const overlay = document.getElementById('lock-' + key);
   if(!overlay) return; // ئەم پەیجە قوفڵی نییە
   overlay.classList.toggle('hidden', !LOCKED_PAGES[key]);
 }
+
 
 /* ── PIN ── */
 const CORRECT_PIN = '1991';
