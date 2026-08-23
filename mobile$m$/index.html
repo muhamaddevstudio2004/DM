@@ -1496,7 +1496,106 @@ function updateMenuLanguage() {
 	const SUPABASE_URL = 'https://pysfrnqqwprlpxrmsvsn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5brtUPg07ktIHMI6LeJ8tw_Ujekpaar';
 
+/* ============================================================
+   THEMES — پاڵێتی ڕەنگەکان
+============================================================ */
+const THEMES = {
+  orange: {
+	label: 'گەرمی بۆری', swatch: '#E07B2A',
+	vars: {
+	  '--bg-base':'#FDF6EC','--bg-layer':'#FFFFFF','--bg-section':'#FFF9F2',
+	  '--card-border':'rgba(180,120,40,0.12)','--card-shadow':'0 2px 16px rgba(160,90,20,0.10)',
+	  '--card-shadow-h':'0 8px 32px rgba(160,90,20,0.18)',
+	  '--accent':'#E07B2A','--accent-2':'#F5A623','--accent-light':'#FEF0DC','--accent-glow':'rgba(224,123,42,0.20)',
+	  '--text-primary':'#2C1810','--text-secondary':'#6B3A1F','--text-muted':'#A07050','--text-faint':'#C4A882',
+	  '--header-bg':'rgba(253,246,236,0.90)','--tab-bg':'rgba(253,246,236,0.95)','--divider':'rgba(180,120,40,0.14)'
+	}
+  },
+  mono: {
+	label: 'رەش و سپی', swatch: '#1A1A1A',
+	vars: {
+	  '--bg-base':'#FAFAFA','--bg-layer':'#FFFFFF','--bg-section':'#F2F2F2',
+	  '--card-border':'rgba(0,0,0,0.10)','--card-shadow':'0 2px 16px rgba(0,0,0,0.08)',
+	  '--card-shadow-h':'0 8px 32px rgba(0,0,0,0.16)',
+	  '--accent':'#1A1A1A','--accent-2':'#4A4A4A','--accent-light':'#ECECEC','--accent-glow':'rgba(0,0,0,0.15)',
+	  '--text-primary':'#111111','--text-secondary':'#333333','--text-muted':'#777777','--text-faint':'#AAAAAA',
+	  '--header-bg':'rgba(250,250,250,0.90)','--tab-bg':'rgba(250,250,250,0.95)','--divider':'rgba(0,0,0,0.12)'
+	}
+  },
+  pink: {
+	label: 'پەمەیی کچانە', swatch: '#FF6FA5',
+	vars: {
+	  '--bg-base':'#FFF5F8','--bg-layer':'#FFFFFF','--bg-section':'#FFEEF3',
+	  '--card-border':'rgba(255,111,165,0.15)','--card-shadow':'0 2px 16px rgba(255,111,165,0.12)',
+	  '--card-shadow-h':'0 8px 32px rgba(255,111,165,0.20)',
+	  '--accent':'#FF6FA5','--accent-2':'#FFB6C9','--accent-light':'#FFE3ED','--accent-glow':'rgba(255,111,165,0.22)',
+	  '--text-primary':'#4A1030','--text-secondary':'#8A2F55','--text-muted':'#C77A9B','--text-faint':'#F2B8CB',
+	  '--header-bg':'rgba(255,245,248,0.90)','--tab-bg':'rgba(255,245,248,0.95)','--divider':'rgba(255,111,165,0.16)'
+	}
+  },
+  ocean: {
+	label: 'شینی زەریا', swatch: '#1F7A8C',
+	vars: {
+	  '--bg-base':'#F0F8FB','--bg-layer':'#FFFFFF','--bg-section':'#E8F4F8',
+	  '--card-border':'rgba(31,122,140,0.14)','--card-shadow':'0 2px 16px rgba(31,122,140,0.10)',
+	  '--card-shadow-h':'0 8px 32px rgba(31,122,140,0.18)',
+	  '--accent':'#1F7A8C','--accent-2':'#3FA7C4','--accent-light':'#DCF0F5','--accent-glow':'rgba(31,122,140,0.20)',
+	  '--text-primary':'#0D2B33','--text-secondary':'#1F5A66','--text-muted':'#5C919C','--text-faint':'#A6D3DC',
+	  '--header-bg':'rgba(240,248,251,0.90)','--tab-bg':'rgba(240,248,251,0.95)','--divider':'rgba(31,122,140,0.15)'
+	}
+  },
+  nature: {
+	label: 'سەوزی سروشت', swatch: '#2E8B57',
+	vars: {
+	  '--bg-base':'#F3FAF3','--bg-layer':'#FFFFFF','--bg-section':'#EAF6EA',
+	  '--card-border':'rgba(46,139,87,0.14)','--card-shadow':'0 2px 16px rgba(46,139,87,0.10)',
+	  '--card-shadow-h':'0 8px 32px rgba(46,139,87,0.18)',
+	  '--accent':'#2E8B57','--accent-2':'#6FCF97','--accent-light':'#E1F5E9','--accent-glow':'rgba(46,139,87,0.20)',
+	  '--text-primary':'#123322','--text-secondary':'#215C3E','--text-muted':'#5F9179','--text-faint':'#A9D4BE',
+	  '--header-bg':'rgba(243,250,243,0.90)','--tab-bg':'rgba(243,250,243,0.95)','--divider':'rgba(46,139,87,0.15)'
+	}
+  }
+};
+
+function applyTheme(key) {
+  const theme = THEMES[key] || THEMES.orange;
+  const root = document.documentElement.style;
+  Object.entries(theme.vars).forEach(([k,v]) => root.setProperty(k,v));
+}
+
+async function loadAndApplyTheme() {
+  try {
+	const res = await fetch(`${SUPABASE_URL}/rest/v1/store_settings?select=theme&id=eq.1`, {
+	  headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+	});
+	const rows = await res.json();
+	if (rows && rows[0]) applyTheme(rows[0].theme);
+  } catch(e) { console.error('Theme load failed:', e); }
+}
+
+function startThemeRealtime() {
+  const ws_url = SUPABASE_URL.replace('https://','wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+  let ws;
+  function connect(){
+	ws = new WebSocket(ws_url);
+	ws.onopen = () => {
+	  ws.send(JSON.stringify({ topic:'realtime:public:store_settings', event:'phx_join', payload:{}, ref:'th1' }));
+	  setInterval(() => { if(ws.readyState===1) ws.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'th2'})); }, 30000);
+	};
+	ws.onmessage = (e) => {
+	  const msg = JSON.parse(e.data);
+	  if (msg.topic==='realtime:public:store_settings' && msg.event==='UPDATE') {
+		applyTheme(msg.payload.record.theme);
+	  }
+	};
+	ws.onclose = () => setTimeout(connect, 3000);
+	ws.onerror = () => ws.close();
+  }
+  connect();
+}
+
 async function submitOrder() {
+
   const name    = document.getElementById('f-name').value.trim();
   const phone   = document.getElementById('f-phone').value.trim();
   const address = document.getElementById('f-address').value.trim();
@@ -1727,6 +1826,9 @@ function resetAfterOrder() {
 
 	/* ---- INIT ---- */
 	(async function initMenu(){
+	  await loadAndApplyTheme();
+	  startThemeRealtime();
+
 	  MENU_DATA = await fetchMenuDataOnly();
 	  renderTabs(); buildMenuDOM(); updateCartBar(); renderCartDrawer();
 	  startMenuRealtime();
