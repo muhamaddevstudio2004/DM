@@ -314,8 +314,35 @@
 	/* Sidebar overlay mobile */
 	#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(44,24,16,0.45);z-index:199}
 
-	/* ── TOAST ── */
-	#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+/* ── LOCKED PAGE ── */
+.page{position:relative}
+.locked-overlay{
+  position:absolute; inset:0; z-index:50;
+  background:rgba(253,246,236,0.97);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:16px; text-align:center; padding:40px 24px;
+  border-radius:var(--radius-card);
+}
+.locked-icon{
+  width:76px;height:76px;border-radius:50%;
+  background:var(--accent-light); border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;color:var(--accent);
+}
+.locked-title{font-size:1.15rem;font-weight:800;color:var(--text-primary)}
+.locked-sub{font-size:0.88rem;color:var(--text-muted);max-width:340px;line-height:1.6}
+.locked-btn{
+  margin-top:6px;padding:12px 26px;border-radius:var(--radius-btn);
+  background:#25D366;color:#fff;font-size:0.9rem;font-weight:700;
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  box-shadow:0 3px 12px rgba(37,211,102,0.3);
+  transition:opacity 0.2s;
+}
+.locked-btn:hover{opacity:0.9}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
 	  background:var(--text-primary);color:#fff;padding:10px 20px;border-radius:var(--radius-pill);
 	  font-size:0.88rem;font-weight:700;z-index:9999;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);white-space:nowrap}
 	#toast.show{transform:translateX(-50%) translateY(0)}
@@ -453,7 +480,15 @@
   <div id="content">
 
 	<!-- DASHBOARD -->
-	<div class="page active" id="page-dashboard">
+<div class="page active" id="page-dashboard">
+	  <div class="locked-overlay hidden" id="lock-dashboard">
+		<div class="locked-icon"><i class="ri-lock-2-fill"></i></div>
+		<div class="locked-title">ئەم بەشە قوفڵکراوە</div>
+		<div class="locked-sub">بۆ چالاککردنی داشبۆرد، تکایە پەیوەندیمان پێوە بکە.</div>
+		<a class="locked-btn" href="https://wa.me/9647509628683?text=سڵاو، دەمەوێت داشبۆردەکەم چالاک بکەم" target="_blank">
+		  <i class="ri-whatsapp-line"></i> پەیوەندیمان پێوە بکە
+		</a>
+	  </div>
 	  <div class="stats-grid" id="stats-grid"></div>
 	  <div class="dashboard-grid-2">
 		<div class="chart-card">
@@ -468,7 +503,15 @@
 	</div>
 
 	<!-- ORDERS -->
-	<div class="page" id="page-orders">
+<div class="page" id="page-orders">
+	  <div class="locked-overlay hidden" id="lock-orders">
+		<div class="locked-icon"><i class="ri-lock-2-fill"></i></div>
+		<div class="locked-title">ئەم بەشە قوفڵکراوە</div>
+		<div class="locked-sub">بۆ چالاککردنی بەشی داواکارییەکان، تکایە پەیوەندیمان پێوە بکە.</div>
+		<a class="locked-btn" href="https://wa.me/9647509628683?text=سڵاو، دەمەوێت بەشی داواکارییەکانم چالاک بکەم" target="_blank">
+		  <i class="ri-whatsapp-line"></i> پەیوەندیمان پێوە بکە
+		</a>
+	  </div>
 	  <div class="orders-toolbar">
 		<div class="search-box">
 		  <i class="ri-search-line"></i>
@@ -511,7 +554,15 @@
 
 
 	<!-- REPORTS -->
-	<div class="page" id="page-reports">
+<div class="page" id="page-reports">
+	  <div class="locked-overlay hidden" id="lock-reports">
+		<div class="locked-icon"><i class="ri-lock-2-fill"></i></div>
+		<div class="locked-title">ئەم بەشە قوفڵکراوە</div>
+		<div class="locked-sub">بۆ چالاککردنی بەشی راپۆرتەکان، تکایە پەیوەندیمان پێوە بکە.</div>
+		<a class="locked-btn" href="https://wa.me/9647509628683?text=سڵاو، دەمەوێت بەشی راپۆرتەکانم چالاک بکەم" target="_blank">
+		  <i class="ri-whatsapp-line"></i> پەیوەندیمان پێوە بکە
+		</a>
+	  </div>
 	  <div class="reports-header">
 		<div class="period-tabs" id="period-tabs">
 		  <button class="period-btn active" onclick="setPeriod('daily',this)">رۆژانە</button>
@@ -631,6 +682,21 @@
 
 	const SUPABASE_URL = 'https://pysfrnqqwprlpxrmsvsn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5brtUPg07ktIHMI6LeJ8tw_Ujekpaar';
+
+/* ── PAGE LOCKING ──
+   بۆ چالاککردنی بەشێک، بیگۆڕە بۆ false
+   بۆ نموونە: dashboard:false  واتە داشبۆرد چیتر قوفڵ نییە */
+const LOCKED_PAGES = {
+  dashboard: true,
+  orders: true,
+  reports: true
+};
+
+function applyPageLock(key){
+  const overlay = document.getElementById('lock-' + key);
+  if(!overlay) return; // ئەم پەیجە قوفڵی نییە
+  overlay.classList.toggle('hidden', !LOCKED_PAGES[key]);
+}
 
 /* ── PIN ── */
 const CORRECT_PIN = '1991';
@@ -789,10 +855,13 @@ const orderTotal = o => o.items.reduce((s,i)=>s+i.price*i.qty,0);
 async function initApp(){
   ORDERS = await loadOrders();
   startClock();
-  renderDashboard();
-  renderOrders();
+  applyPageLock('dashboard');
+  applyPageLock('orders');
+  applyPageLock('reports');
+  if(!LOCKED_PAGES.dashboard) renderDashboard();
+  if(!LOCKED_PAGES.orders) renderOrders();
   updateSidebarBadge();
-  renderReports('daily');
+  if(!LOCKED_PAGES.reports) renderReports('daily');
 		startRealtime();
 		checkDbConnection();
 		loadThemeSettings();
@@ -935,6 +1004,8 @@ function showPage(key,navEl){
   document.getElementById('topbar-title').textContent=m.title;
   document.getElementById('topbar-sub').textContent=m.sub;
   closeSidebar();
+  applyPageLock(key);
+  if(LOCKED_PAGES[key]) return; // قوفڵکراوە — داتا بار مەکە
   if(key==='dashboard') renderDashboard();
   if(key==='menu') renderMenuPage();
 		  if(key==='ads') renderAdsPage();
