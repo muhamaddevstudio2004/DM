@@ -1693,13 +1693,13 @@ const itemsText = cart.map(ci => {
 }).join('\n');
 const orderNumberText = orderId ? `#${String(orderId).padStart(4,'0')}` : '';
 const waMsg = encodeURIComponent(
-  `🛵 طلب جديد! ${orderNumberText}\n\n` +
-  `👤 الاسم: ${name}\n` +
-  `📞 الهاتف: ${phone}\n` +
-  `📍 العنوان: ${address}\n` +
-  `${note ? '📝 ملاحظة: ' + note + '\n' : ''}` +
-  `\n📦 الطلبات:\n${itemsText}\n\n` +
-  `💰 المجموع الكلي: ${total.toLocaleString()} IQD`
+  `🛵 داواکاری نوێ! ${orderNumberText}\n\n` +
+  `👤 ناو: ${name}\n` +
+  `📞 ژمارە: ${phone}\n` +
+  `📍 ناونیشان: ${address}\n` +
+  `${note ? '📝 تێبینی: ' + note + '\n' : ''}` +
+  `\n📦 داواکارییەکان:\n${itemsText}\n\n` +
+  `💰 کۆی گشتی: ${total.toLocaleString()} IQD`
 );
 const waWindow = window.open(`https://wa.me/${ownerPhone}?text=${waMsg}`, '_blank');
 setTimeout(() => {
