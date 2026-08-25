@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> Momen Phone</title>
+  <title>LDORA</title>
 
   <!-- Noto Sans Arabic — بەهترین فۆنت بۆ کوردی سۆرانی و عەرەبی -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -385,7 +385,21 @@
 	  font-size: 0.76rem;
 	  color: var(--text-muted);
 	  line-height: 1.5;
+	  display: -webkit-box;
+	  -webkit-line-clamp: 2;
+	  -webkit-box-orient: vertical;
+	  overflow: hidden;
 	}
+	.read-more-btn {
+	  align-self: flex-start;
+	  font-size: 0.74rem;
+	  font-weight: 700;
+	  color: var(--accent);
+	  background: transparent;
+	  padding: 0;
+	  margin-top: -2px;
+	}
+	.read-more-btn:hover { text-decoration: underline; }
 
 	/* Add to Cart button */
 .add-btn {
@@ -822,6 +836,45 @@
 	}
 	.back-menu-btn:hover { opacity: 0.9; }
 
+	/* ITEM DETAIL MODAL */
+	#item-modal-overlay {
+	  position: fixed; inset: 0;
+	  background: rgba(44, 24, 16, 0.40);
+	  z-index: 320;
+	  display: flex; align-items: flex-end; justify-content: center;
+	  opacity: 0;
+	  pointer-events: none;
+	  transition: opacity 0.3s ease;
+	}
+	#item-modal-overlay.open { opacity: 1; pointer-events: all; }
+	#item-modal {
+	  background: var(--bg-layer);
+	  border: 1px solid var(--divider);
+	  border-radius: 24px 24px 0 0;
+	  width: 100%;
+	  max-width: 480px;
+	  max-height: 92dvh;
+	  overflow-y: auto;
+	  padding: 0 0 24px;
+	  transform: translateY(40px);
+	  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+	  box-shadow: 0 -8px 32px rgba(160,90,20,0.12);
+	}
+	#item-modal-overlay.open #item-modal { transform: translateY(0); }
+	.item-modal-img {
+	  width: 100%;
+	  aspect-ratio: 4/3;
+	  object-fit: cover;
+	  background: var(--accent-light);
+	}
+	.item-modal-body { padding: 18px 20px 0; }
+	.item-modal-price { font-size: 1rem; font-weight: 800; color: var(--accent); margin-bottom: 14px; }
+	.item-modal-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+	@media (min-width: 720px) {
+	  #item-modal-overlay { align-items: center; }
+	  #item-modal { border-radius: 24px; max-height: 85dvh; }
+	}
+
 	/* ============================================================
 	   RESPONSIVE
 	============================================================ */
@@ -1152,6 +1205,26 @@
 	</div>
   </div>
 
+  <!-- ITEM DETAIL MODAL -->
+  <div id="item-modal-overlay" onclick="if(event.target===this) closeItemDetail()">
+	<div id="item-modal">
+	  <div class="modal-handle"></div>
+	  <div class="modal-header">
+		<div class="modal-title" id="item-modal-title"></div>
+		<button class="close-modal-btn" onclick="closeItemDetail()"><i class="ri-close-line"></i></button>
+	  </div>
+	  <img class="item-modal-img" id="item-modal-img" src="" alt=""/>
+	  <div class="item-modal-body">
+		<div class="item-modal-price" id="item-modal-price"></div>
+		<div class="item-modal-desc" id="item-modal-desc"></div>
+		<button class="add-btn" id="item-modal-add-btn" onclick="addToCartFromModal()">
+		  <i class="ri-add-circle-line"></i>
+		  <span></span>
+		</button>
+	  </div>
+	</div>
+  </div>
+
   <!-- ============================================================
 	   JAVASCRIPT
   ============================================================ -->
@@ -1170,6 +1243,7 @@ sendLocation:' ناردنی لۆکەیشن', locationCaptured:'لۆکەیشن ن
 		successSub:'زووترین کاتدا بۆت دەگەیێنرێت.', backToMenu:'گەڕانەوە بۆ مینۆ',
 		emptyCart:'سەبەتەکەت بەتاڵە', addItemsFirst:' زیاد بکە',
 		addToCart:'زیادکردن بۆ سەبەتە', added:'زیادکرا', allCategories:'هەموو',
+		readMore:'زیاتر بخوێنەوە',
     waRequired:'پێویستە واتسئەپت هەبێت', waRequiredDesc:'دوای پشتڕاستکردنەوە، داواکارییەکەت بە شێوەی پەیامی واتسئەپ دەنێردرێت.',
 footerTagline:"بەخێربێن بۆ L'DORA — فرۆشتن و دابینکردنی مکیاج، ئاکسسوارات و هەموو پێداویستییەکانی جوانکاری. هەڵبژاردەی کاڵای ڕەسەن، کوالێتی بەرز و نرخێکی گونجاو، بۆ ئەوەی ئەزموونێکی باش و متمانەپێکراو بۆ کڕیارەکانمان دابین بکەین.",
 footerCallUs:'پەیوەندیمان پێوە بکە',
@@ -1199,20 +1273,16 @@ formNote:'ملاحظات',
 formNotePH:'هل لديك أي ملاحظة؟',
 optional:'اختياري',
 sendLocation:'إرسال الموقع', locationCaptured:'تم إرسال الموقع ✓ (اضغط مجددًا للتحديث)',
-
     confirmOrder:'إرسال الطلب',
     successTitle:'تم إرسال طلبك!',
     successSub:'سيتم التواصل معك في أقرب وقت ممكن.',
     backToMenu:'العودة إلى المنتجات',
-
     emptyCart:'لم تقم بإضافة أي منتج',
     addItemsFirst:'أضف منتجًا أولًا',
-
-    addToCart:'إضافة إلى القائمة',
+        addToCart:'إضافة إلى القائمة',
     added:'تمت الإضافة',
-
     allCategories:'جميع الأقسام',
-
+    readMore:'قراءة المزيد',
     waRequired:'واتساب مطلوب',
     waRequiredDesc:'بعد التأكيد، سيتم إرسال طلبك عبر واتساب إلى المتجر.',
 footerTagline:"هلا بيكم بـ L'DORA — متخصصين ببيع وتجهيز المكياج، الإكسسوارات وكل مستلزمات التجميل. نوفرلكم منتجات أصلية بجودة عالية وأسعار مناسبة، ونسعى دائماً نقدم لكم خدمة موثوقة وتجربة تسوق مميزة.",
@@ -1228,6 +1298,7 @@ footerTagline:"هلا بيكم بـ L'DORA — متخصصين ببيع وتجه�
 	let currentLang = 'ku';
 	let cart        = JSON.parse(localStorage.getItem('arash_cart') || '[]');
 	let activeMain='all', activeSub='all';
+	let modalItemId = null;
 	let cardEls     = {};   // item.id -> card DOM element
 	let sectionEls  = {};   // category key -> {sectionEl, gridEl, headingEl}
 	let menuBuilt   = false;
@@ -1424,17 +1495,17 @@ function updateMenuLanguage() {
     const nameEl = card.querySelector('.card-name');
     const descEl = card.querySelector('.card-desc');
     const btnSpan = card.querySelector('.add-btn span');
+    const readMoreEl = card.querySelector('.read-more-btn');
     if (nameEl) nameEl.textContent = item.name[currentLang];
     if (descEl) descEl.textContent = item.desc[currentLang];
     if (btnSpan) btnSpan.textContent = t('addToCart');
+    if (readMoreEl) readMoreEl.textContent = t('readMore');
   });
   Object.entries(sectionEls).forEach(([cat, {headingEl}]) => {
     const item = MENU_DATA.find(m => m.cat === cat);
     if (item && headingEl) headingEl.textContent = item.category[currentLang];
   });
 }
-
-
 	function buildCard(item) {
 	  const card=document.createElement('div');
 	  card.className='menu-card';
@@ -1447,6 +1518,7 @@ function updateMenuLanguage() {
 		<div class="card-body">
 		  <div class="card-name">${item.name[currentLang]}</div>
 		  <div class="card-desc">${item.desc[currentLang]}</div>
+		  ${item.desc[currentLang] ? `<button class="read-more-btn" onclick="openItemDetail(${item.id})">${t('readMore')}</button>` : ''}
 		  <button class="add-btn" id="add-btn-${item.id}" onclick="addToCart(${item.id})">
 			<i class="ri-add-circle-line"></i>
 			<span>${t('addToCart')}</span>
@@ -1549,6 +1621,28 @@ function updateMenuLanguage() {
 		row.innerHTML=`<span>${m.name[currentLang]} × ${ci.qty}</span><span>${fmt(m.price*ci.qty)}</span>`;
 		con.appendChild(row);
 	  });
+	}
+
+	function openItemDetail(id) {
+	  const item = MENU_DATA.find(m=>m.id===id); if(!item) return;
+	  modalItemId = id;
+	  document.getElementById('item-modal-title').textContent = item.name[currentLang];
+	  document.getElementById('item-modal-img').src = item.img;
+	  document.getElementById('item-modal-img').alt = item.name[currentLang];
+	  document.getElementById('item-modal-price').textContent = fmt(item.price);
+	  document.getElementById('item-modal-desc').textContent = item.desc[currentLang];
+	  document.getElementById('item-modal-add-btn').querySelector('span').textContent = t('addToCart');
+	  document.getElementById('item-modal-overlay').classList.add('open');
+	  document.body.style.overflow='hidden';
+	}
+	function closeItemDetail() {
+	  document.getElementById('item-modal-overlay').classList.remove('open');
+	  document.body.style.overflow='';
+	}
+	function addToCartFromModal() {
+	  if(modalItemId==null) return;
+	  addToCart(modalItemId);
+	  closeItemDetail();
 	}
 
 	const SUPABASE_URL = 'https://pysfrnqqwprlpxrmsvsn.supabase.co';
