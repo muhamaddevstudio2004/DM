@@ -1547,18 +1547,21 @@ function renderMenuCategories(){
   document.getElementById('menu-cat-count').textContent = MENU_CATEGORIES.length + ' کەتەگۆری';
   const con = document.getElementById('menu-categories-list');
   if(MENU_CATEGORIES.length===0){ con.innerHTML = `<div class="empty-state"><i class="ri-inbox-line"></i><p>هیچ کەتەگۆریەک نییە</p></div>`; return; }
-  con.innerHTML = MENU_CATEGORIES.map(cat => `
-    <div class="order-card">
-      <div class="order-card-header" style="cursor:default">
-        <span class="order-id">${cat.key}</span>
-        <div class="order-customer">
-          <div class="order-cust-name">${cat.label_ku}</div>
-          <div class="order-cust-phone">${cat.label_ar}</div>
-        </div>
-        <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:44px" onclick="openCategoryForm(${cat.id})"><i class="ri-edit-line"></i></button>
-        <button class="status-btn s-cancelled" style="flex:0 0 auto;min-width:44px" onclick="deleteCategory(${cat.id})"><i class="ri-delete-bin-6-line"></i></button>
-      </div>
-    </div>`).join('');
+  const tops = MENU_CATEGORIES.filter(c=>!c.parent_id);
+  const subsOf = pid => MENU_CATEGORIES.filter(c=>c.parent_id===pid);
+  let html = '';
+  tops.forEach(cat=>{ html += catRow(cat,false); subsOf(cat.id).forEach(sub=>html += catRow(sub,true)); });
+  con.innerHTML = html;
+}
+function catRow(cat,isSub){
+  return `<div class="order-card">
+    <div class="order-card-header" style="cursor:default${isSub?';padding-right:32px':''}">
+      ${isSub?'<i class="ri-corner-down-left-line" style="color:var(--text-faint);transform:scaleX(-1)"></i>':''}
+      <span class="order-id">${cat.key}</span>
+      <div class="order-customer"><div class="order-cust-name">${cat.label_ku}</div><div class="order-cust-phone">${cat.label_ar}</div></div>
+      <button class="status-btn s-preparing" style="flex:0 0 auto;min-width:44px" onclick="openCategoryForm(${cat.id})"><i class="ri-edit-line"></i></button>
+      <button class="status-btn s-cancelled" style="flex:0 0 auto;min-width:44px" onclick="deleteCategory(${cat.id})"><i class="ri-delete-bin-6-line"></i></button>
+    </div></div>`;
 }
 
 function renderMenuItems(){
@@ -1584,23 +1587,39 @@ function closeMenuModal(){ document.getElementById('menu-modal-overlay').classLi
 /* ---- CATEGORY FORM ---- */
 function openCategoryForm(id){
   const cat = id ? MENU_CATEGORIES.find(c=>c.id===id) : null;
+  const parents = MENU_CATEGORIES.filter(c=>!c.parent_id && c.id!==id);
+  const parentOpts = parents.map(p=>`<option value="${p.id}" ${cat&&cat.parent_id===p.id?'selected':''}>${p.label_ku}</option>`).join('');
   document.getElementById('menu-modal-body').innerHTML = `
     <div class="settings-card-title" style="margin-bottom:16px">${cat?'دەستکاریکردنی کەتەگۆری':'کەتەگۆری نوێ'}</div>
     <div class="form-group"><label class="form-label">ناو بە کوردی</label><input type="text" class="form-input" id="cat-label-ku" value="${cat?cat.label_ku:''}"/></div>
-
     <div class="form-group"><label class="form-label">ناو بە عەرەبی</label><input type="text" class="form-input" id="cat-label-ar" value="${cat?cat.label_ar:''}"/></div>
+    <div class="toggle-row" style="margin-bottom:10px">
+      <div class="toggle-label">ژێرکەتەگۆرییە؟</div>
+      <button type="button" class="toggle ${cat&&cat.parent_id?'on':''}" id="cat-sub-toggle" onclick="toggleSubField(this)"></button>
+    </div>
+    <div class="form-group" id="cat-parent-group" style="display:${cat&&cat.parent_id?'flex':'none'}">
+      <label class="form-label">کەتەگۆری باوک</label>
+      <select class="form-input form-select" id="cat-parent">${parentOpts}</select>
+    </div>
     <div style="display:flex;gap:10px;margin-top:6px">
       <button class="save-btn" onclick="saveCategory(${cat?cat.id:'null'})"><i class="ri-save-line"></i>پاشەکەوتکردن</button>
       <button class="save-btn" style="background:var(--card-border);color:var(--text-primary)" onclick="closeMenuModal()">پاشگەزبوونەوە</button>
     </div>`;
   document.getElementById('menu-modal-overlay').classList.remove('hidden');
 }
+function toggleSubField(btn){
+  btn.classList.toggle('on');
+  document.getElementById('cat-parent-group').style.display = btn.classList.contains('on') ? 'flex' : 'none';
+}
 
 async function saveCategory(id){
   const label_ku = document.getElementById('cat-label-ku').value.trim();
   const label_ar = document.getElementById('cat-label-ar').value.trim();
+  const isSub = document.getElementById('cat-sub-toggle').classList.contains('on');
+  const parent_id = isSub ? (document.getElementById('cat-parent').value || null) : null;
   if(!label_ku || !label_ar){ showToast('هەموو خانەکان پڕبکەرەوە'); return; }
-  const body = { label_ku, label_ar };
+  if(isSub && !parent_id){ showToast('کەتەگۆری باوک هەڵبژێرە'); return; }
+  const body = { label_ku, label_ar, parent_id };
   if(!id){ body.key = 'cat_' + Date.now(); }
   try{
     let res;
@@ -1632,8 +1651,6 @@ async function saveCategory(id){
     showToast('هەڵەیەک ڕوویدا');
   }
 }
-
-
 async function deleteCategory(id){
   if(!confirm('دڵنیایت لە سڕینەوەی ئەم کەتەگۆریە؟ کاڵا ناوی دەسڕدرێنەوە.')) return;
   try{
@@ -1649,7 +1666,9 @@ async function deleteCategory(id){
 /* ---- ITEM FORM ---- */
 function openItemForm(id){
   const item = id ? MENU_ITEMS.find(i=>i.id===id) : null;
-  const catOptions = MENU_CATEGORIES.map(c=>`<option value="${c.id}" ${item&&item.category_id===c.id?'selected':''}>${c.label_ku}</option>`).join('');
+  const parentIds = new Set(MENU_CATEGORIES.filter(c=>c.parent_id).map(c=>c.parent_id));
+  const leafCats = MENU_CATEGORIES.filter(c=>!parentIds.has(c.id));
+  const catOptions = leafCats.map(c=>`<option value="${c.id}" ${item&&item.category_id===c.id?'selected':''}>${c.label_ku}</option>`).join('');
   document.getElementById('menu-modal-body').innerHTML = `
     <div class="settings-card-title" style="margin-bottom:16px">${item?'دەستکاریکردنی کاڵا':'کاڵای نوێ'}</div>
     <div class="form-group"><label class="form-label">کەتەگۆری</label><select class="form-input form-select" id="item-cat">${catOptions}</select></div>
