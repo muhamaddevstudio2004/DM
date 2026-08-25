@@ -224,6 +224,9 @@
 	  color: var(--accent);
 	  border-color: rgba(224,123,42,0.2);
 	}
+	#subtabs{display:none;gap:8px;padding:0 18px 10px;overflow-x:auto;scrollbar-width:none}
+	#subtabs::-webkit-scrollbar{display:none}
+	.tab-btn.sub-tab{padding:5px 14px;font-size:0.78rem;opacity:0.85}
 
 	/* ============================================================
 	   MAIN CONTENT
@@ -998,9 +1001,10 @@
   </header>
 
   <!-- CATEGORY TABS -->
-  <div id="tabs-wrapper">
+<div id="tabs-wrapper">
 	<div id="tabs"></div>
-  </div>
+	<div id="subtabs"></div>
+</div>
 
   <!-- ADS BANNER -->
   <div id="ads-banner-wrap">
@@ -1223,7 +1227,7 @@ footerTagline:"هلا بيكم بـ L'DORA — متخصصين ببيع وتجه�
 	/* ---- STATE ---- */
 	let currentLang = 'ku';
 	let cart        = JSON.parse(localStorage.getItem('arash_cart') || '[]');
-	let activeTab   = 'all';
+	let activeMain='all', activeSub='all';
 	let cardEls     = {};   // item.id -> card DOM element
 	let sectionEls  = {};   // category key -> {sectionEl, gridEl, headingEl}
 	let menuBuilt   = false;
@@ -1250,25 +1254,50 @@ footerTagline:"هلا بيكم بـ L'DORA — متخصصين ببيع وتجه�
 	}
 
 	/* ---- TABS ---- */
-	function getCategories() {
+	function getMainCategories() {
 	  const seen=new Set(), cats=[];
-	  MENU_DATA.forEach(i=>{ if(!seen.has(i.cat)){ seen.add(i.cat); cats.push({key:i.cat,label:i.category}); }});
+	  MENU_DATA.forEach(i=>{ if(!seen.has(i.parentCat)){ seen.add(i.parentCat); cats.push({key:i.parentCat,label:i.parentCategory}); }});
 	  return cats;
 	}
-
+	function getSubCategories(parentKey) {
+	  const seen=new Set(), cats=[];
+	  MENU_DATA.filter(i=>i.parentCat===parentKey && i.cat!==i.parentCat).forEach(i=>{
+		if(!seen.has(i.cat)){ seen.add(i.cat); cats.push({key:i.cat,label:i.category}); }
+	  });
+	  return cats;
+	}
 	function renderTabs() {
 	  const w = document.getElementById('tabs');
 	  w.innerHTML = '';
 	  const all = document.createElement('button');
-	  all.className = 'tab-btn'+(activeTab==='all'?' active':'');
+	  all.className = 'tab-btn'+(activeMain==='all'?' active':'');
 	  all.textContent = t('allCategories');
-	  all.onclick = ()=>{ activeTab='all'; renderTabs(); filterMenuDisplay(); };
+	  all.onclick = ()=>{ activeMain='all'; activeSub='all'; renderTabs(); filterMenuDisplay(); };
 	  w.appendChild(all);
-	  getCategories().forEach(({key,label})=>{
+	  getMainCategories().forEach(({key,label})=>{
 		const b = document.createElement('button');
-		b.className = 'tab-btn'+(activeTab===key?' active':'');
+		b.className = 'tab-btn'+(activeMain===key?' active':'');
 		b.textContent = label[currentLang];
-		b.onclick = ()=>{ activeTab=key; renderTabs(); filterMenuDisplay(); };
+		b.onclick = ()=>{ activeMain=key; activeSub='all'; renderTabs(); filterMenuDisplay(); };
+		w.appendChild(b);
+	  });
+	  renderSubTabs();
+	}
+	function renderSubTabs() {
+	  const w = document.getElementById('subtabs');
+	  const subs = activeMain==='all' ? [] : getSubCategories(activeMain);
+	  if(subs.length===0){ w.innerHTML=''; w.style.display='none'; return; }
+	  w.style.display='flex'; w.innerHTML='';
+	  const all = document.createElement('button');
+	  all.className = 'tab-btn sub-tab'+(activeSub==='all'?' active':'');
+	  all.textContent = t('allCategories');
+	  all.onclick = ()=>{ activeSub='all'; renderSubTabs(); filterMenuDisplay(); };
+	  w.appendChild(all);
+	  subs.forEach(({key,label})=>{
+		const b = document.createElement('button');
+		b.className = 'tab-btn sub-tab'+(activeSub===key?' active':'');
+		b.textContent = label[currentLang];
+		b.onclick = ()=>{ activeSub=key; renderSubTabs(); filterMenuDisplay(); };
 		w.appendChild(b);
 	  });
 	}
@@ -1312,11 +1341,13 @@ footerTagline:"هلا بيكم بـ L'DORA — متخصصين ببيع وتجه�
 	/* ---- SHOW/HIDE ONLY — no DOM rebuild, no image reload ---- */
 	function filterMenuDisplay() {
 	  Object.entries(sectionEls).forEach(([cat, {sectionEl}])=>{
-		const show = activeTab==='all' || activeTab===cat;
-		sectionEl.style.display = show ? '' : 'none';
+		const item = MENU_DATA.find(m=>m.cat===cat);
+		if(!item){ sectionEl.style.display='none'; return; }
+		const matchMain = activeMain==='all' || item.parentCat===activeMain;
+		const matchSub  = activeSub==='all'  || item.cat===activeSub;
+		sectionEl.style.display = (matchMain && matchSub) ? '' : 'none';
 	  });
 	}
-
 	/* ---- INCREMENTAL UPDATE — called on realtime changes, keeps existing images ---- */
 	function updateMenuIncremental(newData) {
 	  if (!menuBuilt) {
@@ -1821,26 +1852,30 @@ function resetAfterOrder() {
 	async function fetchMenuDataOnly() {
 	  try {
 		const res = await fetch(
-		  `${SUPABASE_URL}/rest/v1/menu_items?select=*,menu_categories(key,label_ku,label_ar,sort_order)&active=eq.true&order=sort_order.asc`,
+		  `${SUPABASE_URL}/rest/v1/menu_items?select=*,menu_categories(key,label_ku,label_ar,sort_order,parent_id,parent:parent_id(key,label_ku,label_ar))&active=eq.true&order=sort_order.asc`,
 		  { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
 		);
 		const rows = await res.json();
 		return rows
 		  .filter(r => r.menu_categories)
-		  .map(r => ({
-			id: r.id,
-			cat: r.menu_categories.key,
-			catSort: r.menu_categories.sort_order || 0,
-			category: { ku: r.menu_categories.label_ku, ar: r.menu_categories.label_ar },
-			name: { ku: r.name_ku, ar: r.name_ar },
-			desc: { ku: r.desc_ku || '', ar: r.desc_ar || '' },
-			price: r.price,
-			img: r.img || ''
-		  }))
+		  .map(r => {
+			const c = r.menu_categories;
+			return {
+			  id: r.id,
+			  cat: c.key,
+			  catSort: c.sort_order || 0,
+			  category: { ku: c.label_ku, ar: c.label_ar },
+			  parentCat: c.parent ? c.parent.key : c.key,
+			  parentCategory: c.parent ? { ku: c.parent.label_ku, ar: c.parent.label_ar } : { ku: c.label_ku, ar: c.label_ar },
+			  name: { ku: r.name_ku, ar: r.name_ar },
+			  desc: { ku: r.desc_ku || '', ar: r.desc_ar || '' },
+			  price: r.price,
+			  img: r.img || ''
+			};
+		  })
 		  .sort((a,b) => a.catSort - b.catSort);
 	  } catch(e) { console.error('Menu fetch failed:', e); return MENU_DATA; }
 	}
-
 	function startMenuRealtime() {
 	  const ws_url = SUPABASE_URL.replace('https://','wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
 	  let ws;
