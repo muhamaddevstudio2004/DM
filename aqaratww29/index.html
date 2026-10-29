@@ -16,6 +16,9 @@ button,.big{touch-action:manipulation}
 body{margin:0;background:var(--bg);color:#1c2433;font-family:"Noto Sans Arabic","Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;direction:rtl}
 header.top{background:var(--navy);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 20px 12px;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 header.top h1{font-size:18px;margin:0;cursor:pointer}
+#back{display:flex;align-items:center;gap:4px;background:#ffffff22;border:1px solid #ffffff66;color:#fff;border-radius:10px;padding:8px 14px 8px 12px;min-height:40px;font:inherit;font-size:15px;cursor:pointer}
+#back.hide{display:none}
+#back svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 nav button{background:transparent;border:1px solid #ffffff55;color:#fff;border-radius:8px;padding:6px 12px;margin-inline-start:6px;cursor:pointer;font:inherit;font-size:14px}
 nav button:hover{background:#ffffff22}
 main{max-width:1040px;margin:0 auto;padding:20px 14px calc(20px + env(safe-area-inset-bottom))}
@@ -89,14 +92,14 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
  .rc{page-break-after:avoid;break-after:avoid}
  #ov{display:block!important;position:static}
  #rcw{padding:0;display:block}
- #rcs{display:block;position:relative!important;width:158mm!important;height:214mm!important;margin:0 auto!important;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
- #rcs .rc{position:absolute!important;top:0!important;right:0!important;margin:0!important;transform:scale(.83)!important;transform-origin:top right!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #rcs{display:block;position:relative!important;width:175mm!important;height:236mm!important;margin:0 auto!important;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+ #rcs .rc{position:absolute!important;top:0!important;right:0!important;margin:0!important;transform:scale(.92)!important;transform-origin:top right!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
 <body>
 <div id="app">
-<header class="top"><h1 onclick="show('home')">نووسینگەی گونجاو</h1></header>
+<header class="top"><button id="back" class="hide" onclick="show('home')" aria-label="گەڕانەوە"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>گەڕانەوە</button><h1 onclick="show('home')">نووسینگەی گونجاو</h1></header>
 <main>
 <section id="v-home">
 <div class="cards">
@@ -104,7 +107,7 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
 <div class="big" onclick="openForm('rent')"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg><h2>بەکرێدان</h2></div>
 </div></section>
 <section id="v-form" class="hide"><h2 id="fTitle" style="color:var(--navy)"></h2><div id="fBody"></div>
-<div class="bar"><button class="btn" onclick="doPreview()">پێشبینین و چاپ</button><button class="btn alt" onclick="openForm(cur.type)">وەسڵی نوێ</button><button class="btn alt" onclick="show('home')">گەڕانەوە</button></div></section>
+<div class="bar"><button class="btn alt" onclick="doPreview()">بینینی وەسڵ</button><button class="btn red" onclick="doPrint()">چاپکردنی وەسڵ</button></div></section>
 
 </main></div>
 <div id="ov"><div id="rcw"></div><div class="tb"><button class="btn alt" onclick="closeOv()">داخستن</button><button class="btn red" onclick="window.print()">چاپکردنی وەسڵ</button></div></div>
@@ -129,7 +132,7 @@ rent:[['زانیاری وەسڵ',[['date','بەروار','date'],['start','دە�
 const today=()=>new Date().toISOString().slice(0,10);
 const money=(v,c)=>v===''||v==null?'':(Number(v)||0).toLocaleString('en-US')+' '+(c=='USD'?'$':'دینار');
 function toast(m,e){const t=$('#toast');t.textContent=m;t.className=e?'err':'';t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2600)}
-function show(v){['home','form'].forEach(x=>$('#v-'+x).classList.toggle('hide',x!=v));scrollTo(0,0)}
+function show(v){['home','form'].forEach(x=>$('#v-'+x).classList.toggle('hide',x!=v));$('#back').classList.toggle('hide',v=='home');scrollTo(0,0)}
 function nextNum(t){let c=(+localStorage.getItem('kre_c')||0)+1;localStorage.setItem('kre_c',c);return (t=='sale'?'B-':'R-')+String(c).padStart(4,'0')}
 function openForm(t,rec){cur={type:t,id:rec?rec.id:null,num:rec?rec.num:nextNum(t)};const d=rec?rec.data:{date:today()};
 $('#fTitle').textContent=(t=='sale'?'کرین و فرۆشتن':'بەکرێدان')+' — وەسڵی ژمارە '+cur.num;
@@ -144,6 +147,7 @@ function calc(){const g=k=>{const e=$('#f_'+k);return e?Number(e.value)||0:0};
 if(cur.type=='sale')$('#f_rem').value=g('total')-g('paid');else $('#f_rem').value=g('rent')-g('adv')-g('paid')}
 function collect(){const d={};F[cur.type].forEach(s=>s[1].forEach(f=>d[f[0]]=$('#f_'+f[0]).value.trim()));return d}
 function doPreview(){const d=collect();showOv(cur.type,cur.num,d)}
+function doPrint(){doPreview();setTimeout(()=>window.print(),300)}
 function showOv(t,n,d){$('#rcw').innerHTML='<div id="rcs">'+tpl(t,n,d)+'</div>';$('#ov').style.display='block';fit()}
 function closeOv(){$('#ov').style.display='none'}
 function fit(){const c=$('#rcs'),e=c&&c.firstChild;if(!e)return;const s=Math.min(1,(innerWidth-16)/718),H=e.offsetHeight;e.style.transformOrigin='top right';e.style.transform='scale('+s+')';c.style.width=718*s+'px';c.style.height=H*s+'px'}
