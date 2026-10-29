@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>وەسڵی عەقار</title>
+<style>
+@page{size:A4 portrait;margin:10mm}
+:root{--navy:#14264a;--navy2:#1f3a6e;--bg:#f2f4f8;--line:#d9dee8;--red:#c0392b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#1c2433;font-family:"Noto Sans Arabic","Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;direction:rtl}
+header.top{background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+header.top h1{font-size:18px;margin:0;cursor:pointer}
+nav button{background:transparent;border:1px solid #ffffff55;color:#fff;border-radius:8px;padding:6px 12px;margin-inline-start:6px;cursor:pointer;font:inherit;font-size:14px}
+nav button:hover{background:#ffffff22}
+main{max-width:980px;margin:0 auto;padding:20px 14px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:30px}
+.big{background:#fff;border-radius:16px;box-shadow:0 4px 16px #14264a1a;padding:44px 20px;text-align:center;cursor:pointer;border:1px solid var(--line);transition:.15s}
+.big:hover{transform:translateY(-3px);border-color:var(--navy2)}
+.big svg{width:78px;height:78px;stroke:var(--navy);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.big h2{margin:14px 0 0;color:var(--navy);font-size:24px}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 8px #14264a14;padding:16px;margin-bottom:14px;border:1px solid var(--line)}
+.card h3{margin:0 0 10px;color:var(--navy);font-size:16px;border-bottom:2px solid var(--bg);padding-bottom:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+label{display:block;font-size:13px;color:#4a5568}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;font:inherit;margin-top:3px;background:#fff}
+input[readonly]{background:#eef1f6;font-weight:700}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:10px 18px;cursor:pointer;font:inherit}
+.btn.alt{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.red{background:var(--red)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+table.h{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
+table.h th{background:var(--navy);color:#fff;padding:8px}
+table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
+.tw{overflow-x:auto;border-radius:10px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:8px;display:none;z-index:99}
+#toast.err{background:var(--red)}
+#ov{position:fixed;inset:0;background:#7b8496;overflow:auto;z-index:50;display:none}
+#ov .tb{position:sticky;top:0;background:var(--navy);padding:10px;display:flex;gap:8px;flex-wrap:wrap;z-index:2}
+#rcw{display:flex;justify-content:center;padding:10px}
+/* receipt */
+.rc{width:190mm;height:276mm;background:#fff;color:#000;direction:rtl;font-size:10.5pt;padding:3mm;display:flex;flex-direction:column;gap:1.5mm;overflow:hidden;page-break-inside:avoid}
+.rc.sale{border:2px solid #d9534f}
+.rc.rent{border:1px solid #999}
+.hd{border:1.5px solid #000;display:flex;align-items:center;gap:3mm;padding:2mm;border-radius:2px}
+.hd .t{flex:1;text-align:center;line-height:1.35}
+.hd .nm{font-size:19pt;font-weight:800;color:#1a2a6c}
+.hd .ph{font-size:13pt;font-weight:800;color:#a01010;direction:ltr}
+.logo{width:26mm;height:19mm;object-fit:contain}
+.rw{display:flex;justify-content:space-between;align-items:center;gap:3mm}
+.no{background:#1a2a6c;color:#fff;padding:1mm 5mm;font-weight:700;direction:ltr;border-radius:3px}
+.ttl{border:1.5px solid #1a2a6c;border-radius:5px;background:#e6e9f5;padding:1mm 6mm;font-weight:800;color:#1a2a6c;display:inline-block}
+.c{text-align:center}
+.two{display:flex;gap:4mm}
+.bx{flex:1;border:1.5px solid #d9534f;padding:2mm 3mm;line-height:1.75}
+.v{display:inline-block;border-bottom:1px dotted #000;padding:0 2mm;text-align:center;font-weight:700;min-width:25mm}
+.cl{flex:1;min-height:0;line-height:1.8;margin:0;padding:0;list-style:none;font-weight:600}
+.cl li{margin-bottom:0}.cl li:empty{display:none}.sg,.nt,.hd,.rw,.two{flex-shrink:0}
+.sg{width:100%;border-collapse:collapse;table-layout:fixed}
+.sg th,.sg td{border:1px solid #c0392b;text-align:center;padding:1.5mm}
+.sale .sg th{background:#f2b1ab;color:#1a2a6c}
+.rent .sg th{color:#c0392b;font-weight:800}
+.sg td{height:20mm}
+.nt{line-height:1.9}
+.nt i{display:block;border-bottom:1px dotted #000;height:5mm}
+.hide{display:none}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+@media print{
+ #app,#toast,#ov .tb{display:none!important}
+ body,#ov{background:#fff;position:static;overflow:visible}
+ #ov{display:block!important;position:static}
+ #rcw{padding:0;zoom:1!important;display:block}
+ .rc{margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="top"><h1 onclick="show('home')">نووسینگەی گونجاو</h1></header>
+<main>
+<section id="v-home">
+<div class="cards">
+<div class="big" onclick="openForm('sale')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/></svg><h2>کرین و فرۆشتن</h2></div>
+<div class="big" onclick="openForm('rent')"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg><h2>بەکرێدان</h2></div>
+</div></section>
+<section id="v-form" class="hide"><h2 id="fTitle" style="color:var(--navy)"></h2><div id="fBody"></div>
+<div class="bar"><button class="btn" onclick="doPreview()">پێشبینین و چاپ</button><button class="btn alt" onclick="openForm(cur.type)">وەسڵی نوێ</button><button class="btn alt" onclick="show('home')">گەڕانەوە</button></div></section>
+
+</main></div>
+<div id="ov"><div class="tb"><button class="btn alt" onclick="closeOv()">داخستن</button><button class="btn red" onclick="window.print()">چاپکردنی وەسڵ</button></div><div id="rcw"></div></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),LS=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let cur={type:null,id:null,num:''};
+const PH='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80"><rect width="100" height="80" fill="#e6e9f5"/><path d="M15 42L50 12l35 30M24 40v28h52V40M42 68V50h16v18" fill="none" stroke="#1a2a6c" stroke-width="4"/></svg>');
+const PT=['خانوو','زەوی','دوکان','شوقە','هی تر'];
+const F={
+sale:[['زانیاری وەسڵ',[['date','بەروار','date'],['kind','جۆری مامەڵە','sel',['فرۆشتن','کڕین']]]],
+['فرۆشیار',[['sName','ناوی سیانی'],['sId','ژمارەی ناسنامە'],['sPhone','مۆبایل'],['sAddr','دانیشتووی']]],
+['کڕیار',[['bName','ناوی سیانی'],['bId','ژمارەی ناسنامە'],['bPhone','مۆبایل'],['bAddr','دانیشتووی']]],
+['موڵک',[['pt','جۆری موڵک','sel',PT],['pAddr','ناونیشانی تەواو / گەڕەک'],['plot','ژمارەی پیوانە / تۆمار'],['area','ڕووبەر (م²)','num'],['pDet','وردەکاری زیاتر']]],
+['دارایی',[['cur','دراو','sel',['IQD','USD']],['total','نرخی گشتی','num'],['paid','بڕی دراو (پێشەکی)','num'],['rem','بڕی ماوە','rem'],['method','شێوازی پارەدان'],['notes','تێبینی','ta']]]],
+rent:[['زانیاری وەسڵ',[['date','بەروار','date'],['start','دەستپێکی گرێبەست','date'],['end','کۆتایی گرێبەست','date']]],
+['خاوەن موڵک',[['oName','ناوی سیانی'],['oId','ژمارەی ناسنامە'],['oPhone','مۆبایل'],['oAddr','دانیشتووی']]],
+['کرێچی',[['tName','ناوی سیانی'],['tId','ژمارەی ناسنامە'],['tPhone','مۆبایل'],['tAddr','دانیشتووی']]],
+['موڵک',[['pt','جۆری موڵک','sel',PT],['pAddr','ناونیشانی تەواو / گەڕەک'],['area','ڕووبەر (م²)','num'],['unit','نهۆم / ژمارەی یەکە']]],
+['کرێ و پارەدان',[['cur','دراو','sel',['IQD','USD']],['rent','بڕی کرێ','num'],['period','ماوەی کرێ','sel',['مانگانە','هەر شەش مانگ','ساڵانە']],['adv','پێشەکی','num'],['paid','بڕی دراو','num'],['rem','بڕی ماوە (کرێ − پێشەکی − دراو)','rem'],['next','بەرواری پارەدانی داهاتوو','date'],['dep','ئەمانەت (تأمین)','num'],['notes','مەرج و تێبینی','ta']]]]};
+const today=()=>new Date().toISOString().slice(0,10);
+const money=(v,c)=>v===''||v==null?'':(Number(v)||0).toLocaleString('en-US')+' '+(c=='USD'?'$':'دینار');
+function toast(m,e){const t=$('#toast');t.textContent=m;t.className=e?'err':'';t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2600)}
+function show(v){['home','form'].forEach(x=>$('#v-'+x).classList.toggle('hide',x!=v));scrollTo(0,0)}
+function nextNum(t){let c=(+localStorage.getItem('kre_c')||0)+1;localStorage.setItem('kre_c',c);return (t=='sale'?'B-':'R-')+String(c).padStart(4,'0')}
+function openForm(t,rec){cur={type:t,id:rec?rec.id:null,num:rec?rec.num:nextNum(t)};const d=rec?rec.data:{date:today()};
+$('#fTitle').textContent=(t=='sale'?'کرین و فرۆشتن':'بەکرێدان')+' — وەسڵی ژمارە '+cur.num;
+$('#fBody').innerHTML=F[t].map(s=>`<div class="card"><h3>${s[0]}</h3><div class="grid">`+s[1].map(f=>{const[k,l,ty,o]=f,id='f_'+k;let x;
+if(ty=='sel')x=`<select id="${id}">${o.map(a=>`<option>${a}</option>`).join('')}</select>`;
+else if(ty=='ta')x=`<textarea id="${id}" rows="2"></textarea>`;
+else x=`<input id="${id}" type="${ty=='num'?'number':ty=='date'?'date':'text'}" ${ty=='rem'?'readonly':''} ${ty=='num'?'min="0" step="any"':''}>`;
+return `<label>${l}${x}</label>`}).join('')+`</div></div>`).join('');
+F[t].forEach(s=>s[1].forEach(f=>{const e=$('#f_'+f[0]);if(d[f[0]]!=null)e.value=d[f[0]];e.addEventListener('input',calc)}));
+calc();show('form')}
+function calc(){const g=k=>{const e=$('#f_'+k);return e?Number(e.value)||0:0};
+if(cur.type=='sale')$('#f_rem').value=g('total')-g('paid');else $('#f_rem').value=g('rent')-g('adv')-g('paid')}
+function collect(){const d={};F[cur.type].forEach(s=>s[1].forEach(f=>d[f[0]]=$('#f_'+f[0]).value.trim()));return d}
+function doPreview(){const d=collect();showOv(cur.type,cur.num,d)}
+function showOv(t,n,d){$('#rcw').innerHTML=tpl(t,n,d);$('#ov').style.display='block';fit()}
+function closeOv(){$('#ov').style.display='none'}
+function fit(){const w=$('#rcw'),s=Math.min(1,(innerWidth-20)/718);w.style.zoom=s}
+addEventListener('resize',fit);
+const v=(x,m)=>`<span class="v" style="min-width:${m||25}mm">${esc(x)||'&nbsp;'}</span>`;
+function hdr(){const L=`<img class="logo" src="${PH}">`;return `<div class="hd">${L}<div class="t"><div class="nm">نووسینگەی گونجاو</div><div>بۆ بەکرێدان خانوو دوکان و باڵەخانە</div><div>ڕێبوار خۆشناو - یونس سماقولی</div><div class="ph">0750 465 4895 - 0750 474 5593</div><div>هەولێر: 20م - 121 گولان نزیک بەرێوبەرایەتی کەم ئەندامان</div></div>${L}</div>`}
+const sig=h=>`<table class="sg"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr><tr>${h.map(()=>'<td></td>').join('')}</tr></table>`;
+const nt=n=>`<div class="nt"><b>تێبینی :</b> ${n?esc(n):''}<i></i><i></i></div>`;
+function tpl(t,n,d){const c=d.cur;
+if(t=='sale')return `<div class="rc sale">${hdr()}
+<div class="rw"><span class="no">No. ${esc(n)}</span><span class="ttl">ڕێکەوتن نامەی کڕین و فرۆشتن</span><span>بەروار: ${v(d.date,28)}</span></div>
+<div class="two"><div class="bx"><b>یەکەم ( فرۆشیار )</b><br>ناو: ${v(d.sName,45)}<br>ژمارەی ناسنامە: ${v(d.sId,30)}<br>مۆبایل: ${v(d.sPhone,40)}<br>دانیشتووی: ${v(d.sAddr,40)}</div>
+<div class="bx"><b>دووەم ( کڕیار )</b><br>ناو: ${v(d.bName,45)}<br>ژمارەی ناسنامە: ${v(d.bId,30)}<br>مۆبایل: ${v(d.bPhone,40)}<br>دانیشتووی: ${v(d.bAddr,40)}</div></div>
+<div class="c"><span class="ttl">هەردوولایەن ڕێکەوتن لەسەر ئەم خاڵانەی خوارەوە</span></div>
+<ul class="cl">
+<li>١- دان پێنانی فرۆشیار بەفرۆشتنی (ئەم موڵکە)ی دیاری کراوە بەم شێوەیە. مامەڵە: ${v(d.kind,20)}</li>
+<li>جۆری موڵک: ${v(d.pt,25)} گەڕەک: ${v(d.pAddr,60)} ژمارە/پیوانە: ${v(d.plot,25)} ڕووبەر: ${v(d.area?d.area+' م²':'',20)}</li>
+<li>${esc(d.pDet)?'وردەکاری: '+v(d.pDet,100):''}</li>
+<li>٢- نرخی فرۆشتن کە لەسەری ڕێکەوتوون بریتی یە لە: ${v(money(d.total,c),50)}</li>
+<li>٣- فرۆشیار دانی پێدەنێ بەوەرگرتنی پێشەکی (مقدمە)ی: ${v(money(d.paid,c),50)}</li>
+<li>٤- باقی پارەی ماوە: ${v(money(d.rem,c),50)}</li>
+<li>٥- کۆی گشتی پارەی واصل کراو: ${v(money(d.paid,c),50)} شێوازی پارەدان: ${v(d.method,30)}</li>
+<li>٦- پەشیمان بوونەوە لە لەهەر لایەنێک ڕووبدات مەرجی بڕی تەنها بدات بەلایەنی بەرامبەر بەبێ گەڕانەوە بۆ دادگا.</li>
+<li>٧- فرۆشیار بەڵێن دەدات کە موڵکی فرۆشراو بدات بەکڕیار لە بەرواری: ${v(d.date,28)} و ئەو ماوەی کە تێیەدەبێت لە بەرواری فرۆشتن تا بەرواری (تەسلیم) کردن دادەنرێت بەبێ کرێ.</li>
+<li>٨- هەموو خەرجی و ڕەسمی کرین کە تایبەتن بە بەرێوەبەرایەتی تۆمار لەئەستۆی کڕیارە.</li>
+<li>٩- کڕیار و فرۆشیار دەبێت (١٪)ی نرخەکە بدات بەنووسینگە پاش واژۆکردنی پارەی نووسینگە ناگەڕێتەوە.</li></ul>
+${sig(['ناو و نیمزای فرۆشیار','ناو و نیمزای کڕیار','شاهید','شاهید'])}${nt(d.notes)}</div>`;
+return `<div class="rc rent">${hdr()}
+<div class="rw"><span class="no">No. ${esc(n)}</span><span class="ttl">ڕێکەوتن نامەی بە کرێدان</span><span>بەروار: ${v(d.date,28)}</span></div>
+<div>لایەنی یەکەم / خاوەن موڵک: ${v(d.oName,50)} ناسنامە: ${v(d.oId,25)}<br>مۆبایل: ${v(d.oPhone,35)} دانیشتووی: ${v(d.oAddr,50)}</div>
+<div>لایەنی دووەم / کرێچی: ${v(d.tName,50)} ناسنامە: ${v(d.tId,25)}<br>مۆبایل: ${v(d.tPhone,35)} دانیشتووی: ${v(d.tAddr,50)}</div>
+<div class="c"><span class="ttl">لەسەر ئەم خاڵانەی خوارەوە ڕێکەوتن</span></div>
+<ul class="cl">
+<li><b>یەکەم:</b> من لایەنی یەکەم خاوەن موڵک ئەم ${v(d.pt,18)} ژمارەی یەکە/نهۆم ${v(d.unit,18)} ڕووبەر ${v(d.area?d.area+' م²':'',16)} لە ${v(d.pAddr,55)}</li>
+<li>داومە بە لایەنی دووەم لە بەرواری ${v(d.start,28)} تاوەکو ${v(d.end,28)} بەبڕی ${v(money(d.rent,c),38)} (${esc(d.period)})</li>
+<li><b>دووەم:</b> من لایەنی دووەم ئەم موڵکەم لە لایەنی یەکەم بەکرێ گرتووە بەپێی ماوەی سەرەوە.</li>
+<li><b>سێیەم:</b> کرێی ناو و کارەبا دەکەوێتە ئەستۆی لایەنی دووەم.</li>
+<li><b>چوارەم:</b> باجی دارایی دەکەوێتە ئەستۆی لایەنی یەکەم. پێشەکی: ${v(money(d.adv,c),32)} ئەمانەت: ${v(money(d.dep,c),32)}</li>
+<li><b>پێنجەم:</b> بڕی دراو: ${v(money(d.paid,c),32)} ماوە: ${v(money(d.rem,c),32)} پارەدانی داهاتوو: ${v(d.next,28)}</li>
+<li><b>شەشەم:</b> لە دوای کۆتایی ماوە لایەنی دووەم پابەندە بە چۆڵکردنی موڵکەکە، ئەگەر چۆڵی نەکرد بڕی ڕۆژانە لەسەری حیسابە.</li>
+<li><b>حەوتەم:</b> لەسەر کرێچی پێویستە موڵکەکە وەک خۆی بگەڕێنێتەوە بۆ خاوەن موڵک بەبێ هیچ کەموکورتییەک لە دوای چۆڵکردن وەک پاراستنی جام و گلۆپ و دەرگا.</li>
+<li><b>هەشتەم:</b> ئەم ڕێکەوتن نامەیە لە بەرواری ${v(d.date,28)} مۆر کرا.</li></ul>
+${sig(['لایەنی یەکەم / خاوەن موڵک','شاهید','شاهید','لایەنی دووەم / کرێچی'])}${nt(d.notes)}</div>`}
+</script>
+</body>
+</html>
+
