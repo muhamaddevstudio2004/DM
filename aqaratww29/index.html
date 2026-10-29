@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#14264a"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>وەسڵی عەقارات گونجاو</title>
+<title>وەسڵی عەقار</title>
 <style>
 @page{margin:8mm}
 :root{--navy:#14264a;--navy2:#1f3a6e;--bg:#f2f4f8;--line:#d9dee8;--red:#c0392b}
@@ -62,27 +62,27 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
 #ov .tb{position:sticky;bottom:0;background:var(--navy);padding:10px 10px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;flex-wrap:wrap;z-index:2}
 #rcw{display:flex;justify-content:center;padding:8px 0 calc(16px + env(safe-area-inset-bottom))}#rcs{position:relative;flex:none}#rcs .rc{position:absolute;top:0;right:0}
 /* receipt */
-.rc{width:190mm;height:256mm;background:#fff;color:#000;direction:rtl;font-size:10.5pt;padding:3mm;display:flex;flex-direction:column;gap:1.5mm;overflow:hidden;page-break-inside:avoid}
-.rc.sale{border:2px solid #d9534f}
-.rc.rent{border:1px solid #999}
-.hd{border:1.5px solid #000;display:flex;align-items:center;gap:3mm;padding:2mm;border-radius:2px}
+.rc{width:190mm;height:256mm;background:#f8f1e2;color:#000;direction:rtl;font-size:10.5pt;padding:3mm;display:flex;flex-direction:column;gap:1.5mm;overflow:hidden;page-break-inside:avoid}
+.rc.sale{border:2px solid #a4472f}
+.rc.rent{border:1.5px solid #8a6f4d}
+.hd{border:1.5px solid #5a3a26;display:flex;align-items:center;gap:3mm;padding:2mm;border-radius:2px}
 .hd .t{flex:1;text-align:center;line-height:1.35}
-.hd .nm{font-size:19pt;font-weight:800;color:#1a2a6c}
-.hd .ph{font-size:13pt;font-weight:800;color:#a01010;direction:ltr}
+.hd .nm{font-size:19pt;font-weight:800;color:#5a3a26}
+.hd .ph{font-size:13pt;font-weight:800;color:#8c2f1f;direction:ltr}
 .logo{width:26mm;height:19mm;object-fit:contain}
 .rw{display:flex;justify-content:space-between;align-items:center;gap:3mm}
-.no{background:#1a2a6c;color:#fff;padding:1mm 5mm;font-weight:700;direction:ltr;border-radius:3px}
-.ttl{border:1.5px solid #1a2a6c;border-radius:5px;background:#e6e9f5;padding:1mm 6mm;font-weight:800;color:#1a2a6c;display:inline-block}
+.no{background:#5a3a26;color:#fff;padding:1mm 5mm;font-weight:700;direction:ltr;border-radius:3px}
+.ttl{border:1.5px solid #5a3a26;border-radius:5px;background:#eadcc0;padding:1mm 6mm;font-weight:800;color:#5a3a26;display:inline-block}
 .c{text-align:center}
 .two{display:flex;gap:4mm}
-.bx{flex:1;border:1.5px solid #d9534f;padding:2mm 3mm;line-height:1.75}
+.bx{flex:1;border:1.5px solid #a4472f;padding:2mm 3mm;line-height:1.75}
 .v{display:inline-block;border-bottom:1px dotted #000;padding:0 2mm;text-align:center;font-weight:700;min-width:25mm}
 .cl{flex:1;min-height:0;line-height:1.8;margin:0;padding:0;list-style:none;font-weight:600}
 .cl li{margin-bottom:0}.cl li:empty{display:none}.sg,.nt,.hd,.rw,.two{flex-shrink:0}
 .sg{width:100%;border-collapse:collapse;table-layout:fixed}
-.sg th,.sg td{border:1px solid #c0392b;text-align:center;padding:1.5mm}
-.sale .sg th{background:#f2b1ab;color:#1a2a6c}
-.rent .sg th{color:#c0392b;font-weight:800}
+.sg th,.sg td{border:1px solid #a4472f;text-align:center;padding:1.5mm}
+.sale .sg th{background:#e6c7b0;color:#5a3a26}
+.rent .sg th{color:#a4472f;font-weight:800}
 .sg td{height:20mm}
 .nt{line-height:1.9}
 .nt i{display:block;border-bottom:1px dotted #000;height:5mm}
@@ -96,7 +96,7 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
  #ov{display:block!important;position:static}
  #rcw{padding:0;display:block}
  #rcs{display:block;position:relative!important;width:175mm!important;height:236mm!important;margin:0 auto!important;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
- #rcs .rc{position:absolute!important;top:0!important;right:0!important;margin:0!important;transform:scale(.92)!important;transform-origin:top right!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #rcs .rc{background:transparent!important;position:absolute!important;top:0!important;right:0!important;margin:0!important;transform:scale(.92)!important;transform-origin:top right!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
@@ -121,7 +121,12 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
 const $=s=>document.querySelector(s),LS=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let cur={type:null,id:null,num:''};
-const PH='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80"><rect width="100" height="80" fill="#e6e9f5"/><path d="M15 42L50 12l35 30M24 40v28h52V40M42 68V50h16v18" fill="none" stroke="#1a2a6c" stroke-width="4"/></svg>');
+/* ===== لۆگۆکان: لێرە بیگۆڕە =====
+   LOGO_R = لۆگۆی لای ڕاست ، LOGO_L = لۆگۆی لای چەپ
+   دەتوانیت ناوی فایل (logo1.png) یان بەستەر یان base64 دابنێیت
+   ئەگەر '' بێت وێنەی نمونە دەردەکەوێت ===== */
+const LOGO_R='/aqaratww29/aqarat.png',LOGO_L='/aqaratww29/aqarat.png';
+const PH='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80"><rect width="100" height="80" fill="#eadcc0"/><path d="M15 42L50 12l35 30M24 40v28h52V40M42 68V50h16v18" fill="none" stroke="#5a3a26" stroke-width="4"/></svg>');
 const PT=['خانوو','زەوی','دوکان','شوقە','هی تر'];
 const F={
 sale:[['زانیاری وەسڵ',[['date','بەروار','date'],['kind','جۆری مامەڵە','sel',['فرۆشتن','کڕین']]]],
@@ -164,7 +169,7 @@ document.addEventListener('dblclick',x=>x.preventDefault());
 document.addEventListener('contextmenu',x=>{if(!/INPUT|TEXTAREA/.test(x.target.tagName))x.preventDefault()});
 document.addEventListener('selectstart',x=>{if(!/INPUT|TEXTAREA/.test(x.target.tagName))x.preventDefault()});
 const v=(x,m)=>`<span class="v" style="min-width:${m||25}mm">${esc(x)||'&nbsp;'}</span>`;
-function hdr(){const L=`<img class="logo" src="${PH}">`;return `<div class="hd">${L}<div class="t"><div class="nm">نووسینگەی گونجاو</div><div>بۆ بەکرێدان خانوو دوکان و باڵەخانە</div><div>ڕێبوار خۆشناو - یونس سماقولی</div><div class="ph">0750 465 4895 - 0750 474 5593</div><div>هەولێر: 20م - 121 گولان نزیک بەرێوبەرایەتی کەم ئەندامان</div></div>${L}</div>`}
+function hdr(){const R=`<img class="logo" src="${LOGO_R||PH}">`,L=`<img class="logo" src="${LOGO_L||PH}">`;return `<div class="hd">${R}<div class="t"><div class="nm">نووسینگەی گونجاو</div><div>بۆ بەکرێدان خانوو دوکان و باڵەخانە</div><div>ڕێبوار خۆشناو - یونس سماقولی</div><div class="ph">0750 465 4895</div><div>هەولێر: 20م - 121 گولان نزیک بەرێوبەرایەتی کەم ئەندامان</div></div>${L}</div>`}
 const sig=h=>`<table class="sg"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr><tr>${h.map(()=>'<td></td>').join('')}</tr></table>`;
 const nt=n=>`<div class="nt"><b>تێبینی :</b> ${n?esc(n):''}<i></i><i></i></div>`;
 function tpl(t,n,d){const c=d.cur;
@@ -182,7 +187,7 @@ if(t=='sale')return `<div class="rc sale">${hdr()}
 <li>٤- باقی پارەی ماوە: ${v(money(d.rem,c),50)}</li>
 <li>٥- کۆی گشتی پارەی واصل کراو: ${v(money(d.paid,c),50)} شێوازی پارەدان: ${v(d.method,30)}</li>
 <li>٦- بەشیمان بوونەوە لە لە هەر لایەنێک ڕووبدات مەرجی بڕی تەنها ${v(d.pen,60)}</li>
-<li>٧- فرۆشیار بەڵێن دەدات کە موڵکی فرۆشراو بدات بەکڕیار لە بەرواری: ${v(d.date,28)} و ئەو ماوەی کە تێیەدەبێت لە بەرواری فرۆشتن تا بەرواری (تەسلیم) کردن دادەنرێت بەبێ کرێ، بەپێچەوانەوە وەک کرێچی مامەڵەی لەگەل دەکرێت.</li>
+<li>٧- فرۆشیار بەڵێن دەدات کە موڵکی فرۆشراو بدات بەکڕیار لە بەرواری: ${v(d.date,28)} و ئەو ماوەی کە تێیەدەبێت لە بەرواری فرۆشتن تا بەرواری (تەسلیم) کردن دادەنرێت بەبێ کرێ.</li>
 <li>٨- هەموو خەرجی و ڕەسمی کرین کە تایبەتن بە بەرێوەبەرایەتی تۆمار لەئەستۆی کڕیارە.</li>
 <li>٩- کڕیار و فرۆشیار دەبێت (١٪)ی نرخەکە بدات بەنووسینگە پاش واژۆکردنی پارەی نووسینگە ناگەڕێتەوە.</li></ul>
 ${sig(['ناو و نیمزای فرۆشیار','ناو و نیمزای کڕیار','شاهید','شاهید'])}${nt(d.notes)}</div>`;
