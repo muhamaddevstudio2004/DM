@@ -169,7 +169,7 @@ document.addEventListener('dblclick',x=>x.preventDefault());
 document.addEventListener('contextmenu',x=>{if(!/INPUT|TEXTAREA/.test(x.target.tagName))x.preventDefault()});
 document.addEventListener('selectstart',x=>{if(!/INPUT|TEXTAREA/.test(x.target.tagName))x.preventDefault()});
 const v=(x,m)=>`<span class="v" style="min-width:${m||25}mm">${esc(x)||'&nbsp;'}</span>`;
-function hdr(){const R=`<img class="logo" src="${LOGO_R||PH}">`,L=`<img class="logo" src="${LOGO_L||PH}">`;return `<div class="hd">${R}<div class="t"><div class="nm">نووسینگەی گونجاو</div><div>بۆ بەکرێدان خانوو دوکان و باڵەخانە</div><div>ڕێبوار خۆشناو - یونس سماقولی</div><div class="ph">0750 465 4895</div><div>هەولێر: 20م - 121 گولان نزیک بەرێوبەرایەتی کەم ئەندامان</div></div>${L}</div>`}
+function hdr(){const R=`<img class="logo" src="${LOGO_R||PH}">`,L=`<img class="logo" src="${LOGO_L||PH}">`;return `<div class="hd">${R}<div class="t"><div class="nm">نووسینگەی گونجاو</div><div>بۆ بەکرێدان خانوو دوکان و باڵەخانە</div><div> بەسەرپەرشتی: یونس سماقولی</div><div class="ph">0750 465 4895</div><div>هەولێر : ٦٠م- ٨هەسارۆک  بەرامبەر هێواخۆشناو</div></div>${L}</div>`}
 const sig=h=>`<table class="sg"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr><tr>${h.map(()=>'<td></td>').join('')}</tr></table>`;
 const nt=n=>`<div class="nt"><b>تێبینی :</b> ${n?esc(n):''}<i></i><i></i></div>`;
 function tpl(t,n,d){const c=d.cur;
