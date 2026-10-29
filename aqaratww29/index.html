@@ -88,8 +88,9 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
  html,body{height:auto!important;overflow:visible!important}
  .rc{page-break-after:avoid;break-after:avoid}
  #ov{display:block!important;position:static}
- #rcw{padding:0;display:block}#rcs{width:auto!important;height:auto!important;position:static}#rcs .rc{position:static!important;transform:none!important}
- .rc{margin:0 auto;zoom:.84;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #rcw{padding:0;display:block}
+ #rcs{display:block;position:relative!important;width:158mm!important;height:214mm!important;margin:0 auto!important;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+ #rcs .rc{position:absolute!important;top:0!important;right:0!important;margin:0!important;transform:scale(.83)!important;transform-origin:top right!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
