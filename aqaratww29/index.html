@@ -28,6 +28,9 @@ main{max-width:1040px;margin:0 auto;padding:20px 14px calc(20px + env(safe-area-
 .bar{position:sticky;bottom:0;background:var(--bg);padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:5}
 .big svg{width:78px;height:78px;stroke:var(--navy);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .big h2{margin:14px 0 0;color:var(--navy);font-size:24px}
+.wm{display:block;text-align:center;margin:34px auto 0;padding:10px;color:#8a93a6;font-size:13px;text-decoration:none;-webkit-user-select:none;user-select:none}
+.wm b{direction:ltr;unicode-bidi:isolate;display:inline-block;color:var(--navy2);font-weight:700;letter-spacing:.3px;border-bottom:1px dotted var(--navy2)}
+.wm:hover b{color:var(--red);border-color:var(--red)}
 .card{background:#fff;border-radius:12px;box-shadow:0 2px 8px #14264a14;padding:16px;margin-bottom:14px;border:1px solid var(--line)}
 .card h3{margin:0 0 10px;color:var(--navy);font-size:16px;border-bottom:2px solid var(--bg);padding-bottom:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}
@@ -105,7 +108,9 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
 <div class="cards">
 <div class="big" onclick="openForm('sale')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/></svg><h2>کرین و فرۆشتن</h2></div>
 <div class="big" onclick="openForm('rent')"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg><h2>بەکرێدان</h2></div>
-</div></section>
+</div>
+<a class="wm" href="https://DevMuhamad.com" target="_blank" rel="noopener noreferrer">دروستکراوە لەلایەن <b>DevMuhamad.com</b></a>
+</section>
 <section id="v-form" class="hide"><h2 id="fTitle" style="color:var(--navy)"></h2><div id="fBody"></div>
 <div class="bar"><button class="btn alt" onclick="doPreview()">بینینی وەسڵ</button><button class="btn red" onclick="doPrint()">چاپکردنی وەسڵ</button></div></section>
 
@@ -123,7 +128,7 @@ sale:[['زانیاری وەسڵ',[['date','بەروار','date'],['kind','جۆر
 ['فرۆشیار',[['sName','ناوی سیانی'],['sId','ژمارەی ناسنامە'],['sPhone','مۆبایل'],['sAddr','دانیشتووی']]],
 ['کڕیار',[['bName','ناوی سیانی'],['bId','ژمارەی ناسنامە'],['bPhone','مۆبایل'],['bAddr','دانیشتووی']]],
 ['موڵک',[['pt','جۆری موڵک','sel',PT],['pAddr','ناونیشانی تەواو / گەڕەک'],['plot','ژمارەی پیوانە / تۆمار'],['area','ڕووبەر (م²)','num'],['pDet','وردەکاری زیاتر']]],
-['دارایی',[['cur','دراو','sel',['IQD','USD']],['total','نرخی گشتی','num'],['paid','بڕی دراو (پێشەکی)','num'],['rem','بڕی ماوە','rem'],['method','شێوازی پارەدان'],['notes','تێبینی','ta']]]],
+['دارایی',[['cur','دراو','sel',['IQD','USD']],['total','نرخی گشتی','num'],['paid','بڕی دراو (پێشەکی)','num'],['rem','بڕی ماوە','rem'],['method','شێوازی پارەدان'],['pen','خاڵی ٦: مەرجی بڕی (بەشیمان بوونەوە)'],['notes','تێبینی','ta']]]],
 rent:[['زانیاری وەسڵ',[['date','بەروار','date'],['start','دەستپێکی گرێبەست','date'],['end','کۆتایی گرێبەست','date']]],
 ['خاوەن موڵک',[['oName','ناوی سیانی'],['oId','ژمارەی ناسنامە'],['oPhone','مۆبایل'],['oAddr','دانیشتووی']]],
 ['کرێچی',[['tName','ناوی سیانی'],['tId','ژمارەی ناسنامە'],['tPhone','مۆبایل'],['tAddr','دانیشتووی']]],
@@ -154,7 +159,7 @@ function fit(){const c=$('#rcs'),e=c&&c.firstChild;if(!e)return;const s=Math.min
 addEventListener('resize',fit);
 ['gesturestart','gesturechange','gestureend'].forEach(e=>document.addEventListener(e,x=>x.preventDefault()));
 document.addEventListener('touchmove',x=>{if(x.touches.length>1)x.preventDefault()},{passive:false});
-let lt=0;document.addEventListener('touchend',x=>{const n=Date.now();if(n-lt<350&&!/INPUT|TEXTAREA|SELECT/.test(x.target.tagName))x.preventDefault();lt=n},{passive:false});
+let lt=0;document.addEventListener('touchend',x=>{const n=Date.now();if(n-lt<350&&!/INPUT|TEXTAREA|SELECT/.test(x.target.tagName)&&!x.target.closest('a'))x.preventDefault();lt=n},{passive:false});
 document.addEventListener('dblclick',x=>x.preventDefault());
 document.addEventListener('contextmenu',x=>{if(!/INPUT|TEXTAREA/.test(x.target.tagName))x.preventDefault()});
 document.addEventListener('selectstart',x=>{if(!/INPUT|TEXTAREA/.test(x.target.tagName))x.preventDefault()});
@@ -176,7 +181,7 @@ if(t=='sale')return `<div class="rc sale">${hdr()}
 <li>٣- فرۆشیار دانی پێدەنێ بەوەرگرتنی پێشەکی (مقدمە)ی: ${v(money(d.paid,c),50)}</li>
 <li>٤- باقی پارەی ماوە: ${v(money(d.rem,c),50)}</li>
 <li>٥- کۆی گشتی پارەی واصل کراو: ${v(money(d.paid,c),50)} شێوازی پارەدان: ${v(d.method,30)}</li>
-<li>٦- پەشیمان بوونەوە لە لەهەر لایەنێک ڕووبدات مەرجی بڕی تەنها بدات بەلایەنی بەرامبەر بەبێ گەڕانەوە بۆ دادگا.</li>
+<li>٦- بەشیمان بوونەوە لە لە هەر لایەنێک ڕووبدات مەرجی بڕی تەنها ${v(d.pen,60)}</li>
 <li>٧- فرۆشیار بەڵێن دەدات کە موڵکی فرۆشراو بدات بەکڕیار لە بەرواری: ${v(d.date,28)} و ئەو ماوەی کە تێیەدەبێت لە بەرواری فرۆشتن تا بەرواری (تەسلیم) کردن دادەنرێت بەبێ کرێ.</li>
 <li>٨- هەموو خەرجی و ڕەسمی کرین کە تایبەتن بە بەرێوەبەرایەتی تۆمار لەئەستۆی کڕیارە.</li>
 <li>٩- کڕیار و فرۆشیار دەبێت (١٪)ی نرخەکە بدات بەنووسینگە پاش واژۆکردنی پارەی نووسینگە ناگەڕێتەوە.</li></ul>
