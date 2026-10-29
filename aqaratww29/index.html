@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#14264a"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>وەسڵی عەقار</title>
+<title>وەسڵی عەقاراتی گونجاو</title>
 <style>
 @page{margin:8mm}
 :root{--navy:#14264a;--navy2:#1f3a6e;--bg:#f2f4f8;--line:#d9dee8;--red:#c0392b}
@@ -69,7 +69,7 @@ table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:center}
 .hd .t{flex:1;text-align:center;line-height:1.35}
 .hd .nm{font-size:19pt;font-weight:800;color:#5a3a26}
 .hd .ph{font-size:13pt;font-weight:800;color:#8c2f1f;direction:ltr}
-.logo{width:26mm;height:19mm;object-fit:contain}
+.logo{width:35mm;height:26mm;object-fit:contain}
 .rw{display:flex;justify-content:space-between;align-items:center;gap:3mm}
 .no{background:#5a3a26;color:#fff;padding:1mm 5mm;font-weight:700;direction:ltr;border-radius:3px}
 .ttl{border:1.5px solid #5a3a26;border-radius:5px;background:#eadcc0;padding:1mm 6mm;font-weight:800;color:#5a3a26;display:inline-block}
@@ -144,8 +144,8 @@ const money=(v,c)=>v===''||v==null?'':(Number(v)||0).toLocaleString('en-US')+' '
 function toast(m,e){const t=$('#toast');t.textContent=m;t.className=e?'err':'';t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2600)}
 function show(v){['home','form'].forEach(x=>$('#v-'+x).classList.toggle('hide',x!=v));$('#back').classList.toggle('hide',v=='home');scrollTo(0,0)}
 function nextNum(t){let c=(+localStorage.getItem('kre_c')||0)+1;localStorage.setItem('kre_c',c);return (t=='sale'?'B-':'R-')+String(c).padStart(4,'0')}
-function openForm(t,rec){cur={type:t,id:rec?rec.id:null,num:rec?rec.num:nextNum(t)};const d=rec?rec.data:{date:today()};
-$('#fTitle').textContent=(t=='sale'?'کرین و فرۆشتن':'بەکرێدان')+' — وەسڵی ژمارە '+cur.num;
+function openForm(t,rec){cur={type:t,id:rec?rec.id:null,num:rec?rec.num:''};const d=rec?rec.data:{date:today()};
+$('#fTitle').textContent=(t=='sale'?'کرین و فرۆشتن':'بەکرێدان');
 $('#fBody').innerHTML=F[t].map(s=>`<div class="card"><h3>${s[0]}</h3><div class="grid">`+s[1].map(f=>{const[k,l,ty,o]=f,id='f_'+k;let x;
 if(ty=='sel')x=`<select id="${id}">${o.map(a=>`<option>${a}</option>`).join('')}</select>`;
 else if(ty=='ta')x=`<textarea id="${id}" rows="2"></textarea>`;
@@ -174,7 +174,7 @@ const sig=h=>`<table class="sg"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr><t
 const nt=n=>`<div class="nt"><b>تێبینی :</b> ${n?esc(n):''}<i></i><i></i></div>`;
 function tpl(t,n,d){const c=d.cur;
 if(t=='sale')return `<div class="rc sale">${hdr()}
-<div class="rw"><span class="no">No. ${esc(n)}</span><span class="ttl">ڕێکەوتن نامەی کڕین و فرۆشتن</span><span>بەروار: ${v(d.date,28)}</span></div>
+<div class="rw"><span class="ttl">ڕێکەوتن نامەی کڕین و فرۆشتن</span><span>بەروار: ${v(d.date,28)}</span></div>
 <div class="two"><div class="bx"><b>یەکەم ( فرۆشیار )</b><br>ناو: ${v(d.sName,45)}<br>ژمارەی ناسنامە: ${v(d.sId,30)}<br>مۆبایل: ${v(d.sPhone,40)}<br>دانیشتووی: ${v(d.sAddr,40)}</div>
 <div class="bx"><b>دووەم ( کڕیار )</b><br>ناو: ${v(d.bName,45)}<br>ژمارەی ناسنامە: ${v(d.bId,30)}<br>مۆبایل: ${v(d.bPhone,40)}<br>دانیشتووی: ${v(d.bAddr,40)}</div></div>
 <div class="c"><span class="ttl">هەردوولایەن ڕێکەوتن لەسەر ئەم خاڵانەی خوارەوە</span></div>
@@ -192,7 +192,7 @@ if(t=='sale')return `<div class="rc sale">${hdr()}
 <li>٩- کڕیار و فرۆشیار دەبێت (١٪)ی نرخەکە بدات بەنووسینگە پاش واژۆکردنی پارەی نووسینگە ناگەڕێتەوە.</li></ul>
 ${sig(['ناو و نیمزای فرۆشیار','ناو و نیمزای کڕیار','شاهید','شاهید'])}${nt(d.notes)}</div>`;
 return `<div class="rc rent">${hdr()}
-<div class="rw"><span class="no">No. ${esc(n)}</span><span class="ttl">ڕێکەوتن نامەی بە کرێدان</span><span>بەروار: ${v(d.date,28)}</span></div>
+<div class="rw"><span class="ttl">ڕێکەوتن نامەی بە کرێدان</span><span>بەروار: ${v(d.date,28)}</span></div>
 <div>لایەنی یەکەم / خاوەن موڵک: ${v(d.oName,50)} ناسنامە: ${v(d.oId,25)}<br>مۆبایل: ${v(d.oPhone,35)} دانیشتووی: ${v(d.oAddr,50)}</div>
 <div>لایەنی دووەم / کرێچی: ${v(d.tName,50)} ناسنامە: ${v(d.tId,25)}<br>مۆبایل: ${v(d.tPhone,35)} دانیشتووی: ${v(d.tAddr,50)}</div>
 <div class="c"><span class="ttl">لەسەر ئەم خاڵانەی خوارەوە ڕێکەوتن</span></div>
