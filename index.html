@@ -1,1808 +1,532 @@
 <!DOCTYPE html>
-<html lang="ckb" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>DevMuhamad.com</title>
-<meta name="description" content="ماڵپەری DevMuhamad.com بەم زووانە بەردەست دەبێت بۆ دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییە مۆدێرنەکان: سیستەمی خواردنگە، QR Menu، Dashboard، ماڵپەڕ، ئەپی مۆبایل، Discord Bots و SA-MP Projects.">
-<meta property="og:title" content="DevMuhamad.com">
-<meta property="og:description" content="دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییە مۆدێرنەکان — بەردەستە.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://devmuhamad.com/">
-<meta name="theme-color" content="#0B0B0B">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevMuhamad.com | Custom Software, Websites & Business Systems</title>
+<meta name="description" content="DevMuhamad.com builds custom management systems, POS, websites, mobile apps, dashboards, bots and automation for businesses. Request a system on WhatsApp.">
+<meta name="keywords" content="DevMuhamad, software development, custom software, management systems, POS system, inventory management, restaurant system, QR menu, booking system, school management system, clinic management system, e-commerce website, business website, mobile apps, admin dashboard, business automation, Discord bot, SA-MP, Iraq, Kurdistan">
+<meta name="author" content="DevMuhamad.com">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://devmuhamad.com/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B0B0B'/%3E%3Ctext x='50' y='68' font-size='58' font-family='monospace' fill='%23fff' text-anchor='middle'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DevMuhamad.com">
+<meta property="og:title" content="DevMuhamad.com | Digital Systems & Software Solutions">
+<meta property="og:description" content="Websites, applications, and custom systems that help businesses grow, work smarter, and serve customers better.">
+<meta property="og:url" content="https://devmuhamad.com/">
+<meta property="og:image" content="https://devmuhamad.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DevMuhamad.com - Building Smart Digital Systems for Your Business">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DevMuhamad.com | Digital Systems & Software Solutions">
+<meta name="twitter:description" content="Websites, applications, and custom systems that help businesses grow.">
+<meta name="twitter:image" content="https://devmuhamad.com/og-image.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-	--bg:#0B0B0B;
-	--bg-2:#111111;
-	--fg:#FFFFFF;
-	--gray:#8A8A8A;
-	--gray-dim:#5c5c5c;
-	--line:rgba(255,255,255,0.08);
-	--glow:rgba(255,255,255,0.55);
-	--accent:#FFFFFF;
-  }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-	background:var(--bg);
-	color:var(--fg);
-	font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
-	overflow-x:hidden;
-	min-height:100vh;
-	cursor:default;
-  }
-  ::selection{background:#fff; color:#000;}
-
-  /* ===== Scrollbar ===== */
-  ::-webkit-scrollbar{width:8px;}
-  ::-webkit-scrollbar-track{background:#0B0B0B;}
-  ::-webkit-scrollbar-thumb{background:#2a2a2a; border-radius:10px;}
-
-  /* ===================== SPLASH ===================== */
-  #splash{
-	position:fixed; inset:0; z-index:9999;
-	background:#000;
-	display:flex; align-items:center; justify-content:center; flex-direction:column;
-	transition:opacity .8s ease, visibility .8s ease;
-  }
-  #splash.hide{ opacity:0; visibility:hidden; pointer-events:none; }
-  .splash-logo{
-	font-family:'JetBrains Mono', monospace;
-	font-size:clamp(28px,5vw,44px);
-	letter-spacing:2px;
-	font-weight:500;
-	opacity:0;
-	animation:fadeInLogo 1.1s ease forwards .15s;
-	display:flex; align-items:baseline; gap:2px;
-	direction:ltr; unicode-bidi:isolate;
-  }
-  .splash-logo .dim{ color:var(--gray); font-weight:300; }
-  .splash-logo .cursor{
-	display:inline-block; width:10px; height:1.1em; background:#fff; margin-inline-start:6px;
-	animation:blink 1s steps(1) infinite;
-  }
-  @keyframes fadeInLogo{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-  @keyframes blink{ 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
-
-  .splash-loader-wrap{
-	margin-top:38px;
-	width:180px;
-	opacity:0;
-	animation:fadeInLogo 1s ease forwards .6s;
-  }
-  .splash-bar-track{
-	width:100%; height:2px; background:rgba(255,255,255,0.12); border-radius:2px; overflow:hidden;
-  }
-  .splash-bar-fill{
-	height:100%; width:0%; background:#fff;
-	box-shadow:0 0 12px rgba(255,255,255,.7);
-	animation:loadBar 2.6s cubic-bezier(.4,0,.2,1) forwards .3s;
-  }
-  @keyframes loadBar{ to{ width:100%; } }
-  .splash-dots{
-	margin-top:14px; display:flex; gap:6px; justify-content:center;
-  }
-  .splash-dots span{
-	width:5px; height:5px; border-radius:50%; background:var(--gray);
-	animation:dotPulse 1.2s ease-in-out infinite;
-  }
-  .splash-dots span:nth-child(2){ animation-delay:.15s; }
-  .splash-dots span:nth-child(3){ animation-delay:.3s; }
-  @keyframes dotPulse{ 0%,100%{ opacity:.25; transform:scale(.8);} 50%{ opacity:1; transform:scale(1.15);} }
-
-  /* ===================== BACKGROUND FX ===================== */
-  #bg-canvas{ position:fixed; inset:0; z-index:0; opacity:.55; }
-  .grid-overlay{
-	position:fixed; inset:0; z-index:1; pointer-events:none;
-	background-image:
-	  linear-gradient(var(--line) 1px, transparent 1px),
-	  linear-gradient(90deg, var(--line) 1px, transparent 1px);
-	background-size:46px 46px;
-	-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%, #000 10%, transparent 75%);
-	mask-image:radial-gradient(ellipse 80% 60% at 50% 40%, #000 10%, transparent 75%);
-  }
-  .glow-orb{
-	position:fixed; z-index:1; pointer-events:none; border-radius:50%;
-	filter:blur(90px); mix-blend-mode:screen;
-  }
-  .glow-orb.one{
-	width:520px; height:520px; background:rgba(255,255,255,.09);
-	top:-140px; left:-120px;
-	animation:driftA 16s ease-in-out infinite;
-  }
-  .glow-orb.two{
-	width:420px; height:420px; background:rgba(180,200,255,.06);
-	bottom:-160px; right:-100px;
-	animation:driftB 20s ease-in-out infinite;
-  }
-  @keyframes driftA{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(40px,30px);} }
-  @keyframes driftB{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(-30px,-40px);} }
-
-  /* ===================== LAYOUT ===================== */
-  .wrap{
-	position:relative; z-index:3;
-	min-height:100vh;
-	display:flex; flex-direction:column; align-items:center; justify-content:center;
-	padding:32px 20px 100px;
-	text-align:center;
-  }
-
-  /* language switch */
-  .settings-btn{
-	position:fixed; top:22px; inset-inline-start:22px; z-index:20;
-	width:38px; height:38px; border-radius:50%;
-	border:1px solid var(--line);
-	background:rgba(255,255,255,0.04);
-	backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-	color:var(--gray); font-size:15px;
-	display:flex; align-items:center; justify-content:center;
-	cursor:pointer;
-	transition:all .3s ease;
-  }
-  .settings-btn:hover{ color:#fff; border-color:rgba(255,255,255,.25); }
-
-  .announce-btn{
-	position:fixed;
-	top:22px;
-	inset-inline-start:70px;
-  }
-  .announce-dot{
-	position:absolute; top:6px; inset-inline-end:6px;
-	width:8px; height:8px; border-radius:50%;
-	background:#F87171;
-	box-shadow:0 0 6px #F87171;
-	opacity:0; visibility:hidden;
-	transition:opacity .3s ease, visibility .3s ease;
-  }
-  .announce-dot.show{ opacity:1; visibility:visible; }
-
-@media (max-width: 560px){
-  .settings-btn.announce-btn{ top:16px; inset-inline-start:64px; }
+  --bg:#fff;--ink:#111;--mute:#777;--line:#ececec;--soft:#f7f7f7;--blue:#2f5bea;--gold:#b8923a;
+  --r:20px;--max:1180px;
+  --head:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
 }
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.65 var(--body);-webkit-font-smoothing:antialiased}
+img,svg{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+.wrap{width:min(var(--max),100% - 2.5rem);margin-inline:auto}
+section{padding-block:clamp(4.5rem,9vw,8rem)}
+h1,h2,h3{font-family:var(--head);margin:0;letter-spacing:-.03em;line-height:1.05;font-weight:600}
+h2{font-size:clamp(2rem,4.6vw,3.4rem)}
+p{margin:0}
+.mute{color:var(--mute)}
+.label{display:inline-flex;align-items:center;gap:.6rem;font-size:.78rem;font-weight:600;letter-spacing:.14em;color:var(--mute)}
+.label::before{content:"";width:22px;height:1px;background:var(--gold)}
+.sec-head{display:grid;gap:1rem;max-width:640px;margin-bottom:3rem}
+.sec-head p{color:var(--mute);font-size:1.1rem}
 
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:.9rem 1.5rem;border-radius:999px;border:1px solid var(--ink);font-weight:500;font-size:.95rem;transition:background .25s,color .25s,transform .25s,border-color .25s}
+.btn i,.btn svg{width:18px;height:18px;transition:transform .25s}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:#333;border-color:#333}
+.btn-line{background:#fff}
+.btn-line:hover{background:var(--ink);color:#fff}
+.btn:active{transform:scale(.97)}
+.btn:hover svg{transform:translateX(3px)}
+[dir=rtl] .btn:hover svg{transform:translateX(-3px)}
 
-  .lang-switch{
-	position:fixed; top:22px; inset-inline-end:22px; z-index:20;
-	display:flex; gap:6px;
-	background:rgba(255,255,255,0.04);
-	border:1px solid var(--line);
-	backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-	border-radius:100px; padding:5px;
-  }
-  .lang-btn{
-	border:none; background:transparent; color:var(--gray);
-	font-family:inherit; font-size:12.5px; padding:6px 12px; border-radius:100px;
-	cursor:pointer; transition:all .3s ease; display:flex; align-items:center; gap:7px;
-	white-space:nowrap;
-  }
-  .lang-btn.active{ background:var(--accent); color:#000; font-weight:600; }
-  .lang-btn:not(.active){ opacity:.85; }
-  .lang-btn:not(.active):hover{ color:#fff; opacity:1; }
-  .flag-icon{
-	width:20px; height:14px; border-radius:2px; display:block;
-	box-shadow:0 0 0 1px rgba(255,255,255,.15);
-	flex-shrink:0;
-  }
+/* nav */
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid transparent;transition:border-color .3s}
+header.scrolled{border-color:var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-family:var(--head);font-weight:700;font-size:1.25rem;letter-spacing:-.03em;display:flex;align-items:center;gap:.55rem}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:var(--ink);color:#fff;display:grid;place-items:center}
+.logo-mark svg{width:16px;height:16px}
+.logo span{color:var(--mute);font-weight:500}
+.links{display:flex;align-items:center;gap:2rem}
+.links a:not(.btn){font-size:.93rem;color:var(--mute);position:relative;padding-block:.3rem;transition:color .2s}
+.links a:not(.btn)::after{content:"";position:absolute;inset-inline:0;bottom:-2px;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+[dir=rtl] .links a:not(.btn)::after{transform-origin:right}
+.links a:not(.btn):hover,.links a.active{color:var(--ink)}
+.links a.active::after{transform:scaleX(1)}
+.links .btn{padding:.65rem 1.2rem;font-size:.9rem}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;position:relative}
+.burger span{position:absolute;inset-inline:13px;height:1.5px;background:var(--ink);transition:transform .35s,opacity .2s,top .35s}
+.burger span:nth-child(1){top:16px}.burger span:nth-child(2){top:22px}.burger span:nth-child(3){top:28px}
+.burger[aria-expanded=true] span:nth-child(1){top:22px;transform:rotate(45deg)}
+.burger[aria-expanded=true] span:nth-child(2){opacity:0}
+.burger[aria-expanded=true] span:nth-child(3){top:22px;transform:rotate(-45deg)}
 
-  /* eyebrow */
-.eyebrow{
-	display:inline-flex; align-items:center; gap:9px;
-	font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif; font-size:12px; letter-spacing:normal;
-	color:var(--gray); text-transform:uppercase;
-	padding:8px 16px; border:1px solid var(--line); border-radius:100px;
-	background:rgba(255,255,255,.03);
-	opacity:0; animation:reveal .8s ease forwards .1s;
-  }
-  .eyebrow .dot{
-	width:6px; height:6px; border-radius:50%; background:var(--accent);
-	box-shadow:0 0 10px var(--accent), 0 0 20px var(--accent);
-	animation:pulseDot 1.8s ease-in-out infinite;
-  }
+/* hero */
+.hero{padding-block:clamp(3rem,7vw,6rem) clamp(4rem,8vw,7rem);overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
+.hero h1{font-size:clamp(2.7rem,6.6vw,5.4rem);margin:1.4rem 0 1.6rem;letter-spacing:-.045em}
+.hero p.lead{font-size:1.15rem;color:var(--mute);max-width:520px}
+.cta-row{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2.2rem}
+.hero-art{position:relative;aspect-ratio:1;max-width:480px;margin-inline:auto;width:100%}
+.hero-art svg{width:100%;height:100%;overflow:visible}
+.hero-art .ring{fill:none;stroke:var(--line);stroke-width:1}
+.hero-art .link{stroke:#cfcfcf;stroke-width:1;stroke-dasharray:3 5;animation:dash 18s linear infinite}
+.hero-art .node{fill:#fff;stroke:var(--ink);stroke-width:1.2}
+.hero-art .core{fill:var(--ink)}
+.hero-art .pulse{fill:none;stroke:var(--gold);stroke-width:1;transform-origin:250px 250px;animation:pulse 4s ease-out infinite}
+.hero-art .orbit{transform-origin:250px 250px;animation:spin 60s linear infinite}
+.hero-art .orbit.rev{animation-duration:90s;animation-direction:reverse}
+.hero-art .tag{font:500 11px var(--body);fill:var(--mute)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes dash{to{stroke-dashoffset:-200}}
+@keyframes pulse{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+.hero-load>*{opacity:0;transform:translateY(14px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+.hero-load>*:nth-child(2){animation-delay:.1s}.hero-load>*:nth-child(3){animation-delay:.2s}.hero-load>*:nth-child(4){animation-delay:.3s}
+@keyframes rise{to{opacity:1;transform:none}}
 
-  @keyframes pulseDot{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+/* services */
+#services{background:var(--soft);border-block:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:1.6rem;display:flex;flex-direction:column;gap:.9rem;transition:border-color .3s,transform .3s}
+.card:hover{border-color:var(--ink);transform:translateY(-3px)}
+.ico{width:46px;height:46px;border-radius:14px;border:1px solid var(--line);display:grid;place-items:center;transition:background .3s,color .3s,border-color .3s}
+.ico svg{width:21px;height:21px}
+.card:hover .ico{background:var(--ink);color:#fff;border-color:var(--ink)}
+.card h3{font-size:1.15rem;letter-spacing:-.02em;line-height:1.2}
+.card p{color:var(--mute);font-size:.93rem;line-height:1.55;flex:1}
+.req{display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:600;border-top:1px solid var(--line);padding-top:.9rem;margin-top:.2rem}
+.req svg{width:16px;height:16px;transition:transform .25s}
+.req:hover svg{transform:translateX(4px)}
+[dir=rtl] .req svg,[dir=rtl] .btn svg.dir{transform:scaleX(-1)}
 
-  h1.brand{
-	margin-top:26px;
-	font-family:'JetBrains Mono', monospace;
-	font-weight:600;
-	font-size:clamp(38px, 8vw, 84px);
-	letter-spacing:-1px;
-	line-height:1.05;
-	opacity:0; animation:reveal .9s ease forwards .25s;
-	direction:ltr; unicode-bidi:isolate;
-  }
-  h1.brand .slash{ color:var(--gray); font-weight:300; }
+/* why */
+.why{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.why div{padding:2rem 1.6rem;border-inline-end:1px solid var(--line)}
+.why div:last-child{border-inline-end:0}
+.why svg{width:26px;height:26px;margin-bottom:1.6rem;color:var(--gold)}
+.why h3{font-size:1.1rem;margin-bottom:.6rem;letter-spacing:-.02em}
+.why p{color:var(--mute);font-size:.93rem}
 
-  .soon-label{
-	margin-top:10px;
-	font-size:clamp(20px, 3.4vw, 30px);
-	font-weight:500;
-	color:var(--fg);
-	opacity:0; animation:reveal .9s ease forwards .4s;
-  }
+/* process */
+#process{background:var(--ink);color:#fff}
+#process .label,#process .sec-head p{color:#9a9a9a}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;position:relative;counter-reset:s}
+.steps::before{content:"";position:absolute;top:18px;inset-inline:0;height:1px;background:#333}
+.step{position:relative;padding-top:3.4rem}
+.step::before{content:"";position:absolute;top:12px;inset-inline-start:0;width:13px;height:13px;border-radius:50%;background:var(--ink);border:1px solid #fff;transition:background .3s}
+.step:hover::before{background:var(--gold);border-color:var(--gold)}
+.step b{font-family:var(--head);font-size:.95rem;color:var(--gold);font-weight:600}
+.step h3{font-size:1.25rem;margin:.4rem 0 .6rem;letter-spacing:-.02em}
+.step p{color:#9a9a9a;font-size:.93rem}
 
-    .desc{
-	margin-top:26px;
-	max-width:680px;
-	color:var(--gray);
-	font-size:clamp(0.9375rem, 2vw, 1.0625rem);
-	line-height:2;
+/* about */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.about h2{margin:1.2rem 0 1.4rem}
+.about p{color:var(--mute);font-size:1.1rem;max-width:520px}
+.about .btn{margin-top:2rem}
+.stack{position:relative;aspect-ratio:5/4;border:1px solid var(--line);border-radius:28px;background:var(--soft);padding:1.6rem;display:grid;gap:.8rem;align-content:center}
+.bar{height:46px;border-radius:12px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;gap:.8rem;padding-inline:1rem;font-size:.88rem;color:var(--mute);transition:transform .4s,border-color .3s}
+.bar svg{width:17px;height:17px;color:var(--ink)}
+.bar:nth-child(2){margin-inline-start:2rem}.bar:nth-child(3){margin-inline-start:4rem}.bar:nth-child(4){margin-inline-start:1rem}
+.stack:hover .bar{transform:translateX(6px)}
+[dir=rtl] .stack:hover .bar{transform:translateX(-6px)}
+.bar i{margin-inline-start:auto;width:8px;height:8px;border-radius:50%;background:var(--gold)}
 
-	opacity:0; animation:reveal .9s ease forwards .55s;
-  }
+/* contact */
+#contact{padding-top:0}
+.contact{border:1px solid var(--line);border-radius:32px;padding:clamp(2.2rem,6vw,5rem);display:grid;grid-template-columns:1.2fr .8fr;gap:3rem;align-items:center}
+.contact h2{margin-bottom:1rem}
+.contact>div>p{color:var(--mute);font-size:1.1rem;max-width:460px}
+.contact .btn{margin-top:2rem}
+.info{display:grid;gap:1rem}
+.info a,.info div{display:flex;align-items:center;gap:1rem;border:1px solid var(--line);border-radius:16px;padding:1rem 1.2rem;transition:border-color .3s}
+.info a:hover{border-color:var(--ink)}
+.info svg{width:20px;height:20px;flex:none}
+.info small{display:block;color:var(--mute);font-size:.78rem;line-height:1.2}
+.info span{font-weight:500;direction:ltr;unicode-bidi:plaintext}
 
-  /* glass card with services */
-  .services{
-	margin-top:40px;
-	display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:760px;
-	opacity:0; animation:reveal .9s ease forwards .7s;
-  }
-  .chip{
-	font-size:0.8125rem; color:var(--gray);
-	border:1px solid var(--line);
-	background:rgba(255,255,255,.03);
-	backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-	padding:9px 16px; border-radius:100px;
-	transition:all .35s cubic-bezier(.4,0,.2,1);
-  }
-  .chip:hover{
-	color:#fff; border-color:var(--accent); transform:translateY(-3px);
-	box-shadow:0 8px 24px rgba(255,255,255,.06);
-  }
+/* footer */
+footer{border-top:1px solid var(--line);padding-block:4rem 2rem}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2.5rem}
+.foot p{color:var(--mute);font-size:.93rem;margin-top:1rem;max-width:300px}
+.foot h4{margin:0 0 1rem;font-size:.85rem;font-weight:600}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:.55rem}
+.foot li a{color:var(--mute);font-size:.92rem;transition:color .2s}
+.foot li a:hover{color:var(--ink)}
+.legal{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--mute);font-size:.85rem}
 
+/* brand + flag */
+.brand{display:flex;align-items:center;gap:.75rem}
+.flag{display:block;width:30px;height:20px;border-radius:4px;overflow:hidden;box-shadow:0 0 0 1px var(--line);flex:none}
+.flag svg{width:100%;height:100%}
 
-  @keyframes reveal{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+/* confirm dialog */
+.dlg{border:1px solid var(--line);border-radius:24px;padding:0;width:min(420px,100% - 2.5rem);color:var(--ink);background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.2)}
+.dlg::backdrop{background:rgba(17,17,17,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.dlg[open]{animation:pop .3s cubic-bezier(.2,.7,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}}
+.dlg-body{padding:2rem 1.8rem 1.7rem;display:grid;gap:.7rem}
+.dlg-ico{width:48px;height:48px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center;margin-bottom:.5rem}
+.dlg-ico svg{width:22px;height:22px}
+.dlg h3{font-size:1.45rem}
+.dlg p{color:var(--mute);font-size:.96rem}
+.dlg-act{display:flex;gap:.7rem;margin-top:1rem}
+.dlg-act .btn{flex:1;padding-inline:1rem}
 
-  /* countdown-esque divider */
-  .divider{
-	width:1px; height:60px; background:linear-gradient(var(--line), transparent);
-	margin:48px 0 0;
-	opacity:0; animation:reveal 1s ease forwards .85s;
-  }
+/* floating wa */
+.wa{position:fixed;inset-inline-end:1.2rem;bottom:1.2rem;z-index:60;width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .25s}
+.wa:hover{transform:scale(1.08)}
+.wa svg{width:24px;height:24px}
 
-  /* footer / social */
-  .footer{
-	position:relative; z-index:3;
-	padding:60px 20px 40px;
-	border-top:1px solid var(--line);
-	margin-top:40px;
-  }
+/* reveal */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
 
-  .discord-card{
-	max-width:1000px;
-	margin:0 auto 48px;
-	background:rgba(255,255,255,.03);
-	border:1px solid var(--line);
-	border-radius:20px;
-	padding:24px;
-	transition:border-color .35s ease, box-shadow .35s ease;
-  }
-  .discord-card:hover{
-	border-color:var(--accent);
-	box-shadow:0 12px 30px rgba(255,255,255,.06);
-  }
-  .discord-card-top{
-	display:flex; align-items:center; justify-content:space-between;
-	gap:16px; margin-bottom:14px;
-  }
-  .discord-card-title{ font-size:16px; font-weight:600; margin-bottom:8px; }
-  .discord-status{
-	display:flex; align-items:center; gap:7px; flex-wrap:wrap;
-	font-size:12.5px; color:var(--gray);
-  }
-  .discord-status-dot{
-	width:7px; height:7px; border-radius:50%;
-	background:#4ADE80;
-	box-shadow:0 0 8px #4ADE80;
-	animation:pulseDot 1.8s ease-in-out infinite;
-	flex-shrink:0;
-  }
-  .discord-dot-sep{ opacity:.4; }
-  .discord-card-icon{
-	flex-shrink:0;
-	width:54px; height:54px; border-radius:16px;
-	background:rgba(255,255,255,.05);
-	color:var(--accent);
-	font-size:24px;
-	display:flex; align-items:center; justify-content:center;
-	transition:color .3s ease;
-  }
-  .discord-card-desc{
-	color:var(--gray); font-size:13.5px; line-height:1.9;
-	margin-bottom:20px;
-  }
-  .discord-join-btn{
-	display:inline-flex; align-items:center; justify-content:center; gap:8px;
-	width:100%;
-	background:var(--accent); color:#000; font-weight:600; font-size:14px;
-	padding:13px 16px; border-radius:100px;
-	text-decoration:none;
-	transition:transform .3s ease, opacity .3s ease;
-  }
-  .discord-join-btn:hover{ transform:translateY(-2px); opacity:.9; }
-
-  @media (min-width:560px){
-	.discord-card{ padding:28px 32px; }
-	.discord-join-btn{ width:auto; padding:13px 32px; }
-  }
-
-  .footer-top{
-	max-width:1000px;
-	margin:0 auto;
-	display:grid;
-	grid-template-columns:repeat(4, 1fr);
-	gap:32px;
-	text-align:right;
-  }
-  @media (max-width:760px){
-	.footer-top{ grid-template-columns:repeat(2, 1fr); gap:28px; }
-  }
-  @media (max-width:480px){
-	.footer-top{ grid-template-columns:1fr; }
-  }
-  .footer-col-logo{
-	font-family:'JetBrains Mono', monospace;
-	font-size:19px; font-weight:600;
-	direction:ltr; unicode-bidi:isolate;
-	margin-bottom:12px;
-  }
-  .footer-col-logo .slash{ color:var(--gray); font-weight:300; }
-  .footer-about{
-	color:var(--gray); font-size:13.5px; line-height:1.9;
-  }
-  .footer-heading{
-	font-size:14px; font-weight:600; color:var(--fg); margin-bottom:14px;
-  }
-    .footer-col-divided{
-	border-top:1px solid var(--line);
-	padding-top:22px;
-  }
-
-  .footer-link-list{ display:flex; flex-direction:column; gap:10px; }
-  .footer-link{
-	color:var(--gray); font-size:13.5px; text-decoration:none;
-	transition:color .25s ease;
-	width:fit-content;
-  }
-  .footer-link:hover{ color:#fff; }
-  .footer-cta-box{
-	background:rgba(255,255,255,.03);
-	border:1px solid var(--line);
-	border-radius:16px;
-	padding:16px;
-  }
-  .footer-cta-text{
-	color:var(--gray); font-size:13px; line-height:1.8; margin-bottom:14px;
-  }
-  .cta-btn{
-	display:inline-flex; align-items:center; justify-content:center; gap:8px;
-	width:100%;
-	background:var(--accent); color:#000; font-weight:600; font-size:13.5px;
-
-	padding:11px 16px; border-radius:100px;
-	text-decoration:none;
-	transition:transform .3s ease, opacity .3s ease;
-  }
-  .cta-btn:hover{ transform:translateY(-2px); opacity:.9; }
-  .social-row{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-  .social-btn{
-	position:relative;
-	width:48px; height:48px; border-radius:50%;
-	display:flex; align-items:center; justify-content:center;
-	border:1px solid var(--line);
-	background:rgba(255,255,255,.03);
-	color:var(--fg); font-size:17px; text-decoration:none;
-	overflow:hidden; isolation:isolate;
-	transition:transform .35s cubic-bezier(.4,0,.2,1), border-color .35s ease;
-  }
-  .social-btn::before{
-	content:''; position:absolute; inset:0; background:#fff; border-radius:50%;
-	transform:scale(0); transition:transform .4s cubic-bezier(.4,0,.2,1); z-index:-1;
-  }
-  .social-btn:hover::before{ transform:scale(1); }
-  .social-btn:hover{ color:#000; transform:translateY(-4px) scale(1.06); border-color:#fff; }
-
-  .wa-label{
-	font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--gray);
-	letter-spacing:.5px;
-	direction:ltr; unicode-bidi:isolate; display:inline-block;
-  }
-
-  .copyright{
-	max-width:1000px; margin:40px auto 0;
-	padding-top:24px; border-top:1px solid var(--line);
-	text-align:center;
-	font-size:12.5px; color:var(--gray-dim);
-	letter-spacing:.3px;
-  }
-
-
-  /* ripple */
-  .ripple{
-	position:absolute; border-radius:50%; background:rgba(255,255,255,.5);
-	transform:scale(0); animation:rippleAnim .6s ease-out forwards; pointer-events:none;
-  }
-  @keyframes rippleAnim{ to{ transform:scale(2.6); opacity:0; } }
-
-
-
-  /* ===================== HEADER BANNER SLIDER ===================== */
-.site-header{
-	position:relative; z-index:3;
-	padding:80px 20px 0;
-	display:flex; justify-content:center;
+@media(max-width:960px){
+  .hero-grid,.about,.contact{grid-template-columns:1fr}
+  .hero-art{max-width:360px;order:-1}
+  .why{grid-template-columns:1fr 1fr}
+  .why div:nth-child(2){border-inline-end:0}
+  .why div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .foot{grid-template-columns:1fr 1fr}
 }
-  .banner-wrap{
-	width:100%; max-width:920px;
-	display:flex; flex-direction:column; align-items:center;
-	opacity:0; animation:reveal .9s ease forwards 0s;
-  }
-  .banner-slider{
-	position:relative;
-	width:100%;
-	border-radius:18px;
-	overflow:hidden;
-	border:1px solid var(--line);
-	background:rgba(255,255,255,.02);
-	user-select:none;
-	-webkit-user-select:none;
-	touch-action:pan-y;
-	cursor:grab;
-	direction:ltr;
-  }
-  .banner-slider:active{ cursor:grabbing; }
-  .banner-track{
-	display:flex;
-	transition:transform .5s cubic-bezier(.4,0,.2,1);
-	will-change:transform;
-  }
-  .banner-track.dragging{ transition:none; }
-  .banner-slide{
-	flex:0 0 100%;
-	position:relative;
-  }
-.banner-slide img{
-	width:100%;
-	aspect-ratio:16 / 9;
-	object-fit:cover;
-	display:block;
-	filter:grayscale(.15) brightness(.82);
-	pointer-events:none;
-	-webkit-user-drag:none;
+@media(max-width:820px){
+  .burger{display:block}
+  .links{position:fixed;inset:72px 0 auto 0;flex-direction:column;align-items:stretch;gap:0;background:#fff;padding:1rem 1.25rem 1.6rem;border-bottom:1px solid var(--line);transform:translateY(-12px);opacity:0;visibility:hidden;transition:.3s}
+  .links.open{transform:none;opacity:1;visibility:visible}
+  .links a:not(.btn){padding:1rem 0;font-size:1.05rem;border-bottom:1px solid var(--line)}
+  .links a:not(.btn)::after{display:none}
+  .links .btn{margin-top:1.2rem;padding:.9rem}
+  .steps{grid-template-columns:1fr;gap:0}
+  .steps::before{inset:0 auto 0 6px;width:1px;height:auto}
+  [dir=rtl] .steps::before{inset:0 6px 0 auto}
+  .step{padding:0 0 2.2rem 2.4rem}
+  [dir=rtl] .step{padding:0 2.4rem 2.2rem 0}
+  .step::before{top:6px}
 }
-  .banner-slide::after{
-	content:'';
-	position:absolute; inset:0;
-	background:linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.55) 100%);
-  }
-  .banner-dots{
-	display:flex; gap:8px; justify-content:center;
-	margin-top:14px;
-  }
-  .banner-dot{
-	width:7px; height:7px; border-radius:50%;
-	background:rgba(255,255,255,.35);
-	border:none; padding:0; cursor:pointer;
-	transition:all .3s ease;
-  }
-  .banner-dot.active{ width:22px; border-radius:4px; background:var(--accent); }
-  .banner-dot:hover{ background:rgba(255,255,255,.7); }
-
-  /* ===================== SERVICES GRID + MODAL ===================== */
-.section-title{
-	margin-top:74px;
-	font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
-	font-size:12.5px; letter-spacing:normal; text-transform:uppercase;
-	color:var(--gray);
-	opacity:0; animation:reveal .8s ease forwards;
-  }
-
-  /* Responsive, evenly-sized card grid.
-	 - Mobile: 2 columns
-	 - Tablet (≥620px): 3 columns
-	 - Desktop (≥900px): 4 columns, capped width so cards stay compact & square-ish */
-  .services-grid{
-	margin-top:24px;
-	width:100%; max-width:51.25rem;
-	display:grid;
-	grid-template-columns:repeat(2, 1fr);
-	gap:0.875rem;
-	opacity:0; animation:reveal .9s ease forwards .1s;
-  }
-  @media (min-width:620px){
-	.services-grid{ grid-template-columns:repeat(3, 1fr); gap:1rem; }
-  }
-  @media (min-width:900px){
-	.services-grid{ grid-template-columns:repeat(4, 1fr); gap:1.125rem; }
-  }
-
-
-  .service-card{
-	border:1px solid var(--line);
-	background:rgba(255,255,255,.03);
-	border-radius:1rem;
-	overflow:hidden;
-	cursor:pointer;
-
-	text-align:center;
-	display:flex;
-	flex-direction:column;
-	transition:transform .35s cubic-bezier(.4,0,.2,1), border-color .35s ease, box-shadow .35s ease;
-  }
-  .service-card:hover{
-	transform:translateY(-5px);
-	border-color:var(--accent);
-	box-shadow:0 12px 30px rgba(255,255,255,.06);
-  }
-
-
-  /* Fixed aspect-ratio image instead of a fixed px height so every
-	 card looks identical regardless of column count / viewport width */
-  .service-card-img{
-	width:100%;
-	aspect-ratio:4 / 3;
-	overflow:hidden;
-	background:#0d0d0d;
-  }
-  .service-card-img img{
-	width:100%; height:100%; object-fit:cover;
-	filter:grayscale(.2) brightness(.85);
-	transition:transform .6s cubic-bezier(.4,0,.2,1);
-	display:block;
-  }
-  .service-card:hover .service-card-img img{ transform:scale(1.07); }
-
-  .service-card-title{
-	flex:1;
-	display:flex; align-items:center; justify-content:center;
-	padding:0.75rem 0.5rem;
-	min-height:2.75rem;
-	font-size:0.84375rem; font-weight:500; color:var(--accent);
-	line-height:1.35;
-	transition:color .3s ease;
-  }
-
-
-  @media (max-width:619px){
-	.service-card-title{ padding:0.625rem 0.375rem; font-size:0.75rem; min-height:2.375rem; }
-  }
-
-
-  .modal-overlay{
-	position:fixed; inset:0; z-index:300;
-	background:rgba(0,0,0,.75);
-	backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-	display:flex; align-items:center; justify-content:center;
-	padding:20px;
-	opacity:0; visibility:hidden;
-	transition:opacity .35s ease, visibility .35s ease;
-  }
-  .modal-overlay.show{ opacity:1; visibility:visible; }
-  .modal-box{
-	position:relative;
-	width:100%; max-width:440px;
-	background:#111214;
-	border:1px solid var(--line);
-	border-radius:20px;
-	overflow:hidden;
-	text-align:center;
-	transform:translateY(20px) scale(.96);
-	transition:transform .4s cubic-bezier(.4,0,.2,1);
-  }
-  .modal-overlay.show .modal-box{ transform:translateY(0) scale(1); }
-  .modal-img{
-	width:100%; height:200px; object-fit:cover;
-	filter:grayscale(.15) brightness(.85);
-	display:block;
-  }
-  .modal-close{
-	position:absolute; top:12px; inset-inline-end:12px; z-index:2;
-	width:34px; height:34px; border-radius:50%;
-	border:1px solid var(--line);
-	background:rgba(0,0,0,.5);
-	color:#fff; font-size:18px; line-height:1;
-	display:flex; align-items:center; justify-content:center;
-	cursor:pointer;
-	transition:all .3s ease;
-  }
-  .modal-close:hover{ background:#fff; color:#000; border-color:#fff; }
-  .modal-content{ padding:24px 22px 30px; }
-  .modal-title{ font-size:19px; font-weight:600; margin-bottom:10px; }
-  .modal-desc{ color:var(--gray); font-size:0.90625rem; line-height:1.95; }
-  .modal-order-btn{
-	display:inline-flex; align-items:center; justify-content:center; gap:8px;
-	width:100%; margin-top:22px;
-	background:var(--accent); color:#000; font-weight:600; font-size:14px;
-	padding:13px 16px; border-radius:100px;
-	text-decoration:none;
-	transition:transform .3s ease, opacity .3s ease;
-  }
-  .modal-order-btn:hover{ transform:translateY(-2px); opacity:.9; }
-
-  .modal-btn-row{
-	display:flex; gap:10px; margin-top:22px;
-  }
-  .modal-btn-row .modal-order-btn{ margin-top:0; flex:1; }
-  .modal-share-btn{
-	flex-shrink:0;
-	width:48px; height:48px;
-	border-radius:50%;
-	border:1px solid var(--line);
-	background:rgba(255,255,255,.03);
-	color:var(--fg); font-size:16px;
-	display:flex; align-items:center; justify-content:center;
-	cursor:pointer;
-	transition:transform .3s ease, border-color .3s ease, background .3s ease;
-  }
-  .modal-share-btn:hover{
-	background:var(--accent); color:#000; border-color:var(--accent);
-	transform:translateY(-2px);
-  }
-
-  .share-toast{
-	position:absolute; bottom:14px; left:50%;
-	transform:translateX(-50%) translateY(8px);
-	background:#fff; color:#000; font-size:12.5px; font-weight:600;
-	padding:8px 16px; border-radius:100px;
-	opacity:0; visibility:hidden; pointer-events:none;
-	transition:opacity .3s ease, transform .3s ease, visibility .3s ease;
-	white-space:nowrap;
-  }
-  .share-toast.show{
-	opacity:1; visibility:visible;
-	transform:translateX(-50%) translateY(0);
-  }
-
-  /* ===================== WHATSAPP CONFIRM DIALOG ===================== */
-  .confirm-overlay{
-	position:fixed; inset:0; z-index:400;
-	background:rgba(0,0,0,.8);
-	backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-	display:flex; align-items:center; justify-content:center;
-	padding:20px;
-	opacity:0; visibility:hidden;
-	transition:opacity .3s ease, visibility .3s ease;
-  }
-  .confirm-overlay.show{ opacity:1; visibility:visible; }
-  .confirm-box{
-	width:100%; max-width:340px;
-	background:#111214;
-	border:1px solid var(--line);
-	border-radius:20px;
-	padding:30px 24px 26px;
-	text-align:center;
-	transform:translateY(16px) scale(.96);
-	transition:transform .35s cubic-bezier(.4,0,.2,1);
-  }
-  .confirm-overlay.show .confirm-box{ transform:translateY(0) scale(1); }
-  .confirm-icon{
-	width:56px; height:56px; margin:0 auto 16px;
-	border-radius:50%;
-	background:rgba(37,211,102,.12);
-	color:#25D366;
-	font-size:26px;
-	display:flex; align-items:center; justify-content:center;
-  }
-  .confirm-title{ font-size:17px; font-weight:600; margin-bottom:8px; }
-  .confirm-desc{ color:var(--gray); font-size:13.5px; line-height:1.8; margin-bottom:22px; }
-  .confirm-actions{ display:flex; flex-direction:column; gap:10px; }
-  .confirm-btn{
-	width:100%;
-	border:none; border-radius:100px;
-	padding:12px 16px; font-size:14px; font-weight:600;
-	cursor:pointer;
-	font-family:inherit;
-	display:inline-flex; align-items:center; justify-content:center; gap:8px;
-	transition:transform .3s ease, opacity .3s ease, background .3s ease;
-  }
-  .confirm-btn.confirm-yes{ background:var(--accent); color:#000; }
-  .confirm-btn.confirm-yes:hover{ transform:translateY(-2px); opacity:.9; }
-  .confirm-btn.confirm-no{
-	background:transparent; color:var(--gray);
-	border:1px solid var(--line);
-  }
-  .confirm-btn.confirm-no:hover{ color:#fff; border-color:rgba(255,255,255,.3); }
-
-
-
-  @media (max-width: 560px){
-	.lang-switch{ top:16px; inset-inline-end:16px; }
-	.divider{ height:40px; margin-top:34px; }
-  }
-
-  /* ===================== SETTINGS / CUSTOMIZE MODAL ===================== */
-  .settings-overlay{
-	position:fixed; inset:0; z-index:300;
-	background:rgba(0,0,0,.75);
-	backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-	display:flex; align-items:center; justify-content:center;
-	padding:20px;
-	opacity:0; visibility:hidden;
-	transition:opacity .35s ease, visibility .35s ease;
-  }
-  .settings-overlay.show{ opacity:1; visibility:visible; }
-  .settings-box{
-	position:relative;
-	width:100%; max-width:380px;
-	background:#111214;
-	border:1px solid var(--accent);
-	border-radius:20px;
-	padding:28px 22px 24px;
-	transform:translateY(20px) scale(.96);
-	transition:transform .4s cubic-bezier(.4,0,.2,1), border-color .3s ease;
-  }
-
-  .settings-overlay.show .settings-box{ transform:translateY(0) scale(1); }
-  .settings-title{ font-size:1.0625rem; font-weight:600; margin-bottom:22px; text-align:center; }
-  .settings-section{ margin-bottom:22px; }
-  .settings-label{ font-size:0.8125rem; color:var(--gray); margin-bottom:12px; }
-  .color-swatches{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-  .swatch{
-	width:34px; height:34px; border-radius:50%;
-	border:2px solid transparent;
-	cursor:pointer;
-	transition:transform .25s ease, border-color .25s ease;
-	position:relative;
-  }
-  .swatch:hover{ transform:scale(1.1); }
-  .swatch.selected{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent); }
-   .font-slider-row{
-	display:flex; align-items:center; gap:12px;
-	color:var(--gray);
-  }
-  .font-slider{
-	flex:1;
-	-webkit-appearance:none; appearance:none;
-	height:4px; border-radius:4px;
-	background:rgba(255,255,255,.12);
-	outline:none;
-	cursor:pointer;
-  }
-  .font-slider::-webkit-slider-thumb{
-	-webkit-appearance:none; appearance:none;
-	width:18px; height:18px; border-radius:50%;
-	background:var(--accent);
-	border:2px solid #111214;
-	box-shadow:0 0 0 1px var(--accent);
-	cursor:pointer;
-	transition:transform .2s ease;
-  }
-  .font-slider::-webkit-slider-thumb:hover{ transform:scale(1.15); }
-  .font-slider::-moz-range-thumb{
-	width:18px; height:18px; border-radius:50%;
-	background:var(--accent);
-	border:2px solid #111214;
-	box-shadow:0 0 0 1px var(--accent);
-	cursor:pointer;
-	transition:transform .2s ease;
-  }
-  .font-slider::-moz-range-thumb:hover{ transform:scale(1.15); }
-  .font-slider::-moz-range-track{
-	height:4px; border-radius:4px;
-	background:rgba(255,255,255,.12);
-  }
-  .font-slider-value{
-	text-align:center;
-	margin-top:10px;
-	font-size:0.8125rem;
-	color:var(--gray);
-	font-family:'JetBrains Mono', monospace;
-  }
-  .bg-swatch{ border:2px solid var(--line); }
-  .bg-style-row{ display:flex; gap:8px; }
-  .bg-style-btn{
-	flex:1;
-	background:rgba(255,255,255,.03);
-	border:1px solid var(--line);
-	color:var(--gray);
-	font-family:inherit; font-size:0.78125rem;
-	padding:10px 6px; border-radius:10px;
-	cursor:pointer;
-	transition:all .25s ease;
-  }
-  .bg-style-btn:hover{ color:#fff; }
-  .bg-style-btn.selected{ background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
-
-
-  .settings-reset{
-	width:100%;
-	background:transparent; border:1px solid var(--line);
-	color:var(--gray); font-family:inherit; font-size:0.8125rem;
-	padding:11px; border-radius:100px;
-	cursor:pointer;
-	transition:all .25s ease;
-  }
-
-  .settings-reset:hover{ color:#fff; border-color:rgba(255,255,255,.3); }
-
-  .announce-box{ text-align:right; max-height:80vh; overflow-y:auto; }
-  .announce-list{ display:flex; flex-direction:column; gap:16px; }
-  .announce-item{
-	border-inline-start:2px solid var(--accent);
-	padding-inline-start:14px;
-	padding-bottom:2px;
-  }
-  .announce-date{
-	font-family:'JetBrains Mono', monospace;
-	font-size:0.71875rem; color:var(--gray);
-	margin-bottom:6px;
-	direction:ltr; unicode-bidi:isolate; display:block;
-	text-align:right;
-  }
-  .announce-item-title{
-	font-size:0.90625rem; font-weight:600; color:var(--fg);
-	margin-bottom:6px;
-  }
-  .announce-item-desc{
-	font-size:0.8125rem; color:var(--gray); line-height:1.85;
-  }
-
-  @media (max-width: 560px){
-	.settings-btn{ top:16px; inset-inline-start:16px; }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-	*{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
-  }
+@media(max-width:560px){
+  .why{grid-template-columns:1fr}
+  .why div{border-inline-end:0!important;border-bottom:1px solid var(--line)}
+  .why div:last-child{border-bottom:0}
+  .foot{grid-template-columns:1fr}
+  .cta-row .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv,.hero-load>*{opacity:1;transform:none}
+}
 </style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://devmuhamad.com/#website","url":"https://devmuhamad.com/","name":"DevMuhamad.com","inLanguage":"en","publisher":{"@id":"https://devmuhamad.com/#org"}},{"@type":["Organization","ProfessionalService"],"@id":"https://devmuhamad.com/#org","name":"DevMuhamad.com","url":"https://devmuhamad.com/","logo":"https://devmuhamad.com/icon-512.png","image":"https://devmuhamad.com/og-image.png","description":"Software development and digital systems company building custom management systems, websites, mobile apps, dashboards and automation for businesses.","telephone":"+9647509628683","knowsAbout":["Custom Management Systems","Sales & POS Systems","Inventory & Warehouse Management","Accounting & Financial Systems","Customer Management (CRM)","Employee & Staff Management","Restaurant Management Systems","QR Digital Menus","Booking & Reservation Systems","Real Estate Management Systems","School & Education Management Systems","Clinic & Medical Management Systems","E-commerce Websites","Business Websites","Personal & Portfolio Websites","Online Marketplaces","Mobile Applications","Admin Dashboards","Business Automation Systems","Discord Bots & Custom Bots","Gaming & SA-MP Systems","Custom Software Solutions"],"contactPoint":{"@type":"ContactPoint","telephone":"+9647509628683","contactType":"sales","availableLanguage":["English"]},"hasOfferCatalog":{"@type":"OfferCatalog","name":"What We Build","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Custom Management Systems","description":"Tailored systems that organize your operations, records, and daily workflows in one place.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Sales & POS Systems","description":"Fast point-of-sale tools that track sales, receipts, and daily performance.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Inventory & Warehouse Management","description":"Keep stock accurate across products, locations, and suppliers.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Accounting & Financial Systems","description":"Clear tracking of income, expenses, invoices, and financial reports.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Customer Management (CRM)","description":"Manage customers, follow-ups, and relationships from a single dashboard.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Employee & Staff Management","description":"Organize staff records, schedules, attendance, and responsibilities.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Restaurant Management Systems","description":"Orders, tables, kitchen flow, and sales for restaurants and cafes.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"QR Digital Menus","description":"Modern menus your guests open instantly by scanning a code.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Booking & Reservation Systems","description":"Let customers book appointments and reservations online, anytime.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Real Estate Management Systems","description":"Manage properties, clients, rentals, and listings with ease.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"School & Education Management Systems","description":"Students, classes, grades, and payments organized for schools and institutes.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Clinic & Medical Management Systems","description":"Patient records, appointments, and clinic operations in one system.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"E-commerce Websites","description":"Online stores built to showcase products and take orders smoothly.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Business Websites","description":"Professional websites that present your company with clarity and trust.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Personal & Portfolio Websites","description":"Elegant personal sites that showcase your work and story.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Online Marketplaces","description":"Platforms where sellers and buyers connect, list, and trade.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Mobile Applications","description":"Mobile apps that put your service in your customers' hands.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Admin Dashboards","description":"Clear control panels to monitor data and manage your platform.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Business Automation Systems","description":"Automate repetitive tasks to save time and reduce errors.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Discord Bots & Custom Bots","description":"Custom bots for communities, moderation, and automated tasks.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Gaming & SA-MP Systems","description":"Scripts, systems, and tools for gaming communities and SA-MP servers.","provider":{"@id":"https://devmuhamad.com/#org"}}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Custom Software Solutions","description":"Purpose-built software for any idea that does not fit an existing product.","provider":{"@id":"https://devmuhamad.com/#org"}}}]}}]}</script>
 </head>
 <body>
 
-<!-- SPLASH -->
-<div id="splash" aria-hidden="true">
-  <div class="splash-logo"><span>Dev</span><span class="dim">Muhamad</span><span class="cursor"></span></div>
-  <div class="splash-loader-wrap">
-	<div class="splash-bar-track"><div class="splash-bar-fill"></div></div>
-	<div class="splash-dots"><span></span><span></span><span></span></div>
-  </div>
-</div>
-
-<canvas id="bg-canvas"></canvas>
-<div class="grid-overlay"></div>
-<div class="glow-orb one"></div>
-<div class="glow-orb two"></div>
-
-<button class="settings-btn" id="settingsBtn" aria-label="Settings">
-  <i class="fa-solid fa-house"></i>
-</button>
-
-<button class="settings-btn announce-btn" id="announceBtn" aria-label="Announcements">
-  <i class="fa-solid fa-bell"></i>
-  <span class="announce-dot" id="announceDot"></span>
-</button>
-
-
-<div class="lang-switch" role="group" aria-label="Language switch">
-  <button class="lang-btn active" data-lang="ckb" aria-label="کوردی">
-	<svg class="flag-icon" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-	  <rect width="30" height="20" fill="#EF3340"/>
-	  <rect width="30" height="13.33" fill="#FFFFFF"/>
-	  <rect width="30" height="6.67" fill="#279B48"/>
-	  <g fill="#FDB913" stroke="#FDB913" stroke-width="0.5">
-		<g transform="translate(15,10)">
-		  <g id="sunRays"></g>
-		</g>
-	  </g>
-	  <circle cx="15" cy="10" r="2.6" fill="#FDB913"/>
-	</svg>
-	<span>کوردی</span>
-  </button>
-  <button class="lang-btn" data-lang="ar" aria-label="العربية">
-	<svg class="flag-icon" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-	  <rect width="30" height="20" fill="#EF3340"/>
-	  <rect width="30" height="13.33" fill="#FFFFFF"/>
-	  <rect width="30" height="6.67" fill="#000000"/>
-	  <text x="15" y="11" font-size="5" fill="#279B48" text-anchor="middle" font-family="serif">الله أكبر</text>
-	</svg>
-	<span>عربي</span>
-  </button>
-</div>
-
-<!-- HEADER BANNER (auto-rotating, dots outside card, drag/hold to change) -->
-<header class="site-header">
-  <div class="banner-wrap">
-	<div class="banner-slider" id="bannerSlider" dir="ltr" aria-roledescription="carousel">
-	  <div class="banner-track" id="bannerTrack">
-		<div class="banner-slide"><img src="img/ads1.webp" alt="Banner 1" draggable="false"></div>
-		<div class="banner-slide"><img src="img/ads2.webp" alt="Banner 2" draggable="false"></div>
-		<div class="banner-slide"><img src="img/ads3.webp" alt="Banner 3" draggable="false"></div>
-		<div class="banner-slide"><img src="img/ads4.webp" alt="Banner 4" draggable="false"></div>
-  <div class="banner-slide"><img src="img/ads5.webp" alt="Banner 5" draggable="false"></div>
-  <div class="banner-slide"><img src="img/ads6.webp" alt="Banner 6" draggable="false"></div>
-  <div class="banner-slide"><img src="img/ads7.webp" alt="Banner 7" draggable="false"></div>
-	<div class="banner-slide"><img src="img/ads8.webp" alt="Banner 8" draggable="false"></div>
-  	<div class="banner-slide"><img src="img/ads9.webp" alt="Banner 9" draggable="false"></div>
-			  	<div class="banner-slide"><img src="img/ads10.webp" alt="Banner 9" draggable="false"></div>
-                                
-	  </div>
-	</div>
-	<div class="banner-dots" id="bannerDots"></div>
+<header id="top">
+  <div class="wrap nav">
+    <div class="brand">
+      <a href="#home" class="logo" aria-label="DevMuhamad.com home">
+        <span class="logo-mark"><i data-lucide="code-xml"></i></span>DevMuhamad<span>.com</span>
+      </a>
+      <span class="flag" role="img" aria-label="Flag of Kurdistan" title="Kurdistan">
+        <svg viewBox="0 0 30 20" aria-hidden="true">
+          <rect width="30" height="6.67" fill="#ed2024"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#278e43"/>
+          <g transform="translate(15 10)" fill="#fed100"><circle r="3.1"/><g id="rays"></g></g>
+        </svg>
+      </span>
+    </div>
+    <button class="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+    <nav class="links" id="menu" aria-label="Main">
+      <a href="#home" class="active">Home</a>
+      <a href="#services">Services</a>
+      <a href="#systems">Systems</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a class="btn btn-dark" href="#contact">Start a Project</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap">
-  <div class="eyebrow"><span class="dot"></span><span data-i18n="eyebrow">لە پێشکەشکردندایە</span></div>
-
-  <h1 class="brand">DevMuhamad<span class="slash">.com</span></h1>
-
-  <div class="soon-label" data-i18n="soon">بەخێربین…</div>
-
-  <p class="desc" data-i18n="desc">
-	ماڵپەری DevMuhamad.com بەردەستە بۆ دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییە مۆدێرنەکان.
-	لە داهاتوودا دەتوانیت سیستەمی خواردنگە، سیستەمی QR Menu، Dashboard، Website، Mobile App، Discord Bots، SA-MP Projects و زۆر خزمەتگوزاری دیجیتاڵی تر لێرە بدۆزیتەوە.
-  </p>
-
-  <div class="services" data-i18n-group="services">
-	<span class="chip" data-i18n="s1">سیستەمی خواردنگە</span>
-	<span class="chip" data-i18n="s2">QR Menu</span>
-	<span class="chip" data-i18n="s3">Dashboard</span>
-	<span class="chip" data-i18n="s4">ماڵپەڕ</span>
-	<span class="chip" data-i18n="s5">ئەپی مۆبایل</span>
-	<span class="chip" data-i18n="s6">دیزاینی لۆگۆ ، بانەر</span>
-	<span class="chip" data-i18n="s7">SA-MP Projects</span>
+<main>
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div class="hero-load">
+      <span class="label">DIGITAL SYSTEMS &amp; SOFTWARE SOLUTIONS</span>
+      <h1>Building Smart Digital Systems for Your Business.</h1>
+      <p class="lead">We design and develop modern websites, applications, and custom systems that help businesses grow, work smarter, and serve their customers better.</p>
+      <div class="cta-row">
+        <a class="btn btn-dark" href="#services">Explore Our Services <i data-lucide="arrow-right" class="dir"></i></a>
+        <a class="btn btn-line" href="https://wa.me/9647509628683" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> Contact Us on WhatsApp</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 500 500">
+        <circle class="ring" cx="250" cy="250" r="230"/><circle class="ring" cx="250" cy="250" r="160"/><circle class="ring" cx="250" cy="250" r="90"/>
+        <circle class="pulse" cx="250" cy="250" r="90"/>
+        <g class="orbit">
+          <line class="link" x1="250" y1="250" x2="250" y2="20"/><line class="link" x1="250" y1="250" x2="449" y2="365"/><line class="link" x1="250" y1="250" x2="51" y2="365"/>
+          <circle class="node" cx="250" cy="20" r="9"/><circle class="node" cx="449" cy="365" r="9"/><circle class="node" cx="51" cy="365" r="9"/>
+        </g>
+        <g class="orbit rev">
+          <line class="link" x1="250" y1="250" x2="410" y2="90"/><line class="link" x1="250" y1="250" x2="90" y2="140"/>
+          <circle class="node" cx="410" cy="90" r="7"/><circle class="node" cx="90" cy="140" r="7"/>
+          <circle cx="250" cy="410" r="6" fill="var(--gold)"/>
+        </g>
+        <rect class="core" x="212" y="212" width="76" height="76" rx="22"/>
+        <path d="M239 236l-14 14 14 14M261 236l14 14-14 14" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
   </div>
+</section>
 
-  <!-- SERVICES CARD GRID (responsive, click for details modal) -->
-  <h2 class="section-title" data-i18n="gridTitle">خزمەتگوزارییەکانمان</h2>
-  <div class="services-grid" id="servicesGrid">
-	<div class="service-card" data-key="c1">
-	  <div class="service-card-img"><img src="img/pos1.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c1t">سیستەمی خواردنگە</div>
-	</div>
-	<div class="service-card" data-key="c2">
-	  <div class="service-card-img"><img src="img/pos2.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c2t">QR Menu</div>
-	</div>
-	<div class="service-card" data-key="c3">
-	  <div class="service-card-img"><img src="img/pos3.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c3t">Dashboard</div>
-	</div>
-	<div class="service-card" data-key="c12">
-	  <div class="service-card-img"><img src="img/pos12.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c12t">SA-MP Projects</div>
-	</div>
-	<div class="service-card" data-key="c4">
-	  <div class="service-card-img"><img src="img/pos4.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c4t">ماڵپەڕ</div>
-	</div>
-	<div class="service-card" data-key="c5">
-	  <div class="service-card-img"><img src="img/pos5.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c5t">ئەپی مۆبایل</div>
-	</div>
-	<div class="service-card" data-key="c6">
-	  <div class="service-card-img"><img src="img/pos6.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c6t">Discord Bots</div>
-	</div>
-	<div class="service-card" data-key="c7">
-	  <div class="service-card-img"><img src="img/pos7.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c7t">SA-MP Projects</div>
-	</div>
-  	<div class="service-card" data-key="c8">
-	  <div class="service-card-img"><img src="img/pos8.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c8t">SA-MP Projects</div>
-	</div>
-  	<div class="service-card" data-key="c9">
-	  <div class="service-card-img"><img src="img/pos9.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c9t">SA-MP Projects</div>
-	</div>
-<div class="service-card" data-key="c10">
-	  <div class="service-card-img"><img src="img/pos10.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c10t">SA-MP Projects</div>
-	</div>
-<div class="service-card" data-key="c11">
-	  <div class="service-card-img"><img src="img/pos11.webp" alt="" draggable="false"></div>
-	  <div class="service-card-title" data-i18n="c11t">SA-MP Projects</div>
-	</div>
-  
+<section id="services" aria-labelledby="services-title">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label">SERVICES</span>
+      <h2 id="services-title">What We Build</h2>
+      <p>Complete digital solutions designed around your business needs.</p>
+    </div>
+    <div class="grid" id="grid">
+<article class="card rv"><div class="ico"><i data-lucide="layout-dashboard"></i></div><h3>Custom Management Systems</h3><p>Tailored systems that organize your operations, records, and daily workflows in one place.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Custom%20Management%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Custom Management Systems" target="_blank" rel="noopener" aria-label="Request Custom Management Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="shopping-cart"></i></div><h3>Sales &amp; POS Systems</h3><p>Fast point-of-sale tools that track sales, receipts, and daily performance.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Sales%20%26%20POS%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Sales &amp; POS Systems" target="_blank" rel="noopener" aria-label="Request Sales &amp; POS Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="package"></i></div><h3>Inventory &amp; Warehouse Management</h3><p>Keep stock accurate across products, locations, and suppliers.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Inventory%20%26%20Warehouse%20Management%20service.%20I%20would%20like%20more%20information." data-svc="Inventory &amp; Warehouse Management" target="_blank" rel="noopener" aria-label="Request Inventory &amp; Warehouse Management on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="calculator"></i></div><h3>Accounting &amp; Financial Systems</h3><p>Clear tracking of income, expenses, invoices, and financial reports.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Accounting%20%26%20Financial%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Accounting &amp; Financial Systems" target="_blank" rel="noopener" aria-label="Request Accounting &amp; Financial Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="users"></i></div><h3>Customer Management (CRM)</h3><p>Manage customers, follow-ups, and relationships from a single dashboard.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Customer%20Management%20%28CRM%29%20service.%20I%20would%20like%20more%20information." data-svc="Customer Management (CRM)" target="_blank" rel="noopener" aria-label="Request Customer Management (CRM) on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="id-card"></i></div><h3>Employee &amp; Staff Management</h3><p>Organize staff records, schedules, attendance, and responsibilities.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Employee%20%26%20Staff%20Management%20service.%20I%20would%20like%20more%20information." data-svc="Employee &amp; Staff Management" target="_blank" rel="noopener" aria-label="Request Employee &amp; Staff Management on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="utensils-crossed"></i></div><h3>Restaurant Management Systems</h3><p>Orders, tables, kitchen flow, and sales for restaurants and cafes.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Restaurant%20Management%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Restaurant Management Systems" target="_blank" rel="noopener" aria-label="Request Restaurant Management Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="qr-code"></i></div><h3>QR Digital Menus</h3><p>Modern menus your guests open instantly by scanning a code.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20QR%20Digital%20Menus%20service.%20I%20would%20like%20more%20information." data-svc="QR Digital Menus" target="_blank" rel="noopener" aria-label="Request QR Digital Menus on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="calendar-check"></i></div><h3>Booking &amp; Reservation Systems</h3><p>Let customers book appointments and reservations online, anytime.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Booking%20%26%20Reservation%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Booking &amp; Reservation Systems" target="_blank" rel="noopener" aria-label="Request Booking &amp; Reservation Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="building-2"></i></div><h3>Real Estate Management Systems</h3><p>Manage properties, clients, rentals, and listings with ease.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Real%20Estate%20Management%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Real Estate Management Systems" target="_blank" rel="noopener" aria-label="Request Real Estate Management Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="graduation-cap"></i></div><h3>School &amp; Education Management Systems</h3><p>Students, classes, grades, and payments organized for schools and institutes.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20School%20%26%20Education%20Management%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="School &amp; Education Management Systems" target="_blank" rel="noopener" aria-label="Request School &amp; Education Management Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="stethoscope"></i></div><h3>Clinic &amp; Medical Management Systems</h3><p>Patient records, appointments, and clinic operations in one system.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Clinic%20%26%20Medical%20Management%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Clinic &amp; Medical Management Systems" target="_blank" rel="noopener" aria-label="Request Clinic &amp; Medical Management Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="store"></i></div><h3>E-commerce Websites</h3><p>Online stores built to showcase products and take orders smoothly.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20E-commerce%20Websites%20service.%20I%20would%20like%20more%20information." data-svc="E-commerce Websites" target="_blank" rel="noopener" aria-label="Request E-commerce Websites on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="briefcase"></i></div><h3>Business Websites</h3><p>Professional websites that present your company with clarity and trust.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Business%20Websites%20service.%20I%20would%20like%20more%20information." data-svc="Business Websites" target="_blank" rel="noopener" aria-label="Request Business Websites on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="user-round"></i></div><h3>Personal &amp; Portfolio Websites</h3><p>Elegant personal sites that showcase your work and story.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Personal%20%26%20Portfolio%20Websites%20service.%20I%20would%20like%20more%20information." data-svc="Personal &amp; Portfolio Websites" target="_blank" rel="noopener" aria-label="Request Personal &amp; Portfolio Websites on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="network"></i></div><h3>Online Marketplaces</h3><p>Platforms where sellers and buyers connect, list, and trade.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Online%20Marketplaces%20service.%20I%20would%20like%20more%20information." data-svc="Online Marketplaces" target="_blank" rel="noopener" aria-label="Request Online Marketplaces on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="smartphone"></i></div><h3>Mobile Applications</h3><p>Mobile apps that put your service in your customers' hands.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Mobile%20Applications%20service.%20I%20would%20like%20more%20information." data-svc="Mobile Applications" target="_blank" rel="noopener" aria-label="Request Mobile Applications on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="chart-column"></i></div><h3>Admin Dashboards</h3><p>Clear control panels to monitor data and manage your platform.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Admin%20Dashboards%20service.%20I%20would%20like%20more%20information." data-svc="Admin Dashboards" target="_blank" rel="noopener" aria-label="Request Admin Dashboards on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="workflow"></i></div><h3>Business Automation Systems</h3><p>Automate repetitive tasks to save time and reduce errors.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Business%20Automation%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Business Automation Systems" target="_blank" rel="noopener" aria-label="Request Business Automation Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="bot"></i></div><h3>Discord Bots &amp; Custom Bots</h3><p>Custom bots for communities, moderation, and automated tasks.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Discord%20Bots%20%26%20Custom%20Bots%20service.%20I%20would%20like%20more%20information." data-svc="Discord Bots &amp; Custom Bots" target="_blank" rel="noopener" aria-label="Request Discord Bots &amp; Custom Bots on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="gamepad-2"></i></div><h3>Gaming &amp; SA-MP Systems</h3><p>Scripts, systems, and tools for gaming communities and SA-MP servers.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Gaming%20%26%20SA-MP%20Systems%20service.%20I%20would%20like%20more%20information." data-svc="Gaming &amp; SA-MP Systems" target="_blank" rel="noopener" aria-label="Request Gaming &amp; SA-MP Systems on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+<article class="card rv"><div class="ico"><i data-lucide="terminal"></i></div><h3>Custom Software Solutions</h3><p>Purpose-built software for any idea that does not fit an existing product.</p><a class="req" href="https://wa.me/9647509628683?text=Hello%20DevMuhamad%2C%20I%20am%20interested%20in%20your%20Custom%20Software%20Solutions%20service.%20I%20would%20like%20more%20information." data-svc="Custom Software Solutions" target="_blank" rel="noopener" aria-label="Request Custom Software Solutions on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>
+</div>
   </div>
-  <div class="divider"></div>
+</section>
+
+<section id="systems">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label">WHY DEVMUHAMAD</span>
+      <h2>Why Choose Us?</h2>
+    </div>
+    <div class="why rv">
+      <div><i data-lucide="drafting-compass"></i><h3>Custom-Built Solutions</h3><p>Every system is shaped around how your business actually works, not a generic template.</p></div>
+      <div><i data-lucide="monitor-smartphone"></i><h3>Modern &amp; Responsive Design</h3><p>Clean interfaces that feel natural on phones, tablets, and desktops.</p></div>
+      <div><i data-lucide="wallet"></i><h3>Affordable Business Solutions</h3><p>Practical pricing that fits growing businesses, with a clear scope from the start.</p></div>
+      <div><i data-lucide="life-buoy"></i><h3>Ongoing Technical Support</h3><p>Help and improvements after launch, so your system keeps working for you.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label">PROCESS</span>
+      <h2>Our Process</h2>
+      <p>A simple, transparent path from first conversation to a working system.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv"><b>01</b><h3>Understanding Your Business</h3><p>We listen, learn how you operate, and define what the system needs to solve.</p></div>
+      <div class="step rv"><b>02</b><h3>Planning &amp; Design</h3><p>We map the features and design a clear, modern interface for your approval.</p></div>
+      <div class="step rv"><b>03</b><h3>Development &amp; Testing</h3><p>We build the system and test it carefully across devices before it goes live.</p></div>
+      <div class="step rv"><b>04</b><h3>Delivery &amp; Support</h3><p>We launch, train your team where needed, and stay available for support.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <div class="rv">
+      <span class="label">ABOUT</span>
+      <h2>Technology That Works for Your Business.</h2>
+      <p>DevMuhamad.com specializes in building modern digital systems and software solutions for businesses. From websites and management dashboards to custom platforms and automation, we turn business ideas into practical digital products.</p>
+      <a class="btn btn-dark" href="#contact">Contact Us <i data-lucide="arrow-right" class="dir"></i></a>
+    </div>
+    <div class="stack rv" aria-hidden="true">
+      <div class="bar"><i data-lucide="layout-dashboard"></i>Dashboard<i></i></div>
+      <div class="bar"><i data-lucide="database"></i>Business data<i></i></div>
+      <div class="bar"><i data-lucide="workflow"></i>Automation<i></i></div>
+      <div class="bar"><i data-lucide="smartphone"></i>Web &amp; mobile<i></i></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact rv">
+      <div>
+        <span class="label">CONTACT</span>
+        <h2 style="margin-top:1.2rem">Have a Project in Mind?</h2>
+        <p>Tell us what your business needs. Let’s build something useful together.</p>
+        <a class="btn btn-dark" href="https://wa.me/9647509628683" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> Chat on WhatsApp</a>
+      </div>
+      <div class="info">
+        <a href="tel:+9647509628683"><i data-lucide="phone"></i><div><small>Phone</small><span>07509628683</span></div></a>
+        <a href="https://wa.me/9647509628683" target="_blank" rel="noopener"><i data-lucide="message-circle"></i><div><small>WhatsApp</small><span>07509628683</span></div></a>
+        <div><i data-lucide="globe"></i><div><small>Website</small><span>DevMuhamad.com</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
 </main>
 
-<footer class="footer">
-
-  <div class="discord-card">
-	<div class="discord-card-top">
-	  <div class="discord-card-info">
-		<div class="discord-card-title" data-i18n="discordTitle">بازرگانی کوردستان</div>
-		<div class="discord-status">
-		  <span class="discord-status-dot"></span>
-		  <span data-i18n="discordActive">چالاک</span>
-		  <span class="discord-dot-sep">•</span>
-		  <span data-i18n="discordMembers">٥٠٠٠+ ئەندام</span>
-		</div>
-	  </div>
-	  <div class="discord-card-icon"><i class="fa-brands fa-discord"></i></div>
-	</div>
-	<p class="discord-card-desc" data-i18n="discordDesc">گەورەترین سێرڤەری بازرگانی لە Discord — کڕین و فرۆشتنی هەموو بابەتێک بە متمانەوە، لەگەڵ هەزاران ئەندام و سیستەمی پارێزراو بۆ مامەڵەکردن.</p>
-	<a class="discord-join-btn" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener">
-	  <i class="fa-brands fa-discord"></i>
-	  <span data-i18n="discordJoin">بەشداری کردن</span>
-	</a>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a href="#home" class="logo"><span class="logo-mark"><i data-lucide="code-xml"></i></span>DevMuhamad<span>.com</span></a>
+        <p>Building Digital Solutions That Move Businesses Forward.</p>
+      </div>
+      <div><h4>Navigate</h4><ul>
+        <li><a href="#home">Home</a></li><li><a href="#services">Services</a></li><li><a href="#systems">Systems</a></li><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li></ul></div>
+      <div><h4>Services</h4><ul id="fsv"></ul></div>
+      <div><h4>Contact</h4><ul>
+        <li><a href="https://wa.me/9647509628683" target="_blank" rel="noopener">WhatsApp</a></li>
+        <li><a href="tel:+9647509628683" dir="ltr">07509628683</a></li>
+        <li><a href="#home">DevMuhamad.com</a></li></ul></div>
+    </div>
+    <div class="legal"><span>&copy; <span id="yr"></span> DevMuhamad.com. All rights reserved.</span><span>Digital systems &amp; software solutions</span></div>
   </div>
-
-  <div class="footer-top">
-
-
-	<div class="footer-col">
-	  <div class="footer-col-logo">DevMuhamad<span class="slash">.com</span></div>
-	  <p class="footer-about" data-i18n="footerAbout">DevMuhamad.com پسپۆڕە لە دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییەکان — لە سیستەمی خواردنگە و QR Menu بگرە تا ماڵپەڕ، ئەپی مۆبایل و پڕۆژەی تایبەت. ئامانجمان دابینکردنی چارەسەری خێرا، جوان و متمانەپێکراوە.</p>
-	</div>
-
-	<div class="footer-col footer-col-divided">
-	  <div class="footer-heading" data-i18n="footerLinksTitle">خزمەتگوزارییەکان</div>
-	  <div class="footer-link-list">
-		<a class="footer-link" href="#servicesGrid" data-i18n="s1">سیستەمی خواردنگە</a>
-		<a class="footer-link" href="#servicesGrid" data-i18n="s2">QR Menu</a>
-		<a class="footer-link" href="#servicesGrid" data-i18n="s3">Dashboard</a>
-		<a class="footer-link" href="#servicesGrid" data-i18n="s4">ماڵپەڕ</a>
-		<a class="footer-link" href="#servicesGrid" data-i18n="s5">ئەپی مۆبایل</a>
-		<a class="footer-link" href="#servicesGrid" data-i18n="s7">SA-MP Projects</a>
-	  </div>
-	</div>
-
-	<div class="footer-col footer-col-divided">
-	  <div class="footer-heading" data-i18n="footerContactTitle">پەیوەندیمان پێوە بکە</div>
-		  <div class="social-row">
-		<a class="social-btn" href="https://wa.me/9647509628683" target="_blank" rel="noopener" aria-label="WhatsApp">
-		  <i class="fa-brands fa-whatsapp"></i>
-		</a>
-	  </div>
-	</div>
-
-	<div class="footer-col">
-	  <div class="footer-cta-box">
-		<div class="footer-heading" data-i18n="footerCtaTitle">ئامادەیت پڕۆژەکەت دەست پێبکەیت؟</div>
-		<p class="footer-cta-text" data-i18n="footerCtaText">پەیامێکمان بۆ بنێرە بە WhatsApp، لە کەمترین کاتدا وەڵامت دەدەینەوە.</p>
-		<a class="cta-btn" href="https://wa.me/9647509628683" target="_blank" rel="noopener">
-		  <i class="fa-brands fa-whatsapp"></i>
-		  <span data-i18n="footerCtaBtn">دەستپێکردنی گفتوگۆ</span>
-		</a>
-	  </div>
-	</div>
-
-  </div>
-
-  <div class="copyright">© 2026 DevMuhamad.com — <span data-i18n="rights">All Rights Reserved.</span></div>
 </footer>
 
-<!-- CUSTOMIZE SETTINGS MODAL -->
-<div class="settings-overlay" id="settingsOverlay">
-  <div class="settings-box">
-	<button class="modal-close" id="settingsClose" aria-label="Close">&times;</button>
-	<div class="settings-title" data-i18n="settingsTitle">کەستمایزکردنی ڕووکار</div>
+<a class="wa" href="https://wa.me/9647509628683" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i data-lucide="message-circle"></i></a>
 
-	<div class="settings-section">
-	  <div class="settings-label" data-i18n="settingsColor">ڕەنگی ڕووکار</div>
-		  <div class="color-swatches" id="colorSwatches">
-		<button class="swatch" data-color="#FFFFFF" style="background:#FFFFFF" aria-label="White"></button>
-		<button class="swatch" data-color="#7DD3FC" style="background:#7DD3FC" aria-label="Blue"></button>
-		<button class="swatch" data-color="#38BDF8" style="background:#38BDF8" aria-label="Sky"></button>
-		<button class="swatch" data-color="#86EFAC" style="background:#86EFAC" aria-label="Green"></button>
-		<button class="swatch" data-color="#4ADE80" style="background:#4ADE80" aria-label="Emerald"></button>
-		<button class="swatch" data-color="#FDE047" style="background:#FDE047" aria-label="Yellow"></button>
-		<button class="swatch" data-color="#FDBA74" style="background:#FDBA74" aria-label="Orange"></button>
-		<button class="swatch" data-color="#FB923C" style="background:#FB923C" aria-label="Amber"></button>
-		<button class="swatch" data-color="#F87171" style="background:#F87171" aria-label="Red"></button>
-		<button class="swatch" data-color="#F9A8D4" style="background:#F9A8D4" aria-label="Pink"></button>
-		<button class="swatch" data-color="#C4B5FD" style="background:#C4B5FD" aria-label="Purple"></button>
-		<button class="swatch" data-color="#818CF8" style="background:#818CF8" aria-label="Indigo"></button>
-	  </div>
-	</div>
-
-	<div class="settings-section">
-	  <div class="settings-label" data-i18n="settingsFont">قەبارەی فۆنت</div>
-	  <div class="font-slider-row">
-		<i class="fa-solid fa-a" style="font-size:11px"></i>
-		<input type="range" id="fontSlider" class="font-slider" min="13" max="20" step="0.5" value="16">
-		<i class="fa-solid fa-a" style="font-size:18px"></i>
-	  </div>
-	  <div class="font-slider-value" id="fontSliderValue">16px</div>
-	</div>
-
-	<div class="settings-section">
-	  <div class="settings-label" data-i18n="settingsBgColor">ڕەنگی پاشبنەما</div>
-	  <div class="color-swatches" id="bgColorSwatches">
-		<button class="swatch bg-swatch" data-color="#0B0B0B" style="background:#0B0B0B" aria-label="Black"></button>
-		<button class="swatch bg-swatch" data-color="#000000" style="background:#000000" aria-label="Pure Black"></button>
-		<button class="swatch bg-swatch" data-color="#0A0F1A" style="background:#0A0F1A" aria-label="Dark Blue"></button>
-		<button class="swatch bg-swatch" data-color="#0A140F" style="background:#0A140F" aria-label="Dark Green"></button>
-		<button class="swatch bg-swatch" data-color="#14100A" style="background:#14100A" aria-label="Dark Brown"></button>
-		<button class="swatch bg-swatch" data-color="#150A14" style="background:#150A14" aria-label="Dark Purple"></button>
-	  </div>
-	</div>
-
-	<div class="settings-section">
-	  <div class="settings-label" data-i18n="settingsBgStyle">شێوازی پاشبنەما</div>
-	  <div class="bg-style-row">
-		<button class="bg-style-btn" data-style="dots" data-i18n="bgStyleDots">خاڵ‌خاڵ</button>
-		<button class="bg-style-btn" data-style="plain" data-i18n="bgStylePlain">سادە</button>
-		<button class="bg-style-btn" data-style="grid" data-i18n="bgStyleGrid">خەتی چوارگۆشە</button>
-	  </div>
-	</div>
-
-	<button class="settings-reset" id="settingsReset" data-i18n="settingsReset">گەڕانەوە بۆ دۆخی سەرەتایی</button>
-
+<dialog class="dlg" id="dlg" aria-labelledby="dlg-title" aria-describedby="dlg-text">
+  <div class="dlg-body">
+    <div class="dlg-ico"><i data-lucide="message-circle"></i></div>
+    <h3 id="dlg-title">Open WhatsApp?</h3>
+    <p id="dlg-text"></p>
+    <div class="dlg-act">
+      <button class="btn btn-line" id="dlg-no" type="button">Cancel</button>
+      <button class="btn btn-dark" id="dlg-ok" type="button">Continue</button>
+    </div>
   </div>
-</div>
+</dialog>
 
-<!-- ANNOUNCEMENTS MODAL -->
-<div class="settings-overlay" id="announceOverlay">
-  <div class="settings-box announce-box">
-	<button class="modal-close" id="announceClose" aria-label="Close">&times;</button>
-	<div class="settings-title" data-i18n="announceTitle">گۆڕانکاری و هەواڵەکان</div>
-	<div class="announce-list" id="announceList"></div>
-  </div>
-</div>
-
-<!-- WHATSAPP CONFIRM DIALOG -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
-	<div class="confirm-icon"><i class="fa-brands fa-whatsapp"></i></div>
-	<div class="confirm-title" data-i18n="confirmTitle">دەتەوێت پەیوەندی بکەیت؟</div>
-	<p class="confirm-desc" data-i18n="confirmDesc">بە کرتەکردنی "بەڵێ"، بۆ WhatsApp دەبردرێیت بۆ پەیوەندیکردن.</p>
-	<div class="confirm-actions">
-	  <button class="confirm-btn confirm-yes" id="confirmYes">
-		<i class="fa-brands fa-whatsapp"></i>
-		<span data-i18n="confirmYes">بەڵێ، پەیوەندی بکە</span>
-	  </button>
-	  <button class="confirm-btn confirm-no" id="confirmNo" data-i18n="confirmNo">پاشگەزبوونەوە</button>
-	</div>
-  </div>
-</div>
-
-<!-- SERVICE DETAILS MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-	<button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
-	<img class="modal-img" id="modalImg" src="" alt="">
-	<div class="modal-content">
-	  <div class="modal-title" id="modalTitle"></div>
-	  <p class="modal-desc" id="modalDesc"></p>
-		  <div class="modal-btn-row">
-		<a class="modal-order-btn" id="modalOrderBtn" href="#" target="_blank" rel="noopener">
-		  <i class="fa-brands fa-whatsapp"></i>
-		  <span data-i18n="orderBtn">داواکردن</span>
-		</a>
-		<button class="modal-share-btn" id="modalShareBtn" aria-label="Share">
-		  <i class="fa-solid fa-share-nodes"></i>
-		</button>
-	  </div>
-	  <div class="share-toast" id="shareToast" data-i18n="shareCopied">لینک کۆپی کرا ✓</div>
-
-	</div>
-  </div>
-</div>
-
-
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.453.0/dist/umd/lucide.min.js"></script>
 <script>
 (function(){
-  "use strict";
-
-  /* ---------- i18n ---------- */
-  const dict = {
-	ckb: {
-	  eyebrow: "لە پێشکەشکردندایە",
-	  soon: "بەخێربێن…",
-	  desc: "ماڵپەری DevMuhamad.com بەردەستە بۆ دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییە مۆدێرنەکان. لە داهاتوودا دەتوانیت سیستەمی خواردنگە، سیستەمی QR Menu، Dashboard، Website، Mobile App، Discord Bots، SA-MP Projects و زۆر خزمەتگوزاری دیجیتاڵی تر لێرە بدۆزیتەوە.",
-	  s1:"سیستەمی خواردنگە", s2:"QR Menu", s3:"Dashboard", s4:"ماڵپەڕ", s5:"ئەپی مۆبایل", s6:"Discord Bots", s7:"SA-MP Projects",
-	  rights:"All Rights Reserved.",
-	  gridTitle:"خزمەتگوزارییەکانمان",
-	  c1t:"دیزاین",
-c1d:"دیزاینی مۆدێرن و پرۆفیشناڵ بۆ هەموو جۆرە کار و بیزنسێک دروست دەکەین؛ وەک پۆستەر، بانەر، لۆگۆ، پۆستی سۆشیال میدیا، کارت و هەر دیزاینێکی تر بەگوێرەی خواستی تۆ. ستافێکی شارەزا و بەئەزموون ئامادەی خزمەتگوزارییە. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c2t:"سیستەمی دوکان",
-c2d:"سیستەمی تایبەت بۆ دوکانەکەت دروست دەکەین بەگوێرەی پێویستی کاروبارەکەت. بەڕێوەبردنی فرۆشتن، کۆگا، بارکۆد، قەرز، راپۆرت، ئامار و زۆر تایبەتمەندی تر بە شێوەیەکی خێرا و ئاسان. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c3t:"QR MENU",
-c3d:"مینۆی دیجیتاڵی خواردنگە بە QR Code کە کریار تەنها بە سکانکردن دەتوانێت هەموو خواردنەکان و نرخەکان ببینێت. پشتگیری زمانی کوردی، عەرەبی و ئینگلیزی دەکات و بەشی ئۆفەر و تایبەتمەندییەکانی تر هەیە. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c4t:"QR MENU + DASHBOARD",
-c4d:"مینۆی دیجیتاڵی لەگەڵ داشبۆردی بەڕێوەبردن. دەتوانیت بەخۆت خواردن زیاد و کەم بکەیت، نرخ بگۆڕیت، وێنە بگۆڕیت، بەشەکان بەڕێوەببەیت و هەموو گۆڕانکارییەکان لەهەر کاتێکدا جێبەجێ بکەیت، بەبێ پێویستی بە دیڤلۆپەر. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c5t:"SAMP",
-c5d:"ئەپی تایبەت بۆ سێرڤەری SA-MP دروست دەکەین بە دیزاینێکی مۆدێرن و پاراستنی بەرز. دەتوانرێت هەموو تایبەتمەندییەکان بەگوێرەی داواکاری تۆ زیاد بکرێن. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c6t:"SYSTEM",
-c6d:"هەر جۆرە سیستەمێکی تایبەت بە کاروبارەکەت دروست دەکەین؛ لە دوکان، کۆمپانیا، قوتابخانە، نەخۆشخانە، خواردنگە و هەر بوارێکی تر. هەموو تایبەتمەندییەکان بەگوێرەی داواکاری تۆ جێبەجێ دەکرێن. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c7t:"سیستەمی کۆگا",
-c7d:"سیستەمێکی تەواو و پرۆفیشناڵ بۆ بەڕێوەبردنی کۆگا، زیاتر لە 50+ تایبەتمەندی هەیە. کاردەکات بە بارکۆد و بێ بارکۆد، بەبێ ئینتەرنێتیش کاردەکات، راپۆرت و ئاماری ورد، داشبۆردی جوان و خێرا، و گونجاوە بۆ هەموو جۆرە ئامێرێک. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c8t:"یاری سیخور",
-c8d:"یارییەکی خێزانی و گەنجانە بە بیرۆکەیەکی نوێ و سەرنجڕاکێش، گونجاو بۆ هەموو تەمەنەکان. دەتوانیت ببیتە خاوەنی یارییەکە و بەگوێرەی خواستی خۆت گۆڕانکاری لێ بکەیت. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c9t:"QR MENU CAFE",
-c9d:"مینۆی دیجیتاڵی تایبەت بۆ کافتریا و کافێکان، بە دیزاینێکی مۆدێرن و خێرا. پشتگیری زمانی کوردی و عەرەبی دەکات و هەموو گۆڕانکارییەکان بەگوێرەی داواکاری خاوەن کافێکە جێبەجێ دەکرێن. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c10t:"یاری بازرگان",
-c10d:"یارییەکی تەواو ئامادە بۆ فرۆشتن، بیرۆکە و پلانی تەواوی بۆ دارێژراوە و تەنها پێویستی بە بەڕێوەبەرێک هەیە. لەپێناوی پاراستنی مافی بیرۆکەکە، یارییەکە بە گشتی بڵاونەکراوەتەوە. بۆ زانیاری زیاتر نامە بنێرە.",
-
-c11t:"Website",
-c11d:"ماڵپەڕی مۆدێرن و خێرا دروست دەکەین بۆ هەموو جۆرە کاروبار و بیزنسێک؛ وەک دوکان، کۆمپانیا، خواردنگە، کافێ، کەسی، فرۆشتنی ئۆنلاین و هەر بیرۆکەیەکی تر. دیزاین، گەشەپێدان و هەموو تایبەتمەندییەکان بەگوێرەی خواستی تۆ جێبەجێ دەکرێن. بۆ زانیاری زیاتر نامە بنێرە.",
-c12t:"MENU + DELIVERY",
-c12d:"سیستەمێکی تەواو و پرۆفیشناڵ بۆ خواردنگە و کافتریاکان کە مینۆی دیجیتاڵی و خزمەتگوزاری دلیڤەری لە یەک سیستەمدا کۆدەکاتەوە. کریار تەنها بە سکانکردنی QR Code دەتوانێت خواردنەکان، وێنە، نرخ، ئۆفەر و زانیارییەکان ببینێت و بە ئاسانی داوای خواردن بکات. خاوەنی خواردنگەش دەتوانێت لە ڕێگەی داشبۆردێکی مۆدێرنەوە هەموو خواردنەکان، نرخەکان، بەشەکان، ئۆفەرەکان، داواکارییەکان بەڕێوەببات.سیستەمەکە پشتگیری زمانی کوردی، عەرەبی و ئینگلیزی دەکات، خێرا و ئاسانە بۆ بەکارهێنان و پێویستی بە دیڤلۆپەر نییە بۆ گۆڕانکارییە ڕۆژانەییەکان و هەموو داواکارییەکان بۆ Whatsup دەگوازرێنەوە. بۆ زانیاری زیاتر نامە بنێرە.",
-
-	  footerAbout:"DevMuhamad.com پسپۆڕە لە دروستکردن و فرۆشتنی سیستەمە دیجیتاڵییەکان — لە سیستەمی خواردنگە و QR Menu بگرە تا ماڵپەڕ، ئەپی مۆبایل و پڕۆژەی تایبەت. ئامانجمان دابینکردنی چارەسەری خێرا، جوان و متمانەپێکراوە.",
-	  footerLinksTitle:"خزمەتگوزارییەکان",
-	  footerContactTitle:"پەیوەندیمان پێوە بکە",
-	  footerCtaTitle:"ئامادەیت پڕۆژەکەت دەست پێبکەیت؟",
-	  footerCtaText:"پەیامێکمان بۆ بنێرە بە WhatsApp، لە کەمترین کاتدا وەڵامت دەدەینەوە.",
-		  footerCtaBtn:"دەستپێکردنی گفتوگۆ",
-	  orderBtn:"داواکردن",
-	  orderMsg:"سڵاو، دەمەوێت زانیاری زیاتر لەسەر ئەم خزمەتگوزارییە بزانم: ",
-	  confirmTitle:"دەتەوێت پەیوەندی بکەیت؟",
-	  confirmDesc:"بە کرتەکردنی \"بەڵێ\"، بۆ WhatsApp دەبردرێیت بۆ پەیوەندیکردن.",
-	  confirmYes:"بەڵێ، پەیوەندی بکە",
-	  	  confirmNo:"پاشگەزبوونەوە",
-	  shareText:"سەیری ئەم خزمەتگوزارییە بکە لە DevMuhamad.com: ",
-	  	  shareCopied:"لینک کۆپی کرا ✓",
-	  settingsTitle:"کەستمایزکردنی ڕووکار",
-	  settingsColor:"ڕەنگی ڕووکار",
-	  settingsFont:"قەبارەی فۆنت",
-	  fontSmall:"بچووک",
-	  fontMedium:"ئاسایی",
-	  fontLarge:"گەورە",
-	  	  settingsReset:"گەڕانەوە بۆ دۆخی سەرەتایی",
-	  settingsBgColor:"ڕەنگی پاشبنەما",
-	  settingsBgStyle:"شێوازی پاشبنەما",
-	  bgStyleDots:"خاڵ‌خاڵ",
-	  bgStylePlain:"سادە",
-	  	  bgStyleGrid:"خەتی چوارگۆشە",
-	  discordTitle:"بازرگانی کوردستان",
-	  discordActive:"چالاک",
-	  discordMembers:"٥٠٠٠+ ئەندام",
-	  discordDesc:"گەورەترین سێرڤەری بازرگانی لە Discord — کڕین و فرۆشتنی هەموو بابەتێک بە متمانەوە، لەگەڵ هەزاران ئەندام و سیستەمی پارێزراو بۆ مامەڵەکردن.",
-	  	  discordJoin:"بەشداری کردن",
-	  announceTitle:"گۆڕانکاری و هەواڵەکان",
-	  dir:"rtl"
-	},
-
-
-
-
-
-
-
-
-	ar: {
-	  eyebrow: "قيد التحضير",
-	  soon: "مرحبا…",
-	  desc: "سيصبح موقع DevMuhamad.com متاحاً قريباً لتطوير وبيع الأنظمة الرقمية الحديثة. ستتمكن قريباً من الحصول على أنظمة المطاعم، قوائم QR، لوحات التحكم، المواقع الإلكترونية، تطبيقات الهواتف، بوتات Discord، مشاريع SA-MP والعديد من الخدمات الرقمية الأخرى.",
-	  s1:"أنظمة المطاعم", s2:"قوائم QR", s3:"لوحة التحكم", s4:"مواقع إلكترونية", s5:"تطبيقات الهواتف", s6:"بوتات Discord", s7:"مشاريع SA-MP",
-	  rights:"جميع الحقوق محفوظة.",
-	  gridTitle:"خدماتنا",
-c1t:"التصميم",
-c1d:"نقدم تصاميم عصرية واحترافية لجميع الأعمال والمشاريع، مثل البوسترات، البنرات، الشعارات، منشورات مواقع التواصل الاجتماعي، البطاقات، وغيرها، وفقًا لطلبك وبأعلى جودة. للمزيد من المعلومات راسلنا.",
-
-c2t:"نظام متجر",
-c2d:"نطوّر أنظمة متكاملة لإدارة المتاجر حسب احتياجات عملك، تشمل المبيعات، المخزون، الباركود، الديون، التقارير، الإحصائيات، والعديد من المميزات التي تجعل إدارة متجرك أسهل وأكثر احترافية. للمزيد من المعلومات راسلنا.",
-
-c3t:"QR MENU",
-c3d:"قائمة طعام رقمية تعمل عبر مسح رمز QR، تتيح للعميل تصفح جميع الأصناف والأسعار بسهولة، وتدعم اللغات العربية والكردية والإنجليزية، مع قسم خاص للعروض والوجبات المميزة. للمزيد من المعلومات راسلنا.",
-
-c4t:"QR MENU + DASHBOARD",
-c4d:"قائمة طعام رقمية مع لوحة تحكم متكاملة، تتيح لك إضافة الأصناف وحذفها، تعديل الأسعار، تغيير الصور، وإدارة القائمة بالكامل بنفسك دون الحاجة إلى مطور أو أي خبرة تقنية. للمزيد من المعلومات راسلنا.",
-
-c5t:"SAMP",
-c5d:"نطوّر تطبيقات خاصة بخوادم SA-MP بتصميم حديث ومستوى حماية عالٍ، مع إمكانية إضافة جميع المميزات التي تناسب احتياجات سيرفرك. للمزيد من المعلومات راسلنا.",
-
-c6t:"SYSTEM",
-c6d:"نطوّر جميع أنواع الأنظمة البرمجية حسب طلبك، سواء للمتاجر أو الشركات أو المطاعم أو المؤسسات أو أي نشاط آخر، مع تنفيذ جميع التفاصيل والمميزات التي تحتاجها. للمزيد من المعلومات راسلنا.",
-
-c7t:"نظام مخزن",
-c7d:"نظام احترافي لإدارة المخازن يحتوي على أكثر من 50 ميزة، يعمل بالباركود وبدونه، ويمكن استخدامه حتى بدون اتصال بالإنترنت، مع لوحة تحكم متطورة، تقارير دقيقة، إحصائيات شاملة، ويدعم جميع الأجهزة. للمزيد من المعلومات راسلنا.",
-
-c8t:"لعبة سيخور",
-c8d:"لعبة عائلية وترفيهية مناسبة لجميع الأعمار، بفكرة مميزة وممتعة، ويمكنك امتلاكها وإجراء أي تعديلات أو تطويرات عليها بما يناسبك. للمزيد من المعلومات راسلنا.",
-
-c9t:"QR MENU CAFE",
-c9d:"قائمة طعام رقمية مخصصة للمقاهي والكافيهات، بتصميم عصري وسريع، تدعم اللغتين العربية والكردية، مع إمكانية تنفيذ جميع التعديلات حسب رغبة العميل. للمزيد من المعلومات راسلنا.",
-
-c10t:"لعبة التاجر",
-c10d:"لعبة متكاملة وجاهزة للبيع، تم إعداد فكرتها وخطتها بالكامل، وتحتاج فقط إلى إدارة وتشغيل. لم يتم نشرها حفاظًا على حقوق الفكرة، وهي مشروع عالي الجودة. للمزيد من المعلومات راسلنا.",
-
-c11t:"Website",
-c11d:"نقوم بتصميم وتطوير مواقع إلكترونية حديثة وسريعة لجميع أنواع الأعمال، مثل المتاجر، الشركات، المطاعم، المقاهي، المواقع الشخصية، والمتاجر الإلكترونية، مع تنفيذ جميع المميزات حسب طلبك. للمزيد من المعلومات راسلنا.",
-c12t:"MENU + DELIVERY",
-c12d:"نظام متكامل واحترافي للمطاعم والمقاهي يجمع بين القائمة الرقمية وخدمة التوصيل في نظام واحد. يستطيع العميل من خلال مسح رمز QR تصفح جميع الأصناف، الصور، الأسعار، العروض والمعلومات، ثم إرسال طلبه بسهولة. كما يمكن لصاحب المطعم إدارة جميع الأصناف، الأسعار، الأقسام، العروض والطلبات من خلال لوحة تحكم حديثة. يدعم النظام اللغات العربية والكردية والإنجليزية، ويتميز بالسرعة وسهولة الاستخدام، ولا يحتاج إلى مطور لإجراء التعديلات اليومية، حيث يتم تحويل جميع الطلبات مباشرة إلى WhatsApp. للمزيد من المعلومات راسلنا.",
-	  footerAbout:"يتخصص موقع DevMuhamad.com في تطوير وبيع الأنظمة الرقمية — من أنظمة المطاعم وقوائم QR إلى المواقع الإلكترونية وتطبيقات الهواتف والمشاريع الخاصة. هدفنا تقديم حلول سريعة وأنيقة وموثوقة.",
-	  footerLinksTitle:"خدماتنا",
-	  footerContactTitle:"تواصل معنا",
-	  footerCtaTitle:"جاهز لبدء مشروعك؟",
-	  footerCtaText:"أرسل لنا رسالة عبر واتساب وسنرد عليك في أقرب وقت.",
-		  footerCtaBtn:"ابدأ المحادثة",
-	  orderBtn:"اطلب الآن",
-		  orderMsg:"مرحباً، أرغب بمعرفة المزيد عن هذه الخدمة: ",
-	  confirmTitle:"هل تريد التواصل معنا؟",
-	  confirmDesc:"بالضغط على \"نعم\"، سيتم تحويلك إلى واتساب للتواصل.",
-	  confirmYes:"نعم، تواصل الآن",
-	  	  confirmNo:"إلغاء",
-	  shareText:"شاهد هذه الخدمة على DevMuhamad.com: ",
-	  	  shareCopied:"تم نسخ الرابط ✓",
-	  settingsTitle:"تخصيص المظهر",
-	  settingsColor:"لون الواجهة",
-	  settingsFont:"حجم الخط",
-	  fontSmall:"صغير",
-	  fontMedium:"عادي",
-	  fontLarge:"كبير",
-	  	  settingsReset:"إعادة الضبط الافتراضي",
-	  settingsBgColor:"لون الخلفية",
-	  settingsBgStyle:"نمط الخلفية",
-	  bgStyleDots:"نقاط",
-	  bgStylePlain:"بسيط",
-	  	  bgStyleGrid:"شبكة مربعات",
-	  discordTitle:"بازركاني كوردستان",
-	  discordActive:"نشط",
-	  discordMembers:"+5000 عضو",
-	  discordDesc:"أكبر سيرفر تجاري على Discord — بيع وشراء جميع الأغراض بكل ثقة، مع آلاف الأعضاء ونظام آمن للتعاملات.",
-	  	  discordJoin:"انضم الآن",
-	  announceTitle:"التحديثات والأخبار",
-	  dir:"rtl"
-	}
-
-  };
-
-  /* ---------- Announcements data ---------- */
-  const announcements = [
-	{
-	  id: "announce-1",
-	  date: "2026-07-17",
-	  ckb: { title:"دەستپێکردنی سایتی نوێ", desc:"سایتی DevMuhamad.com بە ڕووکارێکی نوێ و تایبەتمەندی کەستمایزکردن بەردەست کرا." },
-	  ar:  { title:"إطلاق الموقع الجديد", desc:"تم إطلاق موقع DevMuhamad.com بواجهة جديدة وميزة تخصيص المظهر." }
-	}
+  var PHONE="9647509628683";
+  var S=[
+    ["Custom Management Systems","layout-dashboard","Tailored systems that organize your operations, records, and daily workflows in one place."],
+    ["Sales & POS Systems","shopping-cart","Fast point-of-sale tools that track sales, receipts, and daily performance."],
+    ["Inventory & Warehouse Management","package","Keep stock accurate across products, locations, and suppliers."],
+    ["Accounting & Financial Systems","calculator","Clear tracking of income, expenses, invoices, and financial reports."],
+    ["Customer Management (CRM)","users","Manage customers, follow-ups, and relationships from a single dashboard."],
+    ["Employee & Staff Management","id-card","Organize staff records, schedules, attendance, and responsibilities."],
+    ["Restaurant Management Systems","utensils-crossed","Orders, tables, kitchen flow, and sales for restaurants and cafes."],
+    ["QR Digital Menus","qr-code","Modern menus your guests open instantly by scanning a code."],
+    ["Booking & Reservation Systems","calendar-check","Let customers book appointments and reservations online, anytime."],
+    ["Real Estate Management Systems","building-2","Manage properties, clients, rentals, and listings with ease."],
+    ["School & Education Management Systems","graduation-cap","Students, classes, grades, and payments organized for schools and institutes."],
+    ["Clinic & Medical Management Systems","stethoscope","Patient records, appointments, and clinic operations in one system."],
+    ["E-commerce Websites","store","Online stores built to showcase products and take orders smoothly."],
+    ["Business Websites","briefcase","Professional websites that present your company with clarity and trust."],
+    ["Personal & Portfolio Websites","user-round","Elegant personal sites that showcase your work and story."],
+    ["Online Marketplaces","network","Platforms where sellers and buyers connect, list, and trade."],
+    ["Mobile Applications","smartphone","Mobile apps that put your service in your customers' hands."],
+    ["Admin Dashboards","chart-column","Clear control panels to monitor data and manage your platform."],
+    ["Business Automation Systems","workflow","Automate repetitive tasks to save time and reduce errors."],
+    ["Discord Bots & Custom Bots","bot","Custom bots for communities, moderation, and automated tasks."],
+    ["Gaming & SA-MP Systems","gamepad-2","Scripts, systems, and tools for gaming communities and SA-MP servers."],
+    ["Custom Software Solutions","terminal","Purpose-built software for any idea that does not fit an existing product."]
   ];
+  function wa(n){return "https://wa.me/"+PHONE+"?text="+encodeURIComponent("Hello DevMuhamad, I am interested in your "+n+" service. I would like more information.");}
+  function esc(s){return s.replace(/&/g,"&amp;");}
+  var g=document.getElementById("grid"),f=document.getElementById("fsv");
+  if(!g.children.length)g.innerHTML=S.map(function(s){
+    return '<article class="card rv"><div class="ico"><i data-lucide="'+s[1]+'"></i></div><h3>'+esc(s[0])+'</h3><p>'+s[2].replace(/&/g,"&amp;")+'</p><a class="req" href="'+wa(s[0])+'" data-svc="'+esc(s[0])+'" target="_blank" rel="noopener" aria-label="Request '+esc(s[0])+' on WhatsApp">Request This System <i data-lucide="arrow-right"></i></a></article>';
+  }).join("");
+  f.innerHTML=[0,1,2,12,16,22-1].map(function(i){return '<li><a href="'+wa(S[i][0])+'" data-svc="'+esc(S[i][0])+'" target="_blank" rel="noopener">'+esc(S[i][0])+'</a></li>';}).join("");
+  document.getElementById("yr").textContent=new Date().getFullYear();
+  if(window.lucide)lucide.createIcons();
 
-  /* ---------- Announcements modal ---------- */
-  (function initAnnouncements(){
-	const announceBtn = document.getElementById("announceBtn");
-	const announceDot = document.getElementById("announceDot");
-	const announceOverlay = document.getElementById("announceOverlay");
-	const announceClose = document.getElementById("announceClose");
-	const announceList = document.getElementById("announceList");
-	if(!announceBtn || !announceOverlay) return;
+  var burger=document.querySelector(".burger"),menu=document.getElementById("menu");
+  function toggle(o){burger.setAttribute("aria-expanded",o);menu.classList.toggle("open",o);}
+  burger.addEventListener("click",function(){toggle(burger.getAttribute("aria-expanded")!=="true");});
+  menu.addEventListener("click",function(e){if(e.target.closest("a"))toggle(false);});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")toggle(false);});
 
-	const STORAGE_KEY = "dm_last_seen_announce";
-	const latestId = announcements.length ? announcements[0].id : null;
+  var hd=document.querySelector("header");
+  addEventListener("scroll",function(){hd.classList.toggle("scrolled",scrollY>10);},{passive:true});
 
-	function checkUnseen(){
-	  let seenId = null;
-	  try{ seenId = localStorage.getItem(STORAGE_KEY); }catch(e){}
-	  announceDot.classList.toggle("show", !!latestId && seenId !== latestId);
-	}
+  var rv=document.querySelectorAll(".rv");
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.12,rootMargin:"0px 0px -40px 0px"});
+    rv.forEach(function(el){io.observe(el);});
+  }else rv.forEach(function(el){el.classList.add("in");});
 
-	function renderList(){
-	  const lang = currentLang;
-	  announceList.innerHTML = announcements.map(a => `
-		<div class="announce-item">
-		  <span class="announce-date">${a.date}</span>
-		  <div class="announce-item-title">${(a[lang] || a.ckb).title}</div>
-		  <p class="announce-item-desc">${(a[lang] || a.ckb).desc}</p>
-		</div>
-	  `).join("");
-	}
+  var rh="";
+  for(var k=0;k<21;k++){rh+='<path d="M-0.95 -2.9L0 -5.3L0.95 -2.9Z" transform="rotate('+(k*360/21)+')"/>';}
+  document.getElementById("rays").innerHTML=rh;
 
-	function openAnnounce(){
-	  renderList();
-	  announceOverlay.classList.add("show");
-	  document.body.style.overflow = "hidden";
-	  if(latestId){
-		try{ localStorage.setItem(STORAGE_KEY, latestId); }catch(e){}
-	  }
-	  announceDot.classList.remove("show");
-	}
-	function closeAnnounce(){
-	  announceOverlay.classList.remove("show");
-	  document.body.style.overflow = "";
-	}
-
-	announceBtn.addEventListener("click", openAnnounce);
-	announceClose.addEventListener("click", closeAnnounce);
-	announceOverlay.addEventListener("click", (e)=>{ if(e.target === announceOverlay) closeAnnounce(); });
-	document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && announceOverlay.classList.contains("show")) closeAnnounce(); });
-
-	checkUnseen();
-  })();
-
-  /* ---------- Build Kurdistan flag sun rays (21 triangular rays) ---------- */
-  (function buildSunRays(){
-	const group = document.getElementById("sunRays");
-	if(!group) return;
-	const rays = 21;
-	const rOuter = 3.9, rInner = 2.7;
-	let d = "";
-	for(let i=0;i<rays;i++){
-	  const a1 = (i / rays) * Math.PI * 2;
-	  const a2 = a1 + (Math.PI*2/rays)/2;
-	  const a3 = a1 + (Math.PI*2/rays);
-	  const x1 = Math.cos(a1) * rInner, y1 = Math.sin(a1) * rInner;
-	  const x2 = Math.cos(a2) * rOuter, y2 = Math.sin(a2) * rOuter;
-	  const x3 = Math.cos(a3) * rInner, y3 = Math.sin(a3) * rInner;
-	  d += `M${x1.toFixed(2)},${y1.toFixed(2)} L${x2.toFixed(2)},${y2.toFixed(2)} L${x3.toFixed(2)},${y3.toFixed(2)} Z `;
-	}
-	const path = document.createElementNS("http://www.w3.org/2000/svg","path");
-	path.setAttribute("d", d.trim());
-	group.appendChild(path);
-  })();
-
-  const langBtns = document.querySelectorAll(".lang-btn");
-  const html = document.documentElement;
-  let currentLang = "ckb";
-
-  function applyLang(lang){
-	const t = dict[lang];
-	currentLang = lang;
-	document.querySelectorAll("[data-i18n]").forEach(el=>{
-	  const key = el.getAttribute("data-i18n");
-	  if(t[key]) el.textContent = t[key];
-	});
-	html.setAttribute("lang", lang === "ar" ? "ar" : "ckb");
-	html.setAttribute("dir", t.dir);
-	langBtns.forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
-	try{ localStorage.setItem("dm_lang", lang); }catch(e){}
-  }
-
-  langBtns.forEach(btn=>{
-	btn.addEventListener("click", ()=> applyLang(btn.dataset.lang));
+  var dlg=document.getElementById("dlg"),pending=null;
+  document.addEventListener("click",function(e){
+    var a=e.target.closest("a[href]");
+    if(!a||typeof dlg.showModal!=="function")return;
+    var h=a.getAttribute("href"),tel=h.indexOf("tel:")===0;
+    if(!tel&&h.indexOf("https://wa.me/")!==0)return;
+    e.preventDefault();
+    pending=a.href;
+    var svc=a.getAttribute("data-svc");
+    document.getElementById("dlg-title").textContent=tel?"Call this number?":"Open WhatsApp?";
+    document.getElementById("dlg-text").textContent=tel
+      ?"Your phone will start a call to 07509628683."
+      :(svc?"You are about to message DevMuhamad on WhatsApp about "+svc+".":"You are about to open a WhatsApp chat with DevMuhamad.com.");
+    dlg.showModal();
+    document.getElementById("dlg-ok").focus();
+  });
+  document.getElementById("dlg-no").addEventListener("click",function(){dlg.close();});
+  dlg.addEventListener("click",function(e){if(e.target===dlg)dlg.close();});
+  document.getElementById("dlg-ok").addEventListener("click",function(){
+    var h=pending;dlg.close();pending=null;
+    if(!h)return;
+    if(h.indexOf("tel:")===0)location.href=h;else window.open(h,"_blank","noopener");
   });
 
-    let savedLang = "ckb";
-  try{ savedLang = localStorage.getItem("dm_lang") || "ckb"; }catch(e){}
-  applyLang(savedLang);
-
-  /* ---------- Customize: accent color + font size ---------- */
-  (function initCustomize(){
-		const settingsBtn = document.getElementById("settingsBtn");
-	const settingsOverlay = document.getElementById("settingsOverlay");
-	const settingsClose = document.getElementById("settingsClose");
-	const swatches = document.querySelectorAll(".swatch:not(.bg-swatch)");
-	const bgSwatches = document.querySelectorAll(".bg-swatch");
-	const bgStyleBtns = document.querySelectorAll(".bg-style-btn");
-	const fontSlider = document.getElementById("fontSlider");
-	const fontSliderValue = document.getElementById("fontSliderValue");
-	const resetBtn = document.getElementById("settingsReset");
-	const root = document.documentElement;
-	const bgCanvas = document.getElementById("bg-canvas");
-	const gridOverlay = document.querySelector(".grid-overlay");
-	if(!settingsBtn || !settingsOverlay) return;
-
-	const DEFAULT_ACCENT = "#FFFFFF";
-	const DEFAULT_FONT = "16";
-	const DEFAULT_BG = "#0B0B0B";
-	const DEFAULT_BG_STYLE = "dots";
-
-	function applyAccent(color){
-	  root.style.setProperty("--accent", color);
-	  swatches.forEach(s => s.classList.toggle("selected", s.dataset.color.toLowerCase() === color.toLowerCase()));
-	  try{ localStorage.setItem("dm_accent", color); }catch(e){}
-	}
-	function applyFontSize(size){
-	  root.style.fontSize = size + "px";
-	  fontSlider.value = size;
-	  fontSliderValue.textContent = size + "px";
-	  try{ localStorage.setItem("dm_fontsize", size); }catch(e){}
-	}
-	function applyBgColor(color){
-	  root.style.setProperty("--bg", color);
-	  bgSwatches.forEach(s => s.classList.toggle("selected", s.dataset.color.toLowerCase() === color.toLowerCase()));
-	  try{ localStorage.setItem("dm_bgcolor", color); }catch(e){}
-	}
-	function applyBgStyle(style){
-	  if(bgCanvas) bgCanvas.style.display = (style === "dots") ? "" : "none";
-	  if(gridOverlay) gridOverlay.style.display = (style === "grid") ? "" : "none";
-	  bgStyleBtns.forEach(b => b.classList.toggle("selected", b.dataset.style === style));
-	  try{ localStorage.setItem("dm_bgstyle", style); }catch(e){}
-	}
-
-	let savedAccent = DEFAULT_ACCENT, savedFont = DEFAULT_FONT, savedBg = DEFAULT_BG, savedBgStyle = DEFAULT_BG_STYLE;
-	try{ savedAccent = localStorage.getItem("dm_accent") || DEFAULT_ACCENT; }catch(e){}
-	try{ savedFont = localStorage.getItem("dm_fontsize") || DEFAULT_FONT; }catch(e){}
-	try{ savedBg = localStorage.getItem("dm_bgcolor") || DEFAULT_BG; }catch(e){}
-	try{ savedBgStyle = localStorage.getItem("dm_bgstyle") || DEFAULT_BG_STYLE; }catch(e){}
-	applyAccent(savedAccent);
-	applyFontSize(savedFont);
-	applyBgColor(savedBg);
-	applyBgStyle(savedBgStyle);
-
-	swatches.forEach(s => s.addEventListener("click", ()=> applyAccent(s.dataset.color)));
-	bgSwatches.forEach(s => s.addEventListener("click", ()=> applyBgColor(s.dataset.color)));
-	bgStyleBtns.forEach(b => b.addEventListener("click", ()=> applyBgStyle(b.dataset.style)));
-	fontSlider.addEventListener("input", ()=> applyFontSize(fontSlider.value));
-	resetBtn.addEventListener("click", ()=>{
-	  applyAccent(DEFAULT_ACCENT);
-	  applyFontSize(DEFAULT_FONT);
-	  applyBgColor(DEFAULT_BG);
-	  applyBgStyle(DEFAULT_BG_STYLE);
-	});
-
-	function openSettings(){
-	  settingsOverlay.classList.add("show");
-	  document.body.style.overflow = "hidden";
-	}
-	function closeSettings(){
-	  settingsOverlay.classList.remove("show");
-	  document.body.style.overflow = "";
-	}
-	settingsBtn.addEventListener("click", openSettings);
-	settingsClose.addEventListener("click", closeSettings);
-	settingsOverlay.addEventListener("click", (e)=>{ if(e.target === settingsOverlay) closeSettings(); });
-	document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && settingsOverlay.classList.contains("show")) closeSettings(); });
-  })();
-
-  /* ---------- Splash ---------- */
-  window.addEventListener("load", ()=>{
-	setTimeout(()=>{
-	  document.getElementById("splash").classList.add("hide");
-	  setTimeout(()=>{
-		const settingsOverlay = document.getElementById("settingsOverlay");
-		if(settingsOverlay){
-		  settingsOverlay.classList.add("show");
-		  document.body.style.overflow = "hidden";
-		}
-	  }, 500);
-	}, 3200);
-  });
-
-
-  /* ---------- Ripple on social buttons ---------- */
-  document.querySelectorAll(".social-btn").forEach(btn=>{
-	btn.addEventListener("click", function(e){
-	  const rect = this.getBoundingClientRect();
-	  const ripple = document.createElement("span");
-	  ripple.className = "ripple";
-	  const size = Math.max(rect.width, rect.height);
-	  ripple.style.width = ripple.style.height = size + "px";
-	  ripple.style.left = (e.clientX - rect.left - size/2) + "px";
-	  ripple.style.top = (e.clientY - rect.top - size/2) + "px";
-	  this.appendChild(ripple);
-	  setTimeout(()=> ripple.remove(), 650);
-	});
-  });
-
-
-  /* ---------- Particle network background ---------- */
-  const canvas = document.getElementById("bg-canvas");
-  const ctx = canvas.getContext("2d");
-  let W, H, particles = [];
-  const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function resize(){
-	W = canvas.width = window.innerWidth;
-	H = canvas.height = window.innerHeight;
+  var ids=["home","services","systems","about","contact"],links=document.querySelectorAll(".links a:not(.btn)");
+  if("IntersectionObserver" in window){
+    var so=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id);});}});},{rootMargin:"-45% 0px -50% 0px"});
+    ids.forEach(function(id){var el=document.getElementById(id);if(el)so.observe(el);});
   }
-  window.addEventListener("resize", resize);
-  resize();
-
-  function initParticles(){
-	const count = Math.min(70, Math.floor((W*H)/22000));
-	particles = Array.from({length: count}, ()=>({
-	  x: Math.random()*W,
-	  y: Math.random()*H,
-	  vx: (Math.random()-0.5)*0.25,
-	  vy: (Math.random()-0.5)*0.25,
-	  r: Math.random()*1.6 + 0.6
-	}));
-  }
-  initParticles();
-  window.addEventListener("resize", initParticles);
-
-  function step(){
-	ctx.clearRect(0,0,W,H);
-	for(const p of particles){
-	  p.x += p.vx; p.y += p.vy;
-	  if(p.x < 0 || p.x > W) p.vx *= -1;
-	  if(p.y < 0 || p.y > H) p.vy *= -1;
-	}
-	for(let i=0;i<particles.length;i++){
-	  const a = particles[i];
-	  ctx.beginPath();
-	  ctx.arc(a.x, a.y, a.r, 0, Math.PI*2);
-	  ctx.fillStyle = "rgba(255,255,255,0.55)";
-	  ctx.fill();
-	  for(let j=i+1;j<particles.length;j++){
-		const b = particles[j];
-		const dx = a.x-b.x, dy = a.y-b.y;
-		const dist = Math.sqrt(dx*dx+dy*dy);
-		if(dist < 130){
-		  ctx.beginPath();
-		  ctx.moveTo(a.x, a.y);
-		  ctx.lineTo(b.x, b.y);
-		  ctx.strokeStyle = "rgba(255,255,255," + (0.12*(1-dist/130)) + ")";
-		  ctx.lineWidth = 1;
-		  ctx.stroke();
-		}
-	  }
-	}
-	if(!REDUCE_MOTION) requestAnimationFrame(step);
-  }
-  step();
-
-  /* ---------- Header banner carousel: autoplay + dots + drag/hold ---------- */
-  (function initBanner(){
-	const slider = document.getElementById("bannerSlider");
-	const track = document.getElementById("bannerTrack");
-	const dotsWrap = document.getElementById("bannerDots");
-	if(!slider || !track) return;
-
-	const slides = Array.from(track.children);
-	const count = slides.length;
-	let current = 0;
-	let autoplayId = null;
-	let isDragging = false;
-	let startX = 0;
-
-	// build dots
-	slides.forEach((_, i)=>{
-	  const dot = document.createElement("button");
-	  dot.className = "banner-dot" + (i === 0 ? " active" : "");
-	  dot.setAttribute("aria-label", "Slide " + (i+1));
-	  dot.addEventListener("click", ()=>{ goTo(i); restartAutoplay(); });
-	  dotsWrap.appendChild(dot);
-	});
-	const dots = Array.from(dotsWrap.children);
-
-	function updateDots(){
-	  dots.forEach((d,i)=> d.classList.toggle("active", i === current));
-	}
-
-	function goTo(index, withTransition){
-	  current = ((index % count) + count) % count;
-	  track.style.transition = withTransition === false ? "none" : "";
-	  track.style.transform = "translateX(-" + (current*100) + "%)";
-	  updateDots();
-	}
-
-	function startAutoplay(){
-	  stopAutoplay();
-	  autoplayId = setInterval(()=> goTo(current+1), 4500);
-	}
-	function stopAutoplay(){
-	  if(autoplayId) clearInterval(autoplayId);
-	  autoplayId = null;
-	}
-	function restartAutoplay(){ startAutoplay(); }
-
-	// pointer drag to swipe/hold-change
-	function dragStart(e){
-	  isDragging = true;
-	  startX = e.clientX;
-	  stopAutoplay();
-	  track.classList.add("dragging");
-	}
-	function dragMove(e){
-	  if(!isDragging) return;
-	  const dx = e.clientX - startX;
-	  const percent = (dx / slider.offsetWidth) * 100;
-	  track.style.transform = "translateX(calc(-" + (current*100) + "% + " + percent + "%))";
-	}
-	function dragEnd(e){
-	  if(!isDragging) return;
-	  isDragging = false;
-	  track.classList.remove("dragging");
-	  const dx = (e.clientX || 0) - startX;
-	  if(Math.abs(dx) > 50){
-		goTo(current + (dx < 0 ? 1 : -1));
-	  } else {
-		goTo(current);
-	  }
-	  startAutoplay();
-	}
-
-	slider.addEventListener("pointerdown", dragStart);
-	window.addEventListener("pointermove", dragMove);
-	window.addEventListener("pointerup", dragEnd);
-	slider.addEventListener("pointerleave", (e)=>{ if(isDragging) dragEnd(e); });
-	slider.addEventListener("mouseenter", stopAutoplay);
-	slider.addEventListener("mouseleave", ()=>{ if(!isDragging) startAutoplay(); });
-
-	goTo(0, false);
-	startAutoplay();
-  })();
-
-  /* ---------- WhatsApp confirm dialog (intercepts every wa.me link) ---------- */
-  (function initWhatsappConfirm(){
-	const confirmOverlay = document.getElementById("confirmOverlay");
-	const confirmYes = document.getElementById("confirmYes");
-	const confirmNo = document.getElementById("confirmNo");
-	if(!confirmOverlay) return;
-
-	let pendingUrl = null;
-
-	function openConfirm(url){
-	  pendingUrl = url;
-	  confirmOverlay.classList.add("show");
-	  document.body.style.overflow = "hidden";
-	}
-	function closeConfirm(){
-	  confirmOverlay.classList.remove("show");
-	  document.body.style.overflow = "";
-	  pendingUrl = null;
-	}
-
-	document.addEventListener("click", function(e){
-	  const link = e.target.closest('a[href*="wa.me"]');
-	  if(!link) return;
-	  e.preventDefault();
-	  openConfirm(link.href);
-	});
-
-	confirmYes.addEventListener("click", ()=>{
-	  if(pendingUrl) window.open(pendingUrl, "_blank", "noopener");
-	  closeConfirm();
-	});
-	confirmNo.addEventListener("click", closeConfirm);
-	confirmOverlay.addEventListener("click", (e)=>{ if(e.target === confirmOverlay) closeConfirm(); });
-	document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && confirmOverlay.classList.contains("show")) closeConfirm(); });
-  })();
-
-  /* ---------- Services grid → modal ---------- */
-  (function initServiceModal(){
-	const overlay = document.getElementById("modalOverlay");
-	const modalImg = document.getElementById("modalImg");
-	const modalTitle = document.getElementById("modalTitle");
-	const modalDesc = document.getElementById("modalDesc");
-		const closeBtn = document.getElementById("modalClose");
-	const modalOrderBtn = document.getElementById("modalOrderBtn");
-	if(!overlay) return;
-
-		const modalShareBtn = document.getElementById("modalShareBtn");
-	const shareToast = document.getElementById("shareToast");
-	let currentServiceName = "";
-
-	function openModal(card){
-	  const key = card.dataset.key;
-	  const t = dict[currentLang];
-	  const img = card.querySelector(".service-card-img img");
-	  modalImg.src = img ? img.src : "";
-	  modalImg.alt = t[key + "t"] || "";
-	  modalTitle.textContent = t[key + "t"] || "";
-	  modalDesc.textContent = t[key + "d"] || "";
-	  const serviceName = t[key + "t"] || "";
-	  currentServiceName = serviceName;
-	  const waMessage = encodeURIComponent((t.orderMsg || "") + serviceName);
-	  modalOrderBtn.href = "https://wa.me/9647509628683?text=" + waMessage;
-	  overlay.classList.add("show");
-	  document.body.style.overflow = "hidden";
-	}
-
-	async function handleShare(){
-	  const t = dict[currentLang];
-	  const shareData = {
-		title: "DevMuhamad.com — " + currentServiceName,
-		text: (t.shareText || "") + currentServiceName,
-		url: window.location.href
-	  };
-	  if(navigator.share){
-		try{ await navigator.share(shareData); }catch(err){ /* user cancelled */ }
-	  } else {
-		try{
-		  await navigator.clipboard.writeText(shareData.text + " " + shareData.url);
-		  shareToast.classList.add("show");
-		  setTimeout(()=> shareToast.classList.remove("show"), 2200);
-		}catch(err){ /* clipboard failed silently */ }
-	  }
-	}
-	modalShareBtn.addEventListener("click", handleShare);
-
-	function closeModal(){
-	  overlay.classList.remove("show");
-	  document.body.style.overflow = "";
-	}
-
-	document.querySelectorAll(".service-card").forEach(card=>{
-	  card.addEventListener("click", ()=> openModal(card));
-	});
-	closeBtn.addEventListener("click", closeModal);
-	overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeModal(); });
-	document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
-  })();
-
 })();
 </script>
 </body>
