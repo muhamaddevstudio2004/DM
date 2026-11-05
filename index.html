@@ -236,7 +236,6 @@ html{scroll-behavior:auto}
 .arb-view{position:fixed;inset:0;z-index:200;background:#fff;display:none}
 .arb-view.open{display:block}
 .arb-view iframe{display:block;width:100%;height:100%;border:0;background:#fff}
-.arb-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:14px;z-index:2;width:42px;height:42px;border:1px solid #ddd;border-radius:50%;background:#111;color:#fff;font-size:25px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 14px rgba(0,0,0,.2)}
 .arb-close:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 body.arb-open{overflow:hidden}
 
@@ -447,7 +446,6 @@ body.arb-open{overflow:hidden}
 
 
 <div class="arb-view" id="arb-view" aria-label="Academic Report Builder" aria-hidden="true">
-  <button class="arb-close" id="arb-close" type="button" aria-label="Close Report Builder">&times;</button>
   <iframe id="arb-frame" title="Academic Report Builder" loading="lazy"></iframe>
 </div>
 
@@ -541,7 +539,6 @@ body.arb-open{overflow:hidden}
   var go=document.getElementById("arb-go");
   var arbView=document.getElementById("arb-view");
   var arbFrame=document.getElementById("arb-frame");
-  var arbClose=document.getElementById("arb-close");
   var arbOpen=false;
   function openArb(){
     if(arbOpen)return;
@@ -551,7 +548,6 @@ body.arb-open{overflow:hidden}
     arbView.setAttribute("aria-hidden","false");
     document.body.classList.add("arb-open");
     history.pushState({academicReportBuilder:true},"",location.pathname+location.search+location.hash);
-    arbClose.focus();
   }
   function closeArb(useHistory){
     if(!arbOpen)return;
@@ -567,7 +563,6 @@ body.arb-open{overflow:hidden}
     e.preventDefault();
     openArb();
   });
-  if(arbClose)arbClose.addEventListener("click",function(){closeArb(true);});
   addEventListener("popstate",function(){if(arbOpen)closeArb(false);});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&arbOpen)closeArb(true);});
 })();
