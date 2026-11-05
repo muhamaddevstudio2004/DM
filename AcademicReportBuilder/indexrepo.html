@@ -134,7 +134,7 @@ const FIELDS=[["sup","Supervisor / Doctor"],["uni","University"],["col","College
 const TYPES={h:"Subtitle",p:"Paragraph",ul:"Bullet list",ol:"Numbered list",tbl:"Table",img:"Image"};
 const HINT={ul:"One item per line",ol:"One item per line",tbl:"Header 1 | Header 2\nCell | Cell",p:"Write or paste text. A new line starts a new paragraph."};
 let S=load();if(!Array.isArray(S.refs))S.refs=[];S.refs.forEach((r,i)=>{if(!r.id)r.id="ref-legacy-"+i});if(!S.citeStyle)S.citeStyle="apa";if(S.lineOn===undefined)S.lineOn=true;if(!S.lineColor)S.lineColor="#b8923a";
-function seed(){return{info:{students:["Muhamad Yousif","Karzan Salam","Ismahil"],sup:"Dr. Kherota",uni:"Erbil Polytechnic University",col:"Soran Technical College",dep:"IT Department | Evening",year:"2025–2026",course:"Computer Networks II",title:"Field Visit Report: How FTTH Internet Is Delivered to Homes",sub:"Visit to an FTTH Service Center – Erbil, Iraq"},logo:"",pages:[
+function seed(){return{info:{students:["Muhamad Yousif","Karzan Salam"],sup:"Dr. Kherota",uni:"Erbil Polytechnic University",col:"Soran Technical College",dep:"IT Department | Evening",year:"2025–2026",course:"MODEL II",title:"TITLE REPORT",sub:" "},logo:"",pages:[
 {title:"Introduction",blocks:[{t:"p",text:"Write the introduction of your report here. Each page of the editor becomes a numbered section with its own title."}]},
 {title:"Purpose and Objectives",blocks:[{t:"p",text:"The purpose of our visit was:"},{t:"ul",text:"to identify the main equipment\nto understand how data travels to the home"}]},
 {title:"Equipment Used",blocks:[{t:"tbl",text:"Equipment | Function\nOLT | Manages optical connections\nONT | Converts optical signals to Ethernet"}]}]}}
