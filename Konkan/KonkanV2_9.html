@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<!-- KonKan Scorekeeper — Version 2.9 -->
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="خاڵنووسی کۆنکان">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6eee3">
+<title>خاڵنووسی کۆنکان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body{
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  input, textarea{
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  :root{
+    --ivory:#f6eee3;
+    --ivory-2:#eee2d2;
+    --card:#fffaf3;
+    --charcoal:#3a2218;
+    --charcoal-soft:#7a6354;
+    --copper:#5c3b2c;
+    --copper-deep:#4a2e21;
+    --copper-tint:#ead9c6;
+    --olive:#6d4f3b;
+    --olive-tint:#efe3d3;
+    --border:#e2d2bd;
+    --shadow: 0 1px 2px rgba(58,34,24,.04), 0 8px 24px rgba(58,34,24,.06);
+    --shadow-lg: 0 4px 10px rgba(58,34,24,.06), 0 20px 40px rgba(58,34,24,.10);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ivory);
+    color: var(--charcoal);
+    font-family: "Vazirmatn", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body::before{
+    content:"";
+    position: fixed; inset:0;
+    background:
+      radial-gradient(60% 40% at 15% 0%, rgba(92,59,44,.07), transparent 60%),
+      radial-gradient(50% 30% at 100% 100%, rgba(92,59,44,.05), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+  button{font-family:inherit;}
+  input{font-family:inherit;}
+  h1,h2,h3,p{margin:0;}
+  button{border:none;background:none;cursor:pointer;color:inherit;}
+  button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline: 2.5px solid var(--copper);
+    outline-offset: 2px;
+  }
+
+  .screen{
+    display:none;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: calc(20px + var(--safe-top)) 18px calc(28px + var(--safe-bottom));
+    position: relative;
+    z-index: 1;
+  }
+  .screen.active{display:block;}
+
+  /* ---------- Logo ---------- */
+  .logo-block{
+    position:relative;
+    overflow:hidden;
+    background:#5c3b2c;
+    border-radius:28px;
+    padding:26px 16px 24px;
+    text-align:center;
+    margin: 8px 0 18px;
+    color:#f5ece0;
+  }
+  .logo-block::before{
+    content:"";
+    position:absolute;
+    left:50%; top:-75%;
+    width:125%; aspect-ratio:1;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:#664735;
+    border:1px solid #7b5841;
+  }
+  .logo-block > *{ position:relative; }
+  .hero-art{
+    display:block;
+    width:72%; max-width:260px; height:auto;
+    margin:0 auto 10px;
+  }
+  .hero-art text{ font-family:"Vazirmatn","Noto Sans Arabic",sans-serif; font-weight:800; }
+  .logo-mark{
+    display:inline-flex;
+    align-items:baseline;
+    gap: 2px;
+    font-weight: 800;
+    font-size: 40px;
+    letter-spacing: -0.02em;
+    direction: ltr;
+  }
+  .logo-mark span.k1{ color: #f5ece0; }
+  .logo-mark span.k2{ color: #e3bd92; }
+  .logo-sub{
+    margin-top: 4px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #e8d9c6;
+  }
+
+  /* single coffee card: illustration + form together */
+  .setup-card{
+    margin-top: 8px;
+    border-radius: 28px;
+    background: #5c3b2c;
+    box-shadow: var(--shadow-lg);
+    padding: 26px 18px 22px;
+    color: #f5ece0;
+  }
+  .setup-card .logo-block{
+    background: none;
+    border-radius: 0;
+    overflow: visible;
+    padding: 0;
+    margin: 0 0 22px;
+  }
+  .setup-card .logo-block::before{ display:none; }
+  .setup-card .card{
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .setup-card .field label{ color:#e8d9c6; }
+  .setup-card .field input[type="text"],
+  .setup-card .field input[type="number"]{
+    background:#f3ebdd; border-color:#f3ebdd; color:#3a2218;
+  }
+  .setup-card .field input:focus{ background:#fffaf3; border-color:#e3bd92; }
+  .setup-card .field input::placeholder{ color:#b8a592; }
+  .setup-card .round-opt{
+    background: transparent; border-color:#8a6a55; color:#e8d9c6;
+  }
+  .setup-card .round-opt.selected{
+    background:#f3ebdd; border-color:#f3ebdd; color:#3a2218;
+  }
+  .setup-card .btn-primary{
+    background:#f5ece0; color:#4a2e21; box-shadow:none;
+  }
+  .setup-card .btn-primary:hover{ background:#fffaf3; }
+  /* ---- compact, player-friendly layout ---- */
+  .setup-card{ padding: 20px 16px 18px; }
+  .setup-card .logo-block{ margin: 0 0 16px; }
+  .setup-card .hero-art{ width:46%; max-width:170px; margin:0 auto 6px; }
+  .setup-card .logo-mark{ font-size:34px; }
+  .setup-card .logo-sub{ font-size:16px; margin-top:0; opacity:.85; }
+  .setup-card .field{ margin-bottom:14px; }
+  .setup-card .field label{ font-size:14px; }
+  .setup-card .team-field{ --tc:#e8664f; }
+  .setup-card .team-field.t2{ --tc:#5b9be8; }
+  .setup-card .team-field label{ display:flex; align-items:center; gap:8px; }
+  .setup-card .team-field label::before{
+    content:""; width:11px; height:11px; border-radius:50%; background:var(--tc); flex-shrink:0;
+  }
+  .setup-card .team-field input{
+    border-inline-start: 6px solid var(--tc) !important;
+    font-size:18px; font-weight:700; padding:15px 16px;
+  }
+  .setup-card .round-options{ gap:8px; }
+  .setup-card .round-opt{ padding:14px 8px; font-size:17px; }
+  .setup-card .btn-primary{ padding:16px; font-size:18px; margin-top:4px; border-radius:14px; }
+  .setup-card .custom-rounds-input input{ font-size:18px; font-weight:700; text-align:center; }
+
+  .setup-card .error-text{ color:#ffb9a6; }
+  .setup-card button:focus-visible, .setup-card input:focus-visible{ outline-color:#e3bd92; }
+
+  /* ---------- Setup form ---------- */
+  .card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+  .field{ margin-bottom: 18px; }
+  .field label{
+    display:block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--charcoal-soft);
+    margin-bottom: 8px;
+  }
+  .field input[type="text"], .field input[type="number"]{
+    width:100%;
+    padding: 13px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--ivory-2);
+    font-size: 16px;
+    color: var(--charcoal);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .field input::placeholder{ color: #b8a592; }
+  .field input:focus{ border-color: var(--copper); background: var(--card); }
+
+  .round-options{
+    display:flex;
+    gap: 8px;
+  }
+  .round-opt{
+    flex:1;
+    padding: 12px 8px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--ivory-2);
+    text-align:center;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--charcoal-soft);
+    transition: all .15s ease;
+  }
+  .round-opt.selected{
+    border-color: var(--copper);
+    background: var(--copper-tint);
+    color: var(--copper-deep);
+  }
+  .custom-rounds-input{ margin-top: 10px; display:none; }
+  .custom-rounds-input.show{ display:block; }
+
+  .error-text{
+    color: #b3402a;
+    font-size: 13px;
+    margin-top: 6px;
+    display:none;
+  }
+  .error-text.show{ display:block; }
+
+  .btn-primary{
+    width:100%;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    background: var(--copper);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 6px 16px rgba(92,59,44,.30);
+    transition: transform .1s ease, box-shadow .15s ease, background .15s ease;
+    margin-top: 6px;
+  }
+  .btn-primary:active{ transform: scale(.98); }
+  .btn-primary:hover{ background: var(--copper-deep); }
+
+  .score-actions{
+    display:flex;
+    gap:10px;
+  }
+  .score-actions .btn-primary{ margin-top:0; }
+  .btn-share{
+    width: 52px;
+    flex-shrink:0;
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--charcoal-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .btn-share:hover{ background: var(--ivory-2); color: var(--copper-deep); border-color: var(--copper); }
+  .btn-share svg{ width:20px; height:20px; }
+
+  /* ---------- Score screen header ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 16px;
+  }
+  .icon-btn{
+    width: 42px; height:42px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--charcoal-soft);
+    transition: background .15s ease, color .15s ease;
+  }
+  .icon-btn:hover{ background: var(--ivory-2); color: var(--charcoal); }
+  .icon-btn svg{ width:20px; height:20px; }
+  .topbar-actions{ display:flex; gap:8px; }
+  .brand-mini{
+    font-weight: 800; font-size: 19px; direction: ltr;
+  }
+  .brand-mini span.k2{ color: var(--copper); }
+
+  .game-timer{
+    direction:ltr;
+    text-align:center;
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--copper-deep);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    margin: 2px 0 16px;
+  }
+
+  /* ---------- Scoreboard (tug-of-war bar) ---------- */
+  @property --p{ syntax:'<percentage>'; inherits:true; initial-value:50%; }
+  :root{ --t1:#d2452f; --t2:#2a68b8; }
+  .scoreboard{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 16px 16px;
+    margin-bottom: 18px;
+  }
+  .sb-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom: 14px;
+  }
+  .sb-side{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    max-width:48%;
+    opacity:.5;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .sb-side1{ align-items:flex-start; }
+  .sb-side2{ align-items:flex-end; }
+  .sb-side.leading, .sb-top.tied .sb-side{ opacity:1; }
+  .sb-name-line{ display:flex; align-items:center; gap:8px; min-width:0; max-width:100%; }
+  .sb-dot{ width:11px;height:11px;border-radius:50%; flex-shrink:0; }
+  .sb-side1 .sb-dot{ background: var(--t1); }
+  .sb-side2 .sb-dot{ background: var(--t2); }
+  .sb-icon{
+    width:46px; height:46px;
+    display:block; flex-shrink:0;
+    filter: drop-shadow(0 1px 2px rgba(58,34,24,.22));
+  }
+  .sb-icon svg{ display:block; }
+  .sb-name{
+    font-weight: 700;
+    font-size: 16px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .sb-score{
+    font-weight: 800;
+    font-size: 44px;
+    line-height:1.1;
+    margin-top: 4px;
+    direction:ltr;
+    font-variant-numeric: tabular-nums;
+    transition: color .3s ease;
+  }
+  .sb-side1 .sb-score{ color: var(--t1); }
+  .sb-side2 .sb-score{ color: var(--t2); }
+  .sb-bar{
+    position:relative;
+    height: 18px;
+    border-radius: 999px;
+    --p: 50%;
+    background: linear-gradient(to left,
+      var(--t1) 0%,
+      var(--t1) max(0%, calc(var(--p) - 10%)),
+      var(--t2) min(100%, calc(var(--p) + 10%)),
+      var(--t2) 100%);
+    transition: --p .6s cubic-bezier(.3,.7,.2,1);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.18);
+  }
+  .sb-lead-text{
+    text-align:center;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--olive);
+    background: var(--olive-tint);
+    border-radius: 999px;
+    padding: 7px 10px;
+  }
+
+  .sb-final-head{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:14px; font-weight:700; color: var(--charcoal-soft);
+    margin-bottom: 12px;
+  }
+  .sb-trophy{ color: var(--copper); display:flex; }
+  .sb-trophy svg{ width:22px; height:22px; }
+  .scoreboard.final{ animation: pop .35s ease; border-color:#dcc3a6; }
+  .scoreboard.final .sb-lead-text{
+    background: var(--copper-tint);
+    color: var(--copper-deep);
+    border: 1px solid #dcc3a6;
+    font-size: 14.5px;
+    font-weight: 800;
+  }
+  .konkan-notice{
+    text-align:center;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--copper-deep);
+    background: var(--copper-tint);
+    border: 1px solid #dcc3a6;
+    border-radius: 14px;
+    padding: 11px 14px;
+    margin-bottom: 16px;
+  }
+
+  /* ---------- Round table ---------- */
+  .rounds-label{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--charcoal-soft);
+    margin: 4px 4px 10px;
+  }
+  .round-header{
+    display:grid;
+    grid-template-columns: 44px 1fr 1fr;
+    padding: 0 2px 8px;
+  }
+  .round-header .rh-name{
+    text-align:center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--charcoal-soft);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    padding: 0 4px;
+  }
+  .rh-icon{ display:inline-block; width:22px; height:22px; margin-inline-end:6px; vertical-align:middle; }
+  .rh-icon svg{ display:block; }
+  .round-list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .round-row{
+    display:grid;
+    grid-template-columns: 44px 1fr 1fr;
+    align-items:center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow:hidden;
+  }
+  .round-tag{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--charcoal-soft);
+    text-align:center;
+    padding: 0 4px;
+  }
+  .round-cell{
+    padding: 15px 6px;
+    text-align:center;
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--charcoal);
+    border-inline-start: 1px solid var(--border);
+    transition: background .12s ease;
+  }
+  .round-cell:active{ background: var(--copper-tint); }
+  .round-cell.empty{ color: #c3b9a8; font-weight:600; }
+  .round-cell.round-cell-disabled{
+    color:#d8d0c2;
+    background: var(--ivory-2);
+    cursor: default;
+    pointer-events: none;
+  }
+  .round-cell.round-cell-gharbat{
+    color: var(--olive);
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+
+  /* ---------- Final result ---------- */
+  .final-result{
+    display:none;
+    background: linear-gradient(180deg, var(--copper-tint), var(--card) 60%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 22px 18px;
+    text-align:center;
+    margin-bottom: 20px;
+    animation: pop .35s ease;
+  }
+  .final-result.show{ display:block; }
+  @keyframes pop{
+    from{ opacity:0; transform: translateY(6px) scale(.98); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+  .final-trophy{ color: var(--copper); margin-bottom: 6px; }
+  .final-trophy svg{ width:34px; height:34px; }
+  .final-title{
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--charcoal-soft);
+    margin-bottom: 12px;
+  }
+  .final-scores{
+    display:flex;
+    justify-content:center;
+    gap: 28px;
+    margin-bottom: 12px;
+  }
+  .final-team-name{ font-size: 14px; font-weight:600; color: var(--charcoal-soft); margin-bottom:4px;}
+  .final-team-score{ font-size: 30px; font-weight:800; color: var(--charcoal); }
+  .final-verdict{
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--copper-deep);
+  }
+
+  /* ---------- Overlay / Modal ---------- */
+  .overlay{
+    position: fixed; inset:0;
+    background: rgba(58,34,24,.42);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index: 50;
+    padding: 0;
+  }
+  .overlay.show{ display:flex; }
+  @media (min-width: 520px){
+    .overlay{ align-items:center; }
+  }
+  .modal{
+    width:100%;
+    max-width: 460px;
+    background: var(--ivory);
+    border-radius: 22px 22px 0 0;
+    padding: 20px 18px calc(20px + var(--safe-bottom));
+    box-shadow: var(--shadow-lg);
+    transform: translateY(24px);
+    opacity:0;
+    transition: transform .22s ease, opacity .22s ease;
+    max-height: 88vh;
+    overflow-y:auto;
+  }
+  @media (min-width: 520px){
+    .modal{ border-radius: 22px; }
+  }
+  .overlay.show .modal{ transform: translateY(0); opacity:1; }
+  .modal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 14px;
+  }
+  .modal-title{ font-size: 17px; font-weight: 800; }
+  .modal-close{
+    width:34px;height:34px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    color: var(--charcoal-soft);
+    background: var(--ivory-2);
+  }
+  .modal-close svg{ width:16px;height:16px; }
+
+  .score-input-group{ margin-bottom: 14px; }
+  .score-input-group label{
+    display:block; font-size:13.5px; font-weight:700; color: var(--charcoal-soft);
+    margin-bottom:8px;
+  }
+  .score-input-group input{
+    width:100%;
+    padding: 15px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
+    text-align:center;
+    font-variant-numeric: tabular-nums;
+    transition: border-color .15s ease;
+  }
+  .score-input-group input.active-input{ border-color: var(--copper); }
+
+  .quick-scores{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 14px 0 18px;
+  }
+  .quick-btn{
+    padding: 10px 4px;
+    border-radius: 10px;
+    background: var(--ivory-2);
+    border: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--charcoal-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .quick-btn:active{ background: var(--copper-tint); color: var(--copper-deep); }
+
+  .modal-save{
+    width:100%;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    background: var(--copper);
+    color:#fff;
+    font-weight:700;
+    font-size:16px;
+  }
+  .modal-gharbat{
+    width:100%;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    background: var(--olive-tint);
+    border: 1px solid #e0d0bb;
+    color: var(--olive);
+    font-weight:700;
+    font-size:14.5px;
+    margin-bottom: 10px;
+  }
+
+  /* small confirm modal */
+  .confirm-modal{ text-align:center; }
+  .confirm-text{ font-size:15px; color:var(--charcoal-soft); margin: 4px 0 18px; line-height:1.6; }
+  .confirm-actions{ display:flex; gap:10px; }
+  .confirm-actions button{
+    flex:1;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    font-weight:700;
+    font-size:15px;
+  }
+  .confirm-cancel{ background: var(--ivory-2); border:1px solid var(--border); color: var(--charcoal-soft); }
+  .confirm-ok{ background: var(--copper); color:#fff; }
+
+  /* history */
+  .history-list{ display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; }
+  .history-empty{ text-align:center; color: var(--charcoal-soft); font-size:14px; padding: 30px 0; }
+  .history-item{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .history-item-main{ min-width:0; }
+  .history-teams{ font-weight:700; font-size:15px; margin-bottom:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .history-score{ font-weight:800; font-size:15px; color: var(--copper-deep); }
+  .history-meta{ font-size:12.5px; color: var(--charcoal-soft); margin-top:3px; }
+  .history-del{
+    width:36px;height:36px;flex-shrink:0;
+    border-radius: 10px;
+    display:flex;align-items:center;justify-content:center;
+    color:#b3402a; background: #fbe9e4;
+  }
+  .history-del svg{ width:16px;height:16px; }
+
+  .share-preview{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:58vh;
+    object-fit:contain;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#fff;
+    margin-bottom:14px;
+    -webkit-touch-callout: default;
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+  .toast{
+    position: fixed;
+    bottom: calc(24px + var(--safe-bottom));
+    left:50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--charcoal);
+    color: var(--ivory);
+    padding: 11px 18px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 100;
+    white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SETUP SCREEN ============ -->
+<section id="setupScreen" class="screen active">
+  <div class="setup-card">
+  <div class="logo-block">
+    <svg class="hero-art" viewBox="0 0 340 178" aria-hidden="true">
+      <g transform="rotate(-8 66 114)">
+        <rect x="20" y="62" width="92" height="104" rx="11" fill="#f3ebdd"/>
+        <text x="66" y="130" font-size="50" fill="#3d2218" text-anchor="middle">8</text>
+      </g>
+      <g transform="rotate(8 274 114)">
+        <rect x="228" y="62" width="92" height="104" rx="11" fill="#f3ebdd"/>
+        <text x="274" y="130" font-size="50" fill="#3d2218" text-anchor="middle">5</text>
+      </g>
+      <rect x="130" y="14" width="80" height="124" rx="12" fill="#f3ebdd"/>
+      <text x="170" y="92" font-size="50" fill="#8a5230" text-anchor="middle">13</text>
+    </svg>
+    <div class="logo-mark"><span class="k1">Kon</span><span class="k2">Kan</span></div>
+    <div class="logo-sub">خاڵنووس</div>
+  </div>
+
+  <div class="card">
+    <div class="field team-field t1">
+      <label for="team1Input">ناوی تیمی یەکەم</label>
+      <input type="text" id="team1Input" maxlength="20" autocomplete="off" autocorrect="off" enterkeyhint="next">
+    </div>
+    <div class="field team-field t2">
+      <label for="team2Input">ناوی تیمی دووەم</label>
+      <input type="text" id="team2Input" maxlength="20" autocomplete="off" autocorrect="off" enterkeyhint="go">
+    </div>
+
+    <div class="field">
+      <label id="roundsLabel">تەڵقەکان</label>
+      <div class="round-options" role="group" aria-labelledby="roundsLabel">
+        <button type="button" class="round-opt selected" data-rounds="7">7</button>
+        <button type="button" class="round-opt" data-rounds="9">9</button>
+        <button type="button" class="round-opt" data-rounds="custom">دڵخواز</button>
+      </div>
+      <div class="custom-rounds-input" id="customRoundsWrap">
+        <input type="number" id="customRoundsInput" inputmode="numeric" min="1" max="30" placeholder="ژمارە بنووسە">
+      </div>
+    </div>
+
+    <p class="error-text" id="setupError">تکایە ناوی هەردوو تیم بنووسە</p>
+    <button class="btn-primary" id="startGameBtn">بابڕوا</button>
+  </div>
+  </div>
+</section>
+
+<!-- ============ SCORE SCREEN ============ -->
+<section id="scoreScreen" class="screen">
+  <div class="topbar">
+    <div class="brand-mini">Kon<span class="k2">Kan</span></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="homeBtn" aria-label="گەڕانەوە بۆ سەرەتا" title="سەرەتا"></button>
+      <button class="icon-btn" id="soundBtn" aria-label="دەنگ" title="دەنگ"></button>
+      <button class="icon-btn" id="historyBtn" aria-label="مێژووی یارییەکان" title="مێژوو"></button>
+    </div>
+  </div>
+
+  <div class="game-timer" id="gameTimer">00:00</div>
+
+  <div class="scoreboard" id="scoreboard">
+    <div class="sb-final-head" id="sbFinalHead" style="display:none;"><span class="sb-trophy" id="trophyIcon"></span><span>ئەنجامی یاری</span></div>
+    <div class="sb-top" id="sbTop">
+      <div class="sb-side sb-side1" id="sbRow1">
+        <div class="sb-name-line"><span class="sb-icon" id="sbIcon1"></span><span class="sb-name" id="sbName1"></span></div>
+        <div class="sb-score" id="sbScore1">0</div>
+      </div>
+      <div class="sb-side sb-side2" id="sbRow2">
+        <div class="sb-name-line"><span class="sb-icon" id="sbIcon2"></span><span class="sb-name" id="sbName2"></span></div>
+        <div class="sb-score" id="sbScore2">0</div>
+      </div>
+    </div>
+    <div class="sb-bar" id="sbBar"></div>
+    <div class="sb-lead-text" id="sbLeadText" style="display:none;"></div>
+  </div>
+
+  <div class="konkan-notice" id="konkanNotice" style="display:none;"></div>
+
+  <p class="rounds-label">خاڵەکانی هەر تەڵقەیەک</p>
+  <div class="round-header" id="roundHeader">
+    <div></div>
+    <div class="rh-name" id="rhName1"></div>
+    <div class="rh-name" id="rhName2"></div>
+  </div>
+  <div class="round-list" id="roundList"></div>
+
+  <div class="score-actions">
+    <button class="btn-primary" id="newGameBtn">یاری نوێ</button>
+    <button class="btn-share" id="shareBtn" aria-label="وێنەگرتن و هاوبەشکردن" title="وێنەگرتن و هاوبەشکردن"></button>
+  </div>
+</section>
+<canvas id="shareCanvas" style="display:none;"></canvas>
+
+<!-- ============ SCORE MODAL ============ -->
+<div class="overlay" id="scoreOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="scoreModalTitle">ت 1</div>
+      <button class="modal-close" id="closeScoreModal" aria-label="داخستن"></button>
+    </div>
+
+    <div class="score-input-group">
+      <label id="scoreLabel1"></label>
+      <input type="number" inputmode="numeric" id="scoreInput1" min="0" placeholder="0">
+    </div>
+    <div class="score-input-group">
+      <label id="scoreLabel2"></label>
+      <input type="number" inputmode="numeric" id="scoreInput2" min="0" placeholder="0">
+    </div>
+
+    <div class="quick-scores" id="quickScores"></div>
+
+    <button class="modal-gharbat" id="gharbatBtn" type="button">غەربەت کردن</button>
+    <button class="modal-save" id="saveScoreBtn">تۆمارکردن</button>
+  </div>
+</div>
+
+<!-- ============ NEW GAME CONFIRM MODAL ============ -->
+<div class="overlay" id="newGameOverlay">
+  <div class="modal confirm-modal">
+    <div class="modal-head" style="justify-content:center; margin-bottom:4px;">
+      <div class="modal-title">یاری نوێ؟</div>
+    </div>
+    <p class="confirm-text">هەموو خاڵەکانی ئێستا دەسڕدرێنەوە. ناوی گرووپەکان وەک خۆی دەمێنێتەوە.</p>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" id="cancelNewGame">پاشگەزبوونەوە</button>
+      <button class="confirm-ok" id="confirmNewGame">دەستپێبکە</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HISTORY MODAL ============ -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">مێژووی یارییەکان</div>
+      <button class="modal-close" id="closeHistoryModal" aria-label="داخستن"></button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<!-- ============ SHARE PREVIEW MODAL ============ -->
+<div class="overlay" id="shareOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">وێنەی خاڵەکان</div>
+      <button class="modal-close" id="closeShareModal" aria-label="داخستن"></button>
+    </div>
+    <img id="sharePreview" class="share-preview" alt="وێنەی خاڵەکان">
+    <div class="confirm-actions">
+      <button class="confirm-cancel" id="downloadShareBtn" type="button">داگرتن</button>
+      <button class="confirm-ok" id="sendShareBtn" type="button">هاوبەشکردن</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Icons ---------------- */
+  var ICONS = {
+    history: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v5h5"/><path d="M12 7v5l3.5 2"/></svg>',
+    undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h10a5 5 0 0 1 0 10h-2"/><path d="M4 10l4-4M4 10l4 4"/></svg>',
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5a3 3 0 0 0 3 5"/><path d="M16 5h3a3 3 0 0 1-3 5"/><path d="M12 13v3"/><path d="M9 20h6"/><path d="M10 17h4v3h-4z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>',
+    soundOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></svg>',
+    soundOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>'
+  };
+
+  var EASTERN_DIGITS = ["0","1","2","3","4","5","6","7","8","9"];
+  function toEastern(n){
+    return String(n).replace(/[0-9]/g, function(d){ return EASTERN_DIGITS[+d]; });
+  }
+
+  /* ---------------- Storage keys ---------------- */
+  var K_GAME = "konkan_current_game";
+  var K_HISTORY = "konkan_history";
+  var K_SOUND = "konkan_sound";
+
+  /* ---------------- State ---------------- */
+  var gameState = null;   // { team1Name, team2Name, rounds, roundsData:[{t1,t2}], sound }
+  var undoStack = [];
+  var activeRoundIndex = null;
+  var activeInputEl = null;
+
+  /* ---------------- Helpers ---------------- */
+  function $(id){ return document.getElementById(id); }
+  function showScreen(id){
+    document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+    $(id).classList.add("active");
+  }
+  function showToast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(showToast._tm);
+    showToast._tm = setTimeout(function(){ t.classList.remove("show"); }, 1600);
+  }
+
+  /* ---------------- Sound ---------------- */
+  var audioCtx = null;
+  function getAudioCtx(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+    }
+    return audioCtx;
+  }
+  function playTone(freq, dur, vol){
+    if(!gameState || !gameState.sound) return;
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.value = vol || 0.06;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    var now = ctx.currentTime;
+    gain.gain.setValueAtTime(gain.gain.value, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    osc.start(now);
+    osc.stop(now + dur);
+  }
+  function soundClick(){ playTone(520, 0.07, 0.05); }
+  function soundConfirm(){ playTone(660, 0.08, 0.06); setTimeout(function(){ playTone(880,0.1,0.05); }, 70); }
+
+  /* ---------------- Durable storage (localStorage + IndexedDB mirror) ---------------- */
+  var idbRef = null;
+  function openMirror(cb){
+    try{
+      var req = indexedDB.open("konkan_db", 1);
+      req.onupgradeneeded = function(){ try{ req.result.createObjectStore("kv"); }catch(e){} };
+      req.onsuccess = function(){ idbRef = req.result; cb(); };
+      req.onerror = function(){ cb(); };
+      req.onblocked = function(){ cb(); };
+    }catch(e){ cb(); }
+  }
+  function mirrorSet(key, val){
+    if(!idbRef) return;
+    try{ idbRef.transaction("kv","readwrite").objectStore("kv").put(val, key); }catch(e){}
+  }
+  function mirrorRemove(key){
+    if(!idbRef) return;
+    try{ idbRef.transaction("kv","readwrite").objectStore("kv").delete(key); }catch(e){}
+  }
+  function lsSet(key, val){
+    try{ localStorage.setItem(key, val); }catch(e){}
+    mirrorSet(key, val);
+  }
+  function lsRemove(key){
+    try{ localStorage.removeItem(key); }catch(e){}
+    mirrorRemove(key);
+  }
+  // If the browser wiped localStorage but IndexedDB survived, bring the data back.
+  function restoreFromMirror(done){
+    var finished = false;
+    function finish(){ if(finished) return; finished = true; done(); }
+    setTimeout(finish, 1500);
+    try{
+      if(navigator.storage && navigator.storage.persist){ navigator.storage.persist(); }
+    }catch(e){}
+    openMirror(function(){
+      if(!idbRef){ finish(); return; }
+      var keys = [K_GAME, K_HISTORY, K_SOUND, K_LAST];
+      var left = keys.length;
+      keys.forEach(function(k){
+        var have = null;
+        try{ have = localStorage.getItem(k); }catch(e){}
+        if(have !== null){ mirrorSet(k, have); if(--left === 0) finish(); return; }
+        try{
+          var r = idbRef.transaction("kv","readonly").objectStore("kv").get(k);
+          r.onsuccess = function(){
+            if(r.result !== undefined){ try{ localStorage.setItem(k, r.result); }catch(e){} }
+            if(--left === 0) finish();
+          };
+          r.onerror = function(){ if(--left === 0) finish(); };
+        }catch(e){ if(--left === 0) finish(); }
+      });
+    });
+  }
+
+  /* ---------------- Persistence ---------------- */
+  function saveCurrentGame(){
+    try{ lsSet(K_GAME, JSON.stringify(gameState)); }catch(e){}
+  }
+  function loadCurrentGame(){
+    try{
+      var raw = localStorage.getItem(K_GAME);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function clearCurrentGame(){
+    try{ lsRemove(K_GAME); }catch(e){}
+  }
+  function loadHistory(){
+    try{
+      var raw = localStorage.getItem(K_HISTORY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function saveGameHistory(entry){
+    var h = loadHistory();
+    h.unshift(entry);
+    if(h.length > 100) h = h.slice(0,100);
+    try{ lsSet(K_HISTORY, JSON.stringify(h)); }catch(e){}
+  }
+  function deleteHistoryGame(index){
+    var h = loadHistory();
+    h.splice(index,1);
+    try{ lsSet(K_HISTORY, JSON.stringify(h)); }catch(e){}
+  }
+
+  /* ---------------- Team animals (SVG icons) ---------------- */
+  var ANIMAL_SVG = {"lion": "<circle cx=\"55.0\" cy=\"33.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"51.9\" cy=\"44.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"43.5\" cy=\"52.9\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"32.0\" cy=\"56.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"20.5\" cy=\"52.9\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"12.1\" cy=\"44.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"9.0\" cy=\"33.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"12.1\" cy=\"21.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"20.5\" cy=\"13.1\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"32.0\" cy=\"10.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"43.5\" cy=\"13.1\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"51.9\" cy=\"21.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"32\" cy=\"33\" r=\"24\" fill=\"#c97a22\"/><circle cx=\"17\" cy=\"16\" r=\"6\" fill=\"#f0b24a\"/><circle cx=\"17\" cy=\"16\" r=\"3\" fill=\"#e39a86\"/><circle cx=\"47\" cy=\"16\" r=\"6\" fill=\"#f0b24a\"/><circle cx=\"47\" cy=\"16\" r=\"3\" fill=\"#e39a86\"/><ellipse cx=\"32\" cy=\"36\" rx=\"17\" ry=\"18\" fill=\"#f4bd55\"/><ellipse cx=\"32\" cy=\"44.5\" rx=\"10.5\" ry=\"8\" fill=\"#fbe5b6\"/><path d=\"M26.5 38.5h11l-5.5 6.5z\" fill=\"#5a2d17\"/><path d=\"M32 45v3M32 48q-4 4-8 1M32 48q4 4 8 1\" stroke=\"#5a2d17\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"25\" cy=\"31\" r=\"2.4\" fill=\"#2e180b\"/><circle cx=\"39\" cy=\"31\" r=\"2.4\" fill=\"#2e180b\"/><path d=\"M20 27l9 2M44 27l-9 2\" stroke=\"#8a4a12\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>", "leopard": "<circle cx=\"15\" cy=\"16\" r=\"7.5\" fill=\"#e6a53a\"/><circle cx=\"15\" cy=\"16\" r=\"3.8\" fill=\"#33241a\"/><circle cx=\"49\" cy=\"16\" r=\"7.5\" fill=\"#e6a53a\"/><circle cx=\"49\" cy=\"16\" r=\"3.8\" fill=\"#33241a\"/><ellipse cx=\"32\" cy=\"35\" rx=\"22\" ry=\"20\" fill=\"#efb440\"/><circle cx=\"14\" cy=\"31\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"18\" cy=\"41\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"50\" cy=\"31\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"46\" cy=\"41\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"22\" cy=\"21\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"42\" cy=\"21\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"32\" cy=\"18\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"26\" cy=\"17\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"38\" cy=\"17\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"12\" cy=\"38\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"52\" cy=\"38\" r=\"2.1\" fill=\"#3a2915\"/><ellipse cx=\"32\" cy=\"45\" rx=\"11.5\" ry=\"8.5\" fill=\"#fff2d2\"/><ellipse cx=\"23\" cy=\"32\" rx=\"4\" ry=\"3.4\" fill=\"#b9dc4e\"/><circle cx=\"23\" cy=\"32\" r=\"1.7\" fill=\"#1c1c10\"/><ellipse cx=\"41\" cy=\"32\" rx=\"4\" ry=\"3.4\" fill=\"#b9dc4e\"/><circle cx=\"41\" cy=\"32\" r=\"1.7\" fill=\"#1c1c10\"/><path d=\"M18 29q5-3 10 0M36 29q5-3 10 0\" stroke=\"#3a2915\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M28 40h8l-4 5z\" fill=\"#d9788a\"/><path d=\"M32 45v3M32 48q-3 3-6 1M32 48q3 3 6 1\" stroke=\"#3a2915\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\"/>", "falcon": "<path d=\"M10 40Q4 22 22 10Q32 5 42 10Q60 22 54 40Q50 54 32 58Q14 54 10 40Z\" fill=\"#5b3a25\"/><path d=\"M24 12Q32 8 40 12Q36 18 32 18Q28 18 24 12Z\" fill=\"#3e2616\"/><ellipse cx=\"20\" cy=\"40\" rx=\"8\" ry=\"11\" fill=\"#efe1c6\"/><ellipse cx=\"44\" cy=\"40\" rx=\"8\" ry=\"11\" fill=\"#efe1c6\"/><path d=\"M17 34l5 14M47 34l-5 14\" stroke=\"#33200f\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><circle cx=\"23\" cy=\"28\" r=\"5\" fill=\"#f7d54a\"/><circle cx=\"23\" cy=\"28.4\" r=\"2.4\" fill=\"#0e0e0e\"/><circle cx=\"41\" cy=\"28\" r=\"5\" fill=\"#f7d54a\"/><circle cx=\"41\" cy=\"28.4\" r=\"2.4\" fill=\"#0e0e0e\"/><path d=\"M14 22L30 29V25Z\" fill=\"#26150a\"/><path d=\"M50 22L34 29V25Z\" fill=\"#26150a\"/><path d=\"M24.5 35Q32 28 39.5 35Q39 47 32 56Q25 47 24.5 35Z\" fill=\"#f4b52a\"/><path d=\"M32 56Q27 49 26 43Q32 47 38 43Q37 49 32 56Z\" fill=\"#d98e17\"/><circle cx=\"29.5\" cy=\"37\" r=\"1.1\" fill=\"#8a5a10\"/><circle cx=\"34.5\" cy=\"37\" r=\"1.1\" fill=\"#8a5a10\"/>", "dragon": "<path d=\"M13 20Q5 7 19 3Q15 12 22 18Z\" fill=\"#f0e2b8\"/><path d=\"M51 20Q59 7 45 3Q49 12 42 18Z\" fill=\"#f0e2b8\"/><polygon points=\"12,28 3,23 8,32 1,36 11,39\" fill=\"#2d8a4d\"/><polygon points=\"52,28 61,23 56,32 63,36 53,39\" fill=\"#2d8a4d\"/><polygon points=\"27,15 32,5 37,15\" fill=\"#2d8a4d\"/><ellipse cx=\"32\" cy=\"32\" rx=\"20.5\" ry=\"19.5\" fill=\"#45b469\"/><ellipse cx=\"32\" cy=\"44\" rx=\"13.5\" ry=\"9.5\" fill=\"#7fd093\"/><circle cx=\"27\" cy=\"42\" r=\"1.8\" fill=\"#1e5c35\"/><circle cx=\"37\" cy=\"42\" r=\"1.8\" fill=\"#1e5c35\"/><ellipse cx=\"23\" cy=\"29\" rx=\"4.6\" ry=\"3.6\" fill=\"#f2c230\"/><ellipse cx=\"23\" cy=\"29\" rx=\"1.2\" ry=\"3.2\" fill=\"#1a1a1a\"/><ellipse cx=\"41\" cy=\"29\" rx=\"4.6\" ry=\"3.6\" fill=\"#f2c230\"/><ellipse cx=\"41\" cy=\"29\" rx=\"1.2\" ry=\"3.2\" fill=\"#1a1a1a\"/><path d=\"M16 24.5L29 29M48 24.5L35 29\" stroke=\"#1e5c35\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M23 49.5Q32 54 41 49.5\" stroke=\"#1e5c35\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M26 50l2 5.5 2-4.5z\" fill=\"#fff\"/><path d=\"M34 51l2 4.5 2-5.5z\" fill=\"#fff\"/>", "crow": "<path d=\"M10 20Q7 14 4 10Q15 10 20 16Z\" fill=\"#1d1d24\"/><path d=\"M12 32Q8 52 22 60L52 60Q44 46 42 33Z\" fill=\"#26262e\"/><circle cx=\"28\" cy=\"28\" r=\"18\" fill=\"#26262e\"/><path d=\"M17 22Q24 12 36 14\" stroke=\"#41414e\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M42 22Q58 25 61 33Q50 36 42 34Z\" fill=\"#5a5b66\"/><path d=\"M42 28Q54 29 60 33\" stroke=\"#3a3b44\" stroke-width=\"1.4\" fill=\"none\"/><circle cx=\"34\" cy=\"24\" r=\"4\" fill=\"#eceef4\"/><circle cx=\"35\" cy=\"24\" r=\"2\" fill=\"#0a0a0a\"/><path d=\"M28 19L40 21\" stroke=\"#0d0d12\" stroke-width=\"2\" stroke-linecap=\"round\"/>", "wolf": "<polygon points=\"8,4 26,16 10,30\" fill=\"#767b87\"/><polygon points=\"12,10 22,17 12,24\" fill=\"#d9a4a4\"/><polygon points=\"56,4 38,16 54,30\" fill=\"#767b87\"/><polygon points=\"52,10 42,17 52,24\" fill=\"#d9a4a4\"/><path d=\"M9 30Q9 14 32 14Q55 14 55 30Q55 44 41 52Q32 59 23 52Q9 44 9 30Z\" fill=\"#8c919d\"/><path d=\"M20 38Q32 31 44 38Q42 54 32 59Q22 54 20 38Z\" fill=\"#e9ebef\"/><path d=\"M14 24Q18 18 24 20\" stroke=\"#6a6f7b\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M50 24Q46 18 40 20\" stroke=\"#6a6f7b\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><ellipse cx=\"23\" cy=\"30\" rx=\"4.4\" ry=\"2.8\" transform=\"rotate(14 23 30)\" fill=\"#f2b823\"/><circle cx=\"23\" cy=\"30\" r=\"1.5\" fill=\"#111\"/><ellipse cx=\"41\" cy=\"30\" rx=\"4.4\" ry=\"2.8\" transform=\"rotate(-14 41 30)\" fill=\"#f2b823\"/><circle cx=\"41\" cy=\"30\" r=\"1.5\" fill=\"#111\"/><path d=\"M17 25L28 28.5M47 25L36 28.5\" stroke=\"#2a2b33\" stroke-width=\"2\" stroke-linecap=\"round\"/><ellipse cx=\"32\" cy=\"52\" rx=\"4.6\" ry=\"3.4\" fill=\"#1e1f26\"/><path d=\"M32 55v3.5\" stroke=\"#1e1f26\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>", "fox": "<polygon points=\"8,6 26,18 10,32\" fill=\"#e2702a\"/><polygon points=\"12,12 22,19 13,26\" fill=\"#3a2418\"/><polygon points=\"56,6 38,18 54,32\" fill=\"#e2702a\"/><polygon points=\"52,12 42,19 51,26\" fill=\"#3a2418\"/><path d=\"M7 32Q7 17 32 17Q57 17 57 32Q51 46 32 59Q13 46 7 32Z\" fill=\"#ee7c2b\"/><path d=\"M7 32Q22 33 32 47Q27 55 21 51Q10 44 7 32Z\" fill=\"#fff\"/><path d=\"M57 32Q42 33 32 47Q37 55 43 51Q54 44 57 32Z\" fill=\"#fff\"/><path d=\"M24 20Q32 24 40 20Q36 30 32 30Q28 30 24 20Z\" fill=\"#f6a05a\"/><ellipse cx=\"22\" cy=\"32\" rx=\"3.6\" ry=\"2.4\" transform=\"rotate(18 22 32)\" fill=\"#2a1a10\"/><circle cx=\"23\" cy=\"31.3\" r=\"0.9\" fill=\"#fff\"/><ellipse cx=\"42\" cy=\"32\" rx=\"3.6\" ry=\"2.4\" transform=\"rotate(-18 42 32)\" fill=\"#2a1a10\"/><circle cx=\"41\" cy=\"31.3\" r=\"0.9\" fill=\"#fff\"/><circle cx=\"32\" cy=\"54\" r=\"3.4\" fill=\"#1d1d22\"/>", "owl": "<polygon points=\"12,17 14,3 27,14\" fill=\"#6b4226\"/><polygon points=\"52,17 50,3 37,14\" fill=\"#6b4226\"/><ellipse cx=\"32\" cy=\"35\" rx=\"22\" ry=\"24\" fill=\"#8b5a33\"/><circle cx=\"22\" cy=\"30\" r=\"11.5\" fill=\"#f2e1c3\"/><circle cx=\"42\" cy=\"30\" r=\"11.5\" fill=\"#f2e1c3\"/><circle cx=\"22\" cy=\"30\" r=\"6.8\" fill=\"#f2c230\"/><circle cx=\"42\" cy=\"30\" r=\"6.8\" fill=\"#f2c230\"/><circle cx=\"22\" cy=\"30\" r=\"3.4\" fill=\"#111\"/><circle cx=\"42\" cy=\"30\" r=\"3.4\" fill=\"#111\"/><circle cx=\"23.2\" cy=\"28.6\" r=\"1.1\" fill=\"#fff\"/><circle cx=\"43.2\" cy=\"28.6\" r=\"1.1\" fill=\"#fff\"/><path d=\"M27.5 37h9L32 48z\" fill=\"#e8923a\"/><path d=\"M20 52q3 4 6 0q3 4 6 0q3 4 6 0q3 4 6 0\" stroke=\"#d9b68a\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/>"};
+  var ANIMAL_KEYS = Object.keys(ANIMAL_SVG);
+  function pickAnimals(){
+    var i = Math.floor(Math.random()*ANIMAL_KEYS.length);
+    var j;
+    do{ j = Math.floor(Math.random()*ANIMAL_KEYS.length); }while(j === i);
+    return [ANIMAL_KEYS[i], ANIMAL_KEYS[j]];
+  }
+  function iconSvg(key, px){
+    var inner = ANIMAL_SVG[key];
+    if(!inner) return "";
+    var size = px ? (' width="' + px + '" height="' + px + '"') : ' width="100%" height="100%"';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"' + size + ' aria-hidden="true">' + inner + '</svg>';
+  }
+  function ensureIcons(){
+    if(!ANIMAL_SVG[gameState.team1Icon] || !ANIMAL_SVG[gameState.team2Icon]){
+      var pair = pickAnimals();
+      gameState.team1Icon = pair[0];
+      gameState.team2Icon = pair[1];
+      saveCurrentGame();
+    }
+  }
+  function setNameWithIcon(el, icon, name){
+    el.textContent = "";
+    var ic = document.createElement("span");
+    ic.className = "rh-icon";
+    ic.innerHTML = iconSvg(icon);
+    el.appendChild(ic);
+    el.appendChild(document.createTextNode(name));
+  }
+  // images for the share canvas
+  var iconImgs = {};
+  function loadIconImg(key, cb){
+    if(!ANIMAL_SVG[key] || iconImgs[key]){ cb(); return; }
+    var img = new Image();
+    img.onload = function(){ iconImgs[key] = img; cb(); };
+    img.onerror = function(){ cb(); };
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg(key, 128));
+  }
+
+  /* ---------------- Game logic ---------------- */
+  function createRounds(count){
+    var arr = [];
+    for(var i=0;i<count;i++){ arr.push({ t1:null, t2:null }); }
+    return arr;
+  }
+
+  function calculateTotals(){
+    var t1 = 0, t2 = 0;
+    gameState.roundsData.forEach(function(r){
+      if(r.t1 !== null && r.t1 !== undefined) t1 += r.t1;
+      if(r.t2 !== null && r.t2 !== undefined) t2 += r.t2;
+    });
+    return { t1: t1, t2: t2 };
+  }
+
+  function isGameComplete(){
+    var status = getRoundCheckStatus();
+    if(status && status.type === "lost") return true;
+    return gameState.roundsData.every(function(r){
+      return r.t1 !== null && r.t1 !== undefined && r.t2 !== null && r.t2 !== undefined;
+    });
+  }
+
+  // Checks the KonKan rule at the checkpoint round (the originally selected
+  // round count, i.e. one round before the extra bonus round).
+  function getRoundCheckStatus(){
+    var checkpointRound = gameState.rounds - 1;
+    if(checkpointRound < 1) return null;
+    var r = gameState.roundsData[checkpointRound - 1];
+    if(!r || r.t1 === null || r.t1 === undefined || r.t2 === null || r.t2 === undefined) return null;
+
+    var t1 = 0, t2 = 0;
+    for(var i=0; i<checkpointRound; i++){
+      var rr = gameState.roundsData[i];
+      if(rr.t1 !== null && rr.t1 !== undefined) t1 += rr.t1;
+      if(rr.t2 !== null && rr.t2 !== undefined) t2 += rr.t2;
+    }
+    var diff = Math.abs(t1-t2);
+    var worseTeam = t1 > t2 ? "team1" : (t2 > t1 ? "team2" : null);
+    if(!worseTeam) return null;
+
+    // Lost only if the gap is bigger than 400: a 400 (konkan) in the last
+    // round could still flip the result when the gap is 400 or less.
+    if(diff > 400){
+      return { type:"lost", team: worseTeam, checkpointRound: checkpointRound, totals:{ t1:t1, t2:t2 } };
+    }
+    if(diff >= 200){
+      return { type:"mandatory", team: worseTeam, checkpointRound: checkpointRound };
+    }
+    return null;
+  }
+
+  function updateNotice(){
+    var el = $("konkanNotice");
+    var status = getRoundCheckStatus();
+    if(status && status.type === "mandatory" && !isGameComplete()){
+      var teamName = status.team === "team1" ? gameState.team1Name : gameState.team2Name;
+      el.textContent = teamName + " کۆنکان ئیجبارە";
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  }
+
+  function startGame(team1, team2, selectedRoundsCount){
+    archiveUnfinished();
+    var actualRounds = selectedRoundsCount + 1; // one extra round is always added during play
+    var animalPair = pickAnimals();
+    gameState = {
+      team1Name: team1,
+      team2Name: team2,
+      team1Icon: animalPair[0],
+      team2Icon: animalPair[1],
+      rounds: actualRounds,
+      roundsData: createRounds(actualRounds),
+      sound: gameState ? gameState.sound : true,
+      historySaved: false,
+      startedAt: Date.now()
+    };
+    undoStack = [];
+    saveCurrentGame();
+    renderScoreScreen();
+    showScreen("scoreScreen");
+    requestWakeLock();
+  }
+
+  function startNewGame(){
+    archiveUnfinished();
+    gameState.roundsData = createRounds(gameState.rounds);
+    gameState.historySaved = false;
+    gameState.startedAt = Date.now();
+    undoStack = [];
+    saveCurrentGame();
+    renderScoreScreen();
+    showToast("یاری نوێ دەستیپێکرد");
+    requestWakeLock();
+  }
+
+  function hasAnyScore(){
+    return !!(gameState && gameState.roundsData && gameState.roundsData.some(function(r){
+      return (r.t1 !== null && r.t1 !== undefined) || (r.t2 !== null && r.t2 !== undefined);
+    }));
+  }
+
+  // A game that was left before the end is still kept in history (marked unfinished)
+  function archiveUnfinished(){
+    if(!gameState || !gameState.roundsData || gameState.historySaved) return;
+    if(!hasAnyScore()) return;
+    var totals = calculateTotals();
+    saveGameHistory({
+      team1Name: gameState.team1Name,
+      team2Name: gameState.team2Name,
+      total1: totals.t1,
+      total2: totals.t2,
+      rounds: gameState.rounds,
+      date: new Date().toISOString(),
+      finished: false,
+      durationMs: gameState.startedAt ? Date.now() - gameState.startedAt : 0
+    });
+    gameState.historySaved = true;
+  }
+
+  function finalizeIfComplete(){
+    if(gameState.historySaved) return;
+    if(isGameComplete()){
+      var totals = calculateTotals();
+      saveGameHistory({
+        team1Name: gameState.team1Name,
+        team2Name: gameState.team2Name,
+        total1: totals.t1,
+        total2: totals.t2,
+        rounds: gameState.rounds,
+        date: new Date().toISOString(),
+        finished: true,
+        durationMs: gameState.startedAt ? Date.now() - gameState.startedAt : 0
+      });
+      gameState.historySaved = true;
+      saveCurrentGame();
+    }
+  }
+
+  /* ---------------- Rendering ---------------- */
+  function updateScoreboard(){
+    var totals = calculateTotals();
+    $("sbIcon1").innerHTML = iconSvg(gameState.team1Icon);
+    $("sbIcon2").innerHTML = iconSvg(gameState.team2Icon);
+    $("sbName1").textContent = gameState.team1Name;
+    $("sbName2").textContent = gameState.team2Name;
+    $("sbScore1").textContent = toEastern(totals.t1);
+    $("sbScore2").textContent = toEastern(totals.t2);
+
+    var leadText = $("sbLeadText");
+
+    if(totals.t1 === 0 && totals.t2 === 0){
+      leadText.style.display = "none";
+    } else if(totals.t1 === totals.t2){
+      leadText.style.display = "block";
+      leadText.textContent = "یارییەکە یەکسانە";
+    } else {
+      var diffPlusOne = Math.abs(totals.t1 - totals.t2) + 1;
+      var worseName = totals.t1 > totals.t2 ? gameState.team1Name : gameState.team2Name;
+      leadText.style.display = "block";
+      leadText.textContent = worseName + " پێویستی بە " + toEastern(diffPlusOne) + " خاڵە";
+    }
+
+    var share1 = (totals.t1 + totals.t2) === 0 ? 50 : (totals.t2 / (totals.t1 + totals.t2)) * 100;
+    share1 = Math.max(6, Math.min(94, share1));
+    $("sbBar").style.setProperty("--p", share1 + "%");
+    $("sbTop").classList.toggle("tied", totals.t1 === totals.t2);
+
+    $("sbRow1").classList.remove("leading");
+    $("sbRow2").classList.remove("leading");
+    if(totals.t1 !== totals.t2 && !(totals.t1===0 && totals.t2===0)){
+      if(totals.t1 < totals.t2) $("sbRow1").classList.add("leading");
+      else $("sbRow2").classList.add("leading");
+    }
+  }
+
+  function getSequentialLockIndex(){
+    for(var i=0;i<gameState.roundsData.length;i++){
+      var r = gameState.roundsData[i];
+      if(r.t1===null||r.t1===undefined||r.t2===null||r.t2===undefined){
+        return i;
+      }
+    }
+    return gameState.roundsData.length;
+  }
+
+  function renderRoundList(){
+    var list = $("roundList");
+    list.innerHTML = "";
+    var status = getRoundCheckStatus();
+    var lockAfter = (status && status.type === "lost") ? status.checkpointRound : null;
+    var seqLockIndex = getSequentialLockIndex();
+
+    gameState.roundsData.forEach(function(r, idx){
+      var row = document.createElement("div");
+      row.className = "round-row";
+      var isLocked = (lockAfter && (idx+1) > lockAfter) || (idx > seqLockIndex);
+      var isGharbat = r.gharbat === true;
+
+      var tag = document.createElement("div");
+      tag.className = "round-tag";
+      tag.textContent = "ت " + toEastern(idx+1);
+
+      var c1 = document.createElement("button");
+      c1.type = "button";
+      c1.className = "round-cell" + (r.t1===null||r.t1===undefined ? " empty" : "") + (isLocked ? " round-cell-disabled" : "") + (isGharbat ? " round-cell-gharbat" : "");
+      c1.textContent = isGharbat ? "غەربەت" : ((r.t1===null||r.t1===undefined) ? "—" : toEastern(r.t1));
+      c1.setAttribute("aria-label", gameState.team1Name + " ت" + toEastern(idx+1));
+      if(!isLocked) c1.addEventListener("click", function(){ openScoreModal(idx, "t1"); });
+
+      var c2 = document.createElement("button");
+      c2.type = "button";
+      c2.className = "round-cell" + (r.t2===null||r.t2===undefined ? " empty" : "") + (isLocked ? " round-cell-disabled" : "") + (isGharbat ? " round-cell-gharbat" : "");
+      c2.textContent = isGharbat ? "غەربەت" : ((r.t2===null||r.t2===undefined) ? "—" : toEastern(r.t2));
+      c2.setAttribute("aria-label", gameState.team2Name + " ت" + toEastern(idx+1));
+      if(!isLocked) c2.addEventListener("click", function(){ openScoreModal(idx, "t2"); });
+
+      row.appendChild(tag);
+      row.appendChild(c1);
+      row.appendChild(c2);
+      list.appendChild(row);
+    });
+  }
+
+  function showFinalResult(){
+    var head = $("sbFinalHead");
+    var lead = $("sbLeadText");
+    var sb = $("scoreboard");
+    var status = getRoundCheckStatus();
+    var lost = status && status.type === "lost";
+
+    if(!lost && !isGameComplete()){
+      head.style.display = "none";
+      sb.classList.remove("final");
+      return;
+    }
+
+    head.style.display = "flex";
+    $("trophyIcon").innerHTML = ICONS.trophy;
+    sb.classList.add("final");
+
+    var verdict;
+    if(lost){
+      var loserName = status.team === "team1" ? gameState.team1Name : gameState.team2Name;
+      verdict = loserName + " دۆڕا — لە تەڵقەی " + toEastern(status.checkpointRound) + "دا";
+    } else {
+      var totals = calculateTotals();
+      if(totals.t1 === totals.t2){
+        verdict = "یارییەکە یەکسانە";
+      } else if(totals.t1 < totals.t2){
+        verdict = gameState.team1Name + " بە " + toEastern(totals.t2-totals.t1) + " خاڵ پێشە";
+      } else {
+        verdict = gameState.team2Name + " بە " + toEastern(totals.t1-totals.t2) + " خاڵ پێشە";
+      }
+    }
+    lead.style.display = "block";
+    lead.textContent = verdict;
+  }
+
+  function renderScoreScreen(){
+    ensureIcons();
+    updateScoreboard();
+    updateNotice();
+    setNameWithIcon($("rhName1"), gameState.team1Icon, gameState.team1Name);
+    setNameWithIcon($("rhName2"), gameState.team2Icon, gameState.team2Name);
+    renderRoundList();
+    showFinalResult();
+    updateSoundIcon();
+    updateTimerDisplay();
+  }
+
+  function updateSoundIcon(){
+    $("soundBtn").innerHTML = gameState.sound ? ICONS.soundOn : ICONS.soundOff;
+  }
+
+  /* ---------------- Elapsed-time timer ---------------- */
+  function pad2(n){ return (n<10 ? "0" : "") + n; }
+
+  function updateTimerDisplay(){
+    var el = $("gameTimer");
+    if(!el) return;
+    if(!gameState || !gameState.startedAt){ el.textContent = toEastern("00:00"); return; }
+    var elapsedMs = Date.now() - gameState.startedAt;
+    if(elapsedMs < 0) elapsedMs = 0;
+    var totalSec = Math.floor(elapsedMs/1000);
+    var h = Math.floor(totalSec/3600);
+    var m = Math.floor((totalSec%3600)/60);
+    var s = totalSec%60;
+    var text = (h>0) ? (pad2(h)+":"+pad2(m)+":"+pad2(s)) : (pad2(m)+":"+pad2(s));
+    el.textContent = toEastern(text);
+  }
+
+  /* ---------------- Screen wake lock ---------------- */
+  var wakeLockRef = null;
+  function requestWakeLock(){
+    if(!("wakeLock" in navigator)) return;
+    navigator.wakeLock.request("screen").then(function(lock){
+      wakeLockRef = lock;
+      lock.addEventListener("release", function(){ wakeLockRef = null; });
+    }).catch(function(){ /* ignore - not critical */ });
+  }
+
+  /* ---------------- Share / export as image ---------------- */
+  function drawRoundedRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function buildScoreCanvas(){
+    var totals = calculateTotals();
+    var complete = isGameComplete();
+    var rows = gameState.roundsData.length;
+    var W = 720, pad = 20;
+    var headerH = 150, tableHeaderH = 34, rowH = 46;
+    var footerH = complete ? 70 : 36;
+    var H = headerH + tableHeaderH + rows*rowH + footerH + pad*2;
+
+    var canvas = $("shareCanvas");
+    canvas.width = W; canvas.height = H;
+    var ctx = canvas.getContext("2d");
+    ctx.direction = "rtl";
+    ctx.textAlign = "center";
+
+    var C1 = "#d2452f", C2 = "#2a68b8";
+    var FONT = "Vazirmatn, 'Noto Sans Arabic', sans-serif";
+
+    function nameWithIcon(name, icon, cx, y, color, fontSpec, iconSize){
+      ctx.font = fontSpec;
+      var w = ctx.measureText(name).width;
+      var gap = 6;
+      var total = w + gap + iconSize;
+      var nameCx = cx + iconSize/2 + gap/2 - total/2 - (iconSize+gap)/2 + (iconSize+gap)/2;
+      // group is centered on cx: name on the left, icon on the right (RTL reading order)
+      nameCx = cx - (gap + iconSize)/2;
+      var iconCx = cx + total/2 - iconSize/2;
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.fillText(name, nameCx, y);
+      var im = iconImgs[icon];
+      if(im){ ctx.drawImage(im, iconCx - iconSize/2, y - iconSize*0.78, iconSize, iconSize); }
+      ctx.font = fontSpec;
+    }
+
+    ctx.fillStyle = "#f6eee3";
+    ctx.fillRect(0,0,W,H);
+
+    /* ----- shared column geometry (header + table use the same columns) ----- */
+    var cardX = pad, cardY = pad, cardW = W - pad*2;
+    var tagColW = 64;
+    var teamColW = (cardW - tagColW)/2;
+    var tagCx   = cardX + cardW - tagColW/2;          // round number column (right)
+    var team1Cx = cardX + cardW - tagColW - teamColW/2; // first team (right of the two)
+    var team2Cx = cardX + teamColW/2;                  // second team (left)
+    var divA = cardX + teamColW;                       // between team 2 and team 1
+    var divB = cardX + teamColW*2;                     // between team 1 and round column
+
+    /* ----- header card ----- */
+    var hdrH = headerH - 10;
+    ctx.fillStyle = "#fffaf3";
+    drawRoundedRect(ctx, cardX, cardY, cardW, hdrH, 18);
+    ctx.fill();
+    ctx.strokeStyle = "#e2d2bd"; ctx.lineWidth = 1;
+    drawRoundedRect(ctx, cardX, cardY, cardW, hdrH, 18);
+    ctx.stroke();
+
+    ctx.fillStyle = "#3a2218";
+    ctx.font = "800 26px " + FONT;
+    ctx.fillText("خاڵنووسی کۆنکان", W/2, cardY+38);
+
+    // dividers start BELOW the title so they never cross it
+    ctx.strokeStyle = "#e2d2bd";
+    ctx.beginPath();
+    ctx.moveTo(divA, cardY+58); ctx.lineTo(divA, cardY+hdrH-14);
+    ctx.moveTo(divB, cardY+58); ctx.lineTo(divB, cardY+hdrH-14);
+    ctx.stroke();
+
+    nameWithIcon(gameState.team1Name, gameState.team1Icon, team1Cx, cardY+86, C1, "700 17px " + FONT, 28);
+    nameWithIcon(gameState.team2Name, gameState.team2Icon, team2Cx, cardY+86, C2, "700 17px " + FONT, 28);
+
+    ctx.font = "800 38px " + FONT;
+    ctx.fillStyle = C1;
+    ctx.globalAlpha = (totals.t1 <= totals.t2) ? 1 : 0.5;
+    ctx.fillText(toEastern(totals.t1), team1Cx, cardY+124);
+    ctx.fillStyle = C2;
+    ctx.globalAlpha = (totals.t2 <= totals.t1) ? 1 : 0.5;
+    ctx.fillText(toEastern(totals.t2), team2Cx, cardY+124);
+    ctx.globalAlpha = 1;
+
+    ctx.font = "700 13px " + FONT;
+    ctx.fillStyle = "#7a6354";
+    ctx.fillText("کۆ", tagCx, cardY+122);
+
+    /* ----- table ----- */
+    var tableTop = cardY + headerH + 10;
+
+    nameWithIcon(gameState.team1Name, gameState.team1Icon, team1Cx, tableTop+18, C1, "700 13px " + FONT, 22);
+    nameWithIcon(gameState.team2Name, gameState.team2Icon, team2Cx, tableTop+18, C2, "700 13px " + FONT, 22);
+
+    var y = tableTop + tableHeaderH;
+    var tableBodyTop = y;
+    gameState.roundsData.forEach(function(r, idx){
+      if(idx % 2 === 1){
+        ctx.fillStyle = "#eee2d2";
+        ctx.fillRect(cardX, y, cardW, rowH);
+      }
+      ctx.fillStyle = "#7a6354";
+      ctx.font = "700 14px " + FONT;
+      ctx.fillText("ت " + toEastern(idx+1), tagCx, y+rowH/2+5);
+
+      ctx.font = "700 18px " + FONT;
+      ctx.fillStyle = "#3a2218";
+      var v1 = r.gharbat ? "غەربەت" : ((r.t1===null||r.t1===undefined) ? "—" : toEastern(r.t1));
+      var v2 = r.gharbat ? "غەربەت" : ((r.t2===null||r.t2===undefined) ? "—" : toEastern(r.t2));
+      ctx.fillText(v1, team1Cx, y+rowH/2+6);
+      ctx.fillText(v2, team2Cx, y+rowH/2+6);
+
+      y += rowH;
+    });
+
+    // same column dividers through the whole table
+    ctx.strokeStyle = "#e2d2bd";
+    ctx.beginPath();
+    ctx.moveTo(divA, tableBodyTop); ctx.lineTo(divA, y);
+    ctx.moveTo(divB, tableBodyTop); ctx.lineTo(divB, y);
+    ctx.stroke();
+
+    if(complete){
+      var verdict;
+      if(totals.t1 === totals.t2){
+        verdict = "یارییەکە یەکسانە";
+      } else if(totals.t1 < totals.t2){
+        verdict = gameState.team1Name + " بە " + toEastern(totals.t2-totals.t1) + " خاڵ پێشە";
+      } else {
+        verdict = gameState.team2Name + " بە " + toEastern(totals.t1-totals.t2) + " خاڵ پێشە";
+      }
+      ctx.font = "800 17px " + FONT;
+      ctx.fillStyle = "#4a2e21";
+      ctx.fillText(verdict, W/2, y+30);
+      y += footerH - 20;
+    }
+
+    ctx.font = "600 12px " + FONT;
+    ctx.fillStyle = "#b8a592";
+    ctx.fillText(formatDate(new Date().toISOString()), W/2, y+20);
+
+    return canvas;
+  }
+
+  var shareBlob = null, shareFile = null, shareUrl = null, shareFileName = "konkan.png";
+
+  function exportScoreImage(){
+    function doDraw(){
+      var canvas = buildScoreCanvas();
+      canvas.toBlob(function(blob){
+        if(!blob){ showToast("هەڵەیەک ڕوویدا"); return; }
+        shareBlob = blob;
+        shareFileName = "konkan-" + gameState.team1Name + "-" + gameState.team2Name + ".png";
+        shareFile = null;
+        try{ shareFile = new File([blob], shareFileName, { type: "image/png" }); }catch(e){ shareFile = null; }
+        if(shareUrl){ URL.revokeObjectURL(shareUrl); }
+        shareUrl = URL.createObjectURL(blob);
+        $("sharePreview").src = shareUrl;
+        $("shareOverlay").classList.add("show");
+      }, "image/png");
+    }
+
+    function go(){
+      loadIconImg(gameState.team1Icon, function(){
+        loadIconImg(gameState.team2Icon, doDraw);
+      });
+    }
+
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(go).catch(go);
+    } else {
+      go();
+    }
+  }
+
+  function closeSharePreview(){
+    $("shareOverlay").classList.remove("show");
+  }
+
+  function sendShareImage(){
+    if(!shareBlob) return;
+    if(navigator.share && shareFile && navigator.canShare && navigator.canShare({ files:[shareFile] })){
+      navigator.share({ files:[shareFile], title:"خاڵنووسی کۆنکان", text: gameState.team1Name + " × " + gameState.team2Name }).catch(function(){});
+    } else {
+      downloadShareImage();
+    }
+  }
+
+  function downloadShareImage(){
+    if(!shareUrl) return;
+    var a = document.createElement("a");
+    a.href = shareUrl;
+    a.download = shareFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast("وێنەکە دابەزێنرا");
+  }
+
+  /* ---------------- Score modal ---------------- */
+  function buildQuickButtons(){
+    var wrap = $("quickScores");
+    wrap.innerHTML = "";
+    [200,400].forEach(function(val){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "quick-btn";
+      b.textContent = toEastern(val);
+      b.addEventListener("click", function(){
+        soundClick();
+        if(activeInputEl){
+          activeInputEl.value = val;
+          // the other team automatically gets 0
+          var other = (activeInputEl === $("scoreInput1")) ? $("scoreInput2") : $("scoreInput1");
+          other.value = 0;
+        }
+      });
+      wrap.appendChild(b);
+    });
+  }
+
+  function setActiveInput(el){
+    $("scoreInput1").classList.remove("active-input");
+    $("scoreInput2").classList.remove("active-input");
+    el.classList.add("active-input");
+    activeInputEl = el;
+  }
+
+  function openScoreModal(roundIndex, whichTapped){
+    activeRoundIndex = roundIndex;
+    var r = gameState.roundsData[roundIndex];
+    var isGharbat = r.gharbat === true;
+
+    $("scoreModalTitle").textContent = "ت " + toEastern(roundIndex+1);
+    $("scoreLabel1").textContent = gameState.team1Name;
+    $("scoreLabel2").textContent = gameState.team2Name;
+
+    $("scoreInput1").value = (isGharbat || r.t1===null || r.t1===undefined) ? "" : r.t1;
+    $("scoreInput2").value = (isGharbat || r.t2===null || r.t2===undefined) ? "" : r.t2;
+
+    $("scoreOverlay").classList.add("show");
+
+    var focusEl = whichTapped === "t2" ? $("scoreInput2") : $("scoreInput1");
+    setActiveInput(focusEl);
+    setTimeout(function(){ focusEl.focus(); focusEl.select(); }, 220);
+  }
+
+  function closeScoreModal(){
+    $("scoreOverlay").classList.remove("show");
+    activeRoundIndex = null;
+    activeInputEl = null;
+  }
+
+  function saveScore(){
+    if(activeRoundIndex === null) return;
+    soundConfirm();
+
+    undoStack.push(JSON.parse(JSON.stringify(gameState.roundsData)));
+    if(undoStack.length > 15) undoStack.shift();
+
+    var v1raw = $("scoreInput1").value;
+    var v2raw = $("scoreInput2").value;
+    var r = gameState.roundsData[activeRoundIndex];
+
+    // If only one team has a score, the empty one is saved as 0
+    if(v1raw === "" && v2raw !== "") v1raw = "0";
+    if(v2raw === "" && v1raw !== "") v2raw = "0";
+    r.t1 = v1raw === "" ? null : Math.max(0, parseInt(v1raw,10) || 0);
+    r.t2 = v2raw === "" ? null : Math.max(0, parseInt(v2raw,10) || 0);
+    r.gharbat = false;
+
+    saveCurrentGame();
+    closeScoreModal();
+    renderScoreScreen();
+    finalizeIfComplete();
+  }
+
+  function markGharbat(){
+    if(activeRoundIndex === null) return;
+    soundClick();
+
+    undoStack.push(JSON.parse(JSON.stringify(gameState.roundsData)));
+    if(undoStack.length > 15) undoStack.shift();
+
+    var r = gameState.roundsData[activeRoundIndex];
+    var alreadyGharbat = r.gharbat === true;
+    r.t1 = 0;
+    r.t2 = 0;
+    r.gharbat = true;
+
+    if(!alreadyGharbat){
+      gameState.roundsData.push({ t1:null, t2:null });
+      gameState.rounds += 1;
+    }
+
+    saveCurrentGame();
+    closeScoreModal();
+    renderScoreScreen();
+    finalizeIfComplete();
+    showToast("تەڵقەکە کرا بە غەربەت");
+  }
+
+  function undoLastChange(){
+    if(undoStack.length === 0){
+      showToast("هیچ گۆڕانکارییەک نییە بۆ گەڕاندنەوە");
+      return;
+    }
+    gameState.roundsData = undoStack.pop();
+    saveCurrentGame();
+    renderScoreScreen();
+    showToast("گەڕایەوە بۆ پێشتر");
+  }
+
+  /* ---------------- History ---------------- */
+  function formatDate(iso){
+    var d = new Date(iso);
+    var y = d.getFullYear();
+    var m = String(d.getMonth()+1).padStart(2,"0");
+    var day = String(d.getDate()).padStart(2,"0");
+    return toEastern(y) + "/" + toEastern(m) + "/" + toEastern(day);
+  }
+
+  function escapeHtml(t){
+    return String(t).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function formatDuration(ms){
+    var total = Math.floor(ms/1000);
+    var h = Math.floor(total/3600), m = Math.floor((total%3600)/60), sec = total%60;
+    return (h>0) ? (pad2(h)+":"+pad2(m)+":"+pad2(sec)) : (pad2(m)+":"+pad2(sec));
+  }
+
+  function renderHistory(){
+    var list = $("historyList");
+    var h = loadHistory();
+    list.innerHTML = "";
+    if(h.length === 0){
+      list.innerHTML = '<div class="history-empty">هیچ یارییەک تۆمار نەکراوە</div>';
+      return;
+    }
+    h.forEach(function(item, idx){
+      var row = document.createElement("div");
+      row.className = "history-item";
+
+      var main = document.createElement("div");
+      main.className = "history-item-main";
+      var meta = toEastern(item.rounds) + " تەڵقە · " + formatDate(item.date);
+      if(item.durationMs){ meta += " · " + formatDuration(item.durationMs); }
+      if(item.finished === false){ meta += " · نەتەواو"; }
+      main.innerHTML =
+        '<div class="history-teams">' + escapeHtml(item.team1Name) + ' × ' + escapeHtml(item.team2Name) + '</div>' +
+        '<div class="history-score">' + toEastern(item.total1) + ' — ' + toEastern(item.total2) + '</div>' +
+        '<div class="history-meta">' + meta + '</div>';
+
+      var del = document.createElement("button");
+      del.className = "history-del";
+      del.innerHTML = ICONS.trash;
+      del.setAttribute("aria-label", "سڕینەوە");
+      del.addEventListener("click", function(){
+        deleteHistoryGame(idx);
+        renderHistory();
+        showToast("یارییەکە سڕدرایەوە");
+      });
+
+      row.appendChild(main);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+  }
+
+  /* ---------------- Setup screen wiring ---------------- */
+  var selectedRounds = 7;
+
+  var K_LAST = "konkan_last_setup";
+
+  function applyRoundsToUI(displayedRounds){
+    document.querySelectorAll(".round-opt").forEach(function(b){ b.classList.remove("selected"); });
+    var matchBtn = document.querySelector('.round-opt[data-rounds="' + displayedRounds + '"]');
+    if(matchBtn){
+      matchBtn.classList.add("selected");
+      $("customRoundsWrap").classList.remove("show");
+      selectedRounds = displayedRounds;
+    } else {
+      document.querySelector('.round-opt[data-rounds="custom"]').classList.add("selected");
+      $("customRoundsWrap").classList.add("show");
+      $("customRoundsInput").value = displayedRounds;
+      selectedRounds = "custom";
+    }
+  }
+
+  function loadLastSetup(){
+    try{
+      var raw = localStorage.getItem(K_LAST);
+      if(!raw) return;
+      var d = JSON.parse(raw);
+      if(d.t1) $("team1Input").value = d.t1;
+      if(d.t2) $("team2Input").value = d.t2;
+      if(d.rounds) applyRoundsToUI(d.rounds);
+    }catch(e){}
+  }
+
+  function saveLastSetup(t1, t2, rounds){
+    try{ lsSet(K_LAST, JSON.stringify({ t1:t1, t2:t2, rounds:rounds })); }catch(e){}
+  }
+
+  function wireSetupScreen(){
+    document.querySelectorAll(".round-opt").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        document.querySelectorAll(".round-opt").forEach(function(b){ b.classList.remove("selected"); });
+        btn.classList.add("selected");
+        var val = btn.getAttribute("data-rounds");
+        if(val === "custom"){
+          $("customRoundsWrap").classList.add("show");
+          selectedRounds = "custom";
+        } else {
+          $("customRoundsWrap").classList.remove("show");
+          selectedRounds = parseInt(val,10);
+        }
+      });
+    });
+
+    $("team1Input").addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ e.preventDefault(); $("team2Input").focus(); }
+    });
+    $("team2Input").addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ e.preventDefault(); $("startGameBtn").click(); }
+    });
+
+    $("startGameBtn").addEventListener("click", function(){
+      var t1 = $("team1Input").value.trim();
+      var t2 = $("team2Input").value.trim();
+      var err = $("setupError");
+
+      if(!t1 || !t2){
+        err.classList.add("show");
+        return;
+      }
+      err.classList.remove("show");
+
+      var rounds = selectedRounds;
+      if(rounds === "custom"){
+        rounds = parseInt($("customRoundsInput").value, 10);
+        if(!rounds || rounds < 1) rounds = 7;
+        if(rounds > 30) rounds = 30;
+      }
+
+      saveLastSetup(t1, t2, rounds);
+      startGame(t1, t2, rounds);
+    });
+  }
+
+  /* ---------------- Score screen wiring ---------------- */
+  function wireScoreScreen(){
+    $("homeBtn").addEventListener("click", function(){
+      $("team1Input").value = gameState.team1Name;
+      $("team2Input").value = gameState.team2Name;
+      applyRoundsToUI(gameState.rounds - 1);
+      $("setupError").classList.remove("show");
+      showScreen("setupScreen");
+    });
+
+    $("historyBtn").addEventListener("click", function(){
+      renderHistory();
+      $("historyOverlay").classList.add("show");
+    });
+    $("closeHistoryModal").addEventListener("click", function(){
+      $("historyOverlay").classList.remove("show");
+    });
+
+
+    $("soundBtn").addEventListener("click", function(){
+      gameState.sound = !gameState.sound;
+      try{ lsSet(K_SOUND, gameState.sound ? "1" : "0"); }catch(e){}
+      updateSoundIcon();
+      saveCurrentGame();
+      if(gameState.sound) soundClick();
+    });
+
+    $("newGameBtn").addEventListener("click", function(){
+      $("newGameOverlay").classList.add("show");
+    });
+    $("cancelNewGame").addEventListener("click", function(){
+      $("newGameOverlay").classList.remove("show");
+    });
+    $("confirmNewGame").addEventListener("click", function(){
+      $("newGameOverlay").classList.remove("show");
+      startNewGame();
+    });
+
+    $("shareBtn").addEventListener("click", function(){
+      soundClick();
+      exportScoreImage();
+    });
+
+    $("closeShareModal").addEventListener("click", closeSharePreview);
+    $("shareOverlay").addEventListener("click", function(e){
+      if(e.target === $("shareOverlay")) closeSharePreview();
+    });
+    $("sendShareBtn").addEventListener("click", sendShareImage);
+    $("downloadShareBtn").addEventListener("click", downloadShareImage);
+  }
+
+  function wireScoreModal(){
+    $("closeScoreModal").addEventListener("click", closeScoreModal);
+    $("scoreOverlay").addEventListener("click", function(e){
+      if(e.target === $("scoreOverlay")) closeScoreModal();
+    });
+    $("scoreInput1").addEventListener("focus", function(){ setActiveInput($("scoreInput1")); });
+    $("scoreInput2").addEventListener("focus", function(){ setActiveInput($("scoreInput2")); });
+    $("saveScoreBtn").addEventListener("click", saveScore);
+    $("gharbatBtn").addEventListener("click", markGharbat);
+
+    [$("scoreInput1"), $("scoreInput2")].forEach(function(inp){
+      inp.addEventListener("keydown", function(e){
+        if(e.key === "-" || e.key === "e") e.preventDefault();
+        if(e.key === "Enter") saveScore();
+      });
+    });
+  }
+
+  function wireIcons(){
+    $("historyBtn").innerHTML = ICONS.history;
+    $("closeScoreModal").innerHTML = ICONS.close;
+    $("closeHistoryModal").innerHTML = ICONS.close;
+    $("closeShareModal").innerHTML = ICONS.close;
+    $("homeBtn").innerHTML = ICONS.home;
+    $("shareBtn").innerHTML = ICONS.share;
+  }
+
+  /* ---------------- Init ---------------- */
+  function initializeApp(){
+    wireSetupScreen();
+    wireScoreScreen();
+    wireScoreModal();
+    wireIcons();
+    buildQuickButtons();
+    preventPinchAndDoubleTapZoom();
+
+    var savedSound = null;
+    try{ savedSound = localStorage.getItem(K_SOUND); }catch(e){}
+
+    var restored = loadCurrentGame();
+    if(restored && restored.team1Name && restored.team2Name && Array.isArray(restored.roundsData)){
+      gameState = restored;
+      if(gameState.historySaved === undefined) gameState.historySaved = false;
+      if(!gameState.startedAt) gameState.startedAt = Date.now();
+      if(savedSound !== null) gameState.sound = savedSound === "1";
+      renderScoreScreen();
+      showScreen("scoreScreen");
+      requestWakeLock();
+    } else {
+      gameState = { sound: savedSound === null ? true : savedSound === "1" };
+      loadLastSetup();
+      showScreen("setupScreen");
+    }
+
+    setInterval(updateTimerDisplay, 1000);
+
+    document.addEventListener("visibilitychange", function(){
+      if(document.visibilityState === "visible" && gameState && gameState.startedAt){
+        requestWakeLock();
+      }
+    });
+  }
+
+  /* ---------------- Prevent pinch/double-tap zoom (feel native) ---------------- */
+  function preventPinchAndDoubleTapZoom(){
+    document.addEventListener("touchmove", function(e){
+      if(e.touches && e.touches.length > 1) e.preventDefault();
+    }, { passive:false });
+
+    var lastTouchEnd = 0;
+    document.addEventListener("touchend", function(e){
+      var now = Date.now();
+      if(now - lastTouchEnd <= 300) e.preventDefault();
+      lastTouchEnd = now;
+    }, { passive:false });
+
+    document.addEventListener("gesturestart", function(e){ e.preventDefault(); });
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){ restoreFromMirror(initializeApp); });
+
+  // Save the running game whenever the page is hidden / closed
+  function flushGame(){ if(gameState && gameState.roundsData){ saveCurrentGame(); } }
+  document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "hidden") flushGame(); });
+  window.addEventListener("pagehide", flushGame);
+})();
+</script>
+</body>
+</html>
