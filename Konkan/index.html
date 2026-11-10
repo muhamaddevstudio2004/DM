@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- KonKan Scorekeeper — Version 2.9 -->
+<!-- KonKan Scorekeeper — Version 3.3 -->
 <html lang="ckb" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -361,12 +361,6 @@
   .sb-dot{ width:11px;height:11px;border-radius:50%; flex-shrink:0; }
   .sb-side1 .sb-dot{ background: var(--t1); }
   .sb-side2 .sb-dot{ background: var(--t2); }
-  .sb-icon{
-    width:46px; height:46px;
-    display:block; flex-shrink:0;
-    filter: drop-shadow(0 1px 2px rgba(58,34,24,.22));
-  }
-  .sb-icon svg{ display:block; }
   .sb-name{
     font-weight: 700;
     font-size: 16px;
@@ -424,6 +418,25 @@
     font-size: 14.5px;
     font-weight: 800;
   }
+  /* ---------- Game progress ---------- */
+  .progress{ margin: -4px 2px 16px; }
+  .progress-text{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12.5px; font-weight:700; color: var(--charcoal-soft); margin-bottom:7px;
+  }
+  .progress-segs{ display:flex; gap:4px; direction:rtl; }
+  .pseg{
+    flex:1; height:8px; border-radius:999px;
+    background: var(--ivory-2); border:1px solid var(--border);
+    transition: background .3s ease, border-color .3s ease;
+  }
+  .pseg.done{ background: var(--copper); border-color: var(--copper); }
+  .pseg.skipped{ opacity:.35; }
+  .pseg.bonus{ border-style:dashed; border-color: var(--copper); }
+  .pseg.bonus.done{ border-style:solid; }
+  @keyframes segPulse{ 0%,100%{ background: var(--copper-tint); } 50%{ background:#d9bf9f; } }
+  .pseg.current{ border-color: var(--copper); animation: segPulse 1.6s ease-in-out infinite; }
+
   .konkan-notice{
     text-align:center;
     font-size: 13.5px;
@@ -458,8 +471,12 @@
     white-space:nowrap;
     padding: 0 4px;
   }
-  .rh-icon{ display:inline-block; width:22px; height:22px; margin-inline-end:6px; vertical-align:middle; }
-  .rh-icon svg{ display:block; }
+  #rhName1::before, #rhName2::before{
+    content:""; display:inline-block; width:8px; height:8px; border-radius:50%;
+    margin-inline-end:5px; vertical-align:middle;
+  }
+  #rhName1::before{ background: var(--t1); }
+  #rhName2::before{ background: var(--t2); }
   .round-list{
     display:flex;
     flex-direction:column;
@@ -720,6 +737,146 @@
   }
   .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
 
+
+  /* ================= Tournament ================= */
+  .mode-tabs{
+    display:flex; gap:6px; padding:4px; margin-bottom:16px;
+    background: rgba(0,0,0,.2); border-radius:14px;
+  }
+  .mode-tab{
+    flex:1; padding:11px 8px; border-radius:11px;
+    font-weight:700; font-size:15px; color:#e8d9c6;
+    transition: background .15s ease, color .15s ease;
+  }
+  .mode-tab.active{ background:#f3ebdd; color:#3a2218; }
+
+  .resume-box{
+    background: rgba(243,235,221,.12);
+    border: 1px solid rgba(243,235,221,.28);
+    border-radius:14px; padding:12px 14px; margin-bottom:16px;
+    color:#f5ece0;
+  }
+  .resume-title{ font-weight:800; font-size:15px; }
+  .resume-sub{ font-size:12.5px; opacity:.8; margin-top:2px; }
+  .resume-actions{ display:flex; gap:8px; margin-top:10px; }
+  .resume-actions button{
+    flex:1; padding:10px; border-radius:11px; font-weight:700; font-size:14px;
+  }
+  .resume-go{ background:#f3ebdd; color:#3a2218; }
+  .resume-del{ border:1px solid rgba(243,235,221,.4); color:#f5ece0; }
+
+  .stepper{ display:flex; align-items:center; gap:10px; }
+  .stepper button{
+    width:54px; height:54px; border-radius:14px; flex-shrink:0;
+    background:#f3ebdd; color:#3a2218; font-size:28px; font-weight:700; line-height:1;
+  }
+  .stepper input{ text-align:center; font-size:22px !important; font-weight:800 !important; }
+
+  .tname-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .tnum{
+    width:32px; height:32px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(243,235,221,.18); color:#f5ece0; font-weight:700; font-size:13.5px;
+  }
+  .setup-card .tname-row input{
+    flex:1; min-width:0; width:100%;
+    padding:13px 14px; border-radius:12px;
+    border:1.5px solid #f3ebdd; background:#f3ebdd; color:#3a2218;
+    font-size:17px; font-weight:700;
+  }
+  .setup-card .tname-row input:focus{ background:#fffaf3; border-color:#e3bd92; }
+  .setup-card .tname-row input.dup{ border-color:#ff9c86; }
+
+  .match-label{
+    text-align:center; font-size:13px; font-weight:700;
+    color: var(--charcoal-soft); margin: -4px 0 4px;
+  }
+
+  /* bracket */
+  .b-head{ margin: 6px 0 14px; }
+  .b-title{ font-size:22px; font-weight:800; }
+  .b-sub{ color: var(--charcoal-soft); font-size:13.5px; margin-top:2px; }
+  .round-title{
+    display:flex; align-items:center; gap:8px;
+    font-weight:800; font-size:16px; margin: 20px 0 10px;
+  }
+  .round-badge{
+    font-size:11.5px; background: var(--copper); color:#f5ece0;
+    padding:2px 10px; border-radius:999px; font-weight:700;
+  }
+  .match-card{
+    background: var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:12px; margin-bottom:10px; box-shadow: var(--shadow);
+  }
+  .match-card.bye{ background:transparent; box-shadow:none; border-style:dashed; padding:10px 12px; }
+  .mc-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12.5px; color: var(--charcoal-soft); margin-bottom:8px; font-weight:600;
+  }
+  .mc-chip{ padding:2px 10px; border-radius:999px; background: var(--ivory-2); font-weight:700; }
+  .mc-chip.live{ background:#f1d9b8; color:#6a3d12; }
+  .mc-chip.done{ background:#dfe8d2; color:#46602a; }
+  .mc-team{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:11px; background: var(--ivory);
+    margin-bottom:6px; font-weight:700;
+  }
+  .mc-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mc-team.win{ background:#e3ecd6; }
+  .mc-team.win .mc-name::before{ content:"✓"; color:#46602a; margin-inline-end:6px; }
+  .mc-team.lose{ opacity:.5; }
+  .mc-team.lose .mc-name{ text-decoration:line-through; }
+  .mc-team.tbd{ background:transparent; border:1px dashed var(--border); color: var(--charcoal-soft); font-weight:600; }
+  .mc-score{ direction:ltr; font-variant-numeric: tabular-nums; font-weight:800; }
+  .mc-btn{
+    width:100%; margin-top:4px; padding:12px; border-radius:12px;
+    background: var(--copper); color:#f5ece0; font-weight:700; font-size:15px;
+  }
+  .mc-btn.secondary{ background: var(--ivory-2); color: var(--charcoal-soft); border:1px solid var(--border); }
+  @keyframes cardIn{ from{ opacity:0; transform: translateY(14px) scale(.97); } to{ opacity:1; transform:none; } }
+  .match-card.reveal{ animation: cardIn .5s ease both; }
+
+  .champion-card{
+    background:#5c3b2c; color:#f5ece0; border-radius:24px;
+    padding:24px 18px; text-align:center; margin-bottom:6px;
+    box-shadow: var(--shadow-lg);
+  }
+  .champion-card svg{ width:58px; height:58px; color:#e3bd92; }
+  .champion-label{ font-size:13.5px; opacity:.85; margin-top:4px; }
+  .champion-name{ font-size:30px; font-weight:800; margin:4px 0 14px; }
+  .champion-card button{
+    padding:12px 22px; border-radius:12px; background:#f3ebdd; color:#3a2218; font-weight:700;
+  }
+  .btn-danger-ghost{
+    width:100%; margin-top:24px; padding:13px; border-radius:14px;
+    color:#a3402e; border:1px solid #e0b9ae; background:transparent; font-weight:700;
+  }
+
+  /* draw */
+  .draw-card{
+    background:#5c3b2c; color:#f5ece0; border-radius:28px;
+    padding:34px 16px 26px; text-align:center; margin-top:30px;
+    box-shadow: var(--shadow-lg);
+  }
+  .draw-title{ font-size:24px; font-weight:800; }
+  .draw-hint{ font-size:14px; opacity:.85; margin-top:4px; }
+  .draw-count{
+    width:124px; height:124px; border-radius:50%; margin:22px auto;
+    border:4px solid #e3bd92; display:flex; align-items:center; justify-content:center;
+    font-size:64px; font-weight:800; font-variant-numeric: tabular-nums;
+  }
+  @keyframes tickPulse{ 0%{ transform:scale(1.14); } 100%{ transform:scale(1); } }
+  .draw-count.tick{ animation: tickPulse .5s ease; }
+  .draw-slots{ display:flex; align-items:center; gap:8px; }
+  .draw-slot{
+    flex:1; min-height:56px; padding:14px 8px; border-radius:14px;
+    background:#f3ebdd; color:#3a2218; font-weight:800; font-size:17px;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  }
+  .draw-vs{ color:#e3bd92; font-weight:800; font-size:20px; }
+  .draw-skip{ margin-top:22px; color:#e8d9c6; font-size:14px; text-decoration:underline; }
+
   .visually-hidden{
     position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;
   }
@@ -747,7 +904,46 @@
     <div class="logo-sub">خاڵنووس</div>
   </div>
 
-  <div class="card">
+  <div id="tournResume" class="resume-box" style="display:none;"></div>
+
+  <div class="mode-tabs" id="modeTabs">
+    <button type="button" class="mode-tab active" data-mode="quick">یاری خێرا</button>
+    <button type="button" class="mode-tab" data-mode="tourn">پاڵەوانێتی</button>
+  </div>
+
+  <div class="card" id="tournForm" style="display:none;">
+    <div class="field">
+      <label for="tournName">ناوی پاڵەوانێتی (ئارەزوومەندانە)</label>
+      <input type="text" id="tournName" maxlength="30" autocomplete="off" autocorrect="off">
+    </div>
+    <div class="field">
+      <label for="tCountInput">ژمارەی تیمەکان</label>
+      <div class="stepper">
+        <button type="button" id="tCountMinus" aria-label="کەمکردنەوە">−</button>
+        <input type="number" id="tCountInput" inputmode="numeric" min="2" max="32" value="4">
+        <button type="button" id="tCountPlus" aria-label="زیادکردن">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>ناوی تیمەکان</label>
+      <div id="tournNames"></div>
+    </div>
+    <div class="field">
+      <label id="tRoundsLabel">تەڵقەکانی هەر یارییەک</label>
+      <div class="round-options" role="group" aria-labelledby="tRoundsLabel">
+        <button type="button" class="round-opt t-opt selected" data-rounds="7">7</button>
+        <button type="button" class="round-opt t-opt" data-rounds="9">9</button>
+        <button type="button" class="round-opt t-opt" data-rounds="custom">دڵخواز</button>
+      </div>
+      <div class="custom-rounds-input" id="tCustomWrap">
+        <input type="number" id="tCustomInput" inputmode="numeric" min="1" max="30" placeholder="ژمارە بنووسە">
+      </div>
+    </div>
+    <p class="error-text" id="tournError"></p>
+    <button class="btn-primary" id="tournStartBtn">قورعە بکە</button>
+  </div>
+
+  <div class="card" id="quickForm">
     <div class="field team-field t1">
       <label for="team1Input">ناوی تیمی یەکەم</label>
       <input type="text" id="team1Input" maxlength="20" autocomplete="off" autocorrect="off" enterkeyhint="next">
@@ -775,6 +971,38 @@
   </div>
 </section>
 
+<!-- ============ DRAW SCREEN ============ -->
+<section id="drawScreen" class="screen">
+  <div class="draw-card">
+    <div class="draw-title">قورعە</div>
+    <div class="draw-hint">تیمەکان بە Random دەکەونە بەرامبەر یەکتر</div>
+    <div class="draw-count" id="drawCount">5</div>
+    <div class="draw-slots">
+      <div class="draw-slot" id="drawA"></div>
+      <div class="draw-vs">×</div>
+      <div class="draw-slot" id="drawB"></div>
+    </div>
+    <button class="draw-skip" id="drawSkip" type="button">پەڕاندن</button>
+  </div>
+</section>
+
+<!-- ============ BRACKET SCREEN ============ -->
+<section id="bracketScreen" class="screen">
+  <div class="topbar">
+    <div class="brand-mini">Kon<span class="k2">Kan</span></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="bHomeBtn" aria-label="سەرەتا" title="سەرەتا"></button>
+    </div>
+  </div>
+  <div class="b-head">
+    <div class="b-title" id="bTitle"></div>
+    <div class="b-sub" id="bSub"></div>
+  </div>
+  <div id="bChampion" style="display:none;"></div>
+  <div id="bRounds"></div>
+  <button class="btn-danger-ghost" id="bDeleteBtn" type="button">سڕینەوەی پاڵەوانێتی</button>
+</section>
+
 <!-- ============ SCORE SCREEN ============ -->
 <section id="scoreScreen" class="screen">
   <div class="topbar">
@@ -786,17 +1014,18 @@
     </div>
   </div>
 
+  <div class="match-label" id="matchLabel" style="display:none;"></div>
   <div class="game-timer" id="gameTimer">00:00</div>
 
   <div class="scoreboard" id="scoreboard">
     <div class="sb-final-head" id="sbFinalHead" style="display:none;"><span class="sb-trophy" id="trophyIcon"></span><span>ئەنجامی یاری</span></div>
     <div class="sb-top" id="sbTop">
       <div class="sb-side sb-side1" id="sbRow1">
-        <div class="sb-name-line"><span class="sb-icon" id="sbIcon1"></span><span class="sb-name" id="sbName1"></span></div>
+        <div class="sb-name-line"><span class="sb-dot"></span><span class="sb-name" id="sbName1"></span></div>
         <div class="sb-score" id="sbScore1">0</div>
       </div>
       <div class="sb-side sb-side2" id="sbRow2">
-        <div class="sb-name-line"><span class="sb-icon" id="sbIcon2"></span><span class="sb-name" id="sbName2"></span></div>
+        <div class="sb-name-line"><span class="sb-dot"></span><span class="sb-name" id="sbName2"></span></div>
         <div class="sb-score" id="sbScore2">0</div>
       </div>
     </div>
@@ -804,9 +1033,13 @@
     <div class="sb-lead-text" id="sbLeadText" style="display:none;"></div>
   </div>
 
+  <div class="progress" id="gameProgress">
+    <div class="progress-text"><span id="progressLeft"></span><span id="progressRight"></span></div>
+    <div class="progress-segs" id="progressSegs"></div>
+  </div>
+
   <div class="konkan-notice" id="konkanNotice" style="display:none;"></div>
 
-  <p class="rounds-label">خاڵەکانی هەر تەڵقەیەک</p>
   <div class="round-header" id="roundHeader">
     <div></div>
     <div class="rh-name" id="rhName1"></div>
@@ -855,6 +1088,20 @@
     <div class="confirm-actions">
       <button class="confirm-cancel" id="cancelNewGame">پاشگەزبوونەوە</button>
       <button class="confirm-ok" id="confirmNewGame">دەستپێبکە</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GENERIC CONFIRM MODAL ============ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal confirm-modal">
+    <div class="modal-head" style="justify-content:center; margin-bottom:4px;">
+      <div class="modal-title" id="confirmTitle"></div>
+    </div>
+    <p class="confirm-text" id="confirmText"></p>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" id="confirmCancel" type="button">پاشگەزبوونەوە</button>
+      <button class="confirm-ok" id="confirmOk" type="button">باشە</button>
     </div>
   </div>
 </div>
@@ -913,6 +1160,8 @@
   var K_GAME = "konkan_current_game";
   var K_HISTORY = "konkan_history";
   var K_SOUND = "konkan_sound";
+  var K_TOURN = "konkan_tournament";
+  var K_VIEW = "konkan_view";
 
   /* ---------------- State ---------------- */
   var gameState = null;   // { team1Name, team2Name, rounds, roundsData:[{t1,t2}], sound }
@@ -925,6 +1174,8 @@
   function showScreen(id){
     document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
     $(id).classList.add("active");
+    if(id === "setupScreen" && typeof refreshResumeBox === "function") refreshResumeBox();
+    window.scrollTo(0,0);
   }
   function showToast(msg){
     var t = $("toast");
@@ -999,7 +1250,7 @@
     }catch(e){}
     openMirror(function(){
       if(!idbRef){ finish(); return; }
-      var keys = [K_GAME, K_HISTORY, K_SOUND, K_LAST];
+      var keys = [K_GAME, K_HISTORY, K_SOUND, K_LAST, K_TOURN, K_VIEW];
       var left = keys.length;
       keys.forEach(function(k){
         var have = null;
@@ -1019,6 +1270,7 @@
 
   /* ---------------- Persistence ---------------- */
   function saveCurrentGame(){
+    if(currentMatchId && T){ saveTournament(); return; }
     try{ lsSet(K_GAME, JSON.stringify(gameState)); }catch(e){}
   }
   function loadCurrentGame(){
@@ -1048,47 +1300,6 @@
     try{ lsSet(K_HISTORY, JSON.stringify(h)); }catch(e){}
   }
 
-  /* ---------------- Team animals (SVG icons) ---------------- */
-  var ANIMAL_SVG = {"lion": "<circle cx=\"55.0\" cy=\"33.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"51.9\" cy=\"44.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"43.5\" cy=\"52.9\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"32.0\" cy=\"56.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"20.5\" cy=\"52.9\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"12.1\" cy=\"44.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"9.0\" cy=\"33.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"12.1\" cy=\"21.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"20.5\" cy=\"13.1\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"32.0\" cy=\"10.0\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"43.5\" cy=\"13.1\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"51.9\" cy=\"21.5\" r=\"8.5\" fill=\"#a85a14\"/><circle cx=\"32\" cy=\"33\" r=\"24\" fill=\"#c97a22\"/><circle cx=\"17\" cy=\"16\" r=\"6\" fill=\"#f0b24a\"/><circle cx=\"17\" cy=\"16\" r=\"3\" fill=\"#e39a86\"/><circle cx=\"47\" cy=\"16\" r=\"6\" fill=\"#f0b24a\"/><circle cx=\"47\" cy=\"16\" r=\"3\" fill=\"#e39a86\"/><ellipse cx=\"32\" cy=\"36\" rx=\"17\" ry=\"18\" fill=\"#f4bd55\"/><ellipse cx=\"32\" cy=\"44.5\" rx=\"10.5\" ry=\"8\" fill=\"#fbe5b6\"/><path d=\"M26.5 38.5h11l-5.5 6.5z\" fill=\"#5a2d17\"/><path d=\"M32 45v3M32 48q-4 4-8 1M32 48q4 4 8 1\" stroke=\"#5a2d17\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"25\" cy=\"31\" r=\"2.4\" fill=\"#2e180b\"/><circle cx=\"39\" cy=\"31\" r=\"2.4\" fill=\"#2e180b\"/><path d=\"M20 27l9 2M44 27l-9 2\" stroke=\"#8a4a12\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>", "leopard": "<circle cx=\"15\" cy=\"16\" r=\"7.5\" fill=\"#e6a53a\"/><circle cx=\"15\" cy=\"16\" r=\"3.8\" fill=\"#33241a\"/><circle cx=\"49\" cy=\"16\" r=\"7.5\" fill=\"#e6a53a\"/><circle cx=\"49\" cy=\"16\" r=\"3.8\" fill=\"#33241a\"/><ellipse cx=\"32\" cy=\"35\" rx=\"22\" ry=\"20\" fill=\"#efb440\"/><circle cx=\"14\" cy=\"31\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"18\" cy=\"41\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"50\" cy=\"31\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"46\" cy=\"41\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"22\" cy=\"21\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"42\" cy=\"21\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"32\" cy=\"18\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"26\" cy=\"17\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"38\" cy=\"17\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"12\" cy=\"38\" r=\"2.1\" fill=\"#3a2915\"/><circle cx=\"52\" cy=\"38\" r=\"2.1\" fill=\"#3a2915\"/><ellipse cx=\"32\" cy=\"45\" rx=\"11.5\" ry=\"8.5\" fill=\"#fff2d2\"/><ellipse cx=\"23\" cy=\"32\" rx=\"4\" ry=\"3.4\" fill=\"#b9dc4e\"/><circle cx=\"23\" cy=\"32\" r=\"1.7\" fill=\"#1c1c10\"/><ellipse cx=\"41\" cy=\"32\" rx=\"4\" ry=\"3.4\" fill=\"#b9dc4e\"/><circle cx=\"41\" cy=\"32\" r=\"1.7\" fill=\"#1c1c10\"/><path d=\"M18 29q5-3 10 0M36 29q5-3 10 0\" stroke=\"#3a2915\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M28 40h8l-4 5z\" fill=\"#d9788a\"/><path d=\"M32 45v3M32 48q-3 3-6 1M32 48q3 3 6 1\" stroke=\"#3a2915\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\"/>", "falcon": "<path d=\"M10 40Q4 22 22 10Q32 5 42 10Q60 22 54 40Q50 54 32 58Q14 54 10 40Z\" fill=\"#5b3a25\"/><path d=\"M24 12Q32 8 40 12Q36 18 32 18Q28 18 24 12Z\" fill=\"#3e2616\"/><ellipse cx=\"20\" cy=\"40\" rx=\"8\" ry=\"11\" fill=\"#efe1c6\"/><ellipse cx=\"44\" cy=\"40\" rx=\"8\" ry=\"11\" fill=\"#efe1c6\"/><path d=\"M17 34l5 14M47 34l-5 14\" stroke=\"#33200f\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><circle cx=\"23\" cy=\"28\" r=\"5\" fill=\"#f7d54a\"/><circle cx=\"23\" cy=\"28.4\" r=\"2.4\" fill=\"#0e0e0e\"/><circle cx=\"41\" cy=\"28\" r=\"5\" fill=\"#f7d54a\"/><circle cx=\"41\" cy=\"28.4\" r=\"2.4\" fill=\"#0e0e0e\"/><path d=\"M14 22L30 29V25Z\" fill=\"#26150a\"/><path d=\"M50 22L34 29V25Z\" fill=\"#26150a\"/><path d=\"M24.5 35Q32 28 39.5 35Q39 47 32 56Q25 47 24.5 35Z\" fill=\"#f4b52a\"/><path d=\"M32 56Q27 49 26 43Q32 47 38 43Q37 49 32 56Z\" fill=\"#d98e17\"/><circle cx=\"29.5\" cy=\"37\" r=\"1.1\" fill=\"#8a5a10\"/><circle cx=\"34.5\" cy=\"37\" r=\"1.1\" fill=\"#8a5a10\"/>", "dragon": "<path d=\"M13 20Q5 7 19 3Q15 12 22 18Z\" fill=\"#f0e2b8\"/><path d=\"M51 20Q59 7 45 3Q49 12 42 18Z\" fill=\"#f0e2b8\"/><polygon points=\"12,28 3,23 8,32 1,36 11,39\" fill=\"#2d8a4d\"/><polygon points=\"52,28 61,23 56,32 63,36 53,39\" fill=\"#2d8a4d\"/><polygon points=\"27,15 32,5 37,15\" fill=\"#2d8a4d\"/><ellipse cx=\"32\" cy=\"32\" rx=\"20.5\" ry=\"19.5\" fill=\"#45b469\"/><ellipse cx=\"32\" cy=\"44\" rx=\"13.5\" ry=\"9.5\" fill=\"#7fd093\"/><circle cx=\"27\" cy=\"42\" r=\"1.8\" fill=\"#1e5c35\"/><circle cx=\"37\" cy=\"42\" r=\"1.8\" fill=\"#1e5c35\"/><ellipse cx=\"23\" cy=\"29\" rx=\"4.6\" ry=\"3.6\" fill=\"#f2c230\"/><ellipse cx=\"23\" cy=\"29\" rx=\"1.2\" ry=\"3.2\" fill=\"#1a1a1a\"/><ellipse cx=\"41\" cy=\"29\" rx=\"4.6\" ry=\"3.6\" fill=\"#f2c230\"/><ellipse cx=\"41\" cy=\"29\" rx=\"1.2\" ry=\"3.2\" fill=\"#1a1a1a\"/><path d=\"M16 24.5L29 29M48 24.5L35 29\" stroke=\"#1e5c35\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M23 49.5Q32 54 41 49.5\" stroke=\"#1e5c35\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M26 50l2 5.5 2-4.5z\" fill=\"#fff\"/><path d=\"M34 51l2 4.5 2-5.5z\" fill=\"#fff\"/>", "crow": "<path d=\"M10 20Q7 14 4 10Q15 10 20 16Z\" fill=\"#1d1d24\"/><path d=\"M12 32Q8 52 22 60L52 60Q44 46 42 33Z\" fill=\"#26262e\"/><circle cx=\"28\" cy=\"28\" r=\"18\" fill=\"#26262e\"/><path d=\"M17 22Q24 12 36 14\" stroke=\"#41414e\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M42 22Q58 25 61 33Q50 36 42 34Z\" fill=\"#5a5b66\"/><path d=\"M42 28Q54 29 60 33\" stroke=\"#3a3b44\" stroke-width=\"1.4\" fill=\"none\"/><circle cx=\"34\" cy=\"24\" r=\"4\" fill=\"#eceef4\"/><circle cx=\"35\" cy=\"24\" r=\"2\" fill=\"#0a0a0a\"/><path d=\"M28 19L40 21\" stroke=\"#0d0d12\" stroke-width=\"2\" stroke-linecap=\"round\"/>", "wolf": "<polygon points=\"8,4 26,16 10,30\" fill=\"#767b87\"/><polygon points=\"12,10 22,17 12,24\" fill=\"#d9a4a4\"/><polygon points=\"56,4 38,16 54,30\" fill=\"#767b87\"/><polygon points=\"52,10 42,17 52,24\" fill=\"#d9a4a4\"/><path d=\"M9 30Q9 14 32 14Q55 14 55 30Q55 44 41 52Q32 59 23 52Q9 44 9 30Z\" fill=\"#8c919d\"/><path d=\"M20 38Q32 31 44 38Q42 54 32 59Q22 54 20 38Z\" fill=\"#e9ebef\"/><path d=\"M14 24Q18 18 24 20\" stroke=\"#6a6f7b\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M50 24Q46 18 40 20\" stroke=\"#6a6f7b\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><ellipse cx=\"23\" cy=\"30\" rx=\"4.4\" ry=\"2.8\" transform=\"rotate(14 23 30)\" fill=\"#f2b823\"/><circle cx=\"23\" cy=\"30\" r=\"1.5\" fill=\"#111\"/><ellipse cx=\"41\" cy=\"30\" rx=\"4.4\" ry=\"2.8\" transform=\"rotate(-14 41 30)\" fill=\"#f2b823\"/><circle cx=\"41\" cy=\"30\" r=\"1.5\" fill=\"#111\"/><path d=\"M17 25L28 28.5M47 25L36 28.5\" stroke=\"#2a2b33\" stroke-width=\"2\" stroke-linecap=\"round\"/><ellipse cx=\"32\" cy=\"52\" rx=\"4.6\" ry=\"3.4\" fill=\"#1e1f26\"/><path d=\"M32 55v3.5\" stroke=\"#1e1f26\" stroke-width=\"1.5\" stroke-linecap=\"round\"/>", "fox": "<polygon points=\"8,6 26,18 10,32\" fill=\"#e2702a\"/><polygon points=\"12,12 22,19 13,26\" fill=\"#3a2418\"/><polygon points=\"56,6 38,18 54,32\" fill=\"#e2702a\"/><polygon points=\"52,12 42,19 51,26\" fill=\"#3a2418\"/><path d=\"M7 32Q7 17 32 17Q57 17 57 32Q51 46 32 59Q13 46 7 32Z\" fill=\"#ee7c2b\"/><path d=\"M7 32Q22 33 32 47Q27 55 21 51Q10 44 7 32Z\" fill=\"#fff\"/><path d=\"M57 32Q42 33 32 47Q37 55 43 51Q54 44 57 32Z\" fill=\"#fff\"/><path d=\"M24 20Q32 24 40 20Q36 30 32 30Q28 30 24 20Z\" fill=\"#f6a05a\"/><ellipse cx=\"22\" cy=\"32\" rx=\"3.6\" ry=\"2.4\" transform=\"rotate(18 22 32)\" fill=\"#2a1a10\"/><circle cx=\"23\" cy=\"31.3\" r=\"0.9\" fill=\"#fff\"/><ellipse cx=\"42\" cy=\"32\" rx=\"3.6\" ry=\"2.4\" transform=\"rotate(-18 42 32)\" fill=\"#2a1a10\"/><circle cx=\"41\" cy=\"31.3\" r=\"0.9\" fill=\"#fff\"/><circle cx=\"32\" cy=\"54\" r=\"3.4\" fill=\"#1d1d22\"/>", "owl": "<polygon points=\"12,17 14,3 27,14\" fill=\"#6b4226\"/><polygon points=\"52,17 50,3 37,14\" fill=\"#6b4226\"/><ellipse cx=\"32\" cy=\"35\" rx=\"22\" ry=\"24\" fill=\"#8b5a33\"/><circle cx=\"22\" cy=\"30\" r=\"11.5\" fill=\"#f2e1c3\"/><circle cx=\"42\" cy=\"30\" r=\"11.5\" fill=\"#f2e1c3\"/><circle cx=\"22\" cy=\"30\" r=\"6.8\" fill=\"#f2c230\"/><circle cx=\"42\" cy=\"30\" r=\"6.8\" fill=\"#f2c230\"/><circle cx=\"22\" cy=\"30\" r=\"3.4\" fill=\"#111\"/><circle cx=\"42\" cy=\"30\" r=\"3.4\" fill=\"#111\"/><circle cx=\"23.2\" cy=\"28.6\" r=\"1.1\" fill=\"#fff\"/><circle cx=\"43.2\" cy=\"28.6\" r=\"1.1\" fill=\"#fff\"/><path d=\"M27.5 37h9L32 48z\" fill=\"#e8923a\"/><path d=\"M20 52q3 4 6 0q3 4 6 0q3 4 6 0q3 4 6 0\" stroke=\"#d9b68a\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/>"};
-  var ANIMAL_KEYS = Object.keys(ANIMAL_SVG);
-  function pickAnimals(){
-    var i = Math.floor(Math.random()*ANIMAL_KEYS.length);
-    var j;
-    do{ j = Math.floor(Math.random()*ANIMAL_KEYS.length); }while(j === i);
-    return [ANIMAL_KEYS[i], ANIMAL_KEYS[j]];
-  }
-  function iconSvg(key, px){
-    var inner = ANIMAL_SVG[key];
-    if(!inner) return "";
-    var size = px ? (' width="' + px + '" height="' + px + '"') : ' width="100%" height="100%"';
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"' + size + ' aria-hidden="true">' + inner + '</svg>';
-  }
-  function ensureIcons(){
-    if(!ANIMAL_SVG[gameState.team1Icon] || !ANIMAL_SVG[gameState.team2Icon]){
-      var pair = pickAnimals();
-      gameState.team1Icon = pair[0];
-      gameState.team2Icon = pair[1];
-      saveCurrentGame();
-    }
-  }
-  function setNameWithIcon(el, icon, name){
-    el.textContent = "";
-    var ic = document.createElement("span");
-    ic.className = "rh-icon";
-    ic.innerHTML = iconSvg(icon);
-    el.appendChild(ic);
-    el.appendChild(document.createTextNode(name));
-  }
-  // images for the share canvas
-  var iconImgs = {};
-  function loadIconImg(key, cb){
-    if(!ANIMAL_SVG[key] || iconImgs[key]){ cb(); return; }
-    var img = new Image();
-    img.onload = function(){ iconImgs[key] = img; cb(); };
-    img.onerror = function(){ cb(); };
-    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg(key, 128));
-  }
-
   /* ---------------- Game logic ---------------- */
   function createRounds(count){
     var arr = [];
@@ -1115,7 +1326,26 @@
 
   // Checks the KonKan rule at the checkpoint round (the originally selected
   // round count, i.e. one round before the extra bonus round).
+  var MAX_ROUND_POINTS = 400;   // highest score one team can get in a single round
+
   function getRoundCheckStatus(){
+    // Early loss: the most a team can gain on the other in one round is
+    // MAX_ROUND_POINTS. If the gap can no longer be overturned by the rounds
+    // that are left, the team behind has already lost.
+    var totalRounds = gameState.roundsData.length;
+    var e1 = 0, e2 = 0;
+    for(var k=0; k<totalRounds; k++){
+      var er = gameState.roundsData[k];
+      if(er.t1 === null || er.t1 === undefined || er.t2 === null || er.t2 === undefined) break;
+      e1 += er.t1; e2 += er.t2;
+      var remaining = totalRounds - (k+1);
+      if(remaining <= 0) break;
+      var gap = Math.abs(e1 - e2);
+      if(gap > 0 && gap + 1 > MAX_ROUND_POINTS * remaining){
+        return { type:"lost", team: e1 > e2 ? "team1" : "team2", checkpointRound: k+1, totals:{ t1:e1, t2:e2 } };
+      }
+    }
+
     var checkpointRound = gameState.rounds - 1;
     if(checkpointRound < 1) return null;
     var r = gameState.roundsData[checkpointRound - 1];
@@ -1157,12 +1387,9 @@
   function startGame(team1, team2, selectedRoundsCount){
     archiveUnfinished();
     var actualRounds = selectedRoundsCount + 1; // one extra round is always added during play
-    var animalPair = pickAnimals();
     gameState = {
       team1Name: team1,
       team2Name: team2,
-      team1Icon: animalPair[0],
-      team2Icon: animalPair[1],
       rounds: actualRounds,
       roundsData: createRounds(actualRounds),
       sound: gameState ? gameState.sound : true,
@@ -1170,6 +1397,8 @@
       startedAt: Date.now()
     };
     undoStack = [];
+    currentMatchId = null;
+    lsSet(K_VIEW, "q");
     saveCurrentGame();
     renderScoreScreen();
     showScreen("scoreScreen");
@@ -1224,6 +1453,7 @@
         rounds: gameState.rounds,
         date: new Date().toISOString(),
         finished: true,
+        tournament: (currentMatchId && T) ? T.name : "",
         durationMs: gameState.startedAt ? Date.now() - gameState.startedAt : 0
       });
       gameState.historySaved = true;
@@ -1234,8 +1464,6 @@
   /* ---------------- Rendering ---------------- */
   function updateScoreboard(){
     var totals = calculateTotals();
-    $("sbIcon1").innerHTML = iconSvg(gameState.team1Icon);
-    $("sbIcon2").innerHTML = iconSvg(gameState.team2Icon);
     $("sbName1").textContent = gameState.team1Name;
     $("sbName2").textContent = gameState.team2Name;
     $("sbScore1").textContent = toEastern(totals.t1);
@@ -1284,11 +1512,12 @@
     var status = getRoundCheckStatus();
     var lockAfter = (status && status.type === "lost") ? status.checkpointRound : null;
     var seqLockIndex = getSequentialLockIndex();
+    var tLocked = tournamentLocked();
 
     gameState.roundsData.forEach(function(r, idx){
       var row = document.createElement("div");
       row.className = "round-row";
-      var isLocked = (lockAfter && (idx+1) > lockAfter) || (idx > seqLockIndex);
+      var isLocked = (lockAfter && (idx+1) > lockAfter) || (idx > seqLockIndex) || tLocked;
       var isGharbat = r.gharbat === true;
 
       var tag = document.createElement("div");
@@ -1351,12 +1580,64 @@
     lead.textContent = verdict;
   }
 
+  /* ---------------- Game progress bar ---------------- */
+  function renderProgress(){
+    var total = gameState.roundsData.length;
+    var status = getRoundCheckStatus();
+    var lost = status && status.type === "lost";
+    var lockAfter = lost ? status.checkpointRound : null;
+    var complete = isGameComplete();
+
+    var played = 0, currentIdx = -1;
+    gameState.roundsData.forEach(function(r, i){
+      var filled = r.t1 !== null && r.t1 !== undefined && r.t2 !== null && r.t2 !== undefined;
+      if(filled) played++;
+      else if(currentIdx === -1) currentIdx = i;
+    });
+
+    var segs = $("progressSegs");
+    segs.innerHTML = "";
+    gameState.roundsData.forEach(function(r, i){
+      var seg = document.createElement("div");
+      var cls = "pseg";
+      var filled = r.t1 !== null && r.t1 !== undefined && r.t2 !== null && r.t2 !== undefined;
+      if(filled) cls += " done";
+      else if(lockAfter && (i+1) > lockAfter) cls += " skipped";
+      else if(i === currentIdx && !complete) cls += " current";
+      if(i === total-1) cls += " bonus";
+      seg.className = cls;
+      segs.appendChild(seg);
+    });
+
+    if(complete){
+      $("progressLeft").textContent = "یاری تەواو بوو";
+      $("progressRight").textContent = "";
+    } else {
+      var n = currentIdx + 1;
+      var left = total - played;
+      $("progressLeft").textContent = (currentIdx === total-1)
+        ? ("تەڵقەی کۆتایی · " + toEastern(n) + " لە " + toEastern(total))
+        : ("تەڵقەی " + toEastern(n) + " لە " + toEastern(total));
+      $("progressRight").textContent = toEastern(left) + " ماوە";
+    }
+  }
+
   function renderScoreScreen(){
-    ensureIcons();
+    var lbl = $("matchLabel");
+    if(currentMatchId && T && getMatch(currentMatchId)){
+      var cm = getMatch(currentMatchId);
+      lbl.style.display = "block";
+      lbl.textContent = T.name + " · " + roundTitle(cm.r) + " · یاری " + toEastern(cm.no);
+      $("newGameBtn").textContent = "گەڕانەوە بۆ پاڵەوانێتی";
+    } else {
+      lbl.style.display = "none";
+      $("newGameBtn").textContent = "یاری نوێ";
+    }
     updateScoreboard();
+    renderProgress();
     updateNotice();
-    setNameWithIcon($("rhName1"), gameState.team1Icon, gameState.team1Name);
-    setNameWithIcon($("rhName2"), gameState.team2Icon, gameState.team2Name);
+    $("rhName1").textContent = gameState.team1Name;
+    $("rhName2").textContent = gameState.team2Name;
     renderRoundList();
     showFinalResult();
     updateSoundIcon();
@@ -1423,23 +1704,6 @@
     var C1 = "#d2452f", C2 = "#2a68b8";
     var FONT = "Vazirmatn, 'Noto Sans Arabic', sans-serif";
 
-    function nameWithIcon(name, icon, cx, y, color, fontSpec, iconSize){
-      ctx.font = fontSpec;
-      var w = ctx.measureText(name).width;
-      var gap = 6;
-      var total = w + gap + iconSize;
-      var nameCx = cx + iconSize/2 + gap/2 - total/2 - (iconSize+gap)/2 + (iconSize+gap)/2;
-      // group is centered on cx: name on the left, icon on the right (RTL reading order)
-      nameCx = cx - (gap + iconSize)/2;
-      var iconCx = cx + total/2 - iconSize/2;
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.fillText(name, nameCx, y);
-      var im = iconImgs[icon];
-      if(im){ ctx.drawImage(im, iconCx - iconSize/2, y - iconSize*0.78, iconSize, iconSize); }
-      ctx.font = fontSpec;
-    }
-
     ctx.fillStyle = "#f6eee3";
     ctx.fillRect(0,0,W,H);
 
@@ -1473,8 +1737,9 @@
     ctx.moveTo(divB, cardY+58); ctx.lineTo(divB, cardY+hdrH-14);
     ctx.stroke();
 
-    nameWithIcon(gameState.team1Name, gameState.team1Icon, team1Cx, cardY+86, C1, "700 17px " + FONT, 28);
-    nameWithIcon(gameState.team2Name, gameState.team2Icon, team2Cx, cardY+86, C2, "700 17px " + FONT, 28);
+    ctx.font = "700 17px " + FONT;
+    ctx.fillStyle = C1; ctx.fillText(gameState.team1Name, team1Cx, cardY+86);
+    ctx.fillStyle = C2; ctx.fillText(gameState.team2Name, team2Cx, cardY+86);
 
     ctx.font = "800 38px " + FONT;
     ctx.fillStyle = C1;
@@ -1492,8 +1757,9 @@
     /* ----- table ----- */
     var tableTop = cardY + headerH + 10;
 
-    nameWithIcon(gameState.team1Name, gameState.team1Icon, team1Cx, tableTop+18, C1, "700 13px " + FONT, 22);
-    nameWithIcon(gameState.team2Name, gameState.team2Icon, team2Cx, tableTop+18, C2, "700 13px " + FONT, 22);
+    ctx.font = "700 13px " + FONT;
+    ctx.fillStyle = C1; ctx.fillText(gameState.team1Name, team1Cx, tableTop+18);
+    ctx.fillStyle = C2; ctx.fillText(gameState.team2Name, team2Cx, tableTop+18);
 
     var y = tableTop + tableHeaderH;
     var tableBodyTop = y;
@@ -1563,11 +1829,7 @@
       }, "image/png");
     }
 
-    function go(){
-      loadIconImg(gameState.team1Icon, function(){
-        loadIconImg(gameState.team2Icon, doDraw);
-      });
-    }
+    var go = doDraw;
 
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(go).catch(go);
@@ -1674,6 +1936,7 @@
 
     saveCurrentGame();
     closeScoreModal();
+    if(currentMatchId) tournamentAfterChange();
     renderScoreScreen();
     finalizeIfComplete();
   }
@@ -1698,6 +1961,7 @@
 
     saveCurrentGame();
     closeScoreModal();
+    if(currentMatchId) tournamentAfterChange();
     renderScoreScreen();
     finalizeIfComplete();
     showToast("تەڵقەکە کرا بە غەربەت");
@@ -1751,6 +2015,7 @@
       var meta = toEastern(item.rounds) + " تەڵقە · " + formatDate(item.date);
       if(item.durationMs){ meta += " · " + formatDuration(item.durationMs); }
       if(item.finished === false){ meta += " · نەتەواو"; }
+      if(item.tournament){ meta += " · " + escapeHtml(item.tournament); }
       main.innerHTML =
         '<div class="history-teams">' + escapeHtml(item.team1Name) + ' × ' + escapeHtml(item.team2Name) + '</div>' +
         '<div class="history-score">' + toEastern(item.total1) + ' — ' + toEastern(item.total2) + '</div>' +
@@ -1778,14 +2043,14 @@
   var K_LAST = "konkan_last_setup";
 
   function applyRoundsToUI(displayedRounds){
-    document.querySelectorAll(".round-opt").forEach(function(b){ b.classList.remove("selected"); });
-    var matchBtn = document.querySelector('.round-opt[data-rounds="' + displayedRounds + '"]');
+    document.querySelectorAll("#quickForm .round-opt").forEach(function(b){ b.classList.remove("selected"); });
+    var matchBtn = document.querySelector('#quickForm .round-opt[data-rounds="' + displayedRounds + '"]');
     if(matchBtn){
       matchBtn.classList.add("selected");
       $("customRoundsWrap").classList.remove("show");
       selectedRounds = displayedRounds;
     } else {
-      document.querySelector('.round-opt[data-rounds="custom"]').classList.add("selected");
+      document.querySelector('#quickForm .round-opt[data-rounds="custom"]').classList.add("selected");
       $("customRoundsWrap").classList.add("show");
       $("customRoundsInput").value = displayedRounds;
       selectedRounds = "custom";
@@ -1808,9 +2073,9 @@
   }
 
   function wireSetupScreen(){
-    document.querySelectorAll(".round-opt").forEach(function(btn){
+    document.querySelectorAll("#quickForm .round-opt").forEach(function(btn){
       btn.addEventListener("click", function(){
-        document.querySelectorAll(".round-opt").forEach(function(b){ b.classList.remove("selected"); });
+        document.querySelectorAll("#quickForm .round-opt").forEach(function(b){ b.classList.remove("selected"); });
         btn.classList.add("selected");
         var val = btn.getAttribute("data-rounds");
         if(val === "custom"){
@@ -1856,6 +2121,8 @@
   /* ---------------- Score screen wiring ---------------- */
   function wireScoreScreen(){
     $("homeBtn").addEventListener("click", function(){
+      if(currentMatchId){ leaveMatch(); return; }
+      lsSet(K_VIEW, "q");
       $("team1Input").value = gameState.team1Name;
       $("team2Input").value = gameState.team2Name;
       applyRoundsToUI(gameState.rounds - 1);
@@ -1874,6 +2141,7 @@
 
     $("soundBtn").addEventListener("click", function(){
       gameState.sound = !gameState.sound;
+      soundPref = gameState.sound;
       try{ lsSet(K_SOUND, gameState.sound ? "1" : "0"); }catch(e){}
       updateSoundIcon();
       saveCurrentGame();
@@ -1881,6 +2149,7 @@
     });
 
     $("newGameBtn").addEventListener("click", function(){
+      if(currentMatchId){ leaveMatch(); return; }
       $("newGameOverlay").classList.add("show");
     });
     $("cancelNewGame").addEventListener("click", function(){
@@ -1928,7 +2197,582 @@
     $("closeHistoryModal").innerHTML = ICONS.close;
     $("closeShareModal").innerHTML = ICONS.close;
     $("homeBtn").innerHTML = ICONS.home;
+    $("bHomeBtn").innerHTML = ICONS.home;
     $("shareBtn").innerHTML = ICONS.share;
+  }
+
+
+  /* ---------------- Tournament (knockout) ---------------- */
+  var T = null;                 // current tournament
+  var currentMatchId = null;
+  var soundPref = true;
+
+  /*T-PURE-START*/
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function buildTournament(name, teams, roundsPerMatch){
+    var n = teams.length;
+    var size = 1;
+    while(size < n) size *= 2;
+    var R = 0;
+    for(var q=size; q>1; q = q/2) R++;
+    var byes = size - n;
+    var order = shuffle(teams.map(function(_, i){ return i; }));
+    var firstCount = size/2;
+    var idx = [];
+    for(var k=0;k<firstCount;k++) idx.push(k);
+    idx = shuffle(idx);
+    var byeSet = {};
+    for(var b=0;b<byes;b++) byeSet[idx[b]] = true;
+
+    var rounds = [];
+    var p = 0;
+    for(var r=0;r<R;r++){
+      var count = size / Math.pow(2, r+1);
+      var list = [];
+      for(var i=0;i<count;i++){
+        var m = { id:"r"+r+"m"+i, r:r, i:i, a:null, b:null, winner:null, bye:false, game:null, no:0 };
+        if(r === 0){
+          if(byeSet[i]){ m.a = order[p++]; m.bye = true; m.winner = m.a; }
+          else { m.a = order[p++]; m.b = order[p++]; }
+        }
+        list.push(m);
+      }
+      rounds.push(list);
+    }
+    var no = 0;
+    rounds.forEach(function(list){ list.forEach(function(m){ if(!m.bye) m.no = ++no; }); });
+
+    var tour = {
+      id: "t" + Date.now(),
+      name: name,
+      teams: teams,
+      roundsPerMatch: roundsPerMatch,
+      size: size,
+      rounds: rounds,
+      revealed: false,
+      finished: false,
+      champion: null,
+      activeMatchId: null
+    };
+    refreshSlots(tour);
+    return tour;
+  }
+
+  // Fill each next-round slot from the winners of the previous round
+  function refreshSlots(tour){
+    var R = tour.rounds.length;
+    var prev = {};
+    for(var r=1;r<R;r++){
+      tour.rounds[r].forEach(function(m){ prev[m.id] = m.a + "|" + m.b; m.a = null; m.b = null; });
+    }
+    for(var r2=0;r2<R-1;r2++){
+      tour.rounds[r2].forEach(function(m, i){
+        if(m.winner !== null){
+          var nx = tour.rounds[r2+1][i>>1];
+          if(i % 2 === 0) nx.a = m.winner; else nx.b = m.winner;
+        }
+      });
+    }
+    for(var r3=1;r3<R;r3++){
+      tour.rounds[r3].forEach(function(m){
+        if(prev[m.id] !== (m.a + "|" + m.b) && m.game && m.winner === null){ m.game = null; }
+      });
+    }
+    var fin = tour.rounds[R-1][0];
+    tour.finished = fin.winner !== null;
+    tour.champion = fin.winner;
+  }
+
+  function roundTitleFor(size, r){
+    var remaining = size / Math.pow(2, r);
+    if(remaining === 2) return "کۆتایی";
+    if(remaining === 4) return "نیمەکۆتایی";
+    if(remaining === 8) return "چارەکی کۆتایی";
+    return "دەوری " + remaining;
+  }
+  /*T-PURE-END*/
+
+  function roundTitle(r){ return roundTitleFor(T.size, r); }
+
+  function loadTournament(){
+    try{
+      var raw = localStorage.getItem(K_TOURN);
+      T = raw ? JSON.parse(raw) : null;
+      if(T && !Array.isArray(T.rounds)) T = null;
+    }catch(e){ T = null; }
+  }
+  function saveTournament(){
+    if(!T) return;
+    try{ lsSet(K_TOURN, JSON.stringify(T)); }catch(e){}
+  }
+  function clearTournament(){
+    T = null;
+    currentMatchId = null;
+    try{ lsRemove(K_TOURN); }catch(e){}
+  }
+
+  function getMatch(id){
+    if(!T) return null;
+    for(var r=0;r<T.rounds.length;r++){
+      for(var i=0;i<T.rounds[r].length;i++){
+        if(T.rounds[r][i].id === id) return T.rounds[r][i];
+      }
+    }
+    return null;
+  }
+  function nextMatchOf(m){
+    if(!T || m.r >= T.rounds.length-1) return null;
+    return T.rounds[m.r+1][m.i>>1];
+  }
+  function gameHasScore(g){
+    return !!(g && g.roundsData && g.roundsData.some(function(r){
+      return (r.t1 !== null && r.t1 !== undefined) || (r.t2 !== null && r.t2 !== undefined);
+    }));
+  }
+  function gameTotals(g){
+    var t1 = 0, t2 = 0;
+    g.roundsData.forEach(function(r){
+      if(r.t1 !== null && r.t1 !== undefined) t1 += r.t1;
+      if(r.t2 !== null && r.t2 !== undefined) t2 += r.t2;
+    });
+    return { t1:t1, t2:t2 };
+  }
+
+  // A finished match is locked once the next match already has scores
+  function tournamentLocked(){
+    if(!currentMatchId || !T) return false;
+    var m = getMatch(currentMatchId);
+    if(!m) return false;
+    var nx = nextMatchOf(m);
+    return !!(nx && (nx.winner !== null || gameHasScore(nx.game)));
+  }
+
+  // Called after every score change of a tournament match
+  function tournamentAfterChange(){
+    var m = getMatch(currentMatchId);
+    if(!m) return;
+    var status = getRoundCheckStatus();
+    var result = null;
+    if(status && status.type === "lost"){
+      result = status.team === "team1" ? "team2" : "team1";
+    } else if(isGameComplete()){
+      var t = calculateTotals();
+      result = t.t1 < t.t2 ? "team1" : (t.t2 < t.t1 ? "team2" : "tie");
+    }
+
+    if(result === "tie"){
+      gameState.roundsData.push({ t1:null, t2:null });
+      gameState.rounds += 1;
+      showToast("یەکسان بوون — تەڵقەیەکی زیادە زیاد کرا");
+      result = null;
+    }
+
+    var newWinner = result === null ? null : (result === "team1" ? m.a : m.b);
+    if(newWinner !== m.winner){
+      m.winner = newWinner;
+      refreshSlots(T);
+      if(newWinner !== null){
+        showToast(T.teams[newWinner] + (T.finished ? " بوو بە پاڵەوان" : " تێپەڕی"));
+      }
+    }
+    saveTournament();
+  }
+
+  function startMatch(id){
+    var m = getMatch(id);
+    if(!m || m.a === null || m.b === null || m.bye) return;
+    if(!m.game){
+      var actual = T.roundsPerMatch + 1;
+      m.game = {
+        team1Name: T.teams[m.a],
+        team2Name: T.teams[m.b],
+        rounds: actual,
+        roundsData: createRounds(actual),
+        sound: soundPref,
+        historySaved: false,
+        startedAt: Date.now()
+      };
+    }
+    gameState = m.game;
+    gameState.sound = soundPref;
+    currentMatchId = id;
+    undoStack = [];
+    T.activeMatchId = id;
+    saveTournament();
+    lsSet(K_VIEW, "t");
+    renderScoreScreen();
+    showScreen("scoreScreen");
+    requestWakeLock();
+  }
+
+  function leaveMatch(){
+    saveTournament();
+    currentMatchId = null;
+    if(T) T.activeMatchId = null;
+    saveTournament();
+    gameState = { sound: soundPref };
+    renderBracket(false);
+    showScreen("bracketScreen");
+  }
+
+  /* ---- bracket rendering ---- */
+  function renderBracket(reveal){
+    $("bTitle").textContent = T.name;
+    lsSet(K_VIEW, "t");
+
+    var total = 0, done = 0;
+    T.rounds.forEach(function(list){ list.forEach(function(m){
+      if(!m.bye){ total++; if(m.winner !== null) done++; }
+    }); });
+    $("bSub").textContent = toEastern(T.teams.length) + " تیم · " + toEastern(done) + "/" + toEastern(total) + " یاری تەواو بوو";
+
+    // champion
+    var ch = $("bChampion");
+    if(T.finished && T.champion !== null){
+      ch.style.display = "block";
+      ch.innerHTML = '<div class="champion-card">' + ICONS.trophy +
+        '<div class="champion-label">پاڵەوانی پاڵەوانێتی</div>' +
+        '<div class="champion-name">' + escapeHtml(T.teams[T.champion]) + '</div>' +
+        '<button type="button" id="newTournBtn">پاڵەوانێتی نوێ</button></div>';
+      $("newTournBtn").addEventListener("click", function(){ openSetupTab("tourn"); showScreen("setupScreen"); lsSet(K_VIEW, "q"); });
+    } else {
+      ch.style.display = "none";
+      ch.innerHTML = "";
+    }
+
+    // which round is current
+    var currentRound = -1;
+    for(var r=0;r<T.rounds.length;r++){
+      if(T.rounds[r].some(function(m){ return !m.bye && m.winner === null; })){ currentRound = r; break; }
+    }
+
+    var wrap = $("bRounds");
+    wrap.innerHTML = "";
+    var delay = 0;
+    T.rounds.forEach(function(list, r){
+      var title = document.createElement("div");
+      title.className = "round-title";
+      title.textContent = roundTitle(r);
+      if(r === currentRound){
+        var badge = document.createElement("span");
+        badge.className = "round-badge";
+        badge.textContent = "ئێستا";
+        title.appendChild(badge);
+      }
+      wrap.appendChild(title);
+
+      list.forEach(function(m){
+        var card = buildMatchCard(m);
+        if(reveal){
+          card.classList.add("reveal");
+          card.style.animationDelay = (delay * 0.12) + "s";
+          delay++;
+        }
+        wrap.appendChild(card);
+      });
+    });
+  }
+
+  function teamRow(idx, m, side){
+    var row = document.createElement("div");
+    row.className = "mc-team";
+    var name = document.createElement("span");
+    name.className = "mc-name";
+    var score = document.createElement("span");
+    score.className = "mc-score";
+
+    if(idx === null){
+      row.classList.add("tbd");
+      name.textContent = "چاوەڕێی براوە…";
+    } else {
+      name.textContent = T.teams[idx];
+      if(m.game && gameHasScore(m.game)){
+        var tt = gameTotals(m.game);
+        score.textContent = toEastern(side === "a" ? tt.t1 : tt.t2);
+      }
+      if(m.winner !== null){
+        row.classList.add(m.winner === idx ? "win" : "lose");
+      }
+    }
+    row.appendChild(name);
+    row.appendChild(score);
+    return row;
+  }
+
+  function buildMatchCard(m){
+    var card = document.createElement("div");
+    card.className = "match-card";
+
+    if(m.bye){
+      card.classList.add("bye");
+      var hb = document.createElement("div");
+      hb.className = "mc-head";
+      hb.innerHTML = '<span>بەبێ بەرامبەر</span><span class="mc-chip done">تێپەڕی</span>';
+      card.appendChild(hb);
+      var r1 = document.createElement("div");
+      r1.className = "mc-team win";
+      r1.innerHTML = '<span class="mc-name"></span>';
+      r1.firstChild.textContent = T.teams[m.a];
+      card.appendChild(r1);
+      return card;
+    }
+
+    var live = m.game && gameHasScore(m.game) && m.winner === null;
+    var chipClass = "mc-chip", chipText = "چاوەڕێ";
+    if(m.winner !== null){ chipClass += " done"; chipText = "تەواو"; }
+    else if(live){ chipClass += " live"; chipText = "یاری دەکرێت"; }
+    else if(m.a !== null && m.b !== null){ chipText = "ئامادەیە"; }
+
+    var head = document.createElement("div");
+    head.className = "mc-head";
+    head.innerHTML = '<span>یاری ' + toEastern(m.no) + '</span><span class="' + chipClass + '">' + chipText + '</span>';
+    card.appendChild(head);
+
+    card.appendChild(teamRow(m.a, m, "a"));
+    card.appendChild(teamRow(m.b, m, "b"));
+
+    if(m.a !== null && m.b !== null){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "mc-btn";
+      if(m.winner !== null){ btn.classList.add("secondary"); btn.textContent = "بینینی خاڵەکان"; }
+      else if(live){ btn.textContent = "بەردەوامبە"; }
+      else { btn.textContent = "دەستپێبکە"; }
+      btn.addEventListener("click", function(){ soundClick(); startMatch(m.id); });
+      card.appendChild(btn);
+    }
+    return card;
+  }
+
+  /* ---- draw (5 second countdown) ---- */
+  var drawRoll = null, drawCountdown = null;
+
+  function startDraw(){
+    showScreen("drawScreen");
+    var left = 5;
+    var cEl = $("drawCount");
+    function setCount(){
+      cEl.textContent = toEastern(left);
+      cEl.classList.remove("tick");
+      void cEl.offsetWidth;
+      cEl.classList.add("tick");
+    }
+    setCount();
+    soundClick();
+
+    function rollNames(){
+      var names = T.teams;
+      var i = Math.floor(Math.random()*names.length);
+      var j = Math.floor(Math.random()*names.length);
+      if(names.length > 1){ while(j === i) j = Math.floor(Math.random()*names.length); }
+      $("drawA").textContent = names[i];
+      $("drawB").textContent = names[j];
+    }
+    rollNames();
+    drawRoll = setInterval(rollNames, 90);
+    drawCountdown = setInterval(function(){
+      left--;
+      if(left <= 0){ finishDraw(); return; }
+      setCount();
+      soundClick();
+    }, 1000);
+  }
+
+  function finishDraw(){
+    clearInterval(drawRoll); clearInterval(drawCountdown);
+    drawRoll = null; drawCountdown = null;
+    if(!T) return;
+    T.revealed = true;
+    saveTournament();
+    soundConfirm();
+    renderBracket(true);
+    showScreen("bracketScreen");
+  }
+
+  /* ---- generic confirm ---- */
+  var confirmCb = null;
+  function askConfirm(title, text, okLabel, cb){
+    $("confirmTitle").textContent = title;
+    $("confirmText").textContent = text;
+    $("confirmOk").textContent = okLabel || "باشە";
+    confirmCb = cb;
+    $("confirmOverlay").classList.add("show");
+  }
+
+  /* ---- setup: tournament form ---- */
+  var tRounds = 7;
+
+  function openSetupTab(mode){
+    document.querySelectorAll("#modeTabs .mode-tab").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-mode") === mode);
+    });
+    $("quickForm").style.display = mode === "quick" ? "" : "none";
+    $("tournForm").style.display = mode === "tourn" ? "" : "none";
+  }
+
+  function getTeamCount(){
+    var n = parseInt($("tCountInput").value, 10);
+    if(!n || n < 2) n = 2;
+    if(n > 32) n = 32;
+    return n;
+  }
+
+  function buildNameInputs(){
+    var n = getTeamCount();
+    var wrap = $("tournNames");
+    var old = [];
+    wrap.querySelectorAll("input").forEach(function(inp){ old.push(inp.value); });
+    wrap.innerHTML = "";
+    for(var i=0;i<n;i++){
+      var row = document.createElement("div");
+      row.className = "tname-row";
+      var num = document.createElement("span");
+      num.className = "tnum";
+      num.textContent = toEastern(i+1);
+      var inp = document.createElement("input");
+      inp.type = "text";
+      inp.maxLength = 20;
+      inp.autocomplete = "off";
+      inp.setAttribute("autocorrect","off");
+      inp.setAttribute("enterkeyhint", i === n-1 ? "go" : "next");
+      inp.value = old[i] || "";
+      (function(idx, el){
+        el.addEventListener("keydown", function(e){
+          if(e.key === "Enter"){
+            e.preventDefault();
+            var all = wrap.querySelectorAll("input");
+            if(idx < all.length-1) all[idx+1].focus();
+            else $("tournStartBtn").click();
+          }
+        });
+      })(i, inp);
+      row.appendChild(num);
+      row.appendChild(inp);
+      wrap.appendChild(row);
+    }
+  }
+
+  function setTeamCount(n){
+    if(n < 2) n = 2;
+    if(n > 32) n = 32;
+    $("tCountInput").value = n;
+    buildNameInputs();
+  }
+
+  function refreshResumeBox(){
+    var box = $("tournResume");
+    if(!box) return;
+    if(!T){ box.style.display = "none"; box.innerHTML = ""; return; }
+    var done = 0, total = 0;
+    T.rounds.forEach(function(list){ list.forEach(function(m){ if(!m.bye){ total++; if(m.winner !== null) done++; } }); });
+    var sub = T.finished ? ("پاڵەوان: " + T.teams[T.champion]) : (toEastern(done) + "/" + toEastern(total) + " یاری تەواو بوو");
+    box.style.display = "block";
+    box.innerHTML = '<div class="resume-title"></div><div class="resume-sub"></div>' +
+      '<div class="resume-actions"><button type="button" class="resume-go" id="resumeGo">بەردەوامبە</button>' +
+      '<button type="button" class="resume-del" id="resumeDel">سڕینەوە</button></div>';
+    box.querySelector(".resume-title").textContent = T.name;
+    box.querySelector(".resume-sub").textContent = sub;
+    $("resumeGo").addEventListener("click", function(){
+      if(!T.revealed){ T.revealed = true; saveTournament(); }
+      renderBracket(false);
+      showScreen("bracketScreen");
+    });
+    $("resumeDel").addEventListener("click", function(){ confirmDeleteTournament(); });
+  }
+
+  function confirmDeleteTournament(){
+    askConfirm("پاڵەوانێتی بسڕدرێتەوە؟", "هەموو یاری و ئەنجامەکانی پاڵەوانێتییەکە دەسڕدرێنەوە.", "بسڕەوە", function(){
+      clearTournament();
+      lsSet(K_VIEW, "q");
+      gameState = { sound: soundPref };
+      showScreen("setupScreen");
+    });
+  }
+
+  function startTournamentFromForm(){
+    var err = $("tournError");
+    var inputs = $("tournNames").querySelectorAll("input");
+    var names = [], seen = {}, bad = false, dup = false;
+    inputs.forEach(function(inp){
+      inp.classList.remove("dup");
+      var v = inp.value.trim();
+      if(!v){ bad = true; return; }
+      var key = v.toLowerCase();
+      if(seen[key]){ dup = true; inp.classList.add("dup"); }
+      seen[key] = true;
+      names.push(v);
+    });
+    if(bad){ err.textContent = "تکایە ناوی هەموو تیمەکان بنووسە"; err.classList.add("show"); return; }
+    if(dup){ err.textContent = "ناوی تیمەکان نابێت وەک یەک بن"; err.classList.add("show"); return; }
+    err.classList.remove("show");
+
+    var per = tRounds;
+    if(per === "custom"){
+      per = parseInt($("tCustomInput").value, 10);
+      if(!per || per < 1) per = 7;
+      if(per > 30) per = 30;
+    }
+    var name = $("tournName").value.trim() || "پاڵەوانێتی";
+
+    function go(){
+      T = buildTournament(name, names, per);
+      currentMatchId = null;
+      gameState = { sound: soundPref };
+      saveTournament();
+      lsSet(K_VIEW, "t");
+      startDraw();
+    }
+    if(T && !T.finished){
+      askConfirm("پاڵەوانێتی نوێ؟", "پاڵەوانێتییەکی نەتەواو هەیە. ئەگەر نوێ دروست بکەیت، ئەوی پێشوو دەسڕدرێتەوە.", "نوێ دروست بکە", go);
+    } else {
+      go();
+    }
+  }
+
+  function wireTournament(){
+    document.querySelectorAll("#modeTabs .mode-tab").forEach(function(b){
+      b.addEventListener("click", function(){ openSetupTab(b.getAttribute("data-mode")); });
+    });
+    $("tCountMinus").addEventListener("click", function(){ setTeamCount(getTeamCount()-1); });
+    $("tCountPlus").addEventListener("click", function(){ setTeamCount(getTeamCount()+1); });
+    $("tCountInput").addEventListener("change", function(){ setTeamCount(getTeamCount()); });
+    buildNameInputs();
+
+    document.querySelectorAll(".t-opt").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        document.querySelectorAll(".t-opt").forEach(function(b){ b.classList.remove("selected"); });
+        btn.classList.add("selected");
+        var val = btn.getAttribute("data-rounds");
+        if(val === "custom"){ $("tCustomWrap").classList.add("show"); tRounds = "custom"; }
+        else { $("tCustomWrap").classList.remove("show"); tRounds = parseInt(val,10); }
+      });
+    });
+
+    $("tournStartBtn").addEventListener("click", startTournamentFromForm);
+    $("drawSkip").addEventListener("click", finishDraw);
+
+    $("bHomeBtn").addEventListener("click", function(){
+      lsSet(K_VIEW, "q");
+      showScreen("setupScreen");
+    });
+    $("bDeleteBtn").addEventListener("click", confirmDeleteTournament);
+
+    $("confirmCancel").addEventListener("click", function(){
+      $("confirmOverlay").classList.remove("show"); confirmCb = null;
+    });
+    $("confirmOk").addEventListener("click", function(){
+      $("confirmOverlay").classList.remove("show");
+      var cb = confirmCb; confirmCb = null;
+      if(cb) cb();
+    });
   }
 
   /* ---------------- Init ---------------- */
@@ -1937,14 +2781,36 @@
     wireScoreScreen();
     wireScoreModal();
     wireIcons();
+    wireTournament();
     buildQuickButtons();
     preventPinchAndDoubleTapZoom();
 
     var savedSound = null;
     try{ savedSound = localStorage.getItem(K_SOUND); }catch(e){}
 
+    soundPref = savedSound === null ? true : savedSound === "1";
+    loadTournament();
+    var view = null;
+    try{ view = localStorage.getItem(K_VIEW); }catch(e){}
+
     var restored = loadCurrentGame();
-    if(restored && restored.team1Name && restored.team2Name && Array.isArray(restored.roundsData)){
+    var am = (T && T.activeMatchId) ? getMatch(T.activeMatchId) : null;
+
+    if(T && view === "t"){
+      if(am && am.game){
+        gameState = am.game;
+        gameState.sound = soundPref;
+        currentMatchId = am.id;
+        renderScoreScreen();
+        showScreen("scoreScreen");
+        requestWakeLock();
+      } else {
+        gameState = { sound: soundPref };
+        if(!T.revealed){ T.revealed = true; saveTournament(); }
+        renderBracket(false);
+        showScreen("bracketScreen");
+      }
+    } else if(restored && restored.team1Name && restored.team2Name && Array.isArray(restored.roundsData)){
       gameState = restored;
       if(gameState.historySaved === undefined) gameState.historySaved = false;
       if(!gameState.startedAt) gameState.startedAt = Date.now();
@@ -1953,7 +2819,7 @@
       showScreen("scoreScreen");
       requestWakeLock();
     } else {
-      gameState = { sound: savedSound === null ? true : savedSound === "1" };
+      gameState = { sound: soundPref };
       loadLastSetup();
       showScreen("setupScreen");
     }
@@ -1986,7 +2852,7 @@
   document.addEventListener("DOMContentLoaded", function(){ restoreFromMirror(initializeApp); });
 
   // Save the running game whenever the page is hidden / closed
-  function flushGame(){ if(gameState && gameState.roundsData){ saveCurrentGame(); } }
+  function flushGame(){ if(currentMatchId && T){ saveTournament(); } else if(gameState && gameState.roundsData){ saveCurrentGame(); } }
   document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "hidden") flushGame(); });
   window.addEventListener("pagehide", flushGame);
 })();
