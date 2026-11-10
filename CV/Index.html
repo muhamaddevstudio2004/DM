@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-ui="en"><head><meta charset="utf-8">
+<meta name="theme-color" content="#842D42"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Academic CV Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#F7F3F4;--fg:#333333;--card:#fff;--bd:#E7DADD;--ac:#842D42;--yl:#D9B56D;--gd:#B8924A;--sc:#A94D63;--mut:#666666;--dk:#9b1c1c;box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;touch-action:manipulation;overscroll-behavior:none}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);-webkit-tap-highlight-color:transparent}
+html[data-ui="ckb"] body{font-family:"Noto Sans Arabic","Noto Naskh Arabic",Vazirmatn,"Segoe UI",Tahoma,system-ui,sans-serif}
+html[data-ui="ckb"] :is(button,input,textarea){font-family:inherit}
+button,input,textarea{font:inherit;color:inherit}
+button{background:var(--card);border:1.5px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:42px;display:inline-flex;gap:6px;align-items:center;justify-content:center;color:var(--ac);font-weight:600}
+button:active{transform:scale(.98);background:#F1E8EA}
+button.pri{background:var(--yl);border-color:var(--gd);color:#333333;font-weight:700}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--yl);outline-offset:1px}
+input,textarea{font-size:16px!important;width:100%;border:1.5px solid var(--bd);border-radius:10px;padding:9px 11px;background:#fff;color:#333333;line-height:1.5}
+textarea{resize:vertical;min-height:84px}
+input::placeholder,textarea::placeholder{color:#A39A9D}
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html[dir="rtl"] .chev{transform:scaleX(-1)}
+
+#top{position:sticky;top:0;z-index:20;background:var(--ac);border-bottom:3px solid var(--yl);display:flex;gap:8px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px));align-items:center}
+#top .lg{display:flex;align-items:center;gap:10px;flex:1;min-width:0;color:#fff;font-weight:800;font-size:17px}
+#top .lg span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lgm{flex:none;width:40px;height:40px;border-radius:11px;background:var(--yl);color:#842D42;display:grid;place-items:center}.lgm svg{width:27px;height:27px;fill:currentColor}
+#top button{min-height:42px}#top .sec{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4);color:#fff}
+
+#app{display:block}
+#ed{padding:14px 14px 110px;max-width:640px;margin:0 auto}
+#pv{padding:14px 12px 110px;background:#EFE6E9;min-height:calc(100vh - 62px);overflow-x:auto}
+body[data-view="ed"] #pv{display:none}body[data-view="pv"] #ed{display:none}
+#pages{display:flex;flex-direction:column;align-items:center;gap:14px;width:max-content;min-width:100%}
+.sc{position:relative;flex:none;box-shadow:0 4px 18px rgba(60,20,30,.22);background:#fff;overflow:hidden}
+.sc .page{position:absolute;left:0;top:0;transform-origin:0 0}
+.fit{border-radius:12px;padding:9px 12px;font-size:14px;line-height:1.5;margin:0 0 12px;font-weight:600;border:1.5px solid}.fit.ok{background:#eaf6ee;border-color:#9fd0ae;color:#1d5a32}.fit.small{background:#fbf6e8;border-color:#e8d9a8;color:#5a4a1a}.fit.over{background:#fdeeee;border-color:#e3a3a3;color:#8b1c1c}
+
+#zm{display:flex;gap:8px;justify-content:center;margin:0 0 12px;position:sticky;left:0}#zm button{min-height:38px;padding:4px 14px;font-size:14px}
+#mz{position:absolute;left:0;top:0;width:794px;visibility:hidden;pointer-events:none;z-index:-1}
+
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:2px solid var(--yl);padding:6px 12px calc(6px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;box-shadow:0 -4px 14px rgba(60,20,30,.08)}
+#nav button{flex:1;min-height:48px;border-radius:12px;font-size:16px;font-weight:700}
+@media(min-width:900px){
+ #nav{display:none}
+ #app{display:grid;grid-template-columns:minmax(380px,470px) 1fr;height:calc(100vh - 62px)}
+ body[data-view] #ed,body[data-view] #pv{display:block!important}
+ #ed{max-width:none;margin:0;overflow-y:auto;padding:18px 18px 40px;border-inline-end:1px solid var(--bd);height:100%}
+ #pv{height:100%;overflow:auto;min-height:0;padding-bottom:40px}
+}
+
+.card{background:var(--card);border:1.5px solid var(--bd);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.card h3{margin:0 0 8px;font-size:15px;color:var(--ac)}
+.lab{display:block;font-size:13px;font-weight:600;color:var(--ac);margin:10px 0 4px}.lab:first-child{margin-top:0}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1;min-width:72px;font-size:14px}
+.langsw{direction:ltr}
+.hero{margin:2px 0 14px}.hero h1{margin:0;font-size:24px;line-height:1.25;color:var(--ac)}.hero i{display:block;width:60px;height:4px;border-radius:2px;background:var(--yl);margin-top:10px}
+.note{font-size:13px;color:var(--mut);margin:8px 0 0;line-height:1.55}
+.banner{background:#fbf6e8;border:1.5px solid #e8d9a8;border-radius:14px;padding:12px 14px;margin:0 0 12px;color:#5a4a1a;font-size:14px;line-height:1.6}
+.banner .seg{margin-top:10px}.banner button{min-height:40px;font-size:14px}
+button.arm{background:#fff3f3!important;border-color:#d98a8a!important;color:var(--dk)!important}
+
+.ch{display:flex;align-items:center;gap:6px}
+.chm{flex:1;justify-content:flex-start;text-align:start;border:0;background:transparent;padding:6px 2px;min-height:44px;font-size:16px;color:var(--ac);font-weight:700;min-width:0}
+.chm span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chm .chev{margin-inline-start:auto;transition:transform .15s;color:var(--sc)}.open>.ch .chm .chev{transform:rotate(90deg)}
+.chb{display:flex;gap:4px}.chb button,.ib button{min-height:38px;min-width:38px;padding:4px;border-radius:9px}
+.hid .chm{opacity:.5}.tag{font-size:11px;background:#F1E8EA;border-radius:6px;padding:1px 6px;color:var(--mut);font-weight:600}
+.cb{padding-top:6px}
+.it{border:1.5px solid var(--bd);border-radius:12px;margin:8px 0;background:#FBF8F9}
+.ih{display:flex;align-items:center;gap:4px;padding:2px 4px 2px 8px}html[dir="rtl"] .ih{padding:2px 8px 2px 4px}
+.ih>button:first-child{flex:1;border:0;background:transparent;justify-content:flex-start;text-align:start;font-weight:600;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;line-height:42px;padding:0 4px}
+.ib{display:flex;gap:3px}
+.ib button{min-width:36px;min-height:36px}
+.it .fb{padding:2px 10px 12px}
+.add{width:100%;margin-top:6px;border-style:dashed}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:8px}.menu button{font-size:14px;min-height:46px}
+.ph{display:flex;gap:14px;align-items:center;margin-bottom:6px}
+.pth{width:86px;height:86px;flex:none;background:#F7F3F4;border:2px dashed #D9C3C9;display:grid;place-items:center;color:#A39A9D;overflow:hidden}
+.pth img{width:100%;height:100%;object-fit:cover;display:block}
+.pth.circle{border-radius:50%}.pth.round{border-radius:16px}.pth.portrait{width:70px;height:92px;border-radius:6px}
+.pbt{display:flex;flex-direction:column;gap:6px;flex:1}.pbt button{min-height:40px;font-size:14px}
+input[type=range]{padding:0;height:34px;border:0;background:transparent;accent-color:var(--ac)}
+.lk{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;margin:6px 0;align-items:center}
+.clr{display:flex;gap:10px;flex-wrap:wrap}.clr button{width:44px;height:44px;min-width:44px;border-radius:50%;padding:0;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--bd)}.clr button.on{box-shadow:0 0 0 3px var(--yl)}
+.ftr{text-align:center;color:var(--mut);font-size:13px;margin:18px 0 0}.ftr a{color:var(--ac);font-weight:600}
+#ov{position:fixed;inset:0;z-index:9999;background:rgba(40,12,20,.6);display:none;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px}#ov.on{display:flex}
+
+/* ================= A4 page (single page, ATS-friendly, single column) ================= */
+.page{--ac:#842D42;--sc:#A94D63;--ln:#D9C3C9;width:794px;height:1123px;background:#fff;color:#333333;padding:46px 54px 0;position:relative;overflow:hidden;line-height:1.42;font-size:14px;direction:ltr;text-align:start}
+.page.f-sans{font-family:Inter,Calibri,"Segoe UI",Arial,Helvetica,sans-serif}
+.page.f-serif{font-family:"Source Serif 4",Georgia,"Times New Roman",serif}
+.page.rtl{direction:rtl;line-height:1.6}
+.page.rtl.f-serif{font-family:"Noto Naskh Arabic","Noto Sans Arabic",Vazirmatn,"Times New Roman",serif}
+.page.rtl.f-sans{font-family:"Noto Sans Arabic","Noto Naskh Arabic",Vazirmatn,Tahoma,Arial,sans-serif}
+.pc{height:1037px;overflow:hidden}
+.hd{display:flex;align-items:center;gap:22px}.hd-t{flex:1;min-width:0}
+.nm{font-size:2.15em;font-weight:700;color:var(--ac);line-height:1.12;letter-spacing:.01em}
+.tt{font-size:1.07em;margin-top:.3em;color:var(--sc);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.page.rtl .tt{text-transform:none;letter-spacing:0}
+.ct{margin-top:.6em;font-size:.92em;color:#333333;line-height:1.6;display:flex;flex-wrap:wrap;align-items:center}.ct.lk2{margin-top:.1em}
+.ct span{display:inline-block;unicode-bidi:isolate}.ct .sp{width:1px;align-self:stretch;margin:.35em .7em;background:var(--ln)}
+.ct a{color:inherit;text-decoration:none}
+.pho{flex:none;width:104px;height:104px;overflow:hidden;background:#eee}.pho img{width:100%;height:100%;object-fit:cover;display:block}
+.pho.circle{border-radius:50%}.pho.round{border-radius:12px}.pho.portrait{width:96px;height:128px;border-radius:6px}
+.pho.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed #C9B4BA;background:#F7F3F4;color:#A3868F;font:700 10px/1 Inter,Arial,sans-serif;letter-spacing:.1em}.pho.empty .ic{width:30px;height:30px}
+.hr{height:3px;background:var(--ac);margin:.95em 0 0}
+.sx{margin-top:1.05em}.sx:first-child{margin-top:0}
+.sx h2{margin:0 0 .45em;font-size:.93em;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.11em;border-bottom:1px solid var(--ln);padding-bottom:.22em}
+.page.rtl .sx h2{letter-spacing:0;text-transform:none;font-size:1.05em}
+.it2{margin-top:.5em}.sx h2+.it2,.sx h2+.sk,.sx h2+.tx{margin-top:0}
+.r1{display:flex;justify-content:space-between;gap:14px;align-items:baseline}.r1 b{font-weight:700;color:#333333}
+.dt{unicode-bidi:isolate;flex:none;font-size:.93em;color:#666666;white-space:nowrap}
+.r2{color:#666666;font-style:italic}.page.rtl .r2{font-style:normal}
+.sx ul{list-style:none;margin:.18em 0 0;padding:0}
+.sx li{position:relative;padding-left:15px;margin-top:.1em}.sx li::before{content:"•";position:absolute;left:3px;color:var(--ac)}
+.page.rtl .sx li{padding-left:0;padding-right:15px}.page.rtl .sx li::before{left:auto;right:3px}
+.tx{margin:0;white-space:pre-line}
+.pb{margin:.3em 0 0;padding-left:28px;text-indent:-28px}.pb em{font-style:normal;color:var(--ac);display:inline-block;width:28px;text-indent:0;font-weight:600}
+.page.rtl .pb{padding-left:0;padding-right:28px;text-indent:0}.page.rtl .pb em{margin-right:-28px}
+.sk{margin:.18em 0 0}.sk b{font-weight:700;color:#333333}.sk .lg{white-space:nowrap}
+.cm .r1>span:first-child b{margin-inline-end:.2em}.cm .org{font-style:normal;color:#666666}
+
+@page{size:A4;margin:0}
+@media print{
+ html,body{background:#fff!important;height:auto!important}
+ #top,#nav,#ed,#zm,.ftr,#ov,.fit,#mz{display:none!important}
+ #app{display:block!important;height:auto!important}
+ #pv{display:block!important;padding:0!important;background:#fff!important;overflow:visible!important;height:auto!important;min-height:0!important}
+ #pages{display:block!important;width:auto!important}
+ .sc{width:794px!important;height:1123px!important;box-shadow:none!important;break-after:page;page-break-after:always;overflow:hidden}
+ .sc:last-child{break-after:auto;page-break-after:auto}
+ .sc .page{transform:none!important}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style></head>
+<body data-view="ed">
+<div id="top"></div>
+<div id="app"><div id="ed"></div><div id="pv"><div id="pages"></div></div></div>
+<div id="nav"></div>
+<div id="mz"></div>
+<div id="ov"></div>
+<input type="file" id="pf" accept="image/*" hidden>
+<script>
+"use strict";
+const KEY="acvb2",$=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------------- UI strings ---------------- */
+const T={
+en:{app:"Academic CV Builder",appS:"CV Builder",edit:"Edit",live:"Live",pdf:"PDF",print:"Print",
+ uiLang:"Interface language",cvLang:"CV language",cvLangNote:"Each language keeps its own content. Switch to write your CV in another language.",
+ banner:"This CV contains guide text that shows what to write in each part. Edit it and replace it with your own information before you download.",bannerClear:"Clear guide text",bannerOk:"Got it",confirmClear:"Tap again to clear everything",
+ design:"Design",emptyMsg:"This CV is empty. You can write your own information, or load the guide text again.",loadSample:"Load guide text",color:"CV color",colorNote:"Professional colors that stay readable when printed or viewed in black and white.",font:"Font style",serif:"Classic serif",sans:"Modern sans (ATS-friendly)",fitOk:"Fits on one A4 page ✓",fitSmall:"Text was reduced to fit one page. Shorten a few entries for a cleaner look.",fitOver:"Too long for one page. Shorten the text or hide a section.",
+ personal:"Personal details",photo:"Photo",upPhoto:"Upload photo",chPhoto:"Change photo",rmPhoto:"Remove photo",zoom:"Zoom",posX:"Left / right",posY:"Up / down",shape:"Photo shape",sh_circle:"Circle",sh_round:"Rounded square",sh_portrait:"Portrait",on:"On",off:"Off",optional2:"optional",
+ photoTip:"The photo is optional. Many employers and ATS systems prefer a CV without one, so keep it off if you are unsure.",
+ name:"Full name",jobtitle:"Title / field",email:"Email",phone:"Phone",loc:"Location",links:"Links",lnkLabel:"Label",lnkUrl:"Address",addLink:"Add link",
+ sections:"Sections",secTitle:"Section title",addItem:"Add entry",addSec:"Add a section",hide:"Hide section",show:"Show section",hiddenTag:"Hidden",delSec:"Delete section",delConfirm:"Tap again to delete",up:"Move up",down:"Move down",del:"Delete",emptyEntry:"(empty)",
+ f_text:"Text",f_degree:"Degree / program",f_school:"University / school",f_place:"City, country",f_dates:"Dates",f_details:"Details (one line = one bullet)",f_role:"Job title",f_org:"Organization",f_project:"Project name",f_prole:"Your role",f_link:"Link",f_cite:"Citation",f_group:"Group",f_skills:"Skills (comma separated)",f_lang:"Language",f_level:"Level",f_award:"Title",f_issuer:"Issuer",f_head:"Heading",f_sub:"Sub-heading",
+ tn_publications:"Publications",tn_volunteer:"Volunteer experience",tn_awards:"Awards & honors",tn_refs:"References",tn_interests:"Interests",tn_custom:"Custom section",f_refname:"Name",f_reftitle:"Position & organization",f_contact:"Email / phone",optional:"Optional sections can be deleted. Main sections can only be hidden.",
+ data:"Your data",saved:"Your work is saved automatically on this device.",reset:"Reset everything to sample",resetConfirm:"Tap again to reset all content",
+ pdfWait:"Creating your PDF…",pdfFail:"PDF export failed. Try Print and choose Save as PDF.",libFail:"The PDF library could not load. Check your connection and try again.",fit:"Fit page",full:"Actual size",dev:"Developed by"},
+ckb:{app:"دروستکەری CVی ئەکادیمی",appS:"دروستکەری CV",edit:"دەستکاری",live:"ڕاستەوخۆ",pdf:"PDF",print:"چاپکردن",
+ uiLang:"زمانی ڕووکار",cvLang:"زمانی CV",cvLangNote:"هەر زمانێک ناوەڕۆکی تایبەتی خۆی هەیە. بیگۆڕە بۆ نووسینی CV بە زمانێکی تر.",
+ banner:"ئەم CVـیە نووسینی ڕێنمایی تێدایە کە نیشانی دەدات لە هەر بەشێکدا چی بنووسیت. دەستکاری بکە و پێش داگرتن بە زانیاری خۆت بیگۆڕە.",bannerClear:"پاککردنەوەی نووسینی ڕێنمایی",bannerOk:"باشە",confirmClear:"دووبارە دابگرە بۆ پاککردنەوەی هەموو شتێک",
+ design:"دیزاین",emptyMsg:"ئەم CVـیە بەتاڵە. دەتوانیت زانیاری خۆت بنووسیت، یان نووسینی ڕێنمایی دووبارە دابنێیتەوە.",loadSample:"دانانەوەی نووسینی ڕێنمایی",color:"ڕەنگی CV",colorNote:"ڕەنگی پیشەیی کە لە چاپکردن و ڕەش و سپیدا ڕوون دەمێننەوە.",font:"شێوازی فۆنت",serif:"کلاسیک (Serif)",sans:"مۆدێرن (Sans) – گونجاو بۆ ATS",fitOk:"لە یەک لاپەڕەی A4 دەگونجێت ✓",fitSmall:"نووسینەکە بچووککرایەوە بۆ ئەوەی لە یەک لاپەڕەدا بگونجێت. چەند تۆمارێک کورت بکەرەوە بۆ دیمەنێکی پاکتر.",fitOver:"زۆر درێژە بۆ یەک لاپەڕە. نووسینەکە کورت بکەرەوە یان بەشێک بشارەوە.",
+ personal:"زانیاری کەسی",photo:"وێنە",upPhoto:"دانانی وێنە",chPhoto:"گۆڕینی وێنە",rmPhoto:"سڕینەوەی وێنە",zoom:"نزیککردنەوە",posX:"چەپ / ڕاست",posY:"سەرەوە / خوارەوە",shape:"شێوەی وێنە",sh_circle:"بازنە",sh_round:"چوارگۆشەی نەرم",sh_portrait:"ستوونی",on:"چالاک",off:"ناچالاک",optional2:"هەڵبژاردەیی",
+ photoTip:"وێنە هەڵبژاردەییە. زۆر لە کۆمپانیا و سیستەمەکانی ATS CVی بێ وێنە دەپسەندن، بۆیە ئەگەر دڵنیا نیت ناچالاکی بهێڵەرەوە.",
+ name:"ناوی تەواو",jobtitle:"ناونیشان / بوار",email:"ئیمەیڵ",phone:"ژمارەی مۆبایل",loc:"شوێن",links:"بەستەرەکان",lnkLabel:"ناو",lnkUrl:"ناونیشان",addLink:"زیادکردنی بەستەر",
+ sections:"بەشەکان",secTitle:"ناونیشانی بەش",addItem:"زیادکردنی تۆمار",addSec:"زیادکردنی بەش",hide:"شاردنەوەی بەش",show:"پیشاندانی بەش",hiddenTag:"شاراوە",delSec:"سڕینەوەی بەش",delConfirm:"دووبارە دابگرە بۆ سڕینەوە",up:"بەرەو سەرەوە",down:"بەرەو خوارەوە",del:"سڕینەوە",emptyEntry:"(بەتاڵ)",
+ f_text:"نووسین",f_degree:"پلە / بەش",f_school:"زانکۆ / قوتابخانە",f_place:"شار، وڵات",f_dates:"بەروار",f_details:"وردەکاری (هەر دێڕێک = یەک خاڵ)",f_role:"ناونیشانی کار",f_org:"دامەزراوە",f_project:"ناوی پڕۆژە",f_prole:"ڕۆڵی تۆ",f_link:"بەستەر",f_cite:"سەرچاوە (Citation)",f_group:"گروپ",f_skills:"تواناکان (بە کۆما جیا بکەرەوە)",f_lang:"زمان",f_level:"ئاست",f_award:"ناونیشان",f_issuer:"دەرکەر",f_head:"سەردێڕ",f_sub:"ژێرسەردێڕ",
+ tn_publications:"بڵاوکراوەکان",tn_volunteer:"کاری خۆبەخشی",tn_awards:"خەڵات و ڕێزلێنان",tn_refs:"ڕاسپاردەکان",tn_interests:"حەزەکان",tn_custom:"بەشی تایبەتی",f_refname:"ناو",f_reftitle:"پۆست و دامەزراوە",f_contact:"ئیمەیڵ / مۆبایل",optional:"بەشە هەڵبژاردەییەکان دەسڕدرێنەوە. بەشە سەرەکییەکان تەنها دەشاردرێنەوە.",
+ data:"داتاکانت",saved:"کارەکانت خۆکارانە لەسەر ئەم ئامێرە پاشەکەوت دەکرێن.",reset:"گەڕاندنەوەی هەموو شتێک بۆ نموونە",resetConfirm:"دووبارە دابگرە بۆ گەڕاندنەوەی هەموو ناوەڕۆک",
+ pdfWait:"PDF دروستدەکرێت…",pdfFail:"دروستکردنی PDF سەرنەکەوت. «چاپکردن» بەکاربهێنە و Save as PDF هەڵبژێرە.",libFail:"کتێبخانەی PDF بارنەبوو. ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەوە.",fit:"گونجاندن",full:"قەبارەی ڕاستەقینە",dev:"پەرەپێدراوە لەلایەن"}};
+const t=k=>(T[S.ui]&&T[S.ui][k])||T.en[k]||k;
+
+/* ---------------- Sample content (editable by the user) ---------------- */
+const TT={
+ en:{summary:"Professional Summary",experience:"Work Experience",education:"Education",skills:"Skills",projects:"Projects",certs:"Certifications",languages:"Languages",publications:"Publications",volunteer:"Volunteer Experience",awards:"Awards & Honors",refs:"References",interests:"Interests",custom:"Additional Information"},
+ ckb:{summary:"پوختەی پیشەیی",experience:"ئەزموونی کار",education:"خوێندن",skills:"شارەزاییەکان",projects:"پڕۆژەکان",certs:"بڕوانامەکان",languages:"زمانەکان",publications:"بڵاوکراوەکان",volunteer:"کاری خۆبەخشی",awards:"خەڵات و ڕێزلێنان",refs:"ڕاسپاردەکان",interests:"حەزەکان",custom:"زانیاری زیاتر"}};
+const SAMPLE={
+en:{name:"Your Full Name",title:"Your Job Title or Field",email:"name@example.com",phone:"+964 750 000 0000",loc:"City, Country",
+ links:[{t:"LinkedIn",u:"linkedin.com/in/yourname"},{t:"Portfolio",u:"yourwebsite.com"}],
+ sections:[
+ {id:"summary",type:"summary",core:1,items:[{a:"Write 2–3 sentences about yourself: your profession, your years of experience, your strongest skills, and the kind of role you are looking for."}]},
+ {id:"experience",type:"experience",core:1,items:[
+  {a:"Your Job Title",b:"Company Name",c:"City, Country",d:"Start Year – Present",e:"Start each point with an action verb (Managed, Built, Improved) and say what you did\nAdd a number or a result when you can (for example: increased sales by 20%)\nKeep each point to one line and focus on your most important achievements"},
+  {a:"Previous Job Title",b:"Company Name",c:"City, Country",d:"Start Year – End Year",e:"Describe your main responsibilities in this role\nMention the tools, skills or results that matter for the job you want"}]},
+ {id:"education",type:"education",core:1,items:[{a:"Degree and Field of Study",b:"University Name",c:"City, Country",d:"Start Year – End Year",e:"Add your GPA, honors or graduation project (optional)"}]},
+ {id:"skills",type:"skills",core:1,items:[{a:"Group Name (e.g. Technical Skills)",b:"Skill one, Skill two, Skill three, Skill four"},{a:"Soft Skills",b:"Communication, Teamwork, Problem solving, Time management"},{a:"Tools",b:"The software or tools you use, separated by commas"}]},
+ {id:"projects",type:"projects",core:1,items:[{a:"Project Name",b:"Your Role",c:"",d:"Year",e:"Say what the project was and what result you achieved"}]},
+ {id:"certs",type:"awards",core:1,items:[{a:"Certificate or Course Name",b:"Issuing Organization",d:"Year"},{a:"Another Certificate (optional)",b:"Issuing Organization",d:"Year"}]},
+ {id:"languages",type:"languages",core:1,items:[{a:"Your Native Language",b:"Native"},{a:"Second Language",b:"Fluent"},{a:"Third Language",b:"Intermediate"}]}]},
+ckb:{name:"ناوی تەواوی تۆ",title:"ناونیشانی کار یان بوارەکەت",email:"name@example.com",phone:"+964 750 000 0000",loc:"شار، وڵات",
+ links:[{t:"LinkedIn",u:"linkedin.com/in/yourname"},{t:"Portfolio",u:"yourwebsite.com"}],
+ sections:[
+ {id:"summary",type:"summary",core:1,items:[{a:"2 تا 3 ڕستە دەربارەی خۆت بنووسە: پیشەکەت، ساڵانی ئەزموونت، بەهێزترین تواناکانت و ئەو جۆرە کارەی بەدوایدا دەگەڕێیت."}]},
+ {id:"experience",type:"experience",core:1,items:[
+  {a:"ناونیشانی کارەکەت",b:"ناوی کۆمپانیا",c:"شار، وڵات",d:"ساڵی دەستپێکردن – ئێستا",e:"هەر خاڵێک بە کردارێک دەست پێبکە (بەڕێوەبردن، دروستکردن، باشترکردن) و بنووسە چیت کردووە\nکاتێک دەتوانیت ژمارە یان ئەنجام زیاد بکە (وەک: فرۆشتن بە 20% زیادکرد)\nهەر خاڵێک لە یەک دێڕدا بێت و گرنگترین دەستکەوتەکانت بنووسە"},
+  {a:"ناونیشانی کاری پێشوو",b:"ناوی کۆمپانیا",c:"شار، وڵات",d:"ساڵی دەستپێکردن – ساڵی کۆتایی",e:"ئەرکە سەرەکییەکانت لەم پۆستەدا بنووسە\nئەو ئامراز و توانا و ئەنجامانە باس بکە کە بۆ ئەو کارەی دەتەوێت گرنگن"}]},
+ {id:"education",type:"education",core:1,items:[{a:"پلەی زانستی و بواری خوێندن",b:"ناوی زانکۆ",c:"شار، وڵات",d:"ساڵی دەستپێکردن – ساڵی کۆتایی",e:"نمرەی گشتی، ڕێزلێنان یان پڕۆژەی دەرچوونت زیاد بکە (هەڵبژاردەیی)"}]},
+ {id:"skills",type:"skills",core:1,items:[{a:"ناوی گروپ (وەک: تواناکانی تەکنیکی)",b:"توانای یەکەم، توانای دووەم، توانای سێیەم، توانای چوارەم"},{a:"تواناکانی کەسی",b:"پەیوەندی، کاری تیمی، چارەسەرکردنی کێشە، بەڕێوەبردنی کات"},{a:"ئامراز",b:"ئەو بەرنامە و ئامرازانەی بەکاریان دەهێنیت، بە کۆما جیا بکەرەوە"}]},
+ {id:"projects",type:"projects",core:1,items:[{a:"ناوی پڕۆژە",b:"ڕۆڵی تۆ",c:"",d:"ساڵ",e:"بنووسە پڕۆژەکە چی بوو و چ ئەنجامێکت بەدەست هێنا"}]},
+ {id:"certs",type:"awards",core:1,items:[{a:"ناوی بڕوانامە یان خولەکە",b:"ناوی دەرکەر",d:"ساڵ"},{a:"بڕوانامەیەکی تر (هەڵبژاردەیی)",b:"ناوی دەرکەر",d:"ساڵ"}]},
+ {id:"languages",type:"languages",core:1,items:[{a:"زمانی دایکت",b:"زمانی دایک"},{a:"زمانی دووەم",b:"ڕەوان"},{a:"زمانی سێیەم",b:"ناوەند"}]}]}};
+function mk(l){const d=JSON.parse(JSON.stringify(SAMPLE[l]));d.sections.forEach(s=>{s.show=true;s.title=TT[l][s.id]});return d}
+const ADD=[["publications","publications"],["volunteer","experience"],["awards","awards"],["refs","refs"],["interests","summary"],["custom","custom"]];
+
+/* field schemas: [key, kind, label key] */
+const SCH={
+ summary:[["a","ta","f_text"]],
+ education:[["a","in","f_degree"],["b","in","f_school"],["c","in","f_place"],["d","in","f_dates"],["e","ta","f_details"]],
+ experience:[["a","in","f_role"],["b","in","f_org"],["c","in","f_place"],["d","in","f_dates"],["e","ta","f_details"]],
+ projects:[["a","in","f_project"],["b","in","f_prole"],["c","in","f_link"],["d","in","f_dates"],["e","ta","f_details"]],
+ publications:[["a","ta","f_cite"]],
+ skills:[["a","in","f_group"],["b","in","f_skills"]],
+ languages:[["a","in","f_lang"],["b","in","f_level"]],
+ awards:[["a","in","f_award"],["b","in","f_issuer"],["d","in","f_dates"]],
+ refs:[["a","in","f_refname"],["b","in","f_reftitle"],["c","in","f_contact"]],
+ custom:[["a","in","f_head"],["b","in","f_sub"],["d","in","f_dates"],["e","ta","f_details"]]};
+const COLORS=[
+ {id:"burgundy",ac:"#842D42",sc:"#A94D63",ln:"#D9C3C9",n:{en:"Burgundy",ckb:"سووری تۆخ"}},
+ {id:"navy",ac:"#1F3A5F",sc:"#3E6491",ln:"#C5D0E0",n:{en:"Navy blue",ckb:"شینی تۆخ"}},
+ {id:"forest",ac:"#1E5B45",sc:"#357558",ln:"#C3D9CF",n:{en:"Forest green",ckb:"سەوزی تۆخ"}},
+ {id:"teal",ac:"#0F5E63",sc:"#2A7C82",ln:"#BFD9DB",n:{en:"Teal",ckb:"شینی سەوز"}},
+ {id:"plum",ac:"#5B3A73",sc:"#7E5896",ln:"#D6CADF",n:{en:"Plum",ckb:"مۆری تۆخ"}},
+ {id:"charcoal",ac:"#2B2B2B",sc:"#555555",ln:"#CCCCCC",n:{en:"Charcoal",ckb:"خەڵوزی"}}];
+const colorOf=()=>COLORS.find(c=>c.id===S.color)||COLORS[0];
+
+/* ---------------- state ---------------- */
+function fresh(){return{v:1,ui:"en",cl:"en",font:"sans",color:"burgundy",photoOn:true,pv2:1,shape:"circle",photo:"",psrc:"",pz:1,px:50,py:30,banner:1,data:{en:mk("en"),ckb:mk("ckb")}}}
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&j.data&&j.data.en&&j.data.ckb){const x=Object.assign(fresh(),j);if(!x.pv2){x.photoOn=true;x.pv2=1}if(!["circle","round","portrait"].includes(x.shape))x.shape="circle";if(!COLORS.some(c=>c.id===x.color))x.color="burgundy";x.photoOn=!!x.photoOn;return x}}catch(e){}return fresh()}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const D=()=>S.data[S.cl];
+const REF={en:mk("en"),ckb:mk("ckb")};let FIT={ok:true,fs:14};
+let OP="",OI="",PZ="fit",VIEW="ed";
+
+/* ---------------- icons ---------------- */
+const P={up:"M6 15l6-6 6 6",down:"M6 9l6 6 6-6",trash:"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3",plus:"M12 5v14M5 12h14",eye:"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",eyeoff:"M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.6 7.6C3.8 9.4 2 12 2 12s4 7 10 7c1.5 0 2.9-.4 4.1-1M9.9 9.9a3 3 0 0 0 4.2 4.2",edit:"M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4",dl:"M12 4v11M7 11l5 5 5-5M5 20h14",print:"M7 9V4h10v5M7 17H5a1 1 0 0 1-1-1v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a1 1 0 0 1-1 1h-2M7 14h10v6H7z",cam:"M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",chev:"M9 6l6 6-6 6",x:"M6 6l12 12M18 6L6 18",user:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"};
+const ic=(n,c)=>`<svg class="ic ${c||""}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
+const CAP='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 3h11l6 6v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M19 3v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="15.5" cy="14.5" r="2.7"/><path d="M10.8 22.5c0-2.8 2.1-4.5 4.7-4.5s4.7 1.7 4.7 4.5z"/><path d="M11 26h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+/* ---------------- editor ---------------- */
+const seg=(k,opts,cur,cls)=>`<div class="seg ${cls||""}">${opts.map(([v,l])=>`<button type="button" class="${cur===v?"on":""}" data-a="set" data-k="${k}" data-v="${v}">${l}</button>`).join("")}</div>`;
+function phOf(secId,type,idx,key){const r=REF[S.cl].sections.find(s=>s.id===secId)||REF[S.cl].sections.find(s=>s.type===type);if(!r)return"";const it=r.items[idx]||r.items[0]||{};return it[key]||""}
+function field(path,kind,label,val,ph,dir){const tag=kind==="ta"?`<textarea data-p="${path}" dir="${dir||"auto"}" placeholder="${esc(ph)}">${esc(val)}</textarea>`:`<input type="text" data-p="${path}" dir="${dir||"auto"}" value="${esc(val)}" placeholder="${esc(ph)}" autocomplete="off">`;return`<label class="lab">${esc(label)}</label>${tag}`}
+function itemSummary(sec,it){const v=(it.a||it.b||"").replace(/\s+/g," ").trim();return v?v.slice(0,60):t("emptyEntry")}
+function secCard(sec,i,n){
+ const open=OP===sec.id;
+ let body="";
+ if(open){
+  body=`<div class="cb"><label class="lab">${t("secTitle")}</label><input type="text" dir="auto" data-p="st|${sec.id}" value="${esc(sec.title)}">`+
+  sec.items.map((it,j)=>{const k=sec.id+":"+j,o=OI===k;
+   return`<div class="it"><div class="ih"><button type="button" data-a="item" data-v="${k}">${esc(itemSummary(sec,it))}</button><span class="ib">`+
+   (sec.items.length>1?`<button type="button" aria-label="${t("up")}" data-a="imv" data-v="${k}" data-d="-1" ${j==0?"disabled":""}>${ic("up")}</button><button type="button" aria-label="${t("down")}" data-a="imv" data-v="${k}" data-d="1" ${j==sec.items.length-1?"disabled":""}>${ic("down")}</button>`:"")+
+   `<button type="button" aria-label="${t("del")}" data-a="idel" data-v="${k}">${ic("trash")}</button></span></div>`+
+   (o?`<div class="fb">${SCH[sec.type].map(([key,kind,lk])=>field("s|"+sec.id+"|"+j+"|"+key,kind,t(lk),it[key]||"",phOf(sec.id,sec.type,j,key),key==="c"&&sec.type==="projects"?"ltr":"auto")).join("")}</div>`:"")+`</div>`}).join("")+
+  `<button type="button" class="add" data-a="addi" data-v="${sec.id}">${ic("plus")}${t("addItem")}</button>
+   ${sec.core?"":`<button type="button" class="add" data-a="sdel" data-v="${sec.id}" style="margin-top:10px">${ic("trash")}${t("delSec")}</button>`}</div>`}
+ return`<div class="card ${open?"open":""} ${sec.show?"":"hid"}"><div class="ch"><button type="button" class="chm" data-a="acc" data-v="${sec.id}"><span class="n">${esc(sec.title||"…")}</span>${sec.show?"":`<span class="tag">${t("hiddenTag")}</span>`}${ic("chev","chev")}</button>
+ <span class="chb"><button type="button" aria-label="${sec.show?t("hide"):t("show")}" data-a="sshow" data-v="${sec.id}">${ic(sec.show?"eye":"eyeoff")}</button><button type="button" aria-label="${t("up")}" data-a="smv" data-v="${sec.id}" data-d="-1" ${i==0?"disabled":""}>${ic("up")}</button><button type="button" aria-label="${t("down")}" data-a="smv" data-v="${sec.id}" data-d="1" ${i==n-1?"disabled":""}>${ic("down")}</button></span></div>${body}</div>`}
+function renderEd(){
+ const d=D(),rtl=S.cl==="ckb";
+ const keepY=window.scrollY,edTop=$("ed").scrollTop;
+ let h=`<div class="hero"><h1>${t("app")}</h1><i></i></div>`;
+ h+=`<div class="card"><label class="lab">${t("uiLang")}</label>${seg("ui",[["en","English"],["ckb","کوردی"]],S.ui,"langsw")}
+ <label class="lab">${t("cvLang")}</label>${seg("cl",[["en","English"],["ckb","کوردی"]],S.cl,"langsw")}<p class="note">${t("cvLangNote")}</p></div>`;
+ h+=`<div id="fit" class="fit"></div>`;
+ if(!S.banner&&isBlank(d))h+=`<div class="banner" id="eb">${t("emptyMsg")}<div class="seg"><button type="button" class="pri" data-a="loadsample">${t("loadSample")}</button></div></div>`;
+ /* design */
+ const des=OP==="design";
+ h+=`<div class="card ${des?"open":""}"><div class="ch"><button type="button" class="chm" data-a="acc" data-v="design"><span class="n">${t("design")}</span>${ic("chev","chev")}</button></div>`+(des?`<div class="cb">
+  <label class="lab">${t("color")}</label><div class="clr">${COLORS.map(c=>`<button type="button" class="${S.color===c.id?"on":""}" style="background:${c.ac}" aria-label="${c.n[S.ui]||c.n.en}" title="${c.n[S.ui]||c.n.en}" data-a="set" data-k="color" data-v="${c.id}"></button>`).join("")}</div><p class="note">${t("colorNote")}</p><label class="lab">${t("font")}</label>${seg("font",[["serif",t("serif")],["sans",t("sans")]],S.font)}
+  </div>`:"")+`</div>`;
+ /* personal */
+ const per=OP==="per";
+ h+=`<div class="card ${per?"open":""}"><div class="ch"><button type="button" class="chm" data-a="acc" data-v="per"><span class="n">${t("personal")}</span>${ic("chev","chev")}</button></div>`;
+ if(per){const R=REF[S.cl];
+  h+=`<div class="cb"><label class="lab">${t("photo")} <span class="tag">${t("optional2")}</span></label>${seg("photoOn",[["1",t("on")],["0",t("off")]],S.photoOn?"1":"0")}`;
+  if(S.photoOn){
+   h+=`<div class="ph" style="margin-top:10px"><div class="pth ${S.shape}">${S.photo?`<img src="${S.photo}" alt="">`:ic("user")}</div><div class="pbt"><button type="button" data-a="pup">${ic("cam")}${S.photo?t("chPhoto"):t("upPhoto")}</button>${S.photo?`<button type="button" data-a="prm">${ic("trash")}${t("rmPhoto")}</button>`:""}</div></div>`;
+   if(S.psrc)h+=`<label class="lab">${t("zoom")}</label><input type="range" min="1" max="3" step="0.05" value="${S.pz}" data-ph="pz"><label class="lab">${t("posX")}</label><input type="range" min="0" max="100" step="1" value="${S.px}" data-ph="px"><label class="lab">${t("posY")}</label><input type="range" min="0" max="100" step="1" value="${S.py}" data-ph="py">`;
+   h+=`<label class="lab">${t("shape")}</label>${seg("shape",[["circle",t("sh_circle")],["round",t("sh_round")],["portrait",t("sh_portrait")]],S.shape)}`}
+  h+=`<p class="note">${t("photoTip")}</p>`+
+  field("p|name","in",t("name"),d.name,R.name)+field("p|title","in",t("jobtitle"),d.title,R.title)+field("p|email","in",t("email"),d.email,R.email,"ltr").replace('type="text"','type="email" inputmode="email"')+field("p|phone","in",t("phone"),d.phone,R.phone,"ltr").replace('type="text"','type="tel" inputmode="tel"')+field("p|loc","in",t("loc"),d.loc,R.loc)+
+  `<label class="lab">${t("links")}</label>`+d.links.map((l,i)=>`<div class="lk"><input type="text" data-p="l|${i}|t" dir="auto" value="${esc(l.t)}" placeholder="${esc((R.links[i]||R.links[0]||{}).t||"")}"><input type="text" data-p="l|${i}|u" dir="ltr" value="${esc(l.u)}" placeholder="${esc((R.links[i]||R.links[0]||{}).u||"")}" inputmode="url" autocapitalize="off"><button type="button" aria-label="${t("del")}" data-a="ldel" data-v="${i}" style="min-width:42px;padding:4px">${ic("x")}</button></div>`).join("")+
+  `<button type="button" class="add" data-a="ladd">${ic("plus")}${t("addLink")}</button></div>`}
+ h+=`</div>`;
+ h+=`<h3 style="margin:16px 2px 8px;color:var(--ac);font-size:15px">${t("sections")}</h3>`;
+ h+=d.sections.map((s,i)=>secCard(s,i,d.sections.length)).join("");
+ const adding=OP==="add";
+ h+=`<div class="card ${adding?"open":""}"><div class="ch"><button type="button" class="chm" data-a="acc" data-v="add"><span class="n">${ic("plus")} ${t("addSec")}</span>${ic("chev","chev")}</button></div>`+(adding?`<div class="cb menu">${ADD.map(([k])=>`<button type="button" data-a="addsec" data-v="${k}">${t("tn_"+k)}</button>`).join("")}</div><p class="note">${t("optional")}</p>`:"")+`</div>`;
+ h+=`<div class="ftr">${t("dev")} <a href="https://devmuhamad.com" target="_blank" rel="noopener">DevMuhamad.com</a></div>`;
+ $("ed").innerHTML=h;
+ $("ed").scrollTop=edTop;window.scrollTo(0,keepY);setFit(FIT)}
+
+/* ---------------- chrome ---------------- */
+function chrome(){
+ document.documentElement.lang=S.ui==="ckb"?"ckb":"en";document.documentElement.dir=S.ui==="ckb"?"rtl":"ltr";document.documentElement.dataset.ui=S.ui;
+ document.title=t("app");
+ $("top").innerHTML=`<div class="lg"><span class="lgm">${CAP}</span><span class="t">${t("appS")}</span></div><button type="button" class="pri" id="bpdf">${ic("dl")}<span>${t("pdf")}</span></button><button type="button" class="sec" id="bprint">${ic("print")}<span class="bpt">${t("print")}</span></button>`;
+ $("bpdf").onclick=exportPdf;$("bprint").onclick=()=>window.print();
+ $("nav").innerHTML=`<button type="button" data-v="ed" class="${VIEW==="ed"?"on":""}">${ic("edit")}${t("edit")}</button><button type="button" data-v="pv" class="${VIEW==="pv"?"on":""}">${ic("eye")}${t("live")}</button>`;
+ $("nav").querySelectorAll("button").forEach(b=>b.onclick=()=>{VIEW=b.dataset.v;document.body.dataset.view=VIEW;chrome();if(VIEW==="pv")requestAnimationFrame(applyScale);window.scrollTo(0,0)});
+}
+
+/* ---------------- CV rendering ---------------- */
+const nonEmpty=it=>Object.values(it).some(v=>String(v||"").trim());
+const isBlank=d=>["name","title","email","phone","loc"].every(k=>!String(d[k]||"").trim())&&d.links.every(l=>!String((l.t||"")+(l.u||"")).trim())&&d.sections.every(x=>!x.items.some(nonEmpty));
+/* a completely empty CV (e.g. cleared earlier on this device) gets the guide text again automatically */
+function ensureGuide(l){const d=S.data[l];if(d&&isBlank(d)){S.data[l]=mk(l);S.banner=1;save();return true}return false}
+const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.replace(/^\s*[-•*–]\s+/,"").trim()).filter(Boolean);
+const href=u=>/^(https?:|mailto:|tel:)/i.test(u)?u:"https://"+u;
+function headerHTML(d,exp){
+ const c1=[d.email&&`<span><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></span>`,d.phone&&`<span dir="ltr">${esc(d.phone)}</span>`,d.loc&&`<span>${esc(d.loc)}</span>`].filter(Boolean).join('<i class="sp"></i>');
+ const ls=d.links.filter(l=>(l.u||"").trim()).map(l=>`<span dir="ltr">${l.t?esc(l.t)+": ":""}<a href="${esc(href(l.u.trim()))}" dir="ltr">${esc(l.u.trim().replace(/^https?:\/\//i,""))}</a></span>`).join('<i class="sp"></i>');
+ const ph=!S.photoOn?"":S.photo?`<div class="pho ${S.shape}"><img src="${S.photo}" alt=""></div>`:(exp?"":`<div class="pho ${S.shape} empty">${ic("user")}<span>PHOTO</span></div>`);
+ return`<div class="hd"><div class="hd-t">${d.name?`<div class="nm">${esc(d.name)}</div>`:""}${d.title?`<div class="tt">${esc(d.title)}</div>`:""}${c1?`<div class="ct">${c1}</div>`:""}${ls?`<div class="ct lk2">${ls}</div>`:""}</div>${ph}</div><div class="hr"></div>`}
+function itemHTML(type,it,i){
+ const a=esc(it.a||"");
+ if(type==="summary")return`<p class="tx">${a}</p>`;
+ if(type==="publications")return`<p class="pb"><em>[${i+1}]</em>${a}</p>`;
+ if(type==="skills")return`<p class="sk">${it.a?`<b>${a}:</b> `:""}${esc(it.b||"")}</p>`;
+ if(type==="refs")return`<div class="it2"><div class="r1"><b>${a}</b></div>${it.b?`<div class="r2">${esc(it.b)}</div>`:""}${it.c?`<div>${esc(it.c)}</div>`:""}</div>`;
+ if(type==="awards")return`<div class="it2 cm"><div class="r1"><span><b>${a}</b>${it.b?` <span class="org">— ${esc(it.b)}</span>`:""}</span>${it.d?`<span class="dt" dir="auto">${esc(it.d)}</span>`:""}</div></div>`;
+ const sub=[it.b,it.c].map(x=>(x||"").trim()).filter(Boolean).map(esc).join(" · "),ls=lines(it.e);
+ return`<div class="it2"><div class="r1"><b>${a}</b>${it.d?`<span class="dt" dir="auto">${esc(it.d)}</span>`:""}</div>${sub?`<div class="r2">${sub}</div>`:""}${ls.length?`<ul>${ls.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`}
+function unitsOf(d,exp){
+ const U=[headerHTML(d,exp)];
+ d.sections.forEach(s=>{if(s.show===false)return;const items=s.items.filter(nonEmpty);if(!items.length)return;
+  const h=s.title?`<h2>${esc(s.title)}</h2>`:"";
+  const body=s.type==="languages"?`<p class="sk">${items.map(it=>`<span class="lg"><b>${esc(it.a||"")}</b>${it.b?" ("+esc(it.b)+")":""}</span>`).join(" · ")}</p>`:items.map((it,i)=>itemHTML(s.type,it,i)).join("");
+  U.push(`<section class="sx">${h}${body}</section>`)});
+ return U}
+const SIZES=[14,13.5,13,12.5,12,11.5,11];
+function renderCV(root,exp){
+ const d=D();root.innerHTML="";
+ const p=document.createElement("div");p.className=`page f-${S.font} ${S.cl==="ckb"?"rtl":""}`;{const C=colorOf();p.style.setProperty("--ac",C.ac);p.style.setProperty("--sc",C.sc);p.style.setProperty("--ln",C.ln)}
+ p.innerHTML='<div class="pc"></div>';root.appendChild(p);const pc=p.firstChild;
+ pc.innerHTML=unitsOf(d,exp).join("");
+ let fs=SIZES[0],fits=false;
+ for(const z of SIZES){fs=z;p.style.fontSize=z+"px";if(pc.scrollHeight<=pc.clientHeight+1){fits=true;break}}
+ return{p,fs,fits}}
+function setFit(r){FIT=r;const k=r.fits?(r.fs<12?"small":"ok"):"over",m=r.fits?(r.fs<12?t("fitSmall"):t("fitOk")):t("fitOver");
+ ["fit"].forEach(id=>{const e=$(id);if(e){e.className="fit "+k;e.textContent=m;e.style.display=k==="ok"?"none":""}})}
+function scaleK(){const w=$("pv").clientWidth-24;return Math.max(.3,Math.min(1,w/794))}
+function applyScale(){const k=scaleK();document.querySelectorAll("#pages .sc").forEach(w=>{w.style.width=794*k+"px";w.style.height=1123*k+"px";w.firstChild.style.transform=`scale(${k})`})}
+function buildPreview(){
+ const r=renderCV($("mz")),host=$("pages");host.innerHTML="";
+ const w=document.createElement("div");w.className="sc";w.appendChild(r.p);host.appendChild(w);
+ applyScale();setFit(r)}
+let pvT=0;const schedule=()=>{clearTimeout(pvT);pvT=setTimeout(buildPreview,120)};
+function refresh(){chrome();renderEd();buildPreview()}
+
+/* ---------------- photo ---------------- */
+function cropPhoto(){return new Promise(res=>{if(!S.psrc){S.photo="";return res()}const im=new Image();im.onload=()=>{const ar=S.shape==="portrait"?.75:1,H=480,W=Math.round(H*ar),c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
+ let bh=Math.min(im.height,im.width/ar)/S.pz,bw=bh*ar;const sx=(im.width-bw)*S.px/100,sy=(im.height-bh)*S.py/100;g.fillStyle="#fff";g.fillRect(0,0,W,H);g.drawImage(im,sx,sy,bw,bh,0,0,W,H);S.photo=c.toDataURL("image/jpeg",.9);res()};im.onerror=()=>res();im.src=S.psrc})}
+$("pf").onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const M=1000,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);S.psrc=c.toDataURL("image/jpeg",.88);S.pz=1;S.px=50;S.py=30;S.photoOn=true;cropPhoto().then(()=>{save();OP="per";refresh()})};im.src=r.result};r.readAsDataURL(f)};
+let phT=0;
+
+/* ---------------- events ---------------- */
+function arm(b,label){if(b.dataset.arm)return true;b.dataset.arm=1;const old=b.innerHTML;b.classList.add("arm");b.textContent=label;setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.classList.remove("arm");b.innerHTML=old}},3500);return false}
+const secOf=id=>D().sections.find(s=>s.id===id);
+function blankItem(){return{a:"",b:"",c:"",d:"",e:""}}
+$("ed").addEventListener("input",e=>{
+ const el=e.target;
+ if(el.dataset.ph){S[el.dataset.ph]=+el.value;clearTimeout(phT);phT=setTimeout(()=>cropPhoto().then(()=>{save();schedule();const th=document.querySelector(".pth");if(th&&S.photo)th.innerHTML=`<img src="${S.photo}" alt="">`}),60);return}
+ const p=el.dataset.p;if(!p)return;const a=p.split("|"),d=D();
+ if(a[0]==="p")d[a[1]]=el.value;
+ else if(a[0]==="l")d.links[+a[1]][a[2]]=el.value;
+ else if(a[0]==="st"){secOf(a[1]).title=el.value;const n=document.querySelector(".open>.ch .chm .n");if(n)n.textContent=el.value||"…"}
+ else if(a[0]==="s"){const s=secOf(a[1]);s.items[+a[2]][a[3]]=el.value;
+  if(a[3]==="a"||a[3]==="b"){const btn=el.closest(".it").querySelector(".ih>button:first-child");btn.textContent=itemSummary(s,s.items[+a[2]])}}
+ save();schedule();const eb=$("eb");if(eb&&!isBlank(D()))eb.remove()});
+$("ed").addEventListener("click",e=>{
+ const b=e.target.closest("[data-a]");if(!b||b.disabled)return;
+ const a=b.dataset.a,v=b.dataset.v,d=D();
+ if(a==="set"){const k=b.dataset.k;
+  if(k==="photoOn"){S.photoOn=v==="1";save();renderEd();buildPreview();return}
+  if(k==="shape"){S.shape=v;save();cropPhoto().then(()=>{save();renderEd();buildPreview()});return}
+  S[k]=v;save();
+  if(k==="ui"){chrome();renderEd();return}
+  if(k==="cl"){ensureGuide(S.cl);OP="";OI="";refresh();return}
+  renderEd();buildPreview();return}
+ if(a==="acc"){OP=OP===v?"":v;OI="";renderEd();return}
+ if(a==="item"){OI=OI===v?"":v;renderEd();return}
+ if(a==="sshow"){const s=secOf(v);s.show=!s.show;save();renderEd();buildPreview();return}
+ if(a==="smv"){const i=d.sections.findIndex(s=>s.id===v),j=i+(+b.dataset.d);if(j<0||j>=d.sections.length)return;[d.sections[i],d.sections[j]]=[d.sections[j],d.sections[i]];save();renderEd();buildPreview();return}
+ if(a==="imv"){const[id,ix]=v.split(":"),s=secOf(id),i=+ix,j=i+(+b.dataset.d);if(j<0||j>=s.items.length)return;[s.items[i],s.items[j]]=[s.items[j],s.items[i]];OI=id+":"+j;save();renderEd();buildPreview();return}
+ if(a==="idel"){if(!arm(b,t("delConfirm")))return;const[id,ix]=v.split(":"),s=secOf(id);s.items.splice(+ix,1);if(!s.items.length)s.items.push(blankItem());OI="";save();renderEd();buildPreview();return}
+ if(a==="addi"){const s=secOf(v);s.items.push(blankItem());OI=v+":"+(s.items.length-1);save();renderEd();buildPreview();return}
+ if(a==="sdel"){if(!arm(b,t("delConfirm")))return;d.sections=d.sections.filter(s=>s.id!==v);OP="";save();renderEd();buildPreview();return}
+ if(a==="addsec"){const id="x"+Date.now().toString(36),type=(ADD.find(x=>x[0]===v)||[0,"custom"])[1];d.sections.push({id,type,title:TT[S.cl][v]||TT.en[v],show:true,items:[blankItem()]});OP=id;OI=id+":0";save();renderEd();buildPreview();return}
+ if(a==="ladd"){d.links.push({t:"",u:""});save();renderEd();return}
+ if(a==="ldel"){d.links.splice(+v,1);save();renderEd();buildPreview();return}
+ if(a==="pup"){$("pf").click();return}
+ if(a==="prm"){S.psrc="";S.photo="";save();renderEd();buildPreview();return}
+ if(a==="loadsample"){S.data[S.cl]=mk(S.cl);S.banner=1;OP="per";OI="";save();renderEd();buildPreview();return}
+ if(a==="bok"){S.banner=0;save();renderEd();return}
+ if(a==="clear"){if(!arm(b,t("confirmClear")))return;
+  ["en","ckb"].forEach(l=>{const x=S.data[l];x.name=x.title=x.email=x.phone=x.loc="";x.links=[{t:"",u:""},{t:"",u:""}];x.sections.forEach(s=>{s.items=[blankItem()]})});
+  S.photo="";S.psrc="";S.banner=0;OP="per";OI="";save();renderEd();buildPreview();return}
+ if(a==="reset"){if(!arm(b,t("resetConfirm")))return;const ui=S.ui,cl=S.cl;S=fresh();S.ui=ui;S.cl=cl;OP="";OI="";save();refresh();return}
+});
+
+/* ---------------- export ---------------- */
+const fontsReady=()=>Promise.race([document.fonts?document.fonts.ready:Promise.resolve(),new Promise(r=>setTimeout(r,2500))]);
+/* invisible text layer so ATS / text extraction can read the PDF (Latin text only) */
+function addTextLayer(pdf,page){
+ const pr=page.getBoundingClientRect(),k=210/pr.width;
+ const tw=document.createTreeWalker(page,NodeFilter.SHOW_TEXT),rg=document.createRange();let n;
+ pdf.setFont("helvetica","normal");
+ while((n=tw.nextNode())){const s=n.nodeValue;if(!s.trim())continue;
+  const fs=parseFloat(getComputedStyle(n.parentElement).fontSize)||14;
+  let seg="",x0=0,top0=null,bot=0;
+  const flush=()=>{if(seg.trim()){try{pdf.setFontSize(fs*.75);pdf.text(seg,(x0-pr.left)*k,(bot-pr.top-fs*.22)*k,{renderingMode:"invisible"})}catch(e){}}seg=""};
+  for(let i=0;i<s.length;i++){rg.setStart(n,i);rg.setEnd(n,i+1);const r=rg.getClientRects()[0];if(!r)continue;
+   if(top0===null||Math.abs(r.top-top0)>fs*.5){flush();x0=r.left;top0=r.top}
+   seg+=s[i];bot=r.bottom}
+  flush()}
+ page.querySelectorAll("a[href]").forEach(a=>{try{const r=a.getBoundingClientRect();if(r.width)pdf.link((r.left-pr.left)*k,(r.top-pr.top)*k,r.width*k,r.height*k,{url:a.href})}catch(e){}})}
+async function exportPdf(){
+ if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert(t("libFail"));return}
+ if(!FIT.fits){alert(t("fitOver"));return}
+ const b=$("bpdf");b.disabled=true;const ov=$("ov");ov.textContent=t("pdfWait");ov.classList.add("on");
+ const w=document.createElement("div");w.style.cssText="position:absolute;left:0;top:0;width:794px;background:#fff;z-index:-1";document.body.appendChild(w);
+ try{await fontsReady();const r=renderCV(w,true);await new Promise(x=>requestAnimationFrame(()=>x()));
+  const pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
+  const nm0=(D().name||"").trim();try{pdf.setProperties({title:(nm0||"CV")+" – CV",author:nm0,subject:"Curriculum Vitae"})}catch(e){}
+  const c=await html2canvas(r.p,{scale:innerWidth<900?2:2.5,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:794,windowHeight:1123});
+  pdf.addImage(c.toDataURL("image/jpeg",.92),"JPEG",0,0,210,297,undefined,"FAST");c.width=c.height=0;
+  if(S.cl==="en")addTextLayer(pdf,r.p);
+  const blob=pdf.output("blob"),nm=(nm0.replace(/[^\p{L}\p{N}\- ]+/gu,"").trim().replace(/\s+/g,"_").slice(0,40)||"My")+"_CV.pdf";
+  let dl=null;try{dl=window.claude&&await claude.use("downloads")}catch(x){}
+  if(dl)await dl.save({filename:nm,data:blob});
+  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
+ }catch(x){if(!(x&&x.code==="declined"))alert(t("pdfFail"))}
+ finally{w.remove();ov.classList.remove("on");b.disabled=false}}
+
+addEventListener("resize",()=>{clearTimeout(pvT);pvT=setTimeout(applyScale,80)});
+["en","ckb"].forEach(l=>ensureGuide(l));
+chrome();renderEd();buildPreview();
+if(document.fonts&&document.fonts.load){const smp="ڕێڵۆە کوردی";Promise.all(["400","600","700"].map(w=>document.fonts.load(w+' 14px "Noto Sans Arabic"',smp).catch(()=>0)).concat(document.fonts.load('400 14px "Noto Naskh Arabic"',smp).catch(()=>0))).then(()=>{buildPreview();if(document.fonts.ready)document.fonts.ready.then(buildPreview)})}
+else if(document.fonts&&document.fonts.ready)document.fonts.ready.then(buildPreview);
+</script>
+</body></html>
