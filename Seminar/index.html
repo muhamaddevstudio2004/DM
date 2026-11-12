@@ -534,6 +534,39 @@ html[dir="rtl"] .hv-tx{text-align:right}
 .slide .pic .pic-x{position:absolute;top:12px;right:12px;min-width:68px;height:68px;min-height:0;padding:0 14px;border-radius:34px;border:3px solid #fff;background:#b00020;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;z-index:3;box-shadow:0 3px 10px rgba(0,0,0,.35);font:700 26px/1 var(--cf),system-ui,sans-serif}
 .slide .pic .pic-x .ic{width:34px;height:34px;stroke-width:3}
 .slide .pic .pic-x.arm{background:#7a0016}
+.slide .lgc{cursor:pointer}
+/* RTL: bullet cards must sit in the same column as the lead paragraph card */
+.slide.rtl .bd ul{padding:0}
+/* cover: college / department line stays on ONE row (font shrinks to fit) */
+.slide .inst{max-width:760px}.slide .inst span{white-space:nowrap}
+/* ---- Live editing (tap any element on a slide) ---- */
+#doc [data-ed],#doc .pic:not(.ph){cursor:pointer}
+@media(hover:hover){#doc [data-ed]:hover{outline:4px dashed var(--gd);outline-offset:6px;border-radius:6px}}
+#doc [data-ed]:active{outline:8px solid var(--gd);outline-offset:6px;border-radius:6px}
+body.lsh-open{overflow:hidden}
+#lsh{position:fixed;left:0;right:0;top:0;height:100%;z-index:9000;background:rgba(30,20,48,.55);display:flex;align-items:flex-end;justify-content:center}
+#lsh[hidden]{display:none}
+#lsh .lcard{width:100%;max-width:580px;max-height:94%;display:flex;flex-direction:column;background:var(--card);color:var(--fg);border-radius:18px 18px 0 0;border-top:4px solid var(--yl);box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+@media(min-width:700px){#lsh{align-items:center}#lsh .lcard{border-radius:18px;max-height:88%}}
+#lsh .lhd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--bd)}
+#lsh .lhd b{font-size:17px;color:var(--ac)}
+#lsh .lx{min-height:36px;padding:4px 8px}
+#lsh .lbd{padding:12px 14px;overflow:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+#lsh .lft{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd)}
+#lsh .lft button{flex:1}
+#lsh .lf{margin-bottom:12px}
+#lsh .lf>label{display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:var(--ac)}
+#lsh .lf input[type=text],#lsh .lf textarea{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg)}
+#lsh .lf textarea{min-height:150px;resize:vertical;line-height:1.55}
+#lsh .lseg,#lsh .lact{display:flex;gap:6px;flex-wrap:wrap}
+#lsh .lseg button{flex:1;min-width:58px;padding:6px 8px}
+#lsh .lact button{flex:1;min-width:92px;padding:6px 8px}
+#lsh .dng{color:#b00020;border-color:#e3b8bf}
+#lsh .lsr{display:flex;gap:6px;margin-bottom:6px}
+#lsh .lsr input{flex:1;width:auto}
+#lsh .lthumb{max-width:100%;max-height:170px;border-radius:10px;display:block;margin:0 auto 8px;object-fit:contain;background:#eee}
+#lsh .lsub{font-size:12px;font-weight:700;color:var(--mut);margin:14px 0 6px;letter-spacing:.03em}
+#lsh .lhint{font-size:12px;color:var(--mut);margin:4px 0 0}
 </style></head><body data-tab="edit">
 <div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button><button id="bdocx" aria-label="Download PowerPoint file"></button><button id="bprint" aria-label="Print"></button></div>
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
@@ -1005,14 +1038,21 @@ function mkLoader({title,steps}){
   update(p,label){p=Math.max(0,Math.min(100,Math.round(p)));q(".ld-pct").textContent=p+"%";q(".ld-bar i").style.width=p+"%";if(label!=null)q(".ld-st").textContent=label},
   steps(i,f){el.querySelectorAll("[data-i]").forEach(li=>{const j=+li.dataset.i,d=j<i||(j==i&&f>=1);li.classList.toggle("done",d);li.classList.toggle("cur",!d&&j==i)})},
   done(msg){el.classList.add("is-done");q(".ld-ttl").textContent="Completed";q(".ld-pct").textContent="100%";q(".ld-bar i").style.width="100%";q(".ld-st").textContent=msg;q(".ld-ic").innerHTML=ic("check");el.querySelectorAll("[data-i]").forEach(li=>{li.classList.add("done");li.classList.remove("cur")})}}}
+function detectScript(raw){
+  const t=String(raw).replace(/https?:\/\/\S+/g,"").replace(/^\s*image\s*:.*$/gim,"");
+  const a=(t.match(/[\u0600-\u06FF\u0750-\u077F]/g)||[]).length,l=(t.match(/[A-Za-z]/g)||[]).length;
+  if(a<10||a<l*0.5)return null;
+  const ku=(t.match(/[ڕڵۆێەڤپچژگکی]/g)||[]).length;
+  return ku>=3?"ckb":"ar"}
 async function runGen(raw){
  const ST=["Reading seminar content…","Detecting headings and sections…","Organizing seminar content…","Creating A4 pages…","Applying academic formatting…","Generating table of contents…","Calculating page numbers…","Preparing the final seminar…"];
  const LD=mkLoader({title:"Generating seminar",steps:ST});
  const set=async(i,f)=>{LD.update((i+f)/8*100,ST[i]);LD.steps(i,f);await tickP(f===0||f>=1?70:16)};
- const oldP=S.pages,oldT=S.info.title;let w=null;
+ const oldP=S.pages,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font;let w=null;
  try{
   /* 1 read */
-  await set(0,0);const L=cleanAI(raw).split("\n"),CH=2000,out=[];
+  await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}
+   const L=cleanAI(raw).split("\n"),CH=2000,out=[];
   for(let a=0;a<L.length;a+=CH){out.push(...L.slice(a,a+CH).map(x=>x.replace(/\t/g,"  ")));await set(0,Math.min(1,(a+CH)/L.length))}
   /* 2 detect */
   await set(1,0);const rep=parseReport(out.join("\n"));if(!rep.pages.length)throw new Error("empty");await set(1,1);
@@ -1020,7 +1060,7 @@ async function runGen(raw){
   for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"||(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;
+  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;if(SCR)S.pages.forEach(g=>{if(!isRefPg(g)&&(g.hint||g.picUrl||g.pic))g.pos="l"});
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
   /* 5 formatting check */
@@ -1037,7 +1077,7 @@ async function runGen(raw){
   const importedChars=S.pages.reduce((n,p)=>n+(p.title||"").length+p.blocks.reduce((m,b)=>m+String(b.text||"").length,0),0);
   console.info("Seminar import complete:",raw.length,"source characters;",importedChars,"characters placed in",S.pages.length,"sections.");
  }catch(x){
-  S.pages=oldP;S.info.title=oldT;if(w)w.remove();LD.el.remove();throw x}
+  S.pages=oldP;S.info.title=oldT;S.dir=oldD;S.rlang=oldRl;S.font=oldF;if(w)w.remove();LD.el.remove();throw x}
 }
 function openUR(){if($("ur"))return;
  const o=document.createElement("div");o.id="ur";
@@ -1145,6 +1185,7 @@ function blockEls(b,cl){const o=[],mk=(t,h)=>{const n=document.createElement(t);
  else if(b.t=="ul"||b.t=="ol")ls.length&&o.push(mk(b.t,ls.map(l=>"<li>"+(b.linkify===false?e(l):linkifyHTML(e(l)))+"</li>").join("")));
  else if(b.t=="tbl"&&ls.length){const r=ls.map(l=>l.split("|").map(c=>b.linkify===false?e(c.trim()):linkifyHTML(e(c.trim()))));const head=r[0]||[],body=r.slice(1);o.push(((t)=>{if(head.length>2)t.className="mc";return t})(mk("table",(b.cap?`<caption>${e(cl||"")}${e(capT(b.cap))}</caption>`:"")+`<thead><tr>${head.map(x=>`<th scope="col">${x}</th>`).join("")}</tr></thead><tbody>${body.map(row=>`<tr>${head.map((_,i)=>`<td data-h="${String(head[i]||"").replace(/<[^>]*>/g,"")}">${row[i]||""}</td>`).join("")}</tr>`).join("")}</tbody>`)))}
  else if(b.t=="img"&&b.src){const layout=b.layout||"left",width={s:"20%",m:"32%",l:"44%"}[b.sz||"m"],note=b.note?`<div class="image-copy">${e(b.note).replace(/\n/g,"<br>")}</div>`:"";const img=`<img class="academic-report-image" src="${b.src}" alt="Seminar illustration" style="width:${layout=="top"||layout=="bottom"?"auto":width};max-width:100%;max-height:360px;object-fit:contain">`;let content=layout=="right"?img+note:layout=="top"?img+note:layout=="bottom"?note+img:img+note;const f=mk("figure",`<div class="image-layout ${layout}">${content}</div>`+(b.cap?`<figcaption>${e(cl||"")}${e(capT(b.cap))}</figcaption>`:""));f.style.textAlign="center";o.push(f)}
+ if(b.ta&&(b.t=="p"||b.t=="ul"||b.t=="ol"))o.forEach(x=>x.style.setProperty("text-align",b.ta,"important"));
  return o}
 function buildCV(bp){const I=S.info;let cur=bp();cur.bd.innerHTML=`<div class="cvh"><h1>${e((I.students||[])[0]||"Your Name")}</h1><div class="cj">${e(I.title)}</div><div class="cc">${e(I.sub)}</div></div>`;
  function add(el){cur.bd.appendChild(el);if(cur.bd.scrollHeight>cur.bd.clientHeight+1&&cur.bd.children.length>1){cur.bd.removeChild(el);cur=bp();cur.bd.appendChild(el)}}
@@ -1204,7 +1245,7 @@ function build(t,doc,exp){const SL=!doc;let K=SL?2.25:1;applyCol();const I=S.inf
  if(curPg.pic){d.style.backgroundImage='url("'+curPg.pic+'")';if(curPg.credit)d.innerHTML='<span class="cr">'+e(curPg.credit)+"</span>"}else d.innerHTML=ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>"+(curPg.hint?"<small>"+e(curPg.hint)+"</small>":"");
  if(!exp){const x=document.createElement("button");x.type="button";x.className="pic-x";x.dataset.rm=d.dataset.pg;x.setAttribute("aria-label","Remove image");x.title="Remove image";x.innerHTML=ic("x");d.appendChild(x)}
  p.appendChild(d)};
- const hdrH=()=>`<div class="sl-h"><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
+ const hdrH=()=>`<div class="sl-h"${curPg?` data-ed="pg:${S.pages.indexOf(curPg)}"`:""}><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
  if(S.tpl=="cv"){buildCV(bp);return}
 const names=(I.students||[]).filter(x=>x&&x.trim());
  np().innerHTML=SL?SLCOVER(I,L,names):`<div class="cv"><div class="ct"><div>${[I.uni,I.col,I.dep].filter(Boolean).map(e).join("<br>")}</div>${S.logo?`<img src="${S.logo}" alt="">`:`<div class="lgph" aria-label="Logo placeholder">${ic("image")}<b>LOGO</b></div>`}</div><div class="cm${I.sub||I.course?"":" ns"}"><h1>${e(I.title||"Seminar Title")}</h1>${I.sub?`<div class="sb">${e(I.sub)}</div>`:""}${I.course?`<div class="sb" style="font-size:calc(13pt*var(--cz,1));margin-top:6px">${L.course+e(I.course)}</div>`:""}</div><div class="cb"><div><b class="r">${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div><b class="r">${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div></div><div class="yr">${e(I.year)}</div></div>`;
@@ -1216,7 +1257,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  const isHd=x=>x.tagName=="H1"||x.tagName=="H2"||x.tagName=="H3";
  const over=()=>cur.bd.scrollHeight>cur.bd.clientHeight+1;
  const lh=el=>{const c=getComputedStyle(el);return parseFloat(c.lineHeight)||parseFloat(c.fontSize)*1.5};
- const clone=(el,tg)=>{const r=document.createElement(tg||el.tagName);r.style.fontSize=el.style.fontSize;return r};
+ const clone=(el,tg)=>{const r=document.createElement(tg||el.tagName);r.style.fontSize=el.style.fontSize;if(el.dataset.ed)r.dataset.ed=el.dataset.ed;if(el.style.textAlign)r.style.setProperty("text-align",el.style.textAlign,"important");return r};
  const sz=(el,fs)=>{const g=el.tagName,m={H1:S.h1||16,H2:S.h2||14,H3:S.h3||12};el.style.fontSize=((g in m?m[g]:g=="TABLE"?+(fs*.92).toFixed(2):fs)*K).toFixed(2)+"pt";return el};
  const whole=el=>{const g=el.tagName;if(g=="P")return Math.round(el.offsetHeight/lh(el))<=4;if(g=="UL"||g=="OL")return el.children.length<=3;return true};
  function toNext(el){cur.bd.removeChild(el);const mv=[el];let pv;
@@ -1254,12 +1295,12 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   if(has){toNext(el);if(!over())return}
   splitEl(el)}
  const mkH=(tag,txt,cls)=>{const h=document.createElement(tag);if(cls)h.className=cls;h.textContent=txt;return h};
- function secEls(sec,fs){const out=[],im={};sec.items.forEach(x=>im[x.bi]=x);
+ function secEls(sec,fs){const out=[],im={};sec.items.forEach(x=>im[x.bi]=x);const pi=S.pages.indexOf(sec.pg),tg=(el,v)=>{el.dataset.ed=v;return el};
   const h=mkH("h1",(sec.num?sec.num+" ":"")+sec.title,"sh");sec.el=h;out.push(sz(h,fs));
-  if(sec.k==="ref"){sec.pg.blocks.forEach(b=>blockEls(b).forEach(el=>out.push(sz(el,fs))));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.innerHTML=referenceHTML(r,i);out.push(sz(d,fs))});return out}
+  if(sec.k==="ref"){sec.pg.blocks.forEach((b,bi)=>blockEls(b).forEach(el=>out.push(sz(tg(el,"b:"+pi+":"+bi),fs))));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.dataset.ed="ref:"+r.id;d.innerHTML=referenceHTML(r,i);out.push(sz(d,fs))});return out}
   sec.pg.blocks.forEach((b,bi)=>{
-   if(b.t=="h"){const x=im[bi];if(!x)return;const hh=mkH(x.lv==3?"h3":"h2",(x.num?x.num+" ":"")+x.title);x.el=hh;out.push(sz(hh,fs));return}
-   const c=cm.get(b);blockEls(b,c&&c.label).forEach(el=>{out.push(sz(el,fs));if(c&&!c.el&&(el.tagName=="FIGURE"||el.tagName=="TABLE"))c.el=el})});
+   if(b.t=="h"){const x=im[bi];if(!x)return;const hh=mkH(x.lv==3?"h3":"h2",(x.num?x.num+" ":"")+x.title);tg(hh,"b:"+pi+":"+bi);x.el=hh;out.push(sz(hh,fs));return}
+   const c=cm.get(b);blockEls(b,c&&c.label).forEach(el=>{tg(el,"b:"+pi+":"+bi);out.push(sz(el,fs));if(c&&!c.el&&(el.tagName=="FIGURE"||el.tagName=="TABLE"))c.el=el})});
   return out}
  const ONEK=["en","ckb","ar"].flatMap(l=>[AISEC[l].intro,AISEC[l].con,AISEC[l].ref]).map(x=>x.toLowerCase());
  const isOne=sec=>{if(sec.k==="ref")return true;const q=(sec.title||"").toLowerCase().replace(/^[\d.\s]+/,"").trim();return ONEK.includes(q)||/^(introduction|conclusions?|references|bibliography)$/.test(q)};
@@ -1305,17 +1346,21 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  rows.forEach(r=>{r.pg.textContent=pn(r.ref.el);if(!r.pg.textContent)console.warn("TOC entry without page:",r.txt)});
  try{tameJustify(t)}catch(x){console.warn("justify smoothing skipped",x)}
  t.querySelectorAll(".page .bd").forEach(b=>{if(b.scrollHeight>b.clientHeight+1)console.warn("page overflow")})}
-function SLCOVER(I,L,names){return `<div class="ts"><div class="tc"><div class="t1"><div class="inst"><b>${e(I.uni||"")}</b><span>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</span></div>${S.logo?`<div class="lgc"><img src="${S.logo}" alt=""></div>`:`<div class="lgc ph">${ic("image")}<span>${S.dir=="rtl"?(RL()=="ar"?"الشعار":"لۆگۆ"):"LOGO"}</span></div>`}</div><div class="t2">${I.course?`<div class="kick">${e(I.course)}</div>`:""}<h1>${e(I.title||"Seminar Title")}</h1><span class="rule"></span>${I.sub?`<div class="sub">${e(I.sub)}</div>`:""}</div><div class="t3"><div><b>${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div><b>${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div><div class="yr">${e(I.year||"")}</div></div></div></div>`}
+function SLCOVER(I,L,names){return `<div class="ts"><div class="tc"><div class="t1"><div class="inst" data-ed="info:uni,col,dep"><b>${e(I.uni||"")}</b><span>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</span></div>${S.logo?`<div class="lgc"><img src="${S.logo}" alt=""></div>`:`<div class="lgc ph">${ic("image")}<span>${S.dir=="rtl"?(RL()=="ar"?"الشعار":"لۆگۆ"):"LOGO"}</span></div>`}</div><div class="t2" data-ed="info:title,sub,course">${I.course?`<div class="kick">${e(I.course)}</div>`:""}<h1>${e(I.title||"Seminar Title")}</h1><span class="rule"></span>${I.sub?`<div class="sub">${e(I.sub)}</div>`:""}</div><div class="t3"><div data-ed="stu"><b>${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div data-ed="stu"><b>${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div><div class="yr" data-ed="info:year">${e(I.year||"")}</div></div></div></div>`}
 const defPos=()=>S.dir=="rtl"?"l":"r";
 function isRefPg(g){if(g.kind==="ref")return true;const q=(g.title||"").trim().toLowerCase();return /^(references|bibliography)$/.test(q)||["en","ckb","ar"].some(l=>AISEC[l].ref.toLowerCase()===q)}
 function pgPos(g){if(!g||g.pos==="n")return"n";if(g.pos)return g.pos;if(g.pic)return defPos();if((g.hint||g.picUrl)&&!isRefPg(g))return defPos();return"n"}
 let _pickPg=-1;const _pi=document.createElement("input");_pi.type="file";_pi.accept="image/*";_pi.hidden=true;document.body.appendChild(_pi);
 _pi.onchange=()=>{const f=_pi.files&&_pi.files[0],g=S.pages[_pickPg];_pi.value="";if(!f||!g)return;shrink(f,1000,"image/jpeg",d=>{g.pic=d;delete g.credit;if(!g.pos||g.pos=="n")g.pos=defPos();changed(true)})};
+/* tap the logo (or its placeholder) in Live preview to upload / replace it */
+const _li=document.createElement("input");_li.type="file";_li.accept="image/*";_li.hidden=true;document.body.appendChild(_li);
+_li.onchange=()=>{const f=_li.files&&_li.files[0];_li.value="";if(!f)return;shrink(f,400,"image/png",d=>{S.logo=d;changed(true)})};
+$("doc").addEventListener("click",ev=>{if(ev.target.closest(".lgc"))_li.click()});
 $("doc").addEventListener("click",ev=>{const rx=ev.target.closest(".pic-x");
  if(rx){ev.stopPropagation();
   if(!rx.dataset.arm){rx.dataset.arm=1;rx.classList.add("arm");rx.textContent=tr("Remove image")+"?";setTimeout(()=>{if(rx.isConnected){delete rx.dataset.arm;rx.classList.remove("arm");rx.innerHTML=ic("x")}},3000);return}
   const g=S.pages[+rx.dataset.rm];if(g){g.pos="n";delete g.pic;delete g.credit;delete g.picUrl;changed(true)}return}
- const p=ev.target.closest(".pic");if(!p||p.dataset.pg===undefined)return;_pickPg=+p.dataset.pg;_pi.click()});
+ const p=ev.target.closest(".pic");if(!p||p.dataset.pg===undefined)return;if(p.classList.contains("ph")||!window.LV){_pickPg=+p.dataset.pg;_pi.click();return}LV.open("pic:"+p.dataset.pg)});
 window.addEventListener("beforeprint",()=>{try{build($("doc"),0,true)}catch(x){}});window.addEventListener("afterprint",()=>{try{rp()}catch(x){}});
 function toast(m,ms){let t=$("tst");if(!t){t=document.createElement("div");t.id="tst";t.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#2b2340;color:#fff;padding:10px 18px;border-radius:22px;font:600 14px/1.3 system-ui,sans-serif;z-index:9998;max-width:86vw;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.3)";document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(t._t);if(ms)t._t=setTimeout(()=>{t.hidden=true},ms)}
 async function findImg(q){
@@ -1345,8 +1390,8 @@ async function autoImagesBg(){if(_auto||!S.pages.some(g=>(g.hint||g.picUrl)&&!g.
 async function runAuto(b){const sp=b.querySelector("span"),o=sp.textContent;b.disabled=true;
  try{const[n,t]=await autoImages(i=>{sp.textContent=tr("Finding images…")+" "+i});toast(t?(n?tr("Images added")+": "+n+"/"+t:tr("No images found. Tap a placeholder to add one.")):tr("No image suggestions in this seminar"),5000)}catch(x){toast(tr("Could not reach the image service"),5000)}
  b.disabled=false;sp.textContent=o;changed(true)}
-function fitCover(tc){const h=tc.querySelector("h1"),sb=tc.querySelector(".sub");if(!h)return;const ov=()=>tc.scrollHeight>tc.clientHeight+1;let f=78;while(ov()&&f>34){f-=3;h.style.fontSize=f+"px"}let g=41;while(sb&&ov()&&g>22){g-=2;sb.style.fontSize=g+"px"}}
-function SLEND(I,names,rt){const ar=RL()=="ar",T=!rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"];return `<div class="ts ts2"><div class="tc ce"><div class="ce1">${e(I.uni||"")}<br><small>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</small></div><div><h1>${T[0]}</h1><span class="rule"></span><div class="sub">${T[1]}</div></div><div class="ce3">${e(names.join(" · "))}${I.sup?"<br><small>"+e(I.sup)+"</small>":""}</div></div></div>`}
+function fitCover(tc){const h=tc.querySelector("h1"),sb=tc.querySelector(".sub"),is=tc.querySelector(".inst span");if(is){let q=31;is.style.fontSize=q+"px";while(is.scrollWidth>is.clientWidth+1&&q>18){q-=1;is.style.fontSize=q+"px"}}if(!h)return;const ov=()=>tc.scrollHeight>tc.clientHeight+1;let f=78;while(ov()&&f>34){f-=3;h.style.fontSize=f+"px"}let g=41;while(sb&&ov()&&g>22){g-=2;sb.style.fontSize=g+"px"}}
+function SLEND(I,names,rt){const ar=RL()=="ar",T=!rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"];return `<div class="ts ts2"><div class="tc ce"><div class="ce1" data-ed="info:uni,col,dep">${e(I.uni||"")}<br><small>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</small></div><div><h1>${T[0]}</h1><span class="rule"></span><div class="sub">${T[1]}</div></div><div class="ce3" data-ed="stu">${e(names.join(" · "))}${I.sup?"<br><small>"+e(I.sup)+"</small>":""}</div></div></div>`}
 function tameJustify(t){
  const cv=tameJustify.cv||(tameJustify.cv=document.createElement("canvas").getContext("2d"));
  t.querySelectorAll(".page:not(.rtl) .bd p").forEach(p=>{
@@ -1455,10 +1500,11 @@ async function makeDocx(pgn){
   else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(b.cap),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
  const capP=(txt,fs,c)=>P(R(txt,{i:!rt,sz:Math.round(fs*2*.9)}),{keepNext:0,jc:"center",sp:'w:before="40" w:after="120" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
  /* ---- block (dom) -> xml ---- */
+ const jcOf=el=>{const a=el.style&&el.style.textAlign;if(!a)return undefined;if(a=="center")return"center";return rt?(a=="left"?"right":"left"):a};
  function conv(el,fs,c,b){const t=el.tagName,o={sz:fs*2};
-  if(t=="P")return P(runsOf(el,o),{});
+  if(t=="P")return P(runsOf(el,o),{jc:jcOf(el)});
   if(t=="UL"||t=="OL"){const nid=t=="OL"?newNum(el.start||1):1,li=[...el.children];
-   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:20}"`})).join("")}
+   return li.map((x,i)=>P(runsOf(x,o),{num:nid,jc:jcOf(el),sp:`w:after="${i==li.length-1?120:20}"`})).join("")}
   if(t=="TABLE"){const cap=el.querySelector("caption");let out="";
    if(cap)out+=P(R(cap.textContent,{i:!rt,sz:Math.round(fs*2*.95)}),{keepNext:1,jc:"center",sp:'w:before="60" w:after="80" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
    const hr=[...el.querySelectorAll("thead tr")],br=[...el.querySelectorAll("tbody tr")],nc=Math.max(1,((hr[0]||br[0]||{children:[]}).children.length)),cw=Math.floor(TW/nc),tsz=Math.round(fs*2*.92);
@@ -1749,5 +1795,111 @@ const RLAB={ckb:{toc:"ناوەڕۆک",by:"پێشکەشکراوە لەلایەن:
 const RL=()=>S.dir=="rtl"&&S.rlang=="ar"?"ar":"ckb";
 Object.assign(DICT.ckb,{"Find images automatically":"دۆزینەوەی وێنە بە خۆکاری","Finding images…":"گەڕان بۆ وێنە…","Images added":"وێنە زیادکرا","tap an image to replace it":"دەست لە وێنەیەک بدە بۆ گۆڕینی","No images found. Tap a placeholder to add one.":"وێنە نەدۆزرایەوە. دەست لە شوێنی وێنە بدە بۆ زیادکردنی.","Could not reach the image service":"پەیوەندی بە خزمەتگوزاری وێنەوە نەکرا","No image suggestions in this seminar":"هیچ پێشنیاری وێنە لەم سیمینارەدا نییە","Tap to add image":"دەست بدە بۆ زیادکردنی وێنە","Suggested image":"وێنەی پێشنیارکراو","Change image":"گۆڕینی وێنە","Choose image":"هەڵبژاردنی وێنە","Remove image":"سڕینەوەی وێنە","Search images":"گەڕان بۆ وێنە","Add images to slides":"زیادکردنی وێنە بۆ سلایدەکان","Slide image":"وێنەی سلاید","None":"هیچ","Right":"ڕاست","Left":"چەپ","Top":"سەرەوە","Creating PowerPoint file":"دروستکردنی فایلی PowerPoint","Your PowerPoint is ready":"PowerPoint ئامادەیە","Building PowerPoint…":"دروستکردنی PowerPoint…","Preparing slides…":"ئامادەکردنی سلایدەکان…","Number of slides":"ژمارەی سلایدەکان","Other number (5–40)":"ژمارەیەکی تر (٥–٤٠)"});Object.assign(DICT.ar,{"Find images automatically":"البحث عن الصور تلقائياً","Finding images…":"جارٍ البحث عن الصور…","Images added":"تمت إضافة الصور","tap an image to replace it":"اضغط على الصورة لاستبدالها","No images found. Tap a placeholder to add one.":"لم يتم العثور على صور. اضغط على مكان الصورة لإضافتها.","Could not reach the image service":"تعذر الاتصال بخدمة الصور","No image suggestions in this seminar":"لا توجد اقتراحات صور في هذا العرض","Tap to add image":"اضغط لإضافة صورة","Suggested image":"الصورة المقترحة","Change image":"تغيير الصورة","Choose image":"اختيار صورة","Remove image":"حذف الصورة","Search images":"البحث عن صور","Add images to slides":"إضافة صور إلى الشرائح","Slide image":"صورة الشريحة","None":"بدون","Right":"يمين","Left":"يسار","Top":"أعلى","Creating PowerPoint file":"إنشاء ملف PowerPoint","Your PowerPoint is ready":"ملف PowerPoint جاهز","Building PowerPoint…":"جارٍ إنشاء PowerPoint…","Preparing slides…":"تجهيز الشرائح…","Number of slides":"عدد الشرائح","Other number (5–40)":"رقم آخر (٥–٤٠)"});
 if(!DICT.ckb["Auto"])DICT.ckb["Auto"]="خۆکار";if(!DICT.ar["Auto"])DICT.ar["Auto"]="تلقائي";
+/* ---------- Live editing: tap any text / image on a slide to edit it ---------- */
+(function(){
+const T=(k,a,b)=>{if(!DICT.ckb[k])DICT.ckb[k]=a;if(!DICT.ar[k])DICT.ar[k]=b};
+[["Edit paragraph","دەستکاری پەرەگراف","تعديل الفقرة"],["Edit list","دەستکاری لیست","تعديل القائمة"],["Edit table","دەستکاری خشتە","تعديل الجدول"],["Edit subtitle","دەستکاری ژێرناونیشان","تعديل العنوان الفرعي"],["Edit image","دەستکاری وێنە","تعديل الصورة"],
+["Slide settings","ڕێکخستنی سلاید","إعدادات الشريحة"],["Seminar title","ناونیشانی سیمینار","عنوان السمنار"],["University details","زانیاری زانکۆ","بيانات الجامعة"],["Academic year","ساڵی خوێندن","السنة الدراسية"],
+["Students and supervisor","خوێندکاران و سەرپەرشتیار","الطلاب والمشرف"],["Students","خوێندکاران","الطلاب"],["Edit reference","دەستکاری سەرچاوە","تعديل المصدر"],["Slide image","وێنەی سلاید","صورة الشريحة"],
+["Close","داخستن","إغلاق"],["Done","تەواو","تم"],["Alignment","ڕیزکردن","المحاذاة"],["Auto","خۆکار","تلقائي"],["Center","ناوەڕاست","وسط"],["Left","چەپ","يسار"],["Right","ڕاست","يمين"],
+["Top","سەرەوە","أعلى"],["Bottom","خوارەوە","أسفل"],["None","هیچ","بدون"],["Image position","شوێنی وێنە","موضع الصورة"],["Size","قەبارە","الحجم"],["Small","بچووک","صغير"],["Medium","مامناوەند","متوسط"],["Large","گەورە","كبير"],
+["Replace image","گۆڕینی وێنە","استبدال الصورة"],["Choose image","هەڵبژاردنی وێنە","اختيار صورة"],["Remove image","لابردنی وێنە","إزالة الصورة"],["Move up","بەرزکردنەوە","تحريك للأعلى"],["Move down","دابەزاندن","تحريك للأسفل"],
+["Add below","زیادکردن لە خوارەوە","إضافة أدناه"],["Add to this slide","زیادکردن بۆ ئەم سلایدە","إضافة إلى هذه الشريحة"],["Delete this item","سڕینەوەی ئەم بڕگەیە","حذف هذا العنصر"],["Delete this section","سڕینەوەی ئەم بەشە","حذف هذا القسم"],
+["Move section up","بەشەکە بەرەو سەرەوە","نقل القسم للأعلى"],["Move section down","بەشەکە بەرەو خوارەوە","نقل القسم للأسفل"],["Section title","ناونیشانی بەش","عنوان القسم"],["Text size","قەبارەی نووسین","حجم الخط"],
+["Side image","وێنەی تەنیشت","الصورة الجانبية"],["Delete reference","سڕینەوەی سەرچاوە","حذف المصدر"],["Author","نووسەر","المؤلف"],["Year","ساڵ","السنة"],["Title","ناونیشان","العنوان"],["Source / journal","سەرچاوە / گۆڤار","المصدر / المجلة"],
+["Volume","بەرگ","المجلد"],["Issue","ژمارە","العدد"],["Pages","لاپەڕەکان","الصفحات"],["Publisher","بڵاوکەرەوە","الناشر"],["URL / DOI","بەستەر / DOI","الرابط / DOI"],
+["Image caption (optional)","ناونیشانی وێنە (ئارەزوومەندانە)","تعليق الصورة (اختياري)"],["Text beside the image","دەق لە تەنیشت وێنە","نص بجانب الصورة"],["One item per line","یەک بڕگە لە هەر دێڕێک","عنصر واحد في كل سطر"],
+["Tap any text or image on a slide to edit it","دەست لە هەر دەق یان وێنەیەک بدە لەسەر سلایدەکان بۆ دەستکاریکردن","اضغط على أي نص أو صورة في الشريحة لتعديلها"],
+["Paragraph","پەرەگراف","فقرة"],["Bullet list","لیستی خاڵبەندی","قائمة نقطية"],["Table","خشتە","جدول"],["Image","وێنە","صورة"],["Subtitle","ژێرناونیشان","عنوان فرعي"],["Sure? Tap again","دڵنیایت؟ دووبارە دەست لێبدە","هل أنت متأكد؟ اضغط مرة أخرى"],["Cancel","پاشگەزبوونەوە","إلغاء"],
+["Type","جۆر","النوع"],["Level","ئاست","المستوى"],["Add student","زیادکردنی خوێندکار","إضافة طالب"],["Student name","ناوی خوێندکار","اسم الطالب"],["Level 2 (1.1)","ئاستی ٢ (1.1)","المستوى 2 (1.1)"],["Level 3 (1.1.1)","ئاستی ٣ (1.1.1)","المستوى 3 (1.1.1)"]].forEach(x=>T(...x));
+const ov=document.createElement("div");ov.id="lsh";ov.hidden=true;document.body.appendChild(ov);
+let sh=null;const rt=()=>S.dir=="rtl",ph=v=>rt()&&(v=="left"||v=="right")?(v=="left"?"right":"left"):v;
+const lab=Object.fromEntries(FIELDS),X=s=>e(tr(s));
+const row=(l,h,hint)=>`<div class="lf"><label>${X(l)}</label>${h}${hint?`<p class="lhint">${X(hint)}</p>`:""}</div>`;
+const inp=(k,v,ph)=>`<input type="text" data-k="${k}" value="${e(v||"")}" placeholder="${e(ph?tr(ph):"")}">`;
+const area=(k,v,ph,r)=>`<textarea data-k="${k}" rows="${r||6}" placeholder="${e(ph?tr(ph):"")}">${e(v||"")}</textarea>`;
+const seg=(k,o,cur)=>`<div class="lseg" data-seg="${k}">${o.map(([v,l])=>`<button type="button" data-v="${v}" class="${String(cur)===String(v)?"on":""}">${X(l)}</button>`).join("")}</div>`;
+const btn=(a,l,cls,extra)=>`<button type="button" data-act="${a}" class="${cls||""}" ${extra||""}>${l}</button>`;
+const vvFit=()=>{const v=window.visualViewport;if(!v||ov.hidden)return;ov.style.height=v.height+"px";ov.style.top=v.offsetTop+"px"};
+if(window.visualViewport){visualViewport.addEventListener("resize",vvFit);visualViewport.addEventListener("scroll",vvFit)}
+function show(title,body,o){ov.innerHTML=`<div class="lcard" role="dialog" aria-modal="true"><div class="lhd"><b>${X(title)}</b><button type="button" class="lx" data-x="close" aria-label="${X("Close")}">${ic("x")}</button></div><div class="lbd">${body}</div><div class="lft"><button type="button" class="pri" data-x="done">${X("Done")}</button><button type="button" data-x="close">${X("Cancel")}</button></div></div>`;
+ ov.hidden=false;document.body.classList.add("lsh-open");sh=Object.assign({d:{}},o);vvFit();
+ ov.querySelectorAll("input[type=text],textarea").forEach(x=>x.dir="auto");
+ if(o.focus!==false){const f=ov.querySelector("textarea,input[type=text]");if(f)setTimeout(()=>{f.focus();try{f.setSelectionRange(f.value.length,f.value.length)}catch(x){}},80)}}
+function close(){ov.hidden=true;ov.innerHTML="";document.body.classList.remove("lsh-open");sh=null}
+function commit(){const y=window.scrollY;save();renderEd();fit();window.scrollTo(0,y);setTimeout(()=>window.scrollTo(0,y),60)}
+const val=()=>{const o={};ov.querySelectorAll("[data-k]").forEach(x=>o[x.dataset.k]=x.value);return o};
+const armed=b=>{if(!b.dataset.arm){b.dataset.arm=1;b._h=b.innerHTML;b.textContent=tr("Sure? Tap again");setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.innerHTML=b._h}},3000);return false}return true};
+const pickImg=(max,cb)=>{const f=document.createElement("input");f.type="file";f.accept="image/*";f.onchange=()=>{const x=f.files&&f.files[0];if(x)shrink(x,max,"image/jpeg",cb)};f.click()};
+const NEW={p:{t:"p",text:"",cap:""},ul:{t:"ul",text:"",cap:""},tbl:{t:"tbl",text:"Header 1 | Header 2\nCell | Cell",cap:""},img:{t:"img",text:"",cap:"",layout:"left"},h:{t:"h",text:"",cap:""}};
+const addBar=()=>`<div class="lsub">${X("Add below")}</div><div class="lact">${[["p","Paragraph"],["ul","Bullet list"],["tbl","Table"],["img","Image"],["h","Subtitle"]].map(([t,l])=>btn("add",""+"+ "+X(l),"",`data-t="${t}"`)).join("")}</div>`;
+const emptyBlk=b=>b.t=="img"?!b.src:!String(b.text||"").trim();
+
+/* --- cover info fields --- */
+function sInfo(keys){const ks=keys.split(","),I=S.info,t=ks.includes("title")?"Seminar title":ks.includes("uni")?"University details":"Academic year";
+ show(t,ks.map(k=>row(lab[k]||k,inp(k,I[k]))).join(""),{done(){const v=val();ks.forEach(k=>{I[k]=(v[k]||"").trim()})}})}
+/* --- students + supervisor --- */
+function sStu(){const I=S.info,sr=(v,i)=>`<div class="lsr"><input type="text" data-st value="${e(v||"")}" placeholder="${e(tr("Student name"))}">${btn("delstu",ic("trash"),"dng",`aria-label="${X("Delete")}"`)}</div>`;
+ show("Students and supervisor",`<div class="lf"><label>${X("Students")}</label><div id="lstu">${(I.students&&I.students.length?I.students:[""]).map(sr).join("")}</div>${btn("addstu",ic("plus")+X("Add student"))}</div>${row(lab.sup,inp("sup",I.sup))}`,
+ {sr,done(){const v=val();I.students=[...ov.querySelectorAll("[data-st]")].map(x=>x.value.trim()).filter(Boolean);I.sup=(v.sup||"").trim()}})}
+/* --- reference --- */
+function sRef(id){const i=S.refs.findIndex(r=>r.id==id),r=S.refs[i];if(!r)return;const F=[["author","Author"],["year","Year"],["title","Title"],["source","Source / journal"],["volume","Volume"],["issue","Issue"],["pages","Pages"],["publisher","Publisher"],["url","URL / DOI"]];
+ show("Edit reference",F.map(([k,l])=>row(l,inp(k,r[k]))).join("")+`<div class="lact">${btn("delref",ic("trash")+X("Delete reference"),"dng")}</div>`,{focus:false,ref:r,done(){const v=val();F.forEach(([k])=>{r[k]=(v[k]||"").trim()})}})}
+/* --- slide side picture --- */
+function sPic(i){const g=S.pages[i];if(!g)return;const d={pos:pgPos(g)=="n"?defPos():pgPos(g),pic:g.pic};
+ show("Slide image",`<div id="lprev">${d.pic?`<img class="lthumb" src="${d.pic}" alt="">`:""}</div><div class="lact">${btn("pick",ic("image")+X("Replace image"))}${btn("rmpic",ic("trash")+X("Remove image"),"dng")}</div><div class="lsub">${X("Image position")}</div>${seg("pos",[["l","Left"],["r","Right"],["t","Top"]],d.pos)}`,
+ {focus:false,d,g,done(){g.pos=sh.d.pos;if(sh.d.pic!==g.pic){g.pic=sh.d.pic;delete g.credit;delete g.picUrl}}})}
+/* --- section (tap the slide header) --- */
+function sPg(i){const g=S.pages[i];if(!g)return;const d={fs:g.fs||12,pos:pgPos(g)};
+ show("Slide settings",row("Section title",inp("title",g.title))+row("Text size",seg("fs",[10,11,12,13,14,16].map(v=>[v,v]),d.fs))+row("Side image",seg("pos",[["n","None"],["l","Left"],["r","Right"],["t","Top"]],d.pos))
+ +`<div class="lsub">${X("Add to this slide")}</div><div class="lact">${[["p","Paragraph"],["ul","Bullet list"],["tbl","Table"],["img","Image"],["h","Subtitle"]].map(([t,l])=>btn("addend","+ "+X(l),"",`data-t="${t}"`)).join("")}</div>`
+ +`<div class="lact" style="margin-top:12px">${btn("secup",ic("up")+X("Move section up"))}${btn("secdn",ic("down")+X("Move section down"))}</div><div class="lact" style="margin-top:6px">${btn("delsec",ic("trash")+X("Delete this section"),"dng")}</div>`,
+ {d,g,i,done(){const v=val();g.title=(v.title||"").trim()||g.title;g.fs=+sh.d.fs;g.pos=sh.d.pos}})}
+/* --- block (paragraph, list, table, subtitle, image) --- */
+function sBlk(i,k,isNew){const g=S.pages[i],b=g&&g.blocks[k];if(!b)return;const d={ta:b.ta||"",lv:b.lv==3?3:2,layout:ph(b.layout||"left"),sz:b.sz||"m",src:b.src};let body="",t="Edit paragraph",focus=true;
+ const ALN=row("Alignment",seg("ta",[["","Auto"],["left","Left"],["center","Center"],["right","Right"]],d.ta));
+ if(b.t=="p"){body=row("Paragraph",area("text",b.text,"Write or paste text. A new line starts a new paragraph.",8))+ALN}
+ else if(b.t=="ul"||b.t=="ol"){t="Edit list";body=row(b.t=="ul"?"Bullet list":"Numbered list",area("text",b.text,"One item per line",7))+row("Type",seg("lt",[["ul","Bullet list"],["ol","Numbered list"]],b.t))+ALN;d.lt=b.t}
+ else if(b.t=="tbl"){t="Edit table";body=row("Table",area("text",b.text,"",7),"Header 1 | Header 2")+row("Image caption (optional)",inp("cap",b.cap))}
+ else if(b.t=="h"){t="Edit subtitle";body=row("Subtitle",inp("text",b.text))+row("Level",seg("lv",[[2,"Level 2 (1.1)"],[3,"Level 3 (1.1.1)"]],d.lv))}
+ else if(b.t=="img"){t="Edit image";focus=false;body=`<div id="lprev">${b.src?`<img class="lthumb" src="${b.src}" alt="">`:""}</div><div class="lact">${btn("pick",ic("image")+X(b.src?"Replace image":"Choose image"))}</div>`
+  +row("Image position",seg("layout",[["left","Left"],["center","Center"],["right","Right"],["top","Top"],["bottom","Bottom"]],d.layout))+row("Size",seg("sz",[["s","Small"],["m","Medium"],["l","Large"]],d.sz))
+  +row("Image caption (optional)",inp("cap",b.cap))+row("Text beside the image",area("note",b.note,"",4))}
+ body+=`<div class="lsub">${X("Add below")}</div><div class="lact">${[["p","Paragraph"],["ul","Bullet list"],["tbl","Table"],["img","Image"],["h","Subtitle"]].map(([x,l])=>btn("add","+ "+X(l),"",`data-t="${x}"`)).join("")}</div>`
+  +`<div class="lact" style="margin-top:12px">${btn("bup",ic("up")+X("Move up"))}${btn("bdn",ic("down")+X("Move down"))}${btn("delb",ic("trash")+X("Delete this item"),"dng")}</div>`;
+ show(t,body,{focus,d,g,b,i,k,isNew,
+  cancel(){if(isNew&&emptyBlk(b)){const x=g.blocks.indexOf(b);if(x>=0)g.blocks.splice(x,1)}},
+  done(){const v=val(),dd=sh.d;
+   if(b.t=="img"){b.src=dd.src;b.cap=(v.cap||"").trim();b.note=v.note||"";b.layout=ph(dd.layout);b.sz=dd.sz}
+   else if(b.t=="h"){b.text=(v.text||"").trim();b.lv=+dd.lv}
+   else{b.text=String(v.text||"").replace(/\s+$/,"");if(b.t=="tbl")b.cap=(v.cap||"").trim();else{if(dd.lt)b.t=dd.lt;if(dd.ta)b.ta=dd.ta;else delete b.ta}}
+   if(b.t=="img"?!b.src&&!String(b.note).trim():!String(b.text).trim()){const x=g.blocks.indexOf(b);if(x>=0)g.blocks.splice(x,1)}}})}
+function open(id){const p=String(id).split(":");
+ if(p[0]=="info")sInfo(p[1]);else if(p[0]=="stu")sStu();else if(p[0]=="ref")sRef(p.slice(1).join(":"));else if(p[0]=="pic")sPic(+p[1]);else if(p[0]=="pg")sPg(+p[1]);else if(p[0]=="b")sBlk(+p[1],+p[2])}
+window.LV={open};
+/* --- actions inside the sheet --- */
+ov.addEventListener("click",ev=>{const t=ev.target;
+ if(t===ov){if(sh&&sh.cancel)sh.cancel();close();return}
+ const x=t.closest("[data-x]");
+ if(x){if(x.dataset.x=="close"){if(sh&&sh.cancel)sh.cancel();close()}else if(sh){const was=sh;was.done&&was.done();close();commit()}return}
+ const sg=t.closest(".lseg button");if(sg&&sh){const w=sg.parentElement;sh.d[w.dataset.seg]=w.dataset.seg=="fs"||w.dataset.seg=="lv"?+sg.dataset.v:sg.dataset.v;w.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b===sg));return}
+ const a=t.closest("[data-act]");if(!a||!sh)return;const act=a.dataset.act,s=sh;
+ if(act=="addstu"){const w=ov.querySelector("#lstu");w.insertAdjacentHTML("beforeend",s.sr("",0));const n=w.lastElementChild.querySelector("input");n.dir="auto";n.focus();return}
+ if(act=="delstu"){a.closest(".lsr").remove();return}
+ if(act=="pick"){pickImg(s.b?1100:1000,d=>{s.d[s.b?"src":"pic"]=d;ov.querySelector("#lprev").innerHTML=`<img class="lthumb" src="${d}" alt="">`});return}
+ if(act=="rmpic"){if(!armed(a))return;s.g.pos="n";delete s.g.pic;delete s.g.credit;delete s.g.picUrl;close();commit();return}
+ if(act=="delref"){if(!armed(a))return;const x=S.refs.indexOf(s.ref);if(x>=0)S.refs.splice(x,1);close();commit();return}
+ if(act=="delsec"){if(!armed(a))return;S.pages.splice(s.i,1);close();commit();return}
+ if(act=="secup"||act=="secdn"){mv(S.pages,s.i,act=="secup"?-1:1);close();commit();return}
+ if(act=="addend"){const nb=Object.assign({},NEW[a.dataset.t]);s.done&&s.done();s.g.blocks.push(nb);close();commit();sBlk(s.i,s.g.blocks.length-1,true);return}
+ if(act=="add"){const nb=Object.assign({},NEW[a.dataset.t]),at0=s.g.blocks.indexOf(s.b);s.done&&s.done();const at=s.g.blocks.indexOf(s.b),pos=at>=0?at+1:at0;s.g.blocks.splice(pos,0,nb);close();commit();sBlk(s.i,pos,true);return}
+ if(act=="bup"||act=="bdn"){s.done&&s.done();const at=s.g.blocks.indexOf(s.b);if(at>=0)mv(s.g.blocks,at,act=="bup"?-1:1);close();commit();return}
+ if(act=="delb"){if(!armed(a))return;const at=s.g.blocks.indexOf(s.b);if(at>=0)s.g.blocks.splice(at,1);close();commit()}});
+document.addEventListener("keydown",ev=>{if(ev.key=="Escape"&&sh){if(sh.cancel)sh.cancel();close()}});
+/* --- open the editor when an element in Live is tapped --- */
+$("doc").addEventListener("click",ev=>{if(ev.target.closest(".pic,.lgc,a[href^=http]"))return;const t=ev.target.closest("[data-ed]");if(!t)return;ev.preventDefault();open(t.dataset.ed)});
+const _tab=tab;tab=function(t){_tab(t);if(t==="pv"&&!window.LV.hinted){window.LV.hinted=1;toast(tr("Tap any text or image on a slide to edit it"),5000)}};
+})();
+
 statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));trTree(document.getElementById("nav"));trTree(document.getElementById("ed"));
 </script></body></html>
