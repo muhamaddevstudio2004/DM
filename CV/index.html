@@ -86,12 +86,12 @@ button.arm{background:#fff3f3!important;border-color:#d98a8a!important;color:var
 .pbt{display:flex;flex-direction:column;gap:6px;flex:1}.pbt button{min-height:40px;font-size:14px}
 input[type=range]{padding:0;height:34px;border:0;background:transparent;accent-color:var(--ac)}
 .lk{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;margin:6px 0;align-items:center}
-.clr{display:flex;gap:10px;flex-wrap:wrap}.clr button{width:44px;height:44px;min-width:44px;border-radius:50%;padding:0;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--bd)}.clr button.on{box-shadow:0 0 0 3px var(--yl)}
+.clr{display:flex;gap:10px}.clr button{width:44px;height:44px;min-width:44px;border-radius:50%;padding:0;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--bd)}.clr button.on{box-shadow:0 0 0 3px var(--yl)}
 .ftr{text-align:center;color:var(--mut);font-size:13px;margin:18px 0 0}.ftr a{color:var(--ac);font-weight:600}
 #ov{position:fixed;inset:0;z-index:9999;background:rgba(40,12,20,.6);display:none;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px}#ov.on{display:flex}
 
 /* ================= A4 page (single page, ATS-friendly, single column) ================= */
-.page{--ac:#842D42;--sc:#A94D63;--ln:#D9C3C9;width:794px;height:1123px;background:#fff;color:#333333;padding:46px 54px 0;position:relative;overflow:hidden;line-height:1.42;font-size:14px;direction:ltr;text-align:start}
+.page{--ac:#842D42;width:794px;height:1123px;background:#fff;color:#333333;padding:46px 54px 0;position:relative;overflow:hidden;line-height:1.42;font-size:14px;direction:ltr;text-align:start}
 .page.f-sans{font-family:Inter,Calibri,"Segoe UI",Arial,Helvetica,sans-serif}
 .page.f-serif{font-family:"Source Serif 4",Georgia,"Times New Roman",serif}
 .page.rtl{direction:rtl;line-height:1.6}
@@ -100,17 +100,17 @@ input[type=range]{padding:0;height:34px;border:0;background:transparent;accent-c
 .pc{height:1037px;overflow:hidden}
 .hd{display:flex;align-items:center;gap:22px}.hd-t{flex:1;min-width:0}
 .nm{font-size:2.15em;font-weight:700;color:var(--ac);line-height:1.12;letter-spacing:.01em}
-.tt{font-size:1.07em;margin-top:.3em;color:var(--sc);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.tt{font-size:1.07em;margin-top:.3em;color:#A94D63;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
 .page.rtl .tt{text-transform:none;letter-spacing:0}
 .ct{margin-top:.6em;font-size:.92em;color:#333333;line-height:1.6;display:flex;flex-wrap:wrap;align-items:center}.ct.lk2{margin-top:.1em}
-.ct span{display:inline-block;unicode-bidi:isolate}.ct .sp{width:1px;align-self:stretch;margin:.35em .7em;background:var(--ln)}
+.ct span{display:inline-block;unicode-bidi:isolate}.ct .sp{width:1px;align-self:stretch;margin:.35em .7em;background:#D9C3C9}
 .ct a{color:inherit;text-decoration:none}
 .pho{flex:none;width:104px;height:104px;overflow:hidden;background:#eee}.pho img{width:100%;height:100%;object-fit:cover;display:block}
 .pho.circle{border-radius:50%}.pho.round{border-radius:12px}.pho.portrait{width:96px;height:128px;border-radius:6px}
 .pho.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed #C9B4BA;background:#F7F3F4;color:#A3868F;font:700 10px/1 Inter,Arial,sans-serif;letter-spacing:.1em}.pho.empty .ic{width:30px;height:30px}
 .hr{height:3px;background:var(--ac);margin:.95em 0 0}
 .sx{margin-top:1.05em}.sx:first-child{margin-top:0}
-.sx h2{margin:0 0 .45em;font-size:.93em;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.11em;border-bottom:1px solid var(--ln);padding-bottom:.22em}
+.sx h2{margin:0 0 .45em;font-size:.93em;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.11em;border-bottom:1px solid #D9C3C9;padding-bottom:.22em}
 .page.rtl .sx h2{letter-spacing:0;text-transform:none;font-size:1.05em}
 .it2{margin-top:.5em}.sx h2+.it2,.sx h2+.sk,.sx h2+.tx{margin-top:0}
 .r1{display:flex;justify-content:space-between;gap:14px;align-items:baseline}.r1 b{font-weight:700;color:#333333}
@@ -137,6 +137,30 @@ input[type=range]{padding:0;height:34px;border:0;background:transparent;accent-c
  .sc .page{transform:none!important}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* ---- Live editing (tap any element in the CV preview) ---- */
+#pages [data-ed]{cursor:pointer}
+@media(hover:hover){#pages [data-ed]:hover{outline:2px dashed var(--gd);outline-offset:3px;border-radius:3px}}
+#pages [data-ed]:active{outline:4px solid var(--yl);outline-offset:3px;border-radius:3px}
+.lvh{margin:0 0 8px;text-align:center;color:var(--mut);font-size:13px;line-height:1.5}
+#lvfit{margin:0 auto 12px;max-width:794px}
+body.lsh-open{overflow:hidden}
+#lsh{position:fixed;left:0;right:0;top:0;height:100%;z-index:9000;background:rgba(40,12,20,.55);display:flex;align-items:flex-end;justify-content:center}
+#lsh[hidden]{display:none}
+#lsh .lcard{width:100%;max-width:580px;max-height:94%;display:flex;flex-direction:column;background:var(--card);color:var(--fg);border-radius:18px 18px 0 0;border-top:4px solid var(--yl);box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+@media(min-width:700px){#lsh{align-items:center}#lsh .lcard{border-radius:18px;max-height:88%}}
+#lsh .lhd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--bd)}
+#lsh .lhd b{font-size:17px;color:var(--ac);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lsh .lx{min-height:36px;padding:4px 8px}
+#lsh .lbd{padding:12px 14px;overflow:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+#lsh .lft{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd)}
+#lsh .lft button{flex:1}
+#lsh .lact{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+#lsh .lact button{flex:1;min-width:92px;padding:6px 8px;font-size:14px}
+#lsh .dng{color:var(--dk)}
+#lsh .lsub{font-size:12px;font-weight:700;color:var(--mut);margin:16px 0 4px}
+#lsh .lthumb{display:block;margin:0 auto 10px;width:96px;height:96px;object-fit:cover;background:#F7F3F4;border:2px dashed #D9C3C9}
+#lsh .lthumb.circle{border-radius:50%}#lsh .lthumb.round{border-radius:16px}#lsh .lthumb.portrait{width:76px;height:100px;border-radius:6px}
+@media print{.lvh,#lvfit,#lsh{display:none!important}}
 </style></head>
 <body data-view="ed">
 <div id="top"></div>
@@ -154,8 +178,8 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",
 const T={
 en:{app:"Academic CV Builder",appS:"CV Builder",edit:"Edit",live:"Live",pdf:"PDF",print:"Print",
  uiLang:"Interface language",cvLang:"CV language",cvLangNote:"Each language keeps its own content. Switch to write your CV in another language.",
- banner:"This CV contains guide text that shows what to write in each part. Edit it and replace it with your own information before you download.",bannerClear:"Clear guide text",bannerOk:"Got it",confirmClear:"Tap again to clear everything",
- design:"Design",emptyMsg:"This CV is empty. You can write your own information, or load the guide text again.",loadSample:"Load guide text",color:"CV color",colorNote:"Professional colors that stay readable when printed or viewed in black and white.",font:"Font style",serif:"Classic serif",sans:"Modern sans (ATS-friendly)",fitOk:"Fits on one A4 page ✓",fitSmall:"Text was reduced to fit one page. Shorten a few entries for a cleaner look.",fitOver:"Too long for one page. Shorten the text or hide a section.",
+ banner:"This CV contains sample text. Replace it with your own information before you download.",bannerClear:"Clear sample text",bannerOk:"Got it",confirmClear:"Tap again to clear everything",
+ design:"Design",font:"Font style",serif:"Classic serif",sans:"Modern sans (ATS-friendly)",fitOk:"Fits on one A4 page ✓",fitSmall:"Text was reduced to fit one page. Shorten a few entries for a cleaner look.",fitOver:"Too long for one page. Shorten the text or hide a section.",
  personal:"Personal details",photo:"Photo",upPhoto:"Upload photo",chPhoto:"Change photo",rmPhoto:"Remove photo",zoom:"Zoom",posX:"Left / right",posY:"Up / down",shape:"Photo shape",sh_circle:"Circle",sh_round:"Rounded square",sh_portrait:"Portrait",on:"On",off:"Off",optional2:"optional",
  photoTip:"The photo is optional. Many employers and ATS systems prefer a CV without one, so keep it off if you are unsure.",
  name:"Full name",jobtitle:"Title / field",email:"Email",phone:"Phone",loc:"Location",links:"Links",lnkLabel:"Label",lnkUrl:"Address",addLink:"Add link",
@@ -166,8 +190,8 @@ en:{app:"Academic CV Builder",appS:"CV Builder",edit:"Edit",live:"Live",pdf:"PDF
  pdfWait:"Creating your PDF…",pdfFail:"PDF export failed. Try Print and choose Save as PDF.",libFail:"The PDF library could not load. Check your connection and try again.",fit:"Fit page",full:"Actual size",dev:"Developed by"},
 ckb:{app:"دروستکەری CVی ئەکادیمی",appS:"دروستکەری CV",edit:"دەستکاری",live:"ڕاستەوخۆ",pdf:"PDF",print:"چاپکردن",
  uiLang:"زمانی ڕووکار",cvLang:"زمانی CV",cvLangNote:"هەر زمانێک ناوەڕۆکی تایبەتی خۆی هەیە. بیگۆڕە بۆ نووسینی CV بە زمانێکی تر.",
- banner:"ئەم CVـیە نووسینی ڕێنمایی تێدایە کە نیشانی دەدات لە هەر بەشێکدا چی بنووسیت. دەستکاری بکە و پێش داگرتن بە زانیاری خۆت بیگۆڕە.",bannerClear:"پاککردنەوەی نووسینی ڕێنمایی",bannerOk:"باشە",confirmClear:"دووبارە دابگرە بۆ پاککردنەوەی هەموو شتێک",
- design:"دیزاین",emptyMsg:"ئەم CVـیە بەتاڵە. دەتوانیت زانیاری خۆت بنووسیت، یان نووسینی ڕێنمایی دووبارە دابنێیتەوە.",loadSample:"دانانەوەی نووسینی ڕێنمایی",color:"ڕەنگی CV",colorNote:"ڕەنگی پیشەیی کە لە چاپکردن و ڕەش و سپیدا ڕوون دەمێننەوە.",font:"شێوازی فۆنت",serif:"کلاسیک (Serif)",sans:"مۆدێرن (Sans) – گونجاو بۆ ATS",fitOk:"لە یەک لاپەڕەی A4 دەگونجێت ✓",fitSmall:"نووسینەکە بچووککرایەوە بۆ ئەوەی لە یەک لاپەڕەدا بگونجێت. چەند تۆمارێک کورت بکەرەوە بۆ دیمەنێکی پاکتر.",fitOver:"زۆر درێژە بۆ یەک لاپەڕە. نووسینەکە کورت بکەرەوە یان بەشێک بشارەوە.",
+ banner:"ئەم CVـیە نووسینی نموونەی تێدایە. پێش داگرتن بە زانیاری خۆت بیگۆڕە.",bannerClear:"پاککردنەوەی نووسینی نموونە",bannerOk:"باشە",confirmClear:"دووبارە دابگرە بۆ پاککردنەوەی هەموو شتێک",
+ design:"دیزاین",font:"شێوازی فۆنت",serif:"کلاسیک (Serif)",sans:"مۆدێرن (Sans) – گونجاو بۆ ATS",fitOk:"لە یەک لاپەڕەی A4 دەگونجێت ✓",fitSmall:"نووسینەکە بچووککرایەوە بۆ ئەوەی لە یەک لاپەڕەدا بگونجێت. چەند تۆمارێک کورت بکەرەوە بۆ دیمەنێکی پاکتر.",fitOver:"زۆر درێژە بۆ یەک لاپەڕە. نووسینەکە کورت بکەرەوە یان بەشێک بشارەوە.",
  personal:"زانیاری کەسی",photo:"وێنە",upPhoto:"دانانی وێنە",chPhoto:"گۆڕینی وێنە",rmPhoto:"سڕینەوەی وێنە",zoom:"نزیککردنەوە",posX:"چەپ / ڕاست",posY:"سەرەوە / خوارەوە",shape:"شێوەی وێنە",sh_circle:"بازنە",sh_round:"چوارگۆشەی نەرم",sh_portrait:"ستوونی",on:"چالاک",off:"ناچالاک",optional2:"هەڵبژاردەیی",
  photoTip:"وێنە هەڵبژاردەییە. زۆر لە کۆمپانیا و سیستەمەکانی ATS CVی بێ وێنە دەپسەندن، بۆیە ئەگەر دڵنیا نیت ناچالاکی بهێڵەرەوە.",
  name:"ناوی تەواو",jobtitle:"ناونیشان / بوار",email:"ئیمەیڵ",phone:"ژمارەی مۆبایل",loc:"شوێن",links:"بەستەرەکان",lnkLabel:"ناو",lnkUrl:"ناونیشان",addLink:"زیادکردنی بەستەر",
@@ -183,30 +207,30 @@ const TT={
  en:{summary:"Professional Summary",experience:"Work Experience",education:"Education",skills:"Skills",projects:"Projects",certs:"Certifications",languages:"Languages",publications:"Publications",volunteer:"Volunteer Experience",awards:"Awards & Honors",refs:"References",interests:"Interests",custom:"Additional Information"},
  ckb:{summary:"پوختەی پیشەیی",experience:"ئەزموونی کار",education:"خوێندن",skills:"شارەزاییەکان",projects:"پڕۆژەکان",certs:"بڕوانامەکان",languages:"زمانەکان",publications:"بڵاوکراوەکان",volunteer:"کاری خۆبەخشی",awards:"خەڵات و ڕێزلێنان",refs:"ڕاسپاردەکان",interests:"حەزەکان",custom:"زانیاری زیاتر"}};
 const SAMPLE={
-en:{name:"Your Full Name",title:"Your Job Title or Field",email:"name@example.com",phone:"+964 750 000 0000",loc:"City, Country",
+en:{name:"Your Full Name",title:"Project Coordinator",email:"name@example.com",phone:"+964 750 000 0000",loc:"City, Country",
  links:[{t:"LinkedIn",u:"linkedin.com/in/yourname"},{t:"Portfolio",u:"yourwebsite.com"}],
  sections:[
- {id:"summary",type:"summary",core:1,items:[{a:"Write 2–3 sentences about yourself: your profession, your years of experience, your strongest skills, and the kind of role you are looking for."}]},
+ {id:"summary",type:"summary",core:1,items:[{a:"Results-driven project coordinator with 5+ years of experience managing cross-functional teams, budgets and deadlines. Skilled in stakeholder communication, process improvement and on-time delivery. Seeking to apply strong organizational and leadership abilities in a growing organization."}]},
  {id:"experience",type:"experience",core:1,items:[
-  {a:"Your Job Title",b:"Company Name",c:"City, Country",d:"Start Year – Present",e:"Start each point with an action verb (Managed, Built, Improved) and say what you did\nAdd a number or a result when you can (for example: increased sales by 20%)\nKeep each point to one line and focus on your most important achievements"},
-  {a:"Previous Job Title",b:"Company Name",c:"City, Country",d:"Start Year – End Year",e:"Describe your main responsibilities in this role\nMention the tools, skills or results that matter for the job you want"}]},
- {id:"education",type:"education",core:1,items:[{a:"Degree and Field of Study",b:"University Name",c:"City, Country",d:"Start Year – End Year",e:"Add your GPA, honors or graduation project (optional)"}]},
- {id:"skills",type:"skills",core:1,items:[{a:"Group Name (e.g. Technical Skills)",b:"Skill one, Skill two, Skill three, Skill four"},{a:"Soft Skills",b:"Communication, Teamwork, Problem solving, Time management"},{a:"Tools",b:"The software or tools you use, separated by commas"}]},
- {id:"projects",type:"projects",core:1,items:[{a:"Project Name",b:"Your Role",c:"",d:"Year",e:"Say what the project was and what result you achieved"}]},
- {id:"certs",type:"awards",core:1,items:[{a:"Certificate or Course Name",b:"Issuing Organization",d:"Year"},{a:"Another Certificate (optional)",b:"Issuing Organization",d:"Year"}]},
- {id:"languages",type:"languages",core:1,items:[{a:"Your Native Language",b:"Native"},{a:"Second Language",b:"Fluent"},{a:"Third Language",b:"Intermediate"}]}]},
-ckb:{name:"ناوی تەواوی تۆ",title:"ناونیشانی کار یان بوارەکەت",email:"name@example.com",phone:"+964 750 000 0000",loc:"شار، وڵات",
+  {a:"Project Coordinator",b:"Company Name",c:"City, Country",d:"2022 – Present",e:"Coordinate 12+ concurrent projects with budgets up to $250K, delivering 95% on time\nStreamlined reporting workflows, cutting weekly admin time by 30%\nLiaise with clients, suppliers and internal teams to resolve issues quickly"},
+  {a:"Operations Assistant",b:"Company Name",c:"City, Country",d:"2019 – 2022",e:"Managed scheduling, documentation and vendor communication for a team of 15\nIntroduced a shared tracking system that reduced errors and improved visibility"}]},
+ {id:"education",type:"education",core:1,items:[{a:"Bachelor's Degree in Business Administration",b:"University Name",c:"City, Country",d:"2015 – 2019",e:"GPA: 3.7 / 4.0 · Graduated with honors"}]},
+ {id:"skills",type:"skills",core:1,items:[{a:"Management",b:"Project planning, Budgeting, Risk management, Team leadership"},{a:"Communication",b:"Stakeholder engagement, Negotiation, Reporting, Presentations"},{a:"Tools",b:"Microsoft Office, Excel, Google Workspace, Trello"}]},
+ {id:"projects",type:"projects",core:1,items:[{a:"Process Improvement Initiative",b:"Project Lead",c:"",d:"2024",e:"Redesigned the onboarding workflow, shortening new-hire setup from 10 days to 5"}]},
+ {id:"certs",type:"awards",core:1,items:[{a:"Project Management Professional (PMP)",b:"Project Management Institute",d:"2023"},{a:"First Aid & Workplace Safety Certificate",b:"Organization Name",d:"2022"}]},
+ {id:"languages",type:"languages",core:1,items:[{a:"Kurdish",b:"Native"},{a:"English",b:"Fluent"},{a:"Arabic",b:"Intermediate"}]}]},
+ckb:{name:"ناوی تەواوی تۆ",title:"هاوئاهەنگکاری پڕۆژە",email:"name@example.com",phone:"+964 750 000 0000",loc:"شار، وڵات",
  links:[{t:"LinkedIn",u:"linkedin.com/in/yourname"},{t:"Portfolio",u:"yourwebsite.com"}],
  sections:[
- {id:"summary",type:"summary",core:1,items:[{a:"2 تا 3 ڕستە دەربارەی خۆت بنووسە: پیشەکەت، ساڵانی ئەزموونت، بەهێزترین تواناکانت و ئەو جۆرە کارەی بەدوایدا دەگەڕێیت."}]},
+ {id:"summary",type:"summary",core:1,items:[{a:"هاوئاهەنگکاری پڕۆژە بە زیاتر لە 5 ساڵ ئەزموون لە بەڕێوەبردنی تیمی فرە-بەش، بودجە و کاتی دیاریکراو. شارەزا لە پەیوەندی لەگەڵ لایەنە پەیوەندیدارەکان، باشترکردنی پڕۆسە و تەواوکردنی کار لە کاتی خۆیدا. ئامانجم بەکارهێنانی توانای ڕێکخستن و ڕابەرایەتییە لە دامەزراوەیەکی گەشەکەردا."}]},
  {id:"experience",type:"experience",core:1,items:[
-  {a:"ناونیشانی کارەکەت",b:"ناوی کۆمپانیا",c:"شار، وڵات",d:"ساڵی دەستپێکردن – ئێستا",e:"هەر خاڵێک بە کردارێک دەست پێبکە (بەڕێوەبردن، دروستکردن، باشترکردن) و بنووسە چیت کردووە\nکاتێک دەتوانیت ژمارە یان ئەنجام زیاد بکە (وەک: فرۆشتن بە 20% زیادکرد)\nهەر خاڵێک لە یەک دێڕدا بێت و گرنگترین دەستکەوتەکانت بنووسە"},
-  {a:"ناونیشانی کاری پێشوو",b:"ناوی کۆمپانیا",c:"شار، وڵات",d:"ساڵی دەستپێکردن – ساڵی کۆتایی",e:"ئەرکە سەرەکییەکانت لەم پۆستەدا بنووسە\nئەو ئامراز و توانا و ئەنجامانە باس بکە کە بۆ ئەو کارەی دەتەوێت گرنگن"}]},
- {id:"education",type:"education",core:1,items:[{a:"پلەی زانستی و بواری خوێندن",b:"ناوی زانکۆ",c:"شار، وڵات",d:"ساڵی دەستپێکردن – ساڵی کۆتایی",e:"نمرەی گشتی، ڕێزلێنان یان پڕۆژەی دەرچوونت زیاد بکە (هەڵبژاردەیی)"}]},
- {id:"skills",type:"skills",core:1,items:[{a:"ناوی گروپ (وەک: تواناکانی تەکنیکی)",b:"توانای یەکەم، توانای دووەم، توانای سێیەم، توانای چوارەم"},{a:"تواناکانی کەسی",b:"پەیوەندی، کاری تیمی، چارەسەرکردنی کێشە، بەڕێوەبردنی کات"},{a:"ئامراز",b:"ئەو بەرنامە و ئامرازانەی بەکاریان دەهێنیت، بە کۆما جیا بکەرەوە"}]},
- {id:"projects",type:"projects",core:1,items:[{a:"ناوی پڕۆژە",b:"ڕۆڵی تۆ",c:"",d:"ساڵ",e:"بنووسە پڕۆژەکە چی بوو و چ ئەنجامێکت بەدەست هێنا"}]},
- {id:"certs",type:"awards",core:1,items:[{a:"ناوی بڕوانامە یان خولەکە",b:"ناوی دەرکەر",d:"ساڵ"},{a:"بڕوانامەیەکی تر (هەڵبژاردەیی)",b:"ناوی دەرکەر",d:"ساڵ"}]},
- {id:"languages",type:"languages",core:1,items:[{a:"زمانی دایکت",b:"زمانی دایک"},{a:"زمانی دووەم",b:"ڕەوان"},{a:"زمانی سێیەم",b:"ناوەند"}]}]}};
+  {a:"هاوئاهەنگکاری پڕۆژە",b:"ناوی کۆمپانیا",c:"شار، وڵات",d:"2022 – ئێستا",e:"هاوئاهەنگی 12+ پڕۆژەی هاوکات بە بودجەی تا $250K و تەواوکردنی 95%یان لە کاتی خۆیدا\nباشترکردنی ڕێگای ڕاپۆرتدان و کەمکردنەوەی کاتی کارگێڕی هەفتانە بە 30%\nپەیوەندی لەگەڵ کڕیار و دابینکەر و تیمە ناوخۆییەکان بۆ چارەسەری خێرای کێشەکان"},
+  {a:"یاریدەدەری کارگێڕی",b:"ناوی کۆمپانیا",c:"شار، وڵات",d:"2019 – 2022",e:"ڕێکخستنی خشتە و بەڵگەنامە و پەیوەندی لەگەڵ دابینکەران بۆ تیمێکی 15 کەسی\nدامەزراندنی سیستەمێکی هاوبەشی بەدواداچوون کە هەڵەکانی کەم کردەوە"}]},
+ {id:"education",type:"education",core:1,items:[{a:"بەکالۆریۆس لە بەڕێوەبردنی کار",b:"ناوی زانکۆ",c:"شار، وڵات",d:"2015 – 2019",e:"نمرەی گشتی: 3.7 / 4.0 · دەرچوو بە ڕێزەوە"}]},
+ {id:"skills",type:"skills",core:1,items:[{a:"بەڕێوەبردن",b:"پلاندانانی پڕۆژە، بودجە، بەڕێوەبردنی مەترسی، ڕابەرایەتی تیم"},{a:"پەیوەندی",b:"پەیوەندی لەگەڵ لایەنەکان، دانوستان، ڕاپۆرتدان، پێشکەشکردن"},{a:"ئامراز",b:"Microsoft Office, Excel, Google Workspace, Trello"}]},
+ {id:"projects",type:"projects",core:1,items:[{a:"پڕۆژەی باشترکردنی پڕۆسە",b:"سەرپەرشتیاری پڕۆژە",c:"",d:"2024",e:"دیزاینکردنەوەی پڕۆسەی دامەزراندنی ستافی نوێ و کەمکردنەوەی کاتەکەی لە 10 ڕۆژ بۆ 5 ڕۆژ"}]},
+ {id:"certs",type:"awards",core:1,items:[{a:"Project Management Professional (PMP)",b:"Project Management Institute",d:"2023"},{a:"بڕوانامەی فریاکەوتنی سەرەتایی و سەلامەتی کار",b:"ناوی دامەزراوە",d:"2022"}]},
+ {id:"languages",type:"languages",core:1,items:[{a:"کوردی",b:"زمانی دایک"},{a:"ئینگلیزی",b:"ڕەوان"},{a:"عەرەبی",b:"ناوەند"}]}]}};
 function mk(l){const d=JSON.parse(JSON.stringify(SAMPLE[l]));d.sections.forEach(s=>{s.show=true;s.title=TT[l][s.id]});return d}
 const ADD=[["publications","publications"],["volunteer","experience"],["awards","awards"],["refs","refs"],["interests","summary"],["custom","custom"]];
 
@@ -222,18 +246,11 @@ const SCH={
  awards:[["a","in","f_award"],["b","in","f_issuer"],["d","in","f_dates"]],
  refs:[["a","in","f_refname"],["b","in","f_reftitle"],["c","in","f_contact"]],
  custom:[["a","in","f_head"],["b","in","f_sub"],["d","in","f_dates"],["e","ta","f_details"]]};
-const COLORS=[
- {id:"burgundy",ac:"#842D42",sc:"#A94D63",ln:"#D9C3C9",n:{en:"Burgundy",ckb:"سووری تۆخ"}},
- {id:"navy",ac:"#1F3A5F",sc:"#3E6491",ln:"#C5D0E0",n:{en:"Navy blue",ckb:"شینی تۆخ"}},
- {id:"forest",ac:"#1E5B45",sc:"#357558",ln:"#C3D9CF",n:{en:"Forest green",ckb:"سەوزی تۆخ"}},
- {id:"teal",ac:"#0F5E63",sc:"#2A7C82",ln:"#BFD9DB",n:{en:"Teal",ckb:"شینی سەوز"}},
- {id:"plum",ac:"#5B3A73",sc:"#7E5896",ln:"#D6CADF",n:{en:"Plum",ckb:"مۆری تۆخ"}},
- {id:"charcoal",ac:"#2B2B2B",sc:"#555555",ln:"#CCCCCC",n:{en:"Charcoal",ckb:"خەڵوزی"}}];
-const colorOf=()=>COLORS.find(c=>c.id===S.color)||COLORS[0];
+const ACC="#842D42";
 
 /* ---------------- state ---------------- */
-function fresh(){return{v:1,ui:"en",cl:"en",font:"sans",color:"burgundy",photoOn:true,pv2:1,shape:"circle",photo:"",psrc:"",pz:1,px:50,py:30,banner:1,data:{en:mk("en"),ckb:mk("ckb")}}}
-function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&j.data&&j.data.en&&j.data.ckb){const x=Object.assign(fresh(),j);if(!x.pv2){x.photoOn=true;x.pv2=1}if(!["circle","round","portrait"].includes(x.shape))x.shape="circle";if(!COLORS.some(c=>c.id===x.color))x.color="burgundy";x.photoOn=!!x.photoOn;return x}}catch(e){}return fresh()}
+function fresh(){return{v:1,ui:"en",cl:"en",font:"sans",photoOn:true,pv2:1,shape:"circle",photo:"",psrc:"",pz:1,px:50,py:30,banner:1,data:{en:mk("en"),ckb:mk("ckb")}}}
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&j.data&&j.data.en&&j.data.ckb){const x=Object.assign(fresh(),j);if(!x.pv2){x.photoOn=true;x.pv2=1}if(!["circle","round","portrait"].includes(x.shape))x.shape="circle";x.photoOn=!!x.photoOn;return x}}catch(e){}return fresh()}
 let S=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const D=()=>S.data[S.cl];
@@ -243,7 +260,7 @@ let OP="",OI="",PZ="fit",VIEW="ed";
 /* ---------------- icons ---------------- */
 const P={up:"M6 15l6-6 6 6",down:"M6 9l6 6 6-6",trash:"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3",plus:"M12 5v14M5 12h14",eye:"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",eyeoff:"M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.6 7.6C3.8 9.4 2 12 2 12s4 7 10 7c1.5 0 2.9-.4 4.1-1M9.9 9.9a3 3 0 0 0 4.2 4.2",edit:"M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4",dl:"M12 4v11M7 11l5 5 5-5M5 20h14",print:"M7 9V4h10v5M7 17H5a1 1 0 0 1-1-1v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a1 1 0 0 1-1 1h-2M7 14h10v6H7z",cam:"M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",chev:"M9 6l6 6-6 6",x:"M6 6l12 12M18 6L6 18",user:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"};
 const ic=(n,c)=>`<svg class="ic ${c||""}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
-const CAP='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 3h11l6 6v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M19 3v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="15.5" cy="14.5" r="2.7"/><path d="M10.8 22.5c0-2.8 2.1-4.5 4.7-4.5s4.7 1.7 4.7 4.5z"/><path d="M11 26h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const CAP='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8"/></svg>';
 
 /* ---------------- editor ---------------- */
 const seg=(k,opts,cur,cls)=>`<div class="seg ${cls||""}">${opts.map(([v,l])=>`<button type="button" class="${cur===v?"on":""}" data-a="set" data-k="${k}" data-v="${v}">${l}</button>`).join("")}</div>`;
@@ -271,11 +288,11 @@ function renderEd(){
  h+=`<div class="card"><label class="lab">${t("uiLang")}</label>${seg("ui",[["en","English"],["ckb","کوردی"]],S.ui,"langsw")}
  <label class="lab">${t("cvLang")}</label>${seg("cl",[["en","English"],["ckb","کوردی"]],S.cl,"langsw")}<p class="note">${t("cvLangNote")}</p></div>`;
  h+=`<div id="fit" class="fit"></div>`;
- if(!S.banner&&isBlank(d))h+=`<div class="banner" id="eb">${t("emptyMsg")}<div class="seg"><button type="button" class="pri" data-a="loadsample">${t("loadSample")}</button></div></div>`;
+ if(S.banner)h+=`<div class="banner">${t("banner")}<div class="seg"><button type="button" class="pri" data-a="clear">${t("bannerClear")}</button><button type="button" data-a="bok">${t("bannerOk")}</button></div></div>`;
  /* design */
  const des=OP==="design";
  h+=`<div class="card ${des?"open":""}"><div class="ch"><button type="button" class="chm" data-a="acc" data-v="design"><span class="n">${t("design")}</span>${ic("chev","chev")}</button></div>`+(des?`<div class="cb">
-  <label class="lab">${t("color")}</label><div class="clr">${COLORS.map(c=>`<button type="button" class="${S.color===c.id?"on":""}" style="background:${c.ac}" aria-label="${c.n[S.ui]||c.n.en}" title="${c.n[S.ui]||c.n.en}" data-a="set" data-k="color" data-v="${c.id}"></button>`).join("")}</div><p class="note">${t("colorNote")}</p><label class="lab">${t("font")}</label>${seg("font",[["serif",t("serif")],["sans",t("sans")]],S.font)}
+  <label class="lab">${t("font")}</label>${seg("font",[["serif",t("serif")],["sans",t("sans")]],S.font)}
   </div>`:"")+`</div>`;
  /* personal */
  const per=OP==="per";
@@ -295,6 +312,7 @@ function renderEd(){
  h+=d.sections.map((s,i)=>secCard(s,i,d.sections.length)).join("");
  const adding=OP==="add";
  h+=`<div class="card ${adding?"open":""}"><div class="ch"><button type="button" class="chm" data-a="acc" data-v="add"><span class="n">${ic("plus")} ${t("addSec")}</span>${ic("chev","chev")}</button></div>`+(adding?`<div class="cb menu">${ADD.map(([k])=>`<button type="button" data-a="addsec" data-v="${k}">${t("tn_"+k)}</button>`).join("")}</div><p class="note">${t("optional")}</p>`:"")+`</div>`;
+ h+=`<div class="card"><h3>${t("data")}</h3><p class="note" style="margin-top:0">${t("saved")}</p><button type="button" class="add" data-a="reset" style="margin-top:10px">${t("reset")}</button></div>`;
  h+=`<div class="ftr">${t("dev")} <a href="https://devmuhamad.com" target="_blank" rel="noopener">DevMuhamad.com</a></div>`;
  $("ed").innerHTML=h;
  $("ed").scrollTop=edTop;window.scrollTo(0,keepY);setFit(FIT)}
@@ -311,43 +329,40 @@ function chrome(){
 
 /* ---------------- CV rendering ---------------- */
 const nonEmpty=it=>Object.values(it).some(v=>String(v||"").trim());
-const isBlank=d=>["name","title","email","phone","loc"].every(k=>!String(d[k]||"").trim())&&d.links.every(l=>!String((l.t||"")+(l.u||"")).trim())&&d.sections.every(x=>!x.items.some(nonEmpty));
-/* a completely empty CV (e.g. cleared earlier on this device) gets the guide text again automatically */
-function ensureGuide(l){const d=S.data[l];if(d&&isBlank(d)){S.data[l]=mk(l);S.banner=1;save();return true}return false}
 const lines=s=>String(s||"").split(/\r?\n/).map(x=>x.replace(/^\s*[-•*–]\s+/,"").trim()).filter(Boolean);
 const href=u=>/^(https?:|mailto:|tel:)/i.test(u)?u:"https://"+u;
 function headerHTML(d,exp){
  const c1=[d.email&&`<span><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></span>`,d.phone&&`<span dir="ltr">${esc(d.phone)}</span>`,d.loc&&`<span>${esc(d.loc)}</span>`].filter(Boolean).join('<i class="sp"></i>');
  const ls=d.links.filter(l=>(l.u||"").trim()).map(l=>`<span dir="ltr">${l.t?esc(l.t)+": ":""}<a href="${esc(href(l.u.trim()))}" dir="ltr">${esc(l.u.trim().replace(/^https?:\/\//i,""))}</a></span>`).join('<i class="sp"></i>');
- const ph=!S.photoOn?"":S.photo?`<div class="pho ${S.shape}"><img src="${S.photo}" alt=""></div>`:(exp?"":`<div class="pho ${S.shape} empty">${ic("user")}<span>PHOTO</span></div>`);
- return`<div class="hd"><div class="hd-t">${d.name?`<div class="nm">${esc(d.name)}</div>`:""}${d.title?`<div class="tt">${esc(d.title)}</div>`:""}${c1?`<div class="ct">${c1}</div>`:""}${ls?`<div class="ct lk2">${ls}</div>`:""}</div>${ph}</div><div class="hr"></div>`}
-function itemHTML(type,it,i){
- const a=esc(it.a||"");
- if(type==="summary")return`<p class="tx">${a}</p>`;
- if(type==="publications")return`<p class="pb"><em>[${i+1}]</em>${a}</p>`;
- if(type==="skills")return`<p class="sk">${it.a?`<b>${a}:</b> `:""}${esc(it.b||"")}</p>`;
- if(type==="refs")return`<div class="it2"><div class="r1"><b>${a}</b></div>${it.b?`<div class="r2">${esc(it.b)}</div>`:""}${it.c?`<div>${esc(it.c)}</div>`:""}</div>`;
- if(type==="awards")return`<div class="it2 cm"><div class="r1"><span><b>${a}</b>${it.b?` <span class="org">— ${esc(it.b)}</span>`:""}</span>${it.d?`<span class="dt" dir="auto">${esc(it.d)}</span>`:""}</div></div>`;
+ const ph=!S.photoOn?"":S.photo?`<div class="pho ${S.shape}" data-ed="photo"><img src="${S.photo}" alt=""></div>`:(exp?"":`<div class="pho ${S.shape} empty" data-ed="photo">${ic("user")}<span>PHOTO</span></div>`);
+ return`<div class="hd"><div class="hd-t" data-ed="hd">${d.name?`<div class="nm">${esc(d.name)}</div>`:""}${d.title?`<div class="tt">${esc(d.title)}</div>`:""}${c1?`<div class="ct">${c1}</div>`:""}${ls?`<div class="ct lk2">${ls}</div>`:""}</div>${ph}</div><div class="hr"></div>`}
+function itemHTML(type,it,i,sid,ix){
+ const a=esc(it.a||""),ed=sid?` data-ed="i:${esc(sid)}:${ix}"`:"";
+ if(type==="summary")return`<p class="tx"${ed}>${a}</p>`;
+ if(type==="publications")return`<p class="pb"${ed}><em>[${i+1}]</em>${a}</p>`;
+ if(type==="skills")return`<p class="sk"${ed}>${it.a?`<b>${a}:</b> `:""}${esc(it.b||"")}</p>`;
+ if(type==="refs")return`<div class="it2"${ed}><div class="r1"><b>${a}</b></div>${it.b?`<div class="r2">${esc(it.b)}</div>`:""}${it.c?`<div>${esc(it.c)}</div>`:""}</div>`;
+ if(type==="awards")return`<div class="it2 cm"${ed}><div class="r1"><span><b>${a}</b>${it.b?` <span class="org">— ${esc(it.b)}</span>`:""}</span>${it.d?`<span class="dt" dir="auto">${esc(it.d)}</span>`:""}</div></div>`;
  const sub=[it.b,it.c].map(x=>(x||"").trim()).filter(Boolean).map(esc).join(" · "),ls=lines(it.e);
- return`<div class="it2"><div class="r1"><b>${a}</b>${it.d?`<span class="dt" dir="auto">${esc(it.d)}</span>`:""}</div>${sub?`<div class="r2">${sub}</div>`:""}${ls.length?`<ul>${ls.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`}
+ return`<div class="it2"${ed}><div class="r1"><b>${a}</b>${it.d?`<span class="dt" dir="auto">${esc(it.d)}</span>`:""}</div>${sub?`<div class="r2">${sub}</div>`:""}${ls.length?`<ul>${ls.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}</div>`}
 function unitsOf(d,exp){
  const U=[headerHTML(d,exp)];
- d.sections.forEach(s=>{if(s.show===false)return;const items=s.items.filter(nonEmpty);if(!items.length)return;
-  const h=s.title?`<h2>${esc(s.title)}</h2>`:"";
-  const body=s.type==="languages"?`<p class="sk">${items.map(it=>`<span class="lg"><b>${esc(it.a||"")}</b>${it.b?" ("+esc(it.b)+")":""}</span>`).join(" · ")}</p>`:items.map((it,i)=>itemHTML(s.type,it,i)).join("");
+ d.sections.forEach(s=>{if(s.show===false)return;const pairs=s.items.map((it,ix)=>({it,ix})).filter(p=>nonEmpty(p.it)),items=pairs.map(p=>p.it);if(!items.length)return;
+  const h=s.title?`<h2 data-ed="s:${esc(s.id)}">${esc(s.title)}</h2>`:"";
+  const body=s.type==="languages"?`<p class="sk">${pairs.map(p=>`<span class="lg" data-ed="i:${esc(s.id)}:${p.ix}"><b>${esc(p.it.a||"")}</b>${p.it.b?" ("+esc(p.it.b)+")":""}</span>`).join(" · ")}</p>`:pairs.map((p,i)=>itemHTML(s.type,p.it,i,s.id,p.ix)).join("");
   U.push(`<section class="sx">${h}${body}</section>`)});
  return U}
 const SIZES=[14,13.5,13,12.5,12,11.5,11];
 function renderCV(root,exp){
  const d=D();root.innerHTML="";
- const p=document.createElement("div");p.className=`page f-${S.font} ${S.cl==="ckb"?"rtl":""}`;{const C=colorOf();p.style.setProperty("--ac",C.ac);p.style.setProperty("--sc",C.sc);p.style.setProperty("--ln",C.ln)}
+ const p=document.createElement("div");p.className=`page f-${S.font} ${S.cl==="ckb"?"rtl":""}`;p.style.setProperty("--ac",ACC);
  p.innerHTML='<div class="pc"></div>';root.appendChild(p);const pc=p.firstChild;
  pc.innerHTML=unitsOf(d,exp).join("");
  let fs=SIZES[0],fits=false;
  for(const z of SIZES){fs=z;p.style.fontSize=z+"px";if(pc.scrollHeight<=pc.clientHeight+1){fits=true;break}}
  return{p,fs,fits}}
 function setFit(r){FIT=r;const k=r.fits?(r.fs<12?"small":"ok"):"over",m=r.fits?(r.fs<12?t("fitSmall"):t("fitOk")):t("fitOver");
- ["fit"].forEach(id=>{const e=$(id);if(e){e.className="fit "+k;e.textContent=m;e.style.display=k==="ok"?"none":""}})}
+ ["fit"].forEach(id=>{const e=$(id);if(e){e.className="fit "+k;e.textContent=m}})}
 function scaleK(){const w=$("pv").clientWidth-24;return Math.max(.3,Math.min(1,w/794))}
 function applyScale(){const k=scaleK();document.querySelectorAll("#pages .sc").forEach(w=>{w.style.width=794*k+"px";w.style.height=1123*k+"px";w.firstChild.style.transform=`scale(${k})`})}
 function buildPreview(){
@@ -376,7 +391,7 @@ $("ed").addEventListener("input",e=>{
  else if(a[0]==="st"){secOf(a[1]).title=el.value;const n=document.querySelector(".open>.ch .chm .n");if(n)n.textContent=el.value||"…"}
  else if(a[0]==="s"){const s=secOf(a[1]);s.items[+a[2]][a[3]]=el.value;
   if(a[3]==="a"||a[3]==="b"){const btn=el.closest(".it").querySelector(".ih>button:first-child");btn.textContent=itemSummary(s,s.items[+a[2]])}}
- save();schedule();const eb=$("eb");if(eb&&!isBlank(D()))eb.remove()});
+ save();schedule()});
 $("ed").addEventListener("click",e=>{
  const b=e.target.closest("[data-a]");if(!b||b.disabled)return;
  const a=b.dataset.a,v=b.dataset.v,d=D();
@@ -385,7 +400,7 @@ $("ed").addEventListener("click",e=>{
   if(k==="shape"){S.shape=v;save();cropPhoto().then(()=>{save();renderEd();buildPreview()});return}
   S[k]=v;save();
   if(k==="ui"){chrome();renderEd();return}
-  if(k==="cl"){ensureGuide(S.cl);OP="";OI="";refresh();return}
+  if(k==="cl"){OP="";OI="";refresh();return}
   renderEd();buildPreview();return}
  if(a==="acc"){OP=OP===v?"":v;OI="";renderEd();return}
  if(a==="item"){OI=OI===v?"":v;renderEd();return}
@@ -400,7 +415,6 @@ $("ed").addEventListener("click",e=>{
  if(a==="ldel"){d.links.splice(+v,1);save();renderEd();buildPreview();return}
  if(a==="pup"){$("pf").click();return}
  if(a==="prm"){S.psrc="";S.photo="";save();renderEd();buildPreview();return}
- if(a==="loadsample"){S.data[S.cl]=mk(S.cl);S.banner=1;OP="per";OI="";save();renderEd();buildPreview();return}
  if(a==="bok"){S.banner=0;save();renderEd();return}
  if(a==="clear"){if(!arm(b,t("confirmClear")))return;
   ["en","ckb"].forEach(l=>{const x=S.data[l];x.name=x.title=x.email=x.phone=x.loc="";x.links=[{t:"",u:""},{t:"",u:""}];x.sections.forEach(s=>{s.items=[blankItem()]})});
@@ -442,8 +456,96 @@ async function exportPdf(){
  }catch(x){if(!(x&&x.code==="declined"))alert(t("pdfFail"))}
  finally{w.remove();ov.classList.remove("on");b.disabled=false}}
 
+/* ---------------- Live editing: tap any text / photo in the CV to edit it ---------------- */
+(function(){
+Object.assign(T.en,{lv_p:"Edit personal details",lv_e:"Edit entry",lv_s:"Edit section",lv_done:"Done",lv_cancel:"Cancel",lv_close:"Close",lv_below:"Add entry below",lv_del:"Delete entry",lv_hint:"Tap any text or the photo in the CV to edit it"});
+Object.assign(T.ckb,{lv_p:"دەستکاری زانیاری کەسی",lv_e:"دەستکاری تۆمار",lv_s:"دەستکاری بەش",lv_done:"تەواو",lv_cancel:"پاشگەزبوونەوە",lv_close:"داخستن",lv_below:"زیادکردنی تۆمار لە خوارەوە",lv_del:"سڕینەوەی تۆمار",lv_hint:"دەست لە هەر نووسین یان وێنەیەک بدە لەناو CV بۆ دەستکاریکردن"});
+const ov=document.createElement("div");ov.id="lsh";ov.hidden=true;document.body.appendChild(ov);
+let sh=null;const X=k=>esc(t(k));
+const fld=(k,l,v,kind,ph,dir)=>`<label class="lab">${esc(l)}</label>`+(kind==="ta"?`<textarea data-k="${k}" rows="5" dir="${dir||"auto"}" placeholder="${esc(ph||"")}">${esc(v)}</textarea>`:`<input type="text" data-k="${k}" dir="${dir||"auto"}" value="${esc(v)}" placeholder="${esc(ph||"")}" autocomplete="off">`);
+const sg=(k,o,cur)=>`<div class="seg" data-seg="${k}">${o.map(([v,l])=>`<button type="button" data-v="${v}" class="${String(cur)===String(v)?"on":""}">${esc(l)}</button>`).join("")}</div>`;
+const btn=(a,l,cls,x)=>`<button type="button" data-act="${a}" class="${cls||""}" ${x||""}>${l}</button>`;
+const vvFit=()=>{const v=window.visualViewport;if(!v||ov.hidden)return;ov.style.height=v.height+"px";ov.style.top=v.offsetTop+"px"};
+if(window.visualViewport){visualViewport.addEventListener("resize",vvFit);visualViewport.addEventListener("scroll",vvFit)}
+function show(title,body,o){ov.innerHTML=`<div class="lcard" role="dialog" aria-modal="true"><div class="lhd"><b>${esc(title)}</b><button type="button" class="lx" data-x="close" aria-label="${X("lv_close")}">${ic("x")}</button></div><div class="lbd">${body}</div><div class="lft"><button type="button" class="pri" data-x="done">${X("lv_done")}</button>${o.nocancel?"":`<button type="button" data-x="close">${X("lv_cancel")}</button>`}</div></div>`;
+ ov.hidden=false;document.body.classList.add("lsh-open");sh=Object.assign({d:{}},o);vvFit();
+ if(o.focus!==false){const f=ov.querySelector("textarea,input[type=text]");if(f)setTimeout(()=>{f.focus();try{f.setSelectionRange(f.value.length,f.value.length)}catch(x){}},80)}}
+function close(){ov.hidden=true;ov.innerHTML="";document.body.classList.remove("lsh-open");sh=null}
+function commit(){const y=window.scrollY,pv=$("pv"),st=pv.scrollTop,sl=pv.scrollLeft;save();renderEd();buildPreview();window.scrollTo(0,y);pv.scrollTop=st;pv.scrollLeft=sl}
+const val=()=>{const o={};ov.querySelectorAll("[data-k]").forEach(x=>o[x.dataset.k]=x.value);return o};
+const armed=b=>{if(!b.dataset.arm){b.dataset.arm=1;b._h=b.innerHTML;b.textContent=t("delConfirm");b.classList.add("arm");setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.classList.remove("arm");b.innerHTML=b._h}},3000);return false}return true};
+const blank=()=>({a:"",b:"",c:"",d:"",e:""});
+const secOf2=id=>D().sections.find(s=>s.id===id);
+function secMove(id,dir){const a=D().sections,i=a.findIndex(s=>s.id===id);let j=i+dir;while(j>=0&&j<a.length&&a[j].show===false)j+=dir;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]}
+function newSection(k){const d=D(),id="x"+Date.now().toString(36),type=(ADD.find(x=>x[0]===k)||[0,"custom"])[1],s={id,type,title:TT[S.cl][k]||TT.en[k],show:true,items:[blank()]};d.sections.push(s);return s}
+
+/* --- personal details (tap the name / contact area) --- */
+function sHead(){const d=D(),R=REF[S.cl];
+ const lk=(l,i)=>`<div class="lk"><input type="text" data-lt dir="auto" value="${esc(l.t)}" placeholder="${esc((R.links[i]||R.links[0]||{}).t||"")}"><input type="text" data-lu dir="ltr" value="${esc(l.u)}" placeholder="${esc((R.links[i]||R.links[0]||{}).u||"")}" inputmode="url" autocapitalize="off">${btn("ldel",ic("x"),"","aria-label=\""+X("del")+"\" style=\"min-width:42px;padding:4px\"")}</div>`;
+ show(t("lv_p"),fld("name",t("name"),d.name,"in",R.name)+fld("title",t("jobtitle"),d.title,"in",R.title)+fld("email",t("email"),d.email,"in",R.email,"ltr")+fld("phone",t("phone"),d.phone,"in",R.phone,"ltr")+fld("loc",t("loc"),d.loc,"in",R.loc)
+ +`<label class="lab">${X("links")}</label><div id="llk">${d.links.map(lk).join("")}</div>${btn("ladd",ic("plus")+X("addLink"),"add")}`
+ +`<div class="lsub">${X("addSec")}</div><div class="menu">${ADD.map(([k])=>btn("addsec",esc(t("tn_"+k)),"","data-v=\""+k+"\"")).join("")}</div>`,
+ {lk,done(){const v=val(),rows=[...ov.querySelectorAll("#llk .lk")].map(r=>({t:r.querySelector("[data-lt]").value.trim(),u:r.querySelector("[data-lu]").value.trim()})).filter(l=>l.t||l.u);
+  d.name=v.name.trim();d.title=v.title.trim();d.email=v.email.trim();d.phone=v.phone.trim();d.loc=v.loc.trim();d.links=rows}})}
+/* --- photo --- */
+let phT2=0;
+function sPhoto(){const body=()=>`<div id="lph"><div class="ph" style="justify-content:center">${S.photo?`<img class="lthumb ${S.shape}" src="${S.photo}" alt="">`:`<div class="lthumb ${S.shape}" style="display:grid;place-items:center;color:#A39A9D">${ic("user")}</div>`}</div>
+  <div class="lact">${btn("ppick",ic("cam")+esc(S.photo?t("chPhoto"):t("upPhoto")))}${S.photo?btn("prm",ic("trash")+X("rmPhoto"),"dng"):""}</div>
+  <label class="lab">${X("shape")}</label>${sg("shape",[["circle",t("sh_circle")],["round",t("sh_round")],["portrait",t("sh_portrait")]],S.shape)}
+  ${S.psrc?`<label class="lab">${X("zoom")}</label><input type="range" min="1" max="3" step="0.05" value="${S.pz}" data-ph="pz"><label class="lab">${X("posX")}</label><input type="range" min="0" max="100" step="1" value="${S.px}" data-ph="px"><label class="lab">${X("posY")}</label><input type="range" min="0" max="100" step="1" value="${S.py}" data-ph="py">`:""}
+  <label class="lab">${X("photo")}</label>${sg("photoOn",[["1",t("on")],["0",t("off")]],S.photoOn?"1":"0")}</div>`;
+ show(t("photo"),body(),{focus:false,nocancel:true,body,done(){}})}
+/* --- section (tap a section heading) --- */
+function sSec(id){const s=secOf2(id);if(!s)return;
+ show(t("lv_s"),`<label class="lab">${X("secTitle")}</label><input type="text" data-k="title" dir="auto" value="${esc(s.title)}">
+ <div class="lact">${btn("sadd",ic("plus")+X("addItem"))}</div>
+ <div class="lact">${btn("sup",ic("up")+X("up"))}${btn("sdn",ic("down")+X("down"))}</div>
+ ${s.core?"":`<div class="lact">${btn("sdel",ic("trash")+X("delSec"),"dng")}</div>`}`,{id,s,done(){s.title=val().title.trim()}})}
+/* --- one entry (tap any entry in a section) --- */
+function sItem(sid,ix,isNew,created){const s=secOf2(sid);if(!s||!s.items[ix])return;const it=s.items[ix];
+ const rm=()=>{if(created){const d=D();d.sections=d.sections.filter(x=>x!==s)}else if(s.items.length>1){const x=s.items.indexOf(it);if(x>=0)s.items.splice(x,1)}};
+ show(s.title||t("lv_e"),SCH[s.type].map(([k,kind,lk])=>fld(k,t(lk),it[k]||"",kind,phOf(sid,s.type,ix,k),k==="c"&&s.type==="projects"?"ltr":"auto")).join("")
+ +`<div class="lact" style="margin-top:14px">${btn("iup",ic("up")+X("up"))}${btn("idn",ic("down")+X("down"))}</div><div class="lact">${btn("ibelow",ic("plus")+X("lv_below"))}${btn("idel",ic("trash")+X("lv_del"),"dng")}</div>`,
+ {sid,s,it,ix,
+  cancel(){if(isNew&&!nonEmpty(it))rm()},
+  done(){const v=val();SCH[s.type].forEach(([k])=>{it[k]=v[k]});if(!nonEmpty(it)&&s.items.length>1){const x=s.items.indexOf(it);if(x>=0)s.items.splice(x,1)}}})}
+function open(id){const p=String(id).split(":");if(p[0]==="hd")sHead();else if(p[0]==="photo")sPhoto();else if(p[0]==="s")sSec(p.slice(1).join(":"));else if(p[0]==="i")sItem(p.slice(1,-1).join(":"),+p[p.length-1])}
+window.LV={open};
+/* --- actions inside the sheet --- */
+ov.addEventListener("click",ev=>{const tg=ev.target;
+ if(tg===ov){if(sh&&sh.cancel)sh.cancel();close();return}
+ const x=tg.closest("[data-x]");
+ if(x){if(x.dataset.x==="close"){if(sh&&sh.cancel)sh.cancel();close();if(sh===null)commit()}else if(sh){const w=sh;w.done&&w.done();close();commit()}return}
+ const sb=tg.closest(".seg button");
+ if(sb&&sh){const k=sb.parentElement.dataset.seg;
+  if(k==="photoOn"){S.photoOn=sb.dataset.v==="1";save();buildPreview();sPhotoRefresh();return}
+  if(k==="shape"){S.shape=sb.dataset.v;cropPhoto().then(()=>{save();buildPreview();sPhotoRefresh()});return}return}
+ const a=tg.closest("[data-act]");if(!a||!sh)return;const act=a.dataset.act,s=sh;
+ if(act==="ladd"){ov.querySelector("#llk").insertAdjacentHTML("beforeend",s.lk({t:"",u:""},ov.querySelectorAll("#llk .lk").length));return}
+ if(act==="ldel"){a.closest(".lk").remove();return}
+ if(act==="addsec"){s.done();const ns=newSection(a.dataset.v);close();commit();sItem(ns.id,0,true,true);return}
+ if(act==="ppick"){close();$("pf").click();return}
+ if(act==="prm"){S.psrc="";S.photo="";save();buildPreview();sPhotoRefresh();return}
+ if(act==="sadd"){s.done();s.s.items.push(blank());const n=s.s.items.length-1,id=s.id;close();commit();sItem(id,n,true);return}
+ if(act==="sup"||act==="sdn"){s.done();secMove(s.id,act==="sup"?-1:1);close();commit();return}
+ if(act==="sdel"){if(!armed(a))return;const d=D();d.sections=d.sections.filter(q=>q!==s.s);close();commit();return}
+ if(act==="iup"||act==="idn"){s.done();const i=s.s.items.indexOf(s.it),j=i+(act==="iup"?-1:1);if(i>=0&&j>=0&&j<s.s.items.length)[s.s.items[i],s.s.items[j]]=[s.s.items[j],s.s.items[i]];close();commit();return}
+ if(act==="ibelow"){const at0=s.s.items.indexOf(s.it);s.done();const at=s.s.items.indexOf(s.it),pos=at>=0?at+1:at0;s.s.items.splice(pos,0,blank());close();commit();sItem(s.sid,pos,true);return}
+ if(act==="idel"){if(!armed(a))return;const i=s.s.items.indexOf(s.it);if(i>=0)s.s.items.splice(i,1);if(!s.s.items.length)s.s.items.push(blank());close();commit()}});
+function sPhotoRefresh(){if(sh&&sh.body){const b=ov.querySelector("#lph");if(b){const tmp=document.createElement("div");tmp.innerHTML=sh.body();b.replaceWith(tmp.firstElementChild)}}}
+ov.addEventListener("input",ev=>{const el=ev.target;if(!el.dataset.ph)return;S[el.dataset.ph]=+el.value;clearTimeout(phT2);phT2=setTimeout(()=>cropPhoto().then(()=>{save();buildPreview();const th=ov.querySelector(".lthumb");if(th&&S.photo&&th.tagName==="IMG")th.src=S.photo}),60)});
+addEventListener("keydown",ev=>{if(ev.key==="Escape"&&sh){if(sh.cancel)sh.cancel();close()}});
+/* --- tap handling in the live preview --- */
+$("pages").addEventListener("click",ev=>{const el=ev.target.closest("[data-ed]");if(!el)return;ev.preventDefault();open(el.dataset.ed)});
+/* hint + fit status above the page */
+const hint=document.createElement("p");hint.className="lvh";const lf=document.createElement("div");lf.id="lvfit";lf.className="fit";$("pv").insertBefore(lf,$("pages"));$("pv").insertBefore(hint,lf);
+function lvStatus(){hint.textContent=t("lv_hint");if(FIT&&lf){const k=FIT.fits?(FIT.fs<12?"small":"ok"):"over";lf.className="fit "+k;lf.textContent=FIT.fits?(FIT.fs<12?t("fitSmall"):t("fitOk")):t("fitOver")}}
+const _sf=setFit;setFit=function(r){_sf(r);lvStatus()};
+const _ch=chrome;chrome=function(){_ch();lvStatus()};
+lvStatus();
+})();
+
 addEventListener("resize",()=>{clearTimeout(pvT);pvT=setTimeout(applyScale,80)});
-["en","ckb"].forEach(l=>ensureGuide(l));
 chrome();renderEd();buildPreview();
 if(document.fonts&&document.fonts.load){const smp="ڕێڵۆە کوردی";Promise.all(["400","600","700"].map(w=>document.fonts.load(w+' 14px "Noto Sans Arabic"',smp).catch(()=>0)).concat(document.fonts.load('400 14px "Noto Naskh Arabic"',smp).catch(()=>0))).then(()=>{buildPreview();if(document.fonts.ready)document.fonts.ready.then(buildPreview)})}
 else if(document.fonts&&document.fonts.ready)document.fonts.ready.then(buildPreview);
