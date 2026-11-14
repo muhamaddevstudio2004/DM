@@ -2,8 +2,8 @@ name: Supabase Keep-Alive
 
 on:
   schedule:
-    - cron: "17 6 * * *"   # once every 24 hours (06:17 UTC). GitHub may delay scheduled runs.
-  workflow_dispatch:        # lets you run it by hand from the Actions tab
+    - cron: "17 6 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,17 +15,21 @@ jobs:
     steps:
       - name: Call health Edge Function (3 attempts)
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}      # e.g. https://abcd1234.supabase.co
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           HEALTH_SECRET: ${{ secrets.HEALTH_SECRET }}
         run: |
+          if [ -z "$SUPABASE_URL" ]; then echo "::error::SUPABASE_URL secret is missing or empty"; exit 1; fi
+          if [ -z "$HEALTH_SECRET" ]; then echo "::error::HEALTH_SECRET secret is missing or empty"; exit 1; fi
+          URL="$(printf '%s' "$SUPABASE_URL" | tr -d '[:space:]')"; URL="${URL%/}"
+          KEY="$(printf '%s' "$HEALTH_SECRET" | tr -d '[:space:]')"
+          echo "URL length: ${#URL}, starts with https: $([[ $URL == https://* ]] && echo yes || echo no)"
           for i in 1 2 3; do
-            code=$(curl -s -o out.json -w '%{http_code}' --max-time 30 -X POST \
-              "$SUPABASE_URL/functions/v1/health" \
-              -H "Authorization: Bearer $HEALTH_SECRET" || true)
+            code=$(curl -sS -o out.json -w '%{http_code}' --max-time 30 -X POST \
+              "$URL/functions/v1/health" -H "Authorization: Bearer $KEY" 2>err.txt || true)
             echo "Attempt $i: HTTP ${code:-000}"
-            cat out.json 2>/dev/null || true; echo
+            cat err.txt out.json 2>/dev/null || true; echo
             [ "$code" = "200" ] && exit 0
-            [ "$i" -lt 3 ] && sleep $((i * 60))
+            [ "$i" -lt 3 ] && sleep $((i * 20))
           done
-          echo "::error::Health check failed after 3 attempts. The project may be paused. Restore it manually in the Supabase dashboard."
+          echo "::error::Health check failed after 3 attempts. See the messages above."
           exit 1
