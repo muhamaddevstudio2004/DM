@@ -1,3 +1,4 @@
+
 name: Supabase Keep-Alive
 
 on:
@@ -13,23 +14,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Call health Edge Function (3 attempts)
+      - name: Call health Edge Function
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           HEALTH_SECRET: ${{ secrets.HEALTH_SECRET }}
         run: |
-          if [ -z "$SUPABASE_URL" ]; then echo "::error::SUPABASE_URL secret is missing or empty"; exit 1; fi
-          if [ -z "$HEALTH_SECRET" ]; then echo "::error::HEALTH_SECRET secret is missing or empty"; exit 1; fi
-          URL="$(printf '%s' "$SUPABASE_URL" | tr -d '[:space:]')"; URL="${URL%/}"
-          KEY="$(printf '%s' "$HEALTH_SECRET" | tr -d '[:space:]')"
-          echo "URL length: ${#URL}, starts with https: $([[ $URL == https://* ]] && echo yes || echo no)"
-          for i in 1 2 3; do
-            code=$(curl -sS -o out.json -w '%{http_code}' --max-time 30 -X POST \
-              "$URL/functions/v1/super-responder" -H "Authorization: Bearer $KEY" 2>err.txt || true)
-            echo "Attempt $i: HTTP ${code:-000}"
-            cat err.txt out.json 2>/dev/null || true; echo
-            [ "$code" = "200" ] && exit 0
-            [ "$i" -lt 3 ] && sleep $((i * 20))
-          done
-          echo "::error::Health check failed after 3 attempts. See the messages above."
-          exit 1
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::error::SUPABASE_URL is missing"
+            exit 1
+          fi
+
+          if [ -z "$HEALTH_SECRET" ]; then
+            echo "::error::HEALTH_SECRET is missing"
+            exit 1
+          fi
+
+          URL="${SUPABASE_URL%/}"
+
+          code=$(curl -sS -o response.json -w '%{http_code}' \
+            --max-time 30 -X POST \
+            "$URL/functions/v1/health" \
+            -H "Authorization: Bearer $HEALTH_SECRET" \
+            -H "Content-Type: application/json")
+
+          cat response.json
+          echo "HTTP Status: $code"
+
+          if [ "$code" != "200" ]; then
+            echo "::error::Health check failed"
+            exit 1
+          fi
