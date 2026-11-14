@@ -10,37 +10,25 @@ permissions:
   contents: read
 
 jobs:
-  health-check:
+  ping:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Call health Edge Function
+      - name: Ping Supabase database (3 attempts)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          HEALTH_SECRET: ${{ secrets.HEALTH_SECRET }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          if [ -z "$SUPABASE_URL" ]; then
-            echo "::error::SUPABASE_URL is missing"
-            exit 1
-          fi
-
-          if [ -z "$HEALTH_SECRET" ]; then
-            echo "::error::HEALTH_SECRET is missing"
-            exit 1
-          fi
-
-          URL="${SUPABASE_URL%/}"
-
-          code=$(curl -sS -o response.json -w '%{http_code}' \
-            --max-time 30 -X POST \
-            "$URL/functions/v1/health" \
-            -H "Authorization: Bearer $HEALTH_SECRET" \
-            -H "Content-Type: application/json")
-
-          cat response.json
-          echo "HTTP Status: $code"
-
-          if [ "$code" != "200" ]; then
-            echo "::error::Health check failed"
-            exit 1
-          fi
+          URL="$(printf '%s' "$SUPABASE_URL" | tr -d '[:space:]')"; URL="${URL%/}"
+          KEY="$(printf '%s' "$SUPABASE_ANON_KEY" | tr -d '[:space:]')"
+          for i in 1 2 3; do
+            code=$(curl -sS -o out.json -w '%{http_code}' --max-time 30 -X POST \
+              "$URL/rest/v1/rpc/ping" \
+              -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}' 2>err.txt || true)
+            echo "Attempt $i: HTTP ${code:-000}"
+            [ "$code" = "200" ] && exit 0
+            cat err.txt; head -c 300 out.json; echo
+            [ "$i" -lt 3 ] && sleep $((i * 20))
+          done
+          echo "::error::Ping failed after 3 attempts."
+          exit 1
