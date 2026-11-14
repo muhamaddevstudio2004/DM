@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Locker24</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--navy:#14213d;--bg:#f4f6f9;--card:#fff;--line:#dde2ea;--g:#1f9d55;--r:#d64545;--mut:#5b6678}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--navy)}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{font-weight:800;font-size:20px;display:flex;gap:8px;align-items:center}nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+nav a,.lnk{padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--navy);text-decoration:none;font-weight:500}nav a:hover{background:var(--bg)}
+.badge{background:#e8f5ee;color:var(--g);padding:4px 10px;border-radius:99px;font-size:13px;font-weight:600}
+main{max-width:1000px;margin:auto;padding:20px}section{display:none}section.on{display:block}
+.hero{text-align:center;padding:48px 8px}.hero h1{font-size:clamp(28px,6vw,48px);margin:0 0 8px}.hero p{color:var(--mut);font-size:18px}
+button,.btn{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;background:var(--navy);color:#fff}
+button.sec{background:#fff;color:var(--navy);border:1px solid var(--line)}button:disabled{opacity:.5;cursor:not-allowed}button.sm{padding:5px 10px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0;box-shadow:0 2px 8px #14213d12}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:18px;perspective:900px}
+.locker{position:relative;height:230px;border-radius:6px;background:#566074;padding:7px;box-shadow:0 10px 18px #14213d40,inset 0 0 0 2px #3d4658;cursor:pointer;transition:transform .3s}
+.locker:hover:not(.used){transform:translateY(-4px)}
+.door{position:absolute;inset:7px;border-radius:3px;transform-origin:left center;transition:transform .5s;background:linear-gradient(100deg,#c9d0da,#eef1f5 30%,#bcc4cf 55%,#e3e7ed 80%,#aeb7c3);box-shadow:inset 0 0 0 1px #fff9,inset -3px 0 6px #0002,3px 2px 8px #0004}
+.locker:hover:not(.used) .door{transform:rotateY(-28deg)}
+.vents{position:absolute;top:30px;left:18px;right:18px;height:30px;background:repeating-linear-gradient(#5a6476 0 3px,transparent 3px 8px);border-radius:3px;opacity:.7}
+.plate{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#14213d;color:#fff;font-weight:700;font-size:13px;padding:1px 10px;border-radius:3px}
+.handle{position:absolute;right:14px;top:105px;width:10px;height:44px;border-radius:5px;background:linear-gradient(90deg,#6c7686,#d5dae2,#6c7686);box-shadow:1px 2px 3px #0006}
+.keyh{position:absolute;right:12px;top:158px;width:14px;height:14px;border-radius:50%;background:radial-gradient(#222 25%,#8a93a3 30%,#cfd5dd);box-shadow:0 1px 2px #0006}
+.led{position:absolute;left:14px;bottom:14px;display:flex;gap:6px;align-items:center;font-size:12px;font-weight:700}.led i{width:11px;height:11px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g)}
+.used .led i{background:var(--r);box-shadow:0 0 8px var(--r)}.used{cursor:not-allowed;filter:saturate(.7)}
+input,textarea{font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--navy)}
+label{display:block;font-weight:600;margin:12px 0 4px}textarea{min-height:120px;resize:vertical}
+.drop{border:2px dashed #a8b2c2;border-radius:14px;padding:28px;text-align:center;background:#f9fafc;cursor:pointer;color:var(--mut)}.drop.hov{border-color:var(--navy);background:#eef1f6}
+.files{list-style:none;padding:0;margin:12px 0}.files li{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff}
+.files img{width:44px;height:44px;object-fit:cover;border-radius:6px}.ico{width:44px;height:44px;display:grid;place-items:center;background:var(--bg);border-radius:6px;font-size:12px;font-weight:700;color:var(--mut)}
+.files .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.files small{color:var(--mut);display:block}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:8px;display:none}.bar b{display:block;height:100%;width:0;background:var(--g);transition:width .2s}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:12px 18px;border-radius:10px;color:#fff;display:none;z-index:9;max-width:90%}
+.timer{font:700 32px ui-monospace,monospace;letter-spacing:2px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.demo{background:#fff4d6;color:#7a5a00;padding:8px 20px;text-align:center;font-size:14px;font-weight:600}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes s{to{transform:rotate(360deg)}}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.notes{white-space:pre-wrap;background:var(--bg);padding:12px;border-radius:10px}
+footer{border-top:1px solid var(--line);background:#fff;padding:24px 20px;margin-top:30px}footer div{max-width:1000px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;font-size:14px;color:var(--mut)}footer b{color:var(--navy)}
+</style></head><body>
+<div id="demoBar" class="demo" hidden>DEMO MODE: data is stored only in this browser, not in the cloud. It is not secure.</div>
+<header><div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18M9 11v2M15 11v2"/></svg>Locker24</div>
+<nav><a onclick="go('home')">Home</a><a onclick="go('open')">Open Locker</a><a onclick="go('how')">How It Works</a><span class="badge">Free Plan</span></nav></header>
+<main>
+<section id="home" class="on">
+<div class="hero"><h1>Your Files. Your Locker. 24 Hours.</h1><p>Store your files securely and access them anywhere.</p>
+<div class="row" style="justify-content:center"><button onclick="document.getElementById('lockers').scrollIntoView({behavior:'smooth'})">Find a Locker</button><button class="sec" onclick="go('open')">Open My Locker</button></div></div>
+<h2 id="lockers">Choose a locker</h2><div id="full" class="card" hidden>All 10 lockers are in use. Please try again later.</div>
+<div class="grid" id="grid"></div></section>
+
+<section id="mgr"><div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Locker <span id="mNum"></span></h2><button class="sec sm" onclick="cancel()">Cancel</button></div>
+<p style="color:var(--mut)">Your locker is reserved for 15 minutes. Add files and notes, then set a password and lock it.</p>
+<div class="drop" id="drop">Drag files here or click to choose. Max 10 MB each, up to 20 files.<input id="fi" type="file" multiple hidden></div>
+<div class="bar" id="bar"><b></b></div><ul class="files" id="mFiles"></ul>
+<label for="notes">Text notes</label><textarea id="notes" maxlength="20000"></textarea>
+<label for="p1">Password (at least 6 characters)</label><input id="p1" type="password" autocomplete="new-password">
+<label for="p2">Confirm password</label><input id="p2" type="password" autocomplete="new-password">
+<p><button id="lockBtn" onclick="lockIt()">Lock Locker</button></p></div></section>
+
+<section id="open"><div class="card"><h2 style="margin-top:0">Open Locker</h2>
+<label for="oNum">Locker number</label><input id="oNum" inputmode="numeric" placeholder="01 to 10">
+<label for="oPw">Password</label><input id="oPw" type="password" autocomplete="current-password">
+<p><button id="openBtn" onclick="openIt()">Open Locker</button></p></div></section>
+
+<section id="vault"><div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Locker <span id="vNum"></span></h2><button class="sec sm" onclick="closeV()">Close</button></div>
+<p>Time left</p><div class="timer" id="vTimer"></div></div>
+<div class="card"><h3 style="margin-top:0">Notes</h3><div class="notes" id="vNotes"></div></div>
+<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Files</h3><button class="sm" id="dlAll" onclick="dlAll()">Download all</button></div><ul class="files" id="vFiles"></ul></div></section>
+
+<section id="admin"><div class="card"><h2 style="margin-top:0">Admin: Project Status</h2>
+<label for="aPw">Admin password</label><input id="aPw" type="password" autocomplete="current-password">
+<p><button id="aBtn" onclick="adminCheck()">Check Status</button></p>
+<div id="aOut" hidden><div id="aPause" class="card" style="background:#fff4d6;border-color:#e6c76a" hidden>Supabase is not reachable. If your free project is paused for inactivity, restore it manually in the Supabase dashboard. Scheduled checks reduce this risk but do not guarantee it will never happen.</div>
+<p><b>Supabase Connection Status:</b> <span id="aConn"></span></p><p><b>Last Successful Health Check:</b> <span id="aOk"></span></p><p><b>Last Health Check Result:</b> <span id="aRes"></span></p><p id="aStale" style="color:var(--r)" hidden>No successful check in over 36 hours. Check the GitHub Actions run logs.</p></div></div></section>
+<section id="how"><div class="card"><h2 style="margin-top:0">How It Works</h2><div class="steps">
+<div><b>1. Pick</b><br>Choose a free locker from the ten available.</div><div><b>2. Fill</b><br>Add files and notes.</div>
+<div><b>3. Lock</b><br>Set a password. The 24 hour timer starts.</div><div><b>4. Open</b><br>Use the locker number and password on any device.</div>
+<div><b>5. Expire</b><br>After 24 hours everything is deleted and the locker is free again.</div></div></div></section>
+</main>
+<footer><div><p><b>About Locker24</b><br>Temporary private storage for 24 hours.</p><p><b>How It Works</b><br><a class="lnk" style="padding:0" onclick="go('how')">Read the steps</a></p>
+<p><b>Privacy</b><br>Passwords are hashed. Files are private and deleted after 24 hours.</p><p><b>Contact</b><br>support@locker24.example<br><a class="lnk" style="padding:0" onclick="go('admin')">Admin</a></p></div></footer>
+<div id="toast"></div>
+<script>
+// ===== CONFIG: add your Supabase values. Leave empty for DEMO MODE. =====
+const SUPABASE_URL="", SUPABASE_ANON_KEY="";
+// =======================================================================
+const $=id=>document.getElementById(id),BUCKET="locker-files",MAXMB=10,MAXF=20;
+const OK=/^(image\/(png|jpe?g|gif|webp)|application\/pdf|text\/plain|application\/(msword|zip|vnd\.openxmlformats-officedocument\..*))$/;
+const DEMO=!SUPABASE_URL||!SUPABASE_ANON_KEY;
+const pad=n=>String(n).padStart(2,"0"),fmt=b=>b>1e6?(b/1e6).toFixed(1)+" MB":Math.ceil(b/1e3)+" KB";
+function toast(m,bad){const t=$("toast");t.textContent=m;t.style.background=bad?"#b3261e":"#1f9d55";t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",4000)}
+function busy(b,on,txt){if(on){b._h=b.innerHTML;b.innerHTML='<span class="spin"></span>'+txt;b.disabled=true}else{b.innerHTML=b._h;b.disabled=false}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";")}
+
+// ---------- API layer: Supabase or local demo ----------
+let api;
+if(!DEMO){
+ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),rpc=async(f,a)=>{const{data,error}=await sb.rpc(f,a);if(error)throw new Error(error.message);return data};
+ api={
+  list:()=>rpc("list_lockers"),
+  reserve:n=>rpc("reserve_locker",{n}),
+  async upload(n,tok,file){const path=`${n}/${tok}/${crypto.randomUUID()}_${file.name.replace(/[^\w.\-]/g,"_")}`;
+   const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type});if(error)throw new Error(error.message);
+   const id=await rpc("add_file",{n,tok,fname:file.name,fsize:file.size,fpath:path});return{id,name:file.name,size:file.size,path}},
+  async removeFile(n,tok,id){const p=await rpc("remove_file",{n,tok,fid:id});if(p)await sb.storage.from(BUCKET).remove([p])},
+  health:async pw=>{const r=await rpc("admin_health",{pw});if(r.error)throw new Error(r.error=="blocked"?"Too many attempts. Try again in 15 minutes.":"Wrong admin password.");return r},
+  lock:(n,tok,pw,notes)=>rpc("lock_locker",{n,tok,pw,note:notes}),
+  release:(n,tok)=>rpc("release_locker",{n,tok}),
+  open:async(n,pw)=>{const r=await rpc("open_locker",{n,pw});if(r.error)throw new Error("Wrong locker number or password.");return r},
+  async url(f,tok){const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,120,{download:f.name});if(error)throw new Error(error.message);return data.signedUrl}
+ };
+}else{
+ $("demoBar").hidden=false;
+ const L=()=>{let d=JSON.parse(localStorage.l24||"null");if(!d){d={};for(let i=1;i<=10;i++)d[i]={s:"free",files:[]}}
+  for(const i in d){const x=d[i];if((x.s=="locked"&&x.exp<Date.now())||(x.s=="res"&&x.res<Date.now()))d[i]={s:"free",files:[]}}return d},S=d=>{try{localStorage.l24=JSON.stringify(d)}catch(e){throw new Error("Browser storage is full. Use smaller files.")}};
+ const hash=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");
+ const rd=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error("Could not read file."));r.readAsDataURL(f)});
+ const chk=(d,n,t)=>{if(!d[n]||d[n].tok!==t||d[n].s!="res")throw new Error("Your reservation has expired.")};
+ api={
+  health:async()=>{throw new Error("Not available in demo mode.")},
+  list:async()=>{const d=L();return Object.keys(d).map(i=>({id:+i,used:d[i].s!="free"}))},
+  reserve:async n=>{const d=L();if(d[n].s!="free")return null;const t=crypto.randomUUID();d[n]={s:"res",tok:t,res:Date.now()+9e5,files:[]};S(d);return t},
+  async upload(n,t,f){const d=L();chk(d,n,t);const u=await rd(f),id=crypto.randomUUID(),o={id,name:f.name,size:f.size,path:u};d[n].files.push(o);S(d);return o},
+  removeFile:async(n,t,id)=>{const d=L();chk(d,n,t);d[n].files=d[n].files.filter(f=>f.id!=id);S(d)},
+  lock:async(n,t,pw,notes)=>{const d=L();chk(d,n,t);Object.assign(d[n],{s:"locked",h:await hash(n+pw),notes,exp:Date.now()+864e5});S(d);return{expires_at:new Date(d[n].exp).toISOString(),now:new Date().toISOString()}},
+  release:async(n,t)=>{const d=L();if(d[n].tok===t){d[n]={s:"free",files:[]};S(d)}},
+  open:async(n,pw)=>{const d=L(),x=d[n];if(!x||x.s!="locked"||x.h!==await hash(n+pw))throw new Error("Wrong locker number or password.");
+   return{token:"demo",notes:x.notes,expires_at:new Date(x.exp).toISOString(),now:new Date().toISOString(),files:x.files}},
+  url:async f=>f.path
+ };
+}
+
+// ---------- UI ----------
+let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null;
+function go(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")loadGrid()}
+async function loadGrid(){
+ try{const l=await api.list();$("grid").innerHTML=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");
+  $("full").hidden=!l.every(x=>x.used)}catch(e){toast("Could not load lockers. Check your network.",1)}}
+async function pick(n){
+ try{const t=await api.reserve(n);if(!t){toast("This locker was just taken. Please choose another.",1);return loadGrid()}
+  cur=n;tok=t;mf=[];blobs={};$("mNum").textContent=pad(n);$("notes").value=$("p1").value=$("p2").value="";renderM();go("mgr")}
+ catch(e){toast(e.message,1)}}
+function renderM(){$("mFiles").innerHTML=mf.map(f=>`<li>${blobs[f.id]&&f.type?.startsWith("image/")?`<img src="${blobs[f.id]}" alt="">`:`<div class="ico">FILE</div>`}<div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sec sm" onclick="rmFile('${f.id}')">Delete</button></li>`).join("")}
+async function addFiles(list){
+ const fs=[...list];let done=0;const bar=$("bar");bar.style.display="block";bar.firstChild.style.width="0";
+ for(const f of fs){
+  if(mf.length>=MAXF){toast("Maximum "+MAXF+" files.",1);break}
+  if(!OK.test(f.type)){toast(f.name+": file type is not allowed.",1);continue}
+  if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
+  try{const r=await api.upload(cur,tok,f);r.type=f.type;blobs[r.id]=URL.createObjectURL(f);mf.push(r);renderM()}catch(e){toast(f.name+": "+e.message,1)}
+  bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"}
+ setTimeout(()=>bar.style.display="none",600)}
+async function rmFile(id){try{await api.removeFile(cur,tok,id);mf=mf.filter(f=>f.id!=id);renderM()}catch(e){toast(e.message,1)}}
+async function lockIt(){
+ const a=$("p1").value;if(a.length<6)return toast("Password must have at least 6 characters.",1);
+ if(a!==$("p2").value)return toast("Passwords do not match.",1);
+ const b=$("lockBtn");busy(b,1,"Locking...");
+ try{await api.lock(cur,tok,a,$("notes").value);toast("Locker "+pad(cur)+" is locked for 24 hours.");cur=tok=null;go("home")}
+ catch(e){toast(e.message,1)}busy(b,0)}
+async function cancel(){try{await api.release(cur,tok)}catch(e){}cur=tok=null;go("home")}
+$("drop").onclick=()=>$("fi").click();$("fi").onchange=e=>{addFiles(e.target.files);e.target.value=""};
+["dragenter","dragover"].forEach(v=>$("drop").addEventListener(v,e=>{e.preventDefault();$("drop").classList.add("hov")}));
+["dragleave","drop"].forEach(v=>$("drop").addEventListener(v,e=>{e.preventDefault();$("drop").classList.remove("hov")}));
+$("drop").addEventListener("drop",e=>addFiles(e.dataTransfer.files));
+
+async function openIt(){
+ const n=parseInt($("oNum").value,10),pw=$("oPw").value;
+ if(!(n>=1&&n<=10)||!pw)return toast("Enter a locker number from 01 to 10 and your password.",1);
+ const b=$("openBtn");busy(b,1,"Opening...");
+ try{const r=await api.open(n,pw);vTok=r.token;vFiles=r.files;$("vNum").textContent=pad(n);$("vNotes").textContent=r.notes||"No notes.";
+  const off=new Date(r.now)-Date.now(),end=new Date(r.expires_at).getTime();
+  $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sm" onclick="dl(${i})">Download</button></li>`).join(""):"<li>No files.</li>";
+  $("dlAll").style.display=vFiles.length>1?"":"none";$("oPw").value="";go("vault");
+  const tick=()=>{const s=Math.floor((end-(Date.now()+off))/1e3);if(s<=0){clearInterval(tmr);toast("This locker has expired.",1);return closeV()}
+   $("vTimer").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60)};tick();tmr=setInterval(tick,1000)}
+ catch(e){toast(e.message,1)}busy(b,0)}
+async function dl(i){try{const u=await api.url(vFiles[i],vTok),a=document.createElement("a");a.href=u;a.download=vFiles[i].name;document.body.appendChild(a);a.click();a.remove()}catch(e){toast("Download failed: "+e.message,1)}}
+async function dlAll(){for(let i=0;i<vFiles.length;i++){await dl(i);await new Promise(r=>setTimeout(r,500))}}
+function closeV(){vFiles=[];vTok=null;$("vNotes").textContent="";go("home")}
+async function adminCheck(){
+ const b=$("aBtn"),pw=$("aPw").value;if(!pw)return toast("Enter the admin password.",1);
+ busy(b,1,"Checking...");
+ let conn=true;try{await api.list()}catch(e){conn=false}
+ let r=null,cached=false;
+ try{
+  if(DEMO)throw new Error("Not available in demo mode.");
+  if(conn){r=await api.health(pw);localStorage.l24h=JSON.stringify(r)}
+  else{r=JSON.parse(localStorage.l24h||"null");cached=!!r}
+ }catch(e){toast(e.message,1);busy(b,0);return}
+ $("aOut").hidden=false;
+ $("aConn").textContent=conn?"Connected":"Not reachable";$("aConn").style.color=conn?"var(--g)":"var(--r)";
+ $("aPause").hidden=conn;
+ const f=t=>t?new Date(t).toLocaleString():"Never",sfx=cached?" (saved earlier on this browser)":"";
+ $("aOk").textContent=f(r?.last_success_at)+sfx;
+ $("aRes").textContent=r?.last_result?(r.last_result=="ok"?"OK":"Error: "+(r.last_error||"unknown"))+" at "+f(r.last_check_at)+sfx:"No result yet";
+ $("aStale").hidden=!!r?.last_success_at&&Date.now()-new Date(r.last_success_at)<1.5*864e5;
+ $("aPw").value="";busy(b,0)}
+loadGrid();setInterval(()=>{if($("home").classList.contains("on"))loadGrid()},30000);
+</script></body></html>
