@@ -25,7 +25,7 @@ jobs:
           echo "URL length: ${#URL}, starts with https: $([[ $URL == https://* ]] && echo yes || echo no)"
           for i in 1 2 3; do
             code=$(curl -sS -o out.json -w '%{http_code}' --max-time 30 -X POST \
-              "$URL/functions/v1/health" -H "Authorization: Bearer $KEY" 2>err.txt || true)
+              "$URL/functions/v1/super-responder" -H "Authorization: Bearer $KEY" 2>err.txt || true)
             echo "Attempt $i: HTTP ${code:-000}"
             cat err.txt out.json 2>/dev/null || true; echo
             [ "$code" = "200" ] && exit 0
