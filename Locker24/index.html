@@ -9,7 +9,7 @@ header{display:flex;flex-direction:column;gap:2px;padding:10px 16px 0;background
 .logo{font-weight:800;font-size:20px;display:flex;gap:8px;align-items:center}nav{display:flex;align-items:center;gap:0}nav a{flex:none;white-space:nowrap;font-size:14px;padding:8px 10px;border-radius:0}nav a.act{font-weight:700}nav a:first-child{padding-left:0}.badge{margin-left:auto;white-space:nowrap;font-size:12px;padding:3px 9px}@media(min-width:720px){header{flex-direction:row;align-items:center;gap:28px;padding:0 24px}nav{flex:1}nav a{font-size:16px;padding:18px 12px}nav a:first-child{padding-left:12px}}
 .lnk{padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--navy);text-decoration:none;font-weight:500}nav a{cursor:pointer;color:var(--navy);text-decoration:none;font-weight:500;background:none;outline:none;-webkit-tap-highlight-color:transparent;user-select:none}
 .badge{background:#e8f5ee;color:var(--g);padding:4px 10px;border-radius:99px;font-size:13px;font-weight:600}
-main{max-width:1000px;margin:auto;padding:20px}section{display:none}section.on{display:block}
+main{max-width:1000px;margin:auto;padding:20px}section{display:none}section.on{display:block;animation:fi .25s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){section.on{animation:none}}
 .hero{text-align:center;padding:48px 8px}.hero h1{font-size:clamp(28px,6vw,48px);margin:0 0 8px}.hero p{color:var(--mut);font-size:18px}
 button,.btn{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;background:var(--navy);color:#fff}
 button.sec{background:#fff;color:var(--navy);border:1px solid var(--line)}button:disabled{opacity:.5;cursor:not-allowed}button.sm{padding:5px 10px;font-size:14px}
@@ -204,7 +204,7 @@ if(!DEMO){
 let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=null,vLang="auto";
 function go(id){const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
 async function loadGrid(){
- try{const l=await api.list();$("grid").innerHTML=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");
+ try{const l=await api.list();const h=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");if(loadGrid.h!==h){loadGrid.h=h;$("grid").innerHTML=h}
   $("full").hidden=!l.every(x=>x.used)}catch(e){toast("Could not load lockers. Check your network.",1)}}
 async function pick(n){
  try{const t=await api.reserve(n);if(!t){toast("This locker was just taken. Please choose another.",1);return loadGrid()}
