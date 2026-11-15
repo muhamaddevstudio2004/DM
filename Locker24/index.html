@@ -5,9 +5,9 @@
 <style>
 :root{--navy:#14213d;--bg:#f4f6f9;--card:#fff;--line:#dde2ea;--g:#1f9d55;--r:#d64545;--mut:#5b6678}
 *{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--navy)}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.logo{font-weight:800;font-size:20px;display:flex;gap:8px;align-items:center}nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-nav a,.lnk{padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--navy);text-decoration:none;font-weight:500}nav a:hover{background:var(--bg)}
+header{display:flex;flex-direction:column;gap:2px;padding:10px 16px 0;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{font-weight:800;font-size:20px;display:flex;gap:8px;align-items:center}nav{display:flex;align-items:center;gap:0}nav a{flex:none;white-space:nowrap;font-size:14px;padding:8px 10px;border-radius:0}nav a.act{font-weight:700}nav a:first-child{padding-left:0}.badge{margin-left:auto;white-space:nowrap;font-size:12px;padding:3px 9px}@media(min-width:720px){header{flex-direction:row;align-items:center;gap:28px;padding:0 24px}nav{flex:1}nav a{font-size:16px;padding:18px 12px}nav a:first-child{padding-left:12px}}
+.lnk{padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--navy);text-decoration:none;font-weight:500}nav a{cursor:pointer;color:var(--navy);text-decoration:none;font-weight:500;background:none;outline:none;-webkit-tap-highlight-color:transparent;user-select:none}
 .badge{background:#e8f5ee;color:var(--g);padding:4px 10px;border-radius:99px;font-size:13px;font-weight:600}
 main{max-width:1000px;margin:auto;padding:20px}section{display:none}section.on{display:block}
 .hero{text-align:center;padding:48px 8px}.hero h1{font-size:clamp(28px,6vw,48px);margin:0 0 8px}.hero p{color:var(--mut);font-size:18px}
@@ -37,11 +37,38 @@ label{display:block;font-weight:600;margin:12px 0 4px}textarea{min-height:120px;
 .demo{background:#fff4d6;color:#7a5a00;padding:8px 20px;text-align:center;font-size:14px;font-weight:600}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes s{to{transform:rotate(360deg)}}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.notes{white-space:pre-wrap;background:var(--bg);padding:12px;border-radius:10px}
-footer{border-top:1px solid var(--line);background:#fff;padding:24px 20px;margin-top:30px}footer div{max-width:1000px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;font-size:14px;color:var(--mut)}footer b{color:var(--navy)}
+footer{border-top:1px solid var(--line);background:#fff;padding:24px 16px 18px;margin-top:30px}
+.fw{max-width:1000px;margin:auto;display:grid;grid-template-columns:1fr;gap:20px}
+.fw h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.fw p{margin:0;font-size:14px}.fw a{color:var(--navy);cursor:pointer;font-weight:600;text-decoration:none}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.fb{grid-column:1/-1;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--mut);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 16px}
+@media(min-width:720px){.fw{grid-template-columns:2fr 1fr 1fr}}
+.nh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin:14px 0 6px}
+select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy)}
+.ed{--fs:14px;--lh:22px;position:relative;height:260px;min-height:140px;resize:vertical;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#fbfcfe}
+.ed:focus-within{border-color:var(--navy);box-shadow:0 0 0 3px #14213d1f}
+.gut{position:absolute;left:0;top:0;bottom:0;width:44px;overflow:hidden;background:#f1f4f8;border-right:1px solid var(--line)}
+#gutIn{margin:0;padding-right:8px;text-align:right;color:#8a94a6;font:12px/var(--lh) ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.ed pre.hl,.ed textarea{position:absolute;left:44px;top:0;bottom:0;margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:var(--fs);line-height:var(--lh);tab-size:2;letter-spacing:0;white-space:pre;-webkit-text-size-adjust:100%}
+.ed pre.hl{right:0;padding:10px 40px 40px 12px;overflow:hidden;pointer-events:none;color:var(--navy)}
+.ed textarea{width:calc(100% - 44px);height:100%;min-height:0;padding:10px 12px 24px;border:0;border-radius:0;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:var(--navy);resize:none;overflow:auto;outline:none}
+.ed textarea::placeholder{color:#8a94a6;-webkit-text-fill-color:#8a94a6}
+.ed textarea::selection{background:#b4cdfc}
+.nf{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px;color:var(--mut)}
+.t-comment{color:#6b7a90;font-style:italic}.t-string{color:#0a7a3d}.t-keyword,.t-tag{color:#1d4ed8;font-weight:600}.t-literal{color:#be185d}
+.t-number,.t-attr{color:#b45309}.t-fn{color:#7c3aed}.t-prop{color:#0369a1}.t-var{color:#0f766e}.t-type{color:#0e7490}.t-meta{color:#9a3412}
+.cv{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fbfcfe}
+.cvh{padding:6px 12px;font-size:12px;font-weight:600;color:var(--mut);background:#f1f4f8;border-bottom:1px solid var(--line)}
+.cvb{display:flex;max-height:420px;overflow:auto}
+.cg,.cc{margin:0;padding:10px 12px;font:13px/20px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.cg{position:sticky;left:0;min-width:44px;padding:10px 8px;text-align:right;color:#8a94a6;background:#f1f4f8;border-right:1px solid var(--line);user-select:none}
+.cc{flex:1;white-space:pre}
+@media(max-width:719px){.ed{--fs:16px;--lh:24px;height:300px}select{font-size:16px}}
 </style></head><body>
 <div id="demoBar" class="demo" hidden>DEMO MODE: data is stored only in this browser, not in the cloud. It is not secure.</div>
 <header><div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18M9 11v2M15 11v2"/></svg>Locker24</div>
-<nav><a onclick="go('home')">Home</a><a onclick="go('open')">Open Locker</a><a onclick="go('how')">How It Works</a><span class="badge">Free Plan</span></nav></header>
+<nav><a data-v="home" class="act" onclick="go('home')">Home</a><a data-v="open" onclick="go('open')">Open Locker</a><a data-v="how" onclick="go('how')">How It Works</a><span class="badge">Free Plan</span></nav></header>
 <main>
 <section id="home" class="on">
 <div class="hero"><h1>Your Files. Your Locker. 24 Hours.</h1><p>Store your files securely and access them anywhere.</p>
@@ -53,7 +80,10 @@ footer{border-top:1px solid var(--line);background:#fff;padding:24px 20px;margin
 <p style="color:var(--mut)">Your locker is reserved for 15 minutes. Add files and notes, then set a password and lock it.</p>
 <div class="drop" id="drop">Drag files here or click to choose. Max 10 MB each, up to 20 files.<input id="fi" type="file" multiple hidden></div>
 <div class="bar" id="bar"><b></b></div><ul class="files" id="mFiles"></ul>
-<label for="notes">Text notes</label><textarea id="notes" maxlength="20000"></textarea>
+<div class="nh"><label for="notes" style="margin:0">Text notes</label>
+<div class="row" style="gap:8px"><select id="nLang" aria-label="Language"></select><button type="button" class="sec sm" id="nPaste">Paste</button><button type="button" class="sec sm" id="nCopy">Copy</button><button type="button" class="sec sm" id="nClear">Clear</button></div></div>
+<div class="ed" id="ed"><div class="gut"><pre id="gutIn"></pre></div><pre class="hl" id="hl" aria-hidden="true"></pre><textarea id="notes" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" wrap="off" maxlength="19900" placeholder="Type or paste notes or code here"></textarea></div>
+<div class="nf"><span id="nHint"></span><span id="nCount">0 / 19,900</span></div>
 <label for="p1">Password (at least 6 characters)</label><input id="p1" type="password" autocomplete="new-password">
 <label for="p2">Confirm password</label><input id="p2" type="password" autocomplete="new-password">
 <p><button id="lockBtn" onclick="lockIt()">Lock Locker</button></p></div></section>
@@ -65,7 +95,7 @@ footer{border-top:1px solid var(--line);background:#fff;padding:24px 20px;margin
 
 <section id="vault"><div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Locker <span id="vNum"></span></h2><button class="sec sm" onclick="closeV()">Close</button></div>
 <p>Time left</p><div class="timer" id="vTimer"></div></div>
-<div class="card"><h3 style="margin-top:0">Notes</h3><div class="notes" id="vNotes"></div></div>
+<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h3 style="margin:0">Notes</h3><button class="sec sm" id="cpN" onclick="copyNotes()" hidden>Copy</button></div><div class="notes" id="vNotes"></div></div>
 <div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Files</h3><button class="sm" id="dlAll" onclick="dlAll()">Download all</button></div><ul class="files" id="vFiles"></ul></div></section>
 
 <section id="admin"><div class="card"><h2 style="margin-top:0">Admin: Project Status</h2>
@@ -78,8 +108,12 @@ footer{border-top:1px solid var(--line);background:#fff;padding:24px 20px;margin
 <div><b>3. Lock</b><br>Set a password. The 24 hour timer starts.</div><div><b>4. Open</b><br>Use the locker number and password on any device.</div>
 <div><b>5. Expire</b><br>After 24 hours everything is deleted and the locker is free again.</div></div></div></section>
 </main>
-<footer><div><p><b>About Locker24</b><br>Temporary private storage for 24 hours.</p><p><b>How It Works</b><br><a class="lnk" style="padding:0" onclick="go('how')">Read the steps</a></p>
-<p><b>Privacy</b><br>Passwords are hashed. Files are private and deleted after 24 hours.</p><p><b>Contact</b><br>support@locker24.example<br><a class="lnk" style="padding:0" onclick="go('admin')">Admin</a></p></div></footer>
+<footer><div class="fw">
+<div><h4>About Locker24</h4><p>Temporary private storage. Your files are deleted after 24 hours.</p></div>
+<div><h4>Links</h4><div class="fl"><a onclick="go('how')">How It Works</a><a onclick="go('open')">Open Locker</a><a onclick="go('admin')">Admin</a></div></div>
+<div><h4>Contact</h4><p>WhatsApp: <a href="https://wa.me/9647509628683" target="_blank" rel="noopener">7509628683</a></p></div>
+<div class="fb"><span>Privacy: passwords are hashed and files are private.</span><span>&copy; 2026 Locker24</span></div>
+</div></footer>
 <div id="toast"></div>
 <script>
 // ===== CONFIG: add your Supabase values. Leave empty for DEMO MODE. =====
@@ -133,13 +167,13 @@ if(!DEMO){
 
 // ---------- UI ----------
 let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null;
-function go(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")loadGrid()}
+function go(id){const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
 async function loadGrid(){
  try{const l=await api.list();$("grid").innerHTML=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");
   $("full").hidden=!l.every(x=>x.used)}catch(e){toast("Could not load lockers. Check your network.",1)}}
 async function pick(n){
  try{const t=await api.reserve(n);if(!t){toast("This locker was just taken. Please choose another.",1);return loadGrid()}
-  cur=n;tok=t;mf=[];blobs={};$("mNum").textContent=pad(n);$("notes").value=$("p1").value=$("p2").value="";renderM();go("mgr")}
+  cur=n;tok=t;mf=[];blobs={};$("mNum").textContent=pad(n);$("notes").value=$("p1").value=$("p2").value="";nLang="auto";$("nLang").value="auto";edRender();renderM();go("mgr")}
  catch(e){toast(e.message,1)}}
 function renderM(){$("mFiles").innerHTML=mf.map(f=>`<li>${blobs[f.id]&&f.type?.startsWith("image/")?`<img src="${blobs[f.id]}" alt="">`:`<div class="ico">FILE</div>`}<div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sec sm" onclick="rmFile('${f.id}')">Delete</button></li>`).join("")}
 async function addFiles(list){
@@ -156,9 +190,13 @@ async function lockIt(){
  const a=$("p1").value;if(a.length<6)return toast("Password must have at least 6 characters.",1);
  if(a!==$("p2").value)return toast("Passwords do not match.",1);
  const b=$("lockBtn");busy(b,1,"Locking...");
- try{await api.lock(cur,tok,a,$("notes").value);toast("Locker "+pad(cur)+" is locked for 24 hours.");cur=tok=null;go("home")}
+ try{await api.lock(cur,tok,a,encodeNotes());toast("Locker "+pad(cur)+" is locked for 24 hours.");cur=tok=null;go("home")}
  catch(e){toast(e.message,1)}busy(b,0)}
-async function cancel(){try{await api.release(cur,tok)}catch(e){}cur=tok=null;go("home")}
+async function leaveLocker(){const n=cur,t=tok,fs=mf.slice();cur=tok=null;mf=[];
+ for(const f of fs){try{await api.removeFile(n,t,f.id)}catch(e){}}
+ try{await api.release(n,t)}catch(e){}}
+function cancel(){go("home")}
+addEventListener("pagehide",()=>{if(cur&&tok)try{api.release(cur,tok)}catch(e){}});
 $("drop").onclick=()=>$("fi").click();$("fi").onchange=e=>{addFiles(e.target.files);e.target.value=""};
 ["dragenter","dragover"].forEach(v=>$("drop").addEventListener(v,e=>{e.preventDefault();$("drop").classList.add("hov")}));
 ["dragleave","drop"].forEach(v=>$("drop").addEventListener(v,e=>{e.preventDefault();$("drop").classList.remove("hov")}));
@@ -168,7 +206,7 @@ async function openIt(){
  const n=parseInt($("oNum").value,10),pw=$("oPw").value;
  if(!(n>=1&&n<=10)||!pw)return toast("Enter a locker number from 01 to 10 and your password.",1);
  const b=$("openBtn");busy(b,1,"Opening...");
- try{const r=await api.open(n,pw);vTok=r.token;vFiles=r.files;$("vNum").textContent=pad(n);$("vNotes").textContent=r.notes||"No notes.";
+ try{const r=await api.open(n,pw);vTok=r.token;vFiles=r.files;$("vNum").textContent=pad(n);renderNotes(r.notes);
   const off=new Date(r.now)-Date.now(),end=new Date(r.expires_at).getTime();
   $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sm" onclick="dl(${i})">Download</button></li>`).join(""):"<li>No files.</li>";
   $("dlAll").style.display=vFiles.length>1?"":"none";$("oPw").value="";go("vault");
@@ -196,5 +234,82 @@ async function adminCheck(){
  $("aRes").textContent=r?.last_result?(r.last_result=="ok"?"OK":"Error: "+(r.last_error||"unknown"))+" at "+f(r.last_check_at)+sfx:"No result yet";
  $("aStale").hidden=!!r?.last_success_at&&Date.now()-new Date(r.last_success_at)<1.5*864e5;
  $("aPw").value="";busy(b,0)}
+// ---------- Notes editor with code colors ----------
+const MAXN=19900,LN={plain:"Plain text",javascript:"JavaScript",python:"Python",java:"Java",c:"C / C++",html:"HTML",css:"CSS",sql:"SQL",json:"JSON",bash:"Bash"};
+const K=w=>new RegExp("\\b(?:"+w+")\\b");
+const X={cs:/\/\/.*/,cb:/\/\*[\s\S]*?(?:\*\/|(?![\s\S]))/,ch:/#.*/,cd:/--.*/,dq:/"(?:\\.|[^"\\\n])*"?/,sq:/'(?:\\.|[^'\\\n])*'?/,bt:/`(?:\\[\s\S]|[^`\\])*`?/,num:/\b(?:0x[\da-fA-F]+|\d+\.?\d*(?:[eE][+-]?\d+)?)\b/,fn:/\b[A-Za-z_$][\w$]*(?=\s*\()/,at:/@\w+/};
+const LANGS={
+ javascript:{r:[["comment",X.cb],["comment",X.cs],["string",X.bt],["string",X.dq],["string",X.sq],["keyword",K("const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|class|extends|import|from|export|default|async|await|try|catch|finally|throw|typeof|instanceof|in|of|this|super|yield|static|void|delete")],["literal",K("true|false|null|undefined|NaN|Infinity")],["number",X.num],["fn",X.fn]]},
+ python:{r:[["string",/"""[\s\S]*?(?:"""|(?![\s\S]))|'''[\s\S]*?(?:'''|(?![\s\S]))/],["comment",X.ch],["string",X.dq],["string",X.sq],["fn",X.at],["keyword",K("def|class|return|if|elif|else|for|while|break|continue|import|from|as|try|except|finally|raise|with|pass|lambda|yield|global|nonlocal|in|is|not|and|or|del|assert|async|await")],["literal",K("True|False|None|self|cls")],["number",X.num],["fn",/\b[A-Za-z_]\w*(?=\s*\()/]]},
+ java:{r:[["comment",X.cb],["comment",X.cs],["string",X.dq],["string",X.sq],["fn",X.at],["keyword",K("public|private|protected|static|final|abstract|class|interface|extends|implements|new|return|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|throws|import|package|void|int|long|double|float|boolean|char|byte|short|this|super|instanceof|enum|synchronized|volatile")],["literal",K("true|false|null")],["number",X.num],["type",/\b[A-Z]\w*\b/],["fn",/\b[a-z_]\w*(?=\s*\()/]]},
+ c:{r:[["comment",X.cb],["comment",X.cs],["meta",/^[ \t]*#[ \t]*\w+.*/],["string",X.dq],["string",X.sq],["keyword",K("int|long|short|char|float|double|void|unsigned|signed|const|static|struct|union|enum|typedef|sizeof|return|if|else|for|while|do|switch|case|break|continue|goto|extern|inline|class|public|private|protected|virtual|template|typename|namespace|using|new|delete|try|catch|throw|bool|auto")],["literal",K("true|false|NULL|nullptr")],["number",X.num],["fn",/\b[A-Za-z_]\w*(?=\s*\()/]]},
+ html:{r:[["comment",/<!--[\s\S]*?(?:-->|(?![\s\S]))/],["meta",/<![A-Za-z][^>]*>/],["tag",/<\/?[A-Za-z][\w:-]*|\/?>/],["attr",/[A-Za-z_:@][\w:.-]*(?=\s*=)/],["string",/=\s*(?:"[^"]*"?|'[^']*'?)/]]},
+ css:{r:[["comment",X.cb],["string",X.dq],["string",X.sq],["keyword",/@[\w-]+/],["number",/#[\da-fA-F]{3,8}\b/],["prop",/[A-Za-z-]+(?=\s*:)/],["number",/\b\d+\.?\d*(?:px|em|rem|vh|vw|ch|pt|ms|s|deg|fr|%)?/]]},
+ sql:{r:[["comment",X.cb],["comment",X.cd],["string",X.sq],["string",X.dq],["keyword",K("SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|ALTER|DROP|INDEX|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|ON|AS|AND|OR|NOT|NULL|IS|IN|LIKE|BETWEEN|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|DISTINCT|UNION|ALL|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|CASE|WHEN|THEN|ELSE|END|EXISTS|COUNT|SUM|AVG|MIN|MAX|BEGIN|COMMIT|ROLLBACK|VIEW|WITH|ASC|DESC")],["number",X.num],["fn",/\b[A-Za-z_]\w*(?=\s*\()/]]},
+ json:{r:[["prop",/"(?:\\.|[^"\\\n])*"(?=\s*:)/],["string",X.dq],["literal",K("true|false|null")],["number",/-?\b\d+\.?\d*(?:[eE][+-]?\d+)?\b/]]},
+ bash:{r:[["comment",X.ch],["string",X.dq],["string",X.sq],["var",/\$\{?[A-Za-z_]\w*\}?|\$[0-9?@#*!$]/],["keyword",K("if|then|else|elif|fi|for|while|do|done|case|esac|function|in|return|exit|echo|cd|ls|export|local|source|sudo|grep|cat|mkdir|rm|cp|mv")],["number",X.num]]}
+};
+const RX={};
+function hl(code,lang){const L=LANGS[lang];if(!L)return esc(code);
+ const re=RX[lang]||(RX[lang]=new RegExp(L.r.map(x=>"("+x[1].source+")").join("|"),"gm"+(lang==="sql"?"i":"")));
+ re.lastIndex=0;let out="",last=0,m;
+ while((m=re.exec(code))){if(!m[0]){re.lastIndex++;continue}
+  const i=m.slice(1).findIndex(v=>v!==undefined);
+  out+=esc(code.slice(last,m.index))+'<span class="t-'+L.r[i][0]+'">'+esc(m[0])+"</span>";last=re.lastIndex}
+ return out+esc(code.slice(last))}
+function detect(t){const s=t.trim();if(!s)return"plain";
+ if(/^[\[{]/.test(s)){try{JSON.parse(s);return"json"}catch(e){}}
+ if(/^<(?:!DOCTYPE|!--|\?xml|\/?[a-z][\w-]*)/i.test(s)&&/>/.test(s))return"html";
+ if(/^#!.*\b(?:ba)?sh\b/.test(s)||(/^\s*(?:echo|sudo|cd|mkdir|grep|chmod)\s/m.test(s)&&/\$\w|&&|\|/.test(s)))return"bash";
+ if(/\b(?:SELECT\b[\s\S]*\bFROM|INSERT\s+INTO|UPDATE\s+\w+\s+SET|DELETE\s+FROM|CREATE\s+TABLE|ALTER\s+TABLE)\b/i.test(s))return"sql";
+ if(/^\s*#include\s*[<"]/m.test(s)||/\b(?:std::|printf\s*\(|int\s+main\s*\()/.test(s))return"c";
+ if(/\b(?:public|private)\s+(?:static\s+)?(?:class|void|int|String)\b|System\.out\./.test(s))return"java";
+ if((/^\s*(?:def\s+\w+\s*\(|class\s+\w+.*:|import\s+\w+|from\s+\w+\s+import|elif\b)|\bprint\s*\(|^\s*(?:if|for|while|else|try|except|with)\b.*:\s*$/m.test(s))&&!/[;{}]\s*$/m.test(s))return"python";
+ if(/(?:^|[\s;}])(?:const|let|var|function)\s+[\w$]+|console\.\w+\(|require\(|document\.\w+|\)\s*=>/.test(s))return"javascript";
+ if(/[.#]?[\w-]+\s*\{[^}]*:[^}]*\}/.test(s))return"css";
+ return"plain"}
+const nums=n=>Array.from({length:n},(_,i)=>i+1).join("\n");
+let nLang="auto";
+const curLang=()=>nLang==="auto"?detect($("notes").value):nLang;
+function sync(){const t=$("notes"),h=$("hl");h.scrollTop=t.scrollTop;h.scrollLeft=t.scrollLeft;$("gutIn").style.transform="translateY("+(10-t.scrollTop)+"px)"}
+function edRender(){const t=$("notes").value,l=curLang();
+ $("hl").innerHTML=hl(t,l)+"\n";$("gutIn").textContent=nums(t.split("\n").length);
+ $("nCount").textContent=t.length.toLocaleString("en-US")+" / "+MAXN.toLocaleString("en-US");
+ $("nHint").textContent=nLang==="auto"&&t.trim()?"Detected: "+LN[l]:"";sync()}
+$("nLang").innerHTML='<option value="auto">Auto-detect</option>'+Object.keys(LN).map(k=>'<option value="'+k+'">'+LN[k]+"</option>").join("");
+$("nLang").onchange=e=>{nLang=e.target.value;edRender()};
+$("notes").addEventListener("input",edRender);$("notes").addEventListener("scroll",sync);
+$("nPaste").onclick=async()=>{
+ try{const c=await navigator.clipboard.readText();if(!c)return toast("The clipboard is empty.",1);
+  const t=$("notes"),s=t.selectionStart,e=t.selectionEnd,v=t.value,nv=v.slice(0,s)+c+v.slice(e);
+  if(nv.length>MAXN)return toast("Too long. The maximum is "+MAXN.toLocaleString("en-US")+" characters.",1);
+  t.value=nv;t.selectionStart=t.selectionEnd=s+c.length;edRender();toast("Pasted.")}
+ catch(e){toast("Cannot read the clipboard. Press and hold in the box, then choose Paste.",1)}};
+let clrT=null;
+$("nClear").onclick=function(){
+ if(!$("notes").value)return;
+ if(!clrT){this.textContent="Tap again to clear";clrT=setTimeout(()=>{clrT=null;this.textContent="Clear"},3000);return}
+ clearTimeout(clrT);clrT=null;this.textContent="Clear";$("notes").value="";edRender();$("notes").focus()};
+function encodeNotes(){const t=$("notes").value;
+ if(nLang!=="auto")return"@@lang="+nLang+"\n"+t;
+ return/^@@lang=/.test(t)?"@@lang=auto\n"+t:t}
+function parseNotes(n){const m=/^@@lang=(\w+)\n/.exec(n||"");
+ if(m&&(m[1]==="auto"||m[1]==="plain"||LANGS[m[1]]))return{lang:m[1],text:n.slice(m[0].length)};
+ return{lang:"auto",text:n||""}}
+let vText="";
+function renderNotes(n){const p=parseNotes(n),el=$("vNotes");vText=p.text;
+ if(!p.text.trim()){el.className="notes";el.textContent="No notes.";$("cpN").hidden=true;return}
+ $("cpN").hidden=false;const l=p.lang==="auto"?detect(p.text):p.lang;
+ if(l==="plain"){el.className="notes";el.textContent=p.text;return}
+ el.className="cv";
+ el.innerHTML='<div class="cvh">'+LN[l]+'</div><div class="cvb"><pre class="cg">'+nums(p.text.split("\n").length)+'</pre><pre class="cc">'+hl(p.text,l)+"</pre></div>"}
+async function copyText(v){
+ try{await navigator.clipboard.writeText(v);toast("Copied.")}
+ catch(e){const t=document.createElement("textarea");t.value=v;t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();
+  try{document.execCommand("copy");toast("Copied.")}catch(_){toast("Could not copy.",1)}t.remove()}}
+const copyNotes=()=>copyText(vText);
+$("nCopy").onclick=()=>{const v=$("notes").value;v?copyText(v):toast("There is nothing to copy.",1)};
+edRender();
+
 loadGrid();setInterval(()=>{if($("home").classList.contains("on"))loadGrid()},30000);
 </script></body></html>
