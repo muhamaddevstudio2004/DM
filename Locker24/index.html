@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Locker24</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<link rel="preconnect" href="https://egbcsqvlhbeigemtnyrf.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
 :root{--navy:#14213d;--bg:#f4f6f9;--card:#fff;--line:#dde2ea;--g:#1f9d55;--r:#d64545;--mut:#5b6678}
 *{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--navy)}
@@ -110,6 +111,26 @@ h2{color:var(--steel2)}
 footer{background:var(--steel2);border-top:3px solid var(--acc);color:#c8d2e3}
 .fw h4{color:#93a4bf}.fw a{color:#c7d0fb}.fb{border-top-color:#34456f;color:#93a4bf}
 .timer{color:var(--steel2)}
+/* no text selection on long-press, except where people need to copy */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,textarea,.cvb,.cvb *,.notes,code,.mbd pre{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+img{-webkit-user-drag:none}
+@media(max-width:560px){.files li{flex-wrap:wrap}.files .n{flex-basis:calc(100% - 60px)}}
+.mdl{position:fixed;inset:0;z-index:40;background:#0b1328d9;display:flex;align-items:center;justify-content:center;padding:14px}
+.mdl[hidden]{display:none}
+.mbox{background:#fff;border-radius:14px;width:100%;max-width:760px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;border-top:4px solid var(--acc)}
+.mhd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--steel2);color:#fff}
+.mhd b{overflow-wrap:anywhere;font-size:15px}
+.mbd{overflow:auto;padding:14px;-webkit-overflow-scrolling:touch}
+.mbd img,.mbd video{max-width:100%;border-radius:8px;display:block;margin:0 auto}
+.mbd iframe{width:100%;height:68vh;border:1px solid var(--line);border-radius:8px}
+.mbd pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace}
+.mft{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--line)}
+.shr{display:grid;gap:12px}
+.shr .tag{justify-self:start;background:var(--steel2);color:#fff;padding:3px 12px;border-radius:5px;font-weight:700;letter-spacing:1px}
+.shr .warn{margin:0;font-size:14px;color:var(--mut)}
+.qrp{justify-self:center;background:#fff;border:3px solid var(--steel);border-radius:12px;padding:8px;width:min(240px,100%)}
+.qrp svg{display:block;width:100%;height:auto}
 </style></head><body>
 <div id="demoBar" class="demo" hidden>DEMO MODE: data is stored only in this browser, not in the cloud. It is not secure.</div>
 <header><div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4M12 15v2"/></svg>Locker24</div>
@@ -167,6 +188,9 @@ footer{background:var(--steel2);border-top:3px solid var(--acc);color:#c8d2e3}
 <div class="fb"><span>Privacy: passwords are hashed and files are private.</span><span>&copy; 2026 Locker24 &middot; Developed by <a href="https://DevMuhamad.com" target="_blank" rel="noopener">DevMuhamad.Com</a></span></div>
 </div></footer>
 <div id="toast"></div>
+<div class="mdl" id="mdl" hidden onclick="if(event.target===this)closeM()"><div class="mbox" role="dialog" aria-modal="true"><div class="mhd"><b id="mT"></b><button class="sec sm" onclick="closeM()">Close</button></div><div class="mbd" id="mB"></div><div class="mft" id="mF"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 // ===== CONFIG: add your Supabase values. Leave empty for DEMO MODE. =====
 const SUPABASE_URL="https://egbcsqvlhbeigemtnyrf.supabase.co", SUPABASE_ANON_KEY="sb_publishable_QyJzRAkEUWe-_hB8_3XGgA_ZYkn31rY";
@@ -235,8 +259,13 @@ if(!DEMO){
 // ---------- UI ----------
 let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=null,vLang="auto",admPw=null,aData=[],aFiles={};
 function go(id){if(id!=="admin"){admPw=null;aData=[];aFiles={};const z=$("aLk");if(z)z.innerHTML="";const o=$("aOut");if(o)o.hidden=true}const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
+const GK="l24_grid";
+function gridHtml(l,wait){return l.map(x=>`<div class="locker ${x.used?"used":""}" ${wait?'style="opacity:.55;cursor:default"':`onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"`}><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led">${wait?"Checking...":`<i></i>${x.used?"In Use":"Available"}`}</div></div></div>`).join("")}
+function drawGrid(l,wait){const h=gridHtml(l,wait);if(loadGrid.h!==h){loadGrid.h=h;$("grid").innerHTML=h}}
+function quickGrid(){let l=null;try{const c=JSON.parse(localStorage.getItem(GK)||"null");if(c&&c.l&&Date.now()-c.t<6e5)l=c.l}catch(e){}
+ if(l)drawGrid(l);else drawGrid(Array.from({length:10},(_,i)=>({id:i+1,used:false})),true)}
 async function loadGrid(){
- try{const l=await api.list();const h=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");if(loadGrid.h!==h){loadGrid.h=h;$("grid").innerHTML=h}
+ try{const l=await api.list();drawGrid(l);try{localStorage.setItem(GK,JSON.stringify({t:Date.now(),l}))}catch(e){}
   $("full").hidden=!l.every(x=>x.used);showMine(l)}catch(e){toast("Could not load lockers. Check your network.",1)}}
 const DEVK="l24_mine";
 function myLock(){try{const m=JSON.parse(localStorage.getItem(DEVK)||"null");if(m&&m.n&&m.exp>Date.now())return m;localStorage.removeItem(DEVK)}catch(e){}return null}
@@ -267,7 +296,7 @@ async function lockIt(){
  const a=$("p1").value;if(a.length<6)return toast("Password must have at least 6 characters.",1);
  if(a!==$("p2").value)return toast("Passwords do not match.",1);
  const b=$("lockBtn");busy(b,1,"Locking...");
- try{const lr=await api.lock(cur,tok,a,encodeNotes());markMine(cur,lr);toast("Locker "+pad(cur)+" is locked for 24 hours.");cur=tok=null;go("home")}
+ try{const lr=await api.lock(cur,tok,a,encodeNotes());markMine(cur,lr);toast("Locker "+pad(cur)+" is locked for 24 hours.");const ln=cur;cur=tok=null;go("home");showShare(ln,a)}
  catch(e){toast(e.message,1)}busy(b,0)}
 async function leaveLocker(){const n=cur,t=tok,fs=mf.slice();cur=tok=null;mf=[];
  for(const f of fs){try{await api.removeFile(n,t,f.id)}catch(e){}}
@@ -290,12 +319,9 @@ async function openIt(){
    $("vTimer").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60)};tick();tmr=setInterval(tick,1000)}
  catch(e){toast(e.message,1)}busy(b,0)}
 function renderV(){
- $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sm" onclick="dl(${i})">Download</button><button class="dng sm" onclick="delV(${i})">Delete</button></li>`).join(""):"<li>No files.</li>";
+ $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sec sm" onclick="vw(${i})">View</button><button class="sm" onclick="dl(${i})">Download</button><button class="dng sm" onclick="delV(${i})">Delete</button></li>`).join(""):"<li>No files.</li>";
  $("dlAll").style.display=vFiles.length>1?"":"none"}
-async function saveFile(u,name){
- const r=await fetch(u);if(!r.ok)throw new Error("Could not fetch the file.");
- const h=URL.createObjectURL(new Blob([await r.blob()],{type:"application/octet-stream"})),a=document.createElement("a");
- a.href=h;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(h),60000)}
+async function saveFile(u,name){const r=await fetch(u);if(!r.ok)throw new Error("Could not fetch the file.");saveBlob(await r.blob(),name)}
 async function dl(i){try{await saveFile(await api.url(vFiles[i],vTok),vFiles[i].name)}catch(e){toast("Download failed: "+e.message,1)}}
 async function dlAll(){for(let i=0;i<vFiles.length;i++){await dl(i);await new Promise(r=>setTimeout(r,500))}}
 async function delV(i){const f=vFiles[i];if(!f||!confirm("Delete "+f.name+"?"))return;
@@ -353,12 +379,59 @@ async function aView(n){
  const box=$("av"+n);box.innerHTML="Loading...";
  try{const r=await api.adminView(admPw,n),p=parseNotes(r.notes),fs=r.files||[];aFiles[n]=fs;
   box.innerHTML='<h4 style="margin:12px 0 4px">Notes</h4><div class="notes">'+(p.text.trim()?esc(p.text):"No notes.")+'</div><h4 style="margin:12px 0 4px">Files</h4><ul class="files">'+
-   (fs.length?fs.map((f,i)=>'<li><div class="ico">FILE</div><div class="n">'+esc(f.name)+"<small>"+fmt(f.size)+'</small></div><button class="sm" onclick="aDl('+n+","+i+')">Download</button></li>').join(""):"<li>No files.</li>")+"</ul>"}
+   (fs.length?fs.map((f,i)=>'<li><div class="ico">FILE</div><div class="n">'+esc(f.name)+"<small>"+fmt(f.size)+'</small></div><button class="sec sm" onclick="aVw('+n+","+i+')">View</button><button class="sm" onclick="aDl('+n+","+i+')">Download</button></li>').join(""):"<li>No files.</li>")+"</ul>"}
  catch(e){box.innerHTML="";toast(e.message,1)}}
 async function aDl(n,i){try{const f=aFiles[n][i];await saveFile(await api.url(f),f.name)}catch(e){toast("Download failed: "+e.message,1)}}
 async function aClear(n){
  if(!confirm("Delete Locker "+pad(n)+" and everything inside it? This cannot be undone."))return;
  try{await api.adminClear(admPw,n);toast("Locker "+pad(n)+" cleared.");adminLoad()}catch(e){toast(e.message,1)}}
+
+// ---------- Modal, file preview, share link + QR ----------
+let pvId=0,pvUrl=null,pvBlob=null,pvName="",mClose=null;
+function openM(title,body,foot,onclose){$("mT").textContent=title;$("mB").innerHTML=body;$("mF").innerHTML=foot||"";$("mF").style.display=foot?"":"none";mClose=onclose||null;$("mdl").hidden=false;document.body.style.overflow="hidden"}
+function closeM(){pvId++;$("mdl").hidden=true;$("mB").innerHTML="";$("mF").innerHTML="";document.body.style.overflow="";if(pvUrl){URL.revokeObjectURL(pvUrl);pvUrl=null}pvBlob=null;const f=mClose;mClose=null;if(f)f()}
+const PV={img:{png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",svg:"image/svg+xml",bmp:"image/bmp",avif:"image/avif"},
+ vid:{mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",m4v:"video/mp4"},aud:{mp3:"audio/mpeg",wav:"audio/wav",m4a:"audio/mp4",ogg:"audio/ogg"},
+ txt:"txt md json csv log xml html htm css js ts jsx tsx py java c cpp h cs php sql sh yml yaml ini env".split(" ")};
+function saveBlob(b,name){const h=URL.createObjectURL(new Blob([b],{type:"application/octet-stream"})),a=document.createElement("a");a.href=h;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(h),60000)}
+function pvDl(){if(pvBlob)saveBlob(pvBlob,pvName)}
+function pvFull(){if(pvUrl)window.open(pvUrl,"_blank")}
+async function previewFile(getUrl,name){
+ const id=++pvId;openM(name,"<p>Loading...</p>");
+ try{
+  const r=await fetch(await getUrl());if(!r.ok)throw new Error("Could not fetch the file.");
+  const raw=await r.blob();if(id!==pvId)return;
+  const ext=(name.split(".").pop()||"").toLowerCase();let body,foot='<button class="sm" onclick="pvDl()">Download</button>';
+  if(PV.img[ext]||PV.vid[ext]||PV.aud[ext]||ext==="pdf"){
+   pvBlob=new Blob([raw],{type:PV.img[ext]||PV.vid[ext]||PV.aud[ext]||"application/pdf"});pvUrl=URL.createObjectURL(pvBlob);
+   if(PV.img[ext])body='<img src="'+pvUrl+'" alt="">';
+   else if(PV.vid[ext])body='<video src="'+pvUrl+'" controls playsinline></video>';
+   else if(PV.aud[ext])body='<audio src="'+pvUrl+'" controls style="width:100%"></audio>';
+   else{body='<iframe src="'+pvUrl+'" title="PDF preview"></iframe>';foot='<button class="sec sm" onclick="pvFull()">Open full screen</button>'+foot}
+  }else if(PV.txt.includes(ext)||(raw.type||"").startsWith("text/")){
+   pvBlob=raw;let t=await raw.text();if(id!==pvId)return;const big=t.length>3e5;if(big)t=t.slice(0,3e5);
+   body="<pre>"+esc(t)+"</pre>"+(big?"<p>Showing the first 300,000 characters. Download the file to see all of it.</p>":"")
+  }else{pvBlob=raw;body="<p>Preview is not available for this file type. You can still download it.</p>"}
+  pvName=name;$("mB").innerHTML=body;$("mF").innerHTML=foot;$("mF").style.display=""
+ }catch(e){if(id===pvId){closeM();toast("Could not open the file: "+e.message,1)}}}
+function vw(i){const f=vFiles[i];if(f)previewFile(()=>api.url(f,vTok),f.name)}
+function aVw(n,i){const f=aFiles[n]&&aFiles[n][i];if(f)previewFile(()=>api.url(f),f.name)}
+
+function qrSvg(t){const q=qrcode(0,"M");q.addData(t);q.make();const n=q.getModuleCount(),m=2;let d="";
+ for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))d+="M"+(c+m)+" "+(r+m)+"h1v1h-1z";
+ const z=n+2*m;return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+z+" "+z+'" shape-rendering="crispEdges"><rect width="'+z+'" height="'+z+'" fill="#fff"/><path d="'+d+'" fill="#14213d"/></svg>'}
+function shareLink(n,pw){return location.href.split("#")[0]+"#locker="+n+"&p="+encodeURIComponent(pw)}
+function showShare(n,pw){
+ const u=shareLink(n,pw);let qr="";try{qr='<div class="qrp">'+qrSvg(u)+"</div>"}catch(e){}
+ openM("Locker "+pad(n)+" is locked",'<div class="shr"><span class="tag">LOCKER '+pad(n)+'</span><p class="warn">Open it on any device with this link or QR code. They include your password, so share them only with people you trust.</p><input id="shU" readonly value="'+esc(u)+'" onfocus="this.select()">'+qr+"</div>",
+  '<button class="sm" onclick="copyShare()">Copy link</button>'+(navigator.share?'<button class="sec sm" onclick="nativeShare()">Share</button>':"")+'<button class="sec sm" onclick="closeM()">Done</button>')}
+function copyShare(){const el=$("shU");if(!el)return;el.select();const ok=()=>toast("Link copied.");
+ if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(el.value).then(ok,()=>{document.execCommand("copy");ok()});else{try{document.execCommand("copy");ok()}catch(e){toast("Press and hold the link to copy it.",1)}}}
+function nativeShare(){const el=$("shU");if(el)navigator.share({title:"Locker24",text:"Open my locker",url:el.value}).catch(()=>{})}
+function autoOpen(){const h=location.hash.slice(1);if(!h)return;const q=new URLSearchParams(h),n=q.get("locker"),pw=q.get("p");if(!n||!pw)return;
+ history.replaceState(null,"",location.href.split("#")[0]);$("oNum").value=n;$("oPw").value=pw;go("open");openIt()}
+window.addEventListener("hashchange",autoOpen);
+
 // ---------- Notes editor with code colors ----------
 const MAXN=19900,LN={plain:"Plain text",javascript:"JavaScript",python:"Python",java:"Java",c:"C / C++",html:"HTML",css:"CSS",sql:"SQL",json:"JSON",bash:"Bash"};
 const K=w=>new RegExp("\\b(?:"+w+")\\b");
@@ -436,5 +509,5 @@ const copyNotes=()=>copyText(vText);
 $("nCopy").onclick=()=>{const v=$("notes").value;v?copyText(v):toast("There is nothing to copy.",1)};
 edRender();
 
-loadGrid();setInterval(()=>{if($("home").classList.contains("on"))loadGrid()},30000);
+quickGrid();loadGrid();autoOpen();setInterval(()=>{if($("home").classList.contains("on"))loadGrid()},30000);
 </script></body></html>
