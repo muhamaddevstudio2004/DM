@@ -85,30 +85,30 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
 @media(min-width:720px) and (max-width:1099px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1100px){main,.fw{max-width:1100px}.ed{height:340px}.cvb{max-height:560px}.grid{grid-template-columns:repeat(5,1fr)}}
 
-/* ===== Locker theme: steel + safety amber ===== */
-:root{--acc:#f59e0b;--acc2:#d98400;--steel:#27344d;--steel2:#1b2740}
-body{background:#e8ecf2}
-header{background:linear-gradient(#2c3b57,#1b2740);border-bottom:3px solid var(--acc);color:#fff}
-.logo{color:#fff}.logo svg{stroke:#fbbf24}
-nav a{color:#d6deeb}nav a.act{color:#fff;box-shadow:inset 0 -3px 0 var(--acc)}
-.badge{background:var(--acc);color:#1b2740}
-button:not(.sec):not(.dng){background:var(--acc);color:#1b2740}
+/* ===== Locker theme: navy + indigo ===== */
+:root{--acc:#3f51b5;--acc2:#32409a;--steel:#2b3a67;--steel2:#1a2547}
+body{background:#eceff5}
+header{background:var(--steel2);border-bottom:3px solid var(--acc);color:#fff}
+.logo{color:#fff}.logo svg{stroke:#c7d0fb}
+nav a{color:#c3cce6}nav a.act{color:#fff;box-shadow:inset 0 -3px 0 #8fa0f5}
+.badge{background:#e0e5fb;color:var(--steel2)}
+button:not(.sec):not(.dng){background:var(--acc);color:#fff}
 button:not(.sec):not(.dng):hover:not(:disabled){background:var(--acc2)}
 button.sec{border-color:#b9c3d3}
-.spin{border-color:#1b274055;border-top-color:#1b2740}
-.hero{margin:6px 0 10px;border-radius:16px;border:1px solid #b9c3d3;
- background:repeating-linear-gradient(90deg,#dfe5ee 0 74px,#c3ccda 74px 76px,#dfe5ee 76px 80px);
- box-shadow:inset 0 0 0 4px #fff8,0 4px 14px #14213d1a}
-.hero h1{color:var(--steel2);text-shadow:0 1px 0 #fff}
+.hero{margin:6px 0 10px;border-radius:14px;border:1px solid #c3cbe0;background:#dde3f1;box-shadow:none}
+.hero h1{color:var(--steel2)}
 .hero p{color:#44516a}
 .hero .row{padding-bottom:4px}
-.card{border-top:3px solid #8a97ad}
+.card{border-top:1px solid var(--line);box-shadow:none}
 h2{color:var(--steel2)}
-.plate{background:var(--steel2);color:#fbbf24;border:1px solid #fbbf24}
-.mine{background:#fff7e0;border-color:#f1c668;border-top-color:var(--acc)}
-.mine b{color:#8a5a00}
+.locker{background:var(--steel);box-shadow:none}
+.door{background:#5a6ca6;box-shadow:inset 0 0 0 1px #ffffff30}
+.vents{background:repeating-linear-gradient(#2b3a67 0 3px,transparent 3px 8px);opacity:.6}
+.plate{background:var(--steel2);color:#fff;border:0}
+.mine{background:#e8ecfb;border-color:#aab6ee;border-top-color:var(--acc)}
+.mine b{color:var(--steel2)}
 footer{background:var(--steel2);border-top:3px solid var(--acc);color:#c8d2e3}
-.fw h4{color:#93a4bf}.fw a{color:#fbbf24}.fb{border-top-color:#3a4a68;color:#93a4bf}
+.fw h4{color:#93a4bf}.fw a{color:#c7d0fb}.fb{border-top-color:#34456f;color:#93a4bf}
 .timer{color:var(--steel2)}
 </style></head><body>
 <div id="demoBar" class="demo" hidden>DEMO MODE: data is stored only in this browser, not in the cloud. It is not secure.</div>
@@ -154,7 +154,7 @@ footer{background:var(--steel2);border-top:3px solid var(--acc);color:#c8d2e3}
 <label for="aPw">Admin password</label><input id="aPw" type="password" autocomplete="current-password">
 <p><button id="aBtn" onclick="adminCheck()">Check Status</button></p>
 <div id="aOut" hidden><div id="aPause" class="card" style="background:#fff4d6;border-color:#e6c76a" hidden>Supabase is not reachable. If your free project is paused for inactivity, restore it manually in the Supabase dashboard. Scheduled checks reduce this risk but do not guarantee it will never happen.</div>
-<p><b>Supabase Connection Status:</b> <span id="aConn"></span></p><p><b>Last Successful Health Check:</b> <span id="aOk"></span></p><p><b>Last Health Check Result:</b> <span id="aRes"></span></p><p id="aStale" style="color:var(--r)" hidden>No successful check in over 36 hours. Check the GitHub Actions run logs.</p></div></div></section>
+<p><b>Supabase Connection Status:</b> <span id="aConn"></span></p><p><b>Last Successful Health Check:</b> <span id="aOk"></span></p><p><b>Last Health Check Result:</b> <span id="aRes"></span></p><p id="aStale" style="color:var(--r)" hidden>No successful check in over 36 hours. Check the GitHub Actions run logs.</p><div id="aLk"></div></div></div></section>
 <section id="how"><div class="card"><h2 style="margin-top:0">How It Works</h2><div class="steps">
 <div><b>1. Pick</b><br>Choose a free locker from the ten available.</div><div><b>2. Fill</b><br>Add files and notes.</div>
 <div><b>3. Lock</b><br>Set a password. The 24 hour timer starts.</div><div><b>4. Open</b><br>Use the locker number and password on any device. You can add, change or delete files and notes while it is open.</div>
@@ -200,7 +200,11 @@ if(!DEMO){
    let id;try{id=await rpc("open_add_file",{n,pw,fname:file.name,fsize:file.size,fpath:path})}catch(e){await sb.storage.from(BUCKET).remove([path]);throw e}
    return{id,name:file.name,size:file.size,path}},
   async removeOpen(n,pw,id){const p=await rpc("open_remove_file",{n,pw,fid:id});if(p)await sb.storage.from(BUCKET).remove([p])},
-  editNotes:(n,pw,notes)=>rpc("open_edit_notes",{n,pw,note:notes})
+  editNotes:(n,pw,notes)=>rpc("open_edit_notes",{n,pw,note:notes}),
+  // admin tools (admin password is verified on the server each time)
+  adminList:async pw=>{const r=await rpc("admin_list",{pw});if(r&&r.error)throw new Error(r.error=="blocked"?"Too many attempts. Try again in 15 minutes.":"Wrong admin password.");return r},
+  adminView:async(pw,n)=>{const r=await rpc("admin_view",{pw,n});if(r&&r.error)throw new Error(r.error=="blocked"?"Too many attempts. Try again in 15 minutes.":"Wrong admin password.");return r},
+  adminClear:async(pw,n)=>{const r=await rpc("admin_clear",{pw,n});if(r&&r.error)throw new Error(r.error=="blocked"?"Too many attempts. Try again in 15 minutes.":"Wrong admin password.");const ps=(r&&r.paths)||[];if(ps.length)await sb.storage.from(BUCKET).remove(ps)}
  };
 }else{
  $("demoBar").hidden=false;
@@ -212,6 +216,7 @@ if(!DEMO){
  const chkO=async(d,n,pw)=>{const x=d[n];if(!x||x.s!="locked"||x.h!==await hash(n+pw))throw new Error("Wrong locker number or password.");return x};
  api={
   health:async()=>{throw new Error("Not available in demo mode.")},
+  adminList:async()=>{throw new Error("Not available in demo mode.")},adminView:async()=>{throw new Error("Not available in demo mode.")},adminClear:async()=>{throw new Error("Not available in demo mode.")},
   list:async()=>{const d=L();return Object.keys(d).map(i=>({id:+i,used:d[i].s!="free"}))},
   reserve:async n=>{const d=L();if(d[n].s!="free")return null;const t=crypto.randomUUID();d[n]={s:"res",tok:t,res:Date.now()+9e5,files:[]};S(d);return t},
   async upload(n,t,f){const d=L();chk(d,n,t);const u=await rd(f),id=crypto.randomUUID(),o={id,name:f.name,size:f.size,path:u};d[n].files.push(o);S(d);return o},
@@ -228,8 +233,8 @@ if(!DEMO){
 }
 
 // ---------- UI ----------
-let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=null,vLang="auto";
-function go(id){const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
+let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=null,vLang="auto",admPw=null,aData=[],aFiles={};
+function go(id){if(id!=="admin"){admPw=null;aData=[];aFiles={};const z=$("aLk");if(z)z.innerHTML=""}const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
 async function loadGrid(){
  try{const l=await api.list();const h=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");if(loadGrid.h!==h){loadGrid.h=h;$("grid").innerHTML=h}
   $("full").hidden=!l.every(x=>x.used);showMine(l)}catch(e){toast("Could not load lockers. Check your network.",1)}}
@@ -329,7 +334,27 @@ async function adminCheck(){
  $("aOk").textContent=f(r?.last_success_at)+sfx;
  $("aRes").textContent=r?.last_result?(r.last_result=="ok"?"OK":"Error: "+(r.last_error||"unknown"))+" at "+f(r.last_check_at)+sfx:"No result yet";
  $("aStale").hidden=!!r?.last_success_at&&Date.now()-new Date(r.last_success_at)<1.5*864e5;
+ if(conn&&!cached){admPw=pw;adminLoad()}else{admPw=null;$("aLk").innerHTML=""}
  $("aPw").value="";busy(b,0)}
+const ST={available:"Free",reserved:"Reserved",locked:"Locked",expired:"Expired"};
+async function adminLoad(){
+ try{aData=await api.adminList(admPw);aFiles={};
+  $("aLk").innerHTML="<h3>Lockers</h3>"+aData.map(x=>{const used=x.status&&x.status!=="available",lt=x.status==="locked"&&x.expires_at?" &middot; "+leftTxt({exp:new Date(x.expires_at).getTime()})+" left":"";
+   return '<div class="card" style="margin:8px 0"><div class="row" style="justify-content:space-between"><b>Locker '+pad(x.id)+"</b><span>"+(ST[x.status]||esc(x.status||"Free"))+lt+"</span></div>"+
+   (used?(x.status==="locked"?'<p style="margin:8px 0">Password: <code id="ap'+x.id+'">&bull;&bull;&bull;&bull;&bull;&bull;</code> <button class="sec sm" onclick="aPwToggle('+x.id+')">Show</button></p>':"")+
+   '<div class="row"><button class="sm" onclick="aView('+x.id+')">View</button><button class="dng sm" onclick="aClear('+x.id+')">Delete</button></div><div id="av'+x.id+'"></div>':"")+"</div>"}).join("")}
+ catch(e){toast(e.message,1)}}
+function aPwToggle(n){const el=$("ap"+n),x=aData.find(v=>v.id===n);if(!el||!x)return;const hid=el.dataset.s!=="1";el.dataset.s=hid?"1":"0";el.textContent=hid?(x.password||"(not stored)"):"\u2022\u2022\u2022\u2022\u2022\u2022";el.nextElementSibling.textContent=hid?"Hide":"Show"}
+async function aView(n){
+ const box=$("av"+n);box.innerHTML="Loading...";
+ try{const r=await api.adminView(admPw,n),p=parseNotes(r.notes),fs=r.files||[];aFiles[n]=fs;
+  box.innerHTML='<h4 style="margin:12px 0 4px">Notes</h4><div class="notes">'+(p.text.trim()?esc(p.text):"No notes.")+'</div><h4 style="margin:12px 0 4px">Files</h4><ul class="files">'+
+   (fs.length?fs.map((f,i)=>'<li><div class="ico">FILE</div><div class="n">'+esc(f.name)+"<small>"+fmt(f.size)+'</small></div><button class="sm" onclick="aDl('+n+","+i+')">Download</button></li>').join(""):"<li>No files.</li>")+"</ul>"}
+ catch(e){box.innerHTML="";toast(e.message,1)}}
+async function aDl(n,i){try{const f=aFiles[n][i],u=await api.url(f),a=document.createElement("a");a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove()}catch(e){toast("Download failed: "+e.message,1)}}
+async function aClear(n){
+ if(!confirm("Delete Locker "+pad(n)+" and everything inside it? This cannot be undone."))return;
+ try{await api.adminClear(admPw,n);toast("Locker "+pad(n)+" cleared.");adminLoad()}catch(e){toast(e.message,1)}}
 // ---------- Notes editor with code colors ----------
 const MAXN=19900,LN={plain:"Plain text",javascript:"JavaScript",python:"Python",java:"Java",c:"C / C++",html:"HTML",css:"CSS",sql:"SQL",json:"JSON",bash:"Bash"};
 const K=w=>new RegExp("\\b(?:"+w+")\\b");
