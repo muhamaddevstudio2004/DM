@@ -2,7 +2,8 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Locker24</title>
 <link rel="preconnect" href="https://egbcsqvlhbeigemtnyrf.supabase.co" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" as="script">
 <style>
 :root{--navy:#14213d;--bg:#f4f6f9;--card:#fff;--line:#dde2ea;--g:#1f9d55;--r:#d64545;--mut:#5b6678}
 *{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--navy)}
@@ -190,7 +191,6 @@ img{-webkit-user-drag:none}
 <div id="toast"></div>
 <div class="mdl" id="mdl" hidden onclick="if(event.target===this)closeM()"><div class="mbox" role="dialog" aria-modal="true"><div class="mhd"><b id="mT"></b><button class="sec sm" onclick="closeM()">Close</button></div><div class="mbd" id="mB"></div><div class="mft" id="mF"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 // ===== CONFIG: add your Supabase values. Leave empty for DEMO MODE. =====
 const SUPABASE_URL="https://egbcsqvlhbeigemtnyrf.supabase.co", SUPABASE_ANON_KEY="sb_publishable_QyJzRAkEUWe-_hB8_3XGgA_ZYkn31rY";
@@ -203,7 +203,7 @@ function busy(b,on,txt){if(on){b._h=b.innerHTML;b.innerHTML='<span class="spin">
 function esc(s){return String(s).replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";")}
 
 // ---------- API layer: Supabase or local demo ----------
-let api;
+const uc=new Map();let api;
 if(!DEMO){
  const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),rpc=async(f,a)=>{const{data,error}=await sb.rpc(f,a);if(error)throw new Error(error.message);return data};
  api={
@@ -217,7 +217,8 @@ if(!DEMO){
   lock:(n,tok,pw,notes)=>rpc("lock_locker",{n,tok,pw,note:notes}),
   release:(n,tok)=>rpc("release_locker",{n,tok}),
   open:async(n,pw)=>{const r=await rpc("open_locker",{n,pw});if(r.error)throw new Error("Wrong locker number or password.");return r},
-  async url(f,tok){const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,120,{download:f.name});if(error)throw new Error(error.message);return data.signedUrl},
+  async url(f){const c=uc.get(f.path);if(c&&Date.now()-c.t<5e5)return c.u;const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,600);if(error)throw new Error(error.message);uc.set(f.path,{u:data.signedUrl,t:Date.now()});return data.signedUrl},
+  async warm(fs){const ps=fs.map(f=>f.path).filter(x=>{const c=uc.get(x);return !c||Date.now()-c.t>=5e5});if(!ps.length)return;const{data,error}=await sb.storage.from(BUCKET).createSignedUrls(ps,600);if(error||!data)return;data.forEach((d,i)=>{if(d&&d.signedUrl)uc.set(d.path||ps[i],{u:d.signedUrl,t:Date.now()})})},
   // edits on an opened locker (password is verified on the server each time)
   async addOpen(n,pw,file){const path=`${n}/open/${crypto.randomUUID()}_${file.name.replace(/[^\w.\-]/g,"_")}`;
    const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type||"application/octet-stream"});if(error)throw new Error(error.message);
@@ -249,7 +250,7 @@ if(!DEMO){
   release:async(n,t)=>{const d=L();if(d[n].tok===t){d[n]={s:"free",files:[]};S(d)}},
   open:async(n,pw)=>{const d=L(),x=d[n];if(!x||x.s!="locked"||x.h!==await hash(n+pw))throw new Error("Wrong locker number or password.");
    return{token:"demo",notes:x.notes,expires_at:new Date(x.exp).toISOString(),now:new Date().toISOString(),files:x.files}},
-  url:async f=>f.path,
+  url:async f=>f.path,warm:async()=>{},
   async addOpen(n,pw,f){const d=L(),x=await chkO(d,n,pw);if(x.files.length>=MAXF)throw new Error("Maximum "+MAXF+" files.");const u=await rd(f),o={id:crypto.randomUUID(),name:f.name,size:f.size,path:u};x.files.push(o);S(d);return o},
   async removeOpen(n,pw,id){const d=L(),x=await chkO(d,n,pw);x.files=x.files.filter(f=>f.id!=id);S(d)},
   async editNotes(n,pw,notes){const d=L(),x=await chkO(d,n,pw);x.notes=notes;S(d)}
@@ -258,7 +259,7 @@ if(!DEMO){
 
 // ---------- UI ----------
 let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=null,vLang="auto",admPw=null,aData=[],aFiles={};
-function go(id){if(id!=="admin"){admPw=null;aData=[];aFiles={};const z=$("aLk");if(z)z.innerHTML="";const o=$("aOut");if(o)o.hidden=true}const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
+function go(id){if(id==="home"||id==="how"||id==="open"||id==="mgr")clearCaches();if(id!=="admin"){admPw=null;aData=[];aFiles={};const z=$("aLk");if(z)z.innerHTML="";const o=$("aOut");if(o)o.hidden=true}const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
 const GK="l24_grid";
 function gridHtml(l,wait){return l.map(x=>`<div class="locker ${x.used?"used":""}" ${wait?'style="opacity:.55;cursor:default"':`onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"`}><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led">${wait?"Checking...":`<i></i>${x.used?"In Use":"Available"}`}</div></div></div>`).join("")}
 function drawGrid(l,wait){const h=gridHtml(l,wait);if(loadGrid.h!==h){loadGrid.h=h;$("grid").innerHTML=h}}
@@ -283,13 +284,14 @@ async function pick(n){
   cur=n;tok=t;mf=[];blobs={};$("mNum").textContent=pad(n);$("notes").value=$("p1").value=$("p2").value="";nLang="auto";$("nLang").value="auto";edRender();renderM();go("mgr")}
  catch(e){toast(e.message,1)}}
 function renderM(){$("mFiles").innerHTML=mf.map(f=>`<li>${blobs[f.id]&&f.type?.startsWith("image/")?`<img src="${blobs[f.id]}" alt="">`:`<div class="ico">FILE</div>`}<div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sec sm" onclick="rmFile('${f.id}')">Delete</button></li>`).join("")}
+async function pool(items,fn,lim){let i=0;await Promise.all(Array.from({length:Math.min(lim||3,items.length)},async()=>{while(i<items.length){const it=items[i++];await fn(it)}}))}
 async function addFiles(list){
  const fs=[...list];let done=0;const bar=$("bar");bar.style.display="block";bar.firstChild.style.width="0";
- for(const f of fs){
-  if(mf.length>=MAXF){toast("Maximum "+MAXF+" files.",1);break}
-    if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
-  try{const r=await api.upload(cur,tok,f);r.type=f.type;blobs[r.id]=URL.createObjectURL(f);mf.push(r);renderM()}catch(e){toast(f.name+": "+e.message,1)}
-  bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"}
+ const room=MAXF-mf.length;if(fs.length>room){toast("Maximum "+MAXF+" files.",1);fs.length=Math.max(0,room)}
+ await pool(fs,async f=>{
+  if(f.size>MAXMB*1048576)toast(f.name+": file is larger than "+MAXMB+" MB.",1);
+  else try{const r=await api.upload(cur,tok,f);r.type=f.type;blobs[r.id]=URL.createObjectURL(f);mf.push(r);renderM()}catch(e){toast(f.name+": "+e.message,1)}
+  bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"});
  setTimeout(()=>bar.style.display="none",600)}
 async function rmFile(id){try{await api.removeFile(cur,tok,id);mf=mf.filter(f=>f.id!=id);renderM()}catch(e){toast(e.message,1)}}
 async function lockIt(){
@@ -314,25 +316,25 @@ async function openIt(){
  const b=$("openBtn");busy(b,1,"Opening...");
  try{const r=await api.open(n,pw);vTok=r.token;vN=n;vPw=pw;vFiles=r.files;$("vNum").textContent=pad(n);stopEdit();renderNotes(r.notes);
   const off=new Date(r.now)-Date.now(),end=new Date(r.expires_at).getTime();
-  renderV();$("oPw").value="";go("vault");
+  renderV();prefetchVault();$("oPw").value="";go("vault");
   const tick=()=>{const s=Math.floor((end-(Date.now()+off))/1e3);if(s<=0){clearInterval(tmr);toast("This locker has expired.",1);return closeV()}
    $("vTimer").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60)};tick();tmr=setInterval(tick,1000)}
  catch(e){toast(e.message,1)}busy(b,0)}
 function renderV(){
- $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sec sm" onclick="vw(${i})">View</button><button class="sm" onclick="dl(${i})">Download</button><button class="dng sm" onclick="delV(${i})">Delete</button></li>`).join(""):"<li>No files.</li>";
+ $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sec sm" onpointerdown="pf(${i})" onclick="vw(${i})">View</button><button class="sm" onclick="dl(${i})">Download</button><button class="dng sm" onclick="delV(${i})">Delete</button></li>`).join(""):"<li>No files.</li>";
  $("dlAll").style.display=vFiles.length>1?"":"none"}
 async function saveFile(u,name){const r=await fetch(u);if(!r.ok)throw new Error("Could not fetch the file.");saveBlob(await r.blob(),name)}
-async function dl(i){try{await saveFile(await api.url(vFiles[i],vTok),vFiles[i].name)}catch(e){toast("Download failed: "+e.message,1)}}
+async function dl(i){try{const f=vFiles[i];saveBlob(await fetchBlob(f,vTok),f.name)}catch(e){toast("Download failed: "+e.message,1)}}
 async function dlAll(){for(let i=0;i<vFiles.length;i++){await dl(i);await new Promise(r=>setTimeout(r,500))}}
 async function delV(i){const f=vFiles[i];if(!f||!confirm("Delete "+f.name+"?"))return;
  try{await api.removeOpen(vN,vPw,f.id);vFiles=vFiles.filter(x=>x.id!==f.id);renderV();toast("File deleted.")}catch(e){toast(e.message,1)}}
 async function addV(list){
  const fs=[...list];let done=0;const bar=$("vBar");bar.style.display="block";bar.firstChild.style.width="0";
- for(const f of fs){
-  if(vFiles.length>=MAXF){toast("Maximum "+MAXF+" files.",1);break}
-    if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
-  try{const r=await api.addOpen(vN,vPw,f);r.type=f.type;vFiles.push(r);renderV()}catch(e){toast(f.name+": "+e.message,1)}
-  bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"}
+ const room=MAXF-vFiles.length;if(fs.length>room){toast("Maximum "+MAXF+" files.",1);fs.length=Math.max(0,room)}
+ await pool(fs,async f=>{
+  if(f.size>MAXMB*1048576)toast(f.name+": file is larger than "+MAXMB+" MB.",1);
+  else try{const r=await api.addOpen(vN,vPw,f);r.type=f.type;if(r.path)cacheBlob(r.path,f);vFiles.push(r);renderV()}catch(e){toast(f.name+": "+e.message,1)}
+  bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"});
  setTimeout(()=>bar.style.display="none",600)}
 $("vDrop").onclick=()=>$("vFi").click();$("vFi").onchange=e=>{addV(e.target.files);e.target.value=""};
 ["dragenter","dragover"].forEach(v=>$("vDrop").addEventListener(v,e=>{e.preventDefault();$("vDrop").classList.add("hov")}));
@@ -377,11 +379,11 @@ async function adminLoad(){
 function aPwToggle(n){const el=$("ap"+n),x=aData.find(v=>v.id===n);if(!el||!x)return;const hid=el.dataset.s!=="1";el.dataset.s=hid?"1":"0";el.textContent=hid?(x.password||"(not stored)"):"\u2022\u2022\u2022\u2022\u2022\u2022";el.nextElementSibling.textContent=hid?"Hide":"Show"}
 async function aView(n){
  const box=$("av"+n);box.innerHTML="Loading...";
- try{const r=await api.adminView(admPw,n),p=parseNotes(r.notes),fs=r.files||[];aFiles[n]=fs;
+ try{const r=await api.adminView(admPw,n),p=parseNotes(r.notes),fs=r.files||[];aFiles[n]=fs;api.warm(fs).catch(()=>{});
   box.innerHTML='<h4 style="margin:12px 0 4px">Notes</h4><div class="notes">'+(p.text.trim()?esc(p.text):"No notes.")+'</div><h4 style="margin:12px 0 4px">Files</h4><ul class="files">'+
    (fs.length?fs.map((f,i)=>'<li><div class="ico">FILE</div><div class="n">'+esc(f.name)+"<small>"+fmt(f.size)+'</small></div><button class="sec sm" onclick="aVw('+n+","+i+')">View</button><button class="sm" onclick="aDl('+n+","+i+')">Download</button></li>').join(""):"<li>No files.</li>")+"</ul>"}
  catch(e){box.innerHTML="";toast(e.message,1)}}
-async function aDl(n,i){try{const f=aFiles[n][i];await saveFile(await api.url(f),f.name)}catch(e){toast("Download failed: "+e.message,1)}}
+async function aDl(n,i){try{const f=aFiles[n][i];saveBlob(await fetchBlob(f,null),f.name)}catch(e){toast("Download failed: "+e.message,1)}}
 async function aClear(n){
  if(!confirm("Delete Locker "+pad(n)+" and everything inside it? This cannot be undone."))return;
  try{await api.adminClear(admPw,n);toast("Locker "+pad(n)+" cleared.");adminLoad()}catch(e){toast(e.message,1)}}
@@ -394,37 +396,55 @@ const PV={img:{png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif
  vid:{mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",m4v:"video/mp4"},aud:{mp3:"audio/mpeg",wav:"audio/wav",m4a:"audio/mp4",ogg:"audio/ogg"},
  txt:"txt md json csv log xml html htm css js ts jsx tsx py java c cpp h cs php sql sh yml yaml ini env".split(" ")};
 function saveBlob(b,name){const h=URL.createObjectURL(new Blob([b],{type:"application/octet-stream"})),a=document.createElement("a");a.href=h;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(h),60000)}
-function pvDl(){if(pvBlob)saveBlob(pvBlob,pvName)}
+function extOf(n){return (n.split(".").pop()||"").toLowerCase()}
+const bc=new Map(),bp=new Map();let bcSize=0,pvF=null,pvT=null;
+function clearCaches(){bc.clear();bp.clear();bcSize=0;uc.clear()}
+function cacheBlob(k,b){if(bc.has(k))return;bc.set(k,b);bcSize+=b.size;while(bcSize>6e7&&bc.size>1){const o=bc.keys().next().value;bcSize-=bc.get(o).size;bc.delete(o)}}
+function fetchBlob(f,tok){const k=f.path;if(bc.has(k))return Promise.resolve(bc.get(k));if(bp.has(k))return bp.get(k);
+ const p=(async()=>{const r=await fetch(await api.url(f,tok));if(!r.ok)throw new Error("Could not fetch the file.");const b=await r.blob();cacheBlob(k,b);return b})();
+ bp.set(k,p);p.then(()=>bp.delete(k),()=>bp.delete(k));return p}
+function pvDl(){if(pvF){const f=pvF;fetchBlob(f,pvT).then(b=>saveBlob(b,f.name),e=>toast("Download failed: "+e.message,1))}}
 function pvFull(){if(pvUrl)window.open(pvUrl,"_blank")}
-async function previewFile(getUrl,name){
- const id=++pvId;openM(name,"<p>Loading...</p>");
+async function pvBlobView(f,tok,id){
+ const ext=extOf(f.name),raw=await fetchBlob(f,tok);if(id!==pvId)return;
+ let body,foot='<button class="sm" onclick="pvDl()">Download</button>';
+ if(PV.img[ext]||PV.vid[ext]||PV.aud[ext]||ext==="pdf"){
+  const b=new Blob([raw],{type:PV.img[ext]||PV.vid[ext]||PV.aud[ext]||"application/pdf"});
+  if(pvUrl)URL.revokeObjectURL(pvUrl);pvUrl=URL.createObjectURL(b);
+  if(PV.img[ext])body='<img src="'+pvUrl+'" alt="">';
+  else if(PV.vid[ext])body='<video src="'+pvUrl+'" controls playsinline></video>';
+  else if(PV.aud[ext])body='<audio src="'+pvUrl+'" controls style="width:100%"></audio>';
+  else{body='<iframe src="'+pvUrl+'" title="PDF preview"></iframe>';foot='<button class="sec sm" onclick="pvFull()">Open full screen</button>'+foot}
+ }else if(PV.txt.includes(ext)||(raw.type||"").startsWith("text/")){
+  let t=await raw.text();if(id!==pvId)return;const big=t.length>3e5;if(big)t=t.slice(0,3e5);
+  body="<pre>"+esc(t)+"</pre>"+(big?"<p>Showing the first 300,000 characters. Download the file to see all of it.</p>":"")
+ }else body="<p>Preview is not available for this file type. You can still download it.</p>";
+ $("mB").innerHTML=body;$("mF").innerHTML=foot;$("mF").style.display=""}
+async function previewFile(f,tok){
+ const id=++pvId,ext=extOf(f.name);pvF=f;pvT=tok;openM(f.name,"<p>Loading...</p>");
  try{
-  const r=await fetch(await getUrl());if(!r.ok)throw new Error("Could not fetch the file.");
-  const raw=await r.blob();if(id!==pvId)return;
-  const ext=(name.split(".").pop()||"").toLowerCase();let body,foot='<button class="sm" onclick="pvDl()">Download</button>';
-  if(PV.img[ext]||PV.vid[ext]||PV.aud[ext]||ext==="pdf"){
-   pvBlob=new Blob([raw],{type:PV.img[ext]||PV.vid[ext]||PV.aud[ext]||"application/pdf"});pvUrl=URL.createObjectURL(pvBlob);
-   if(PV.img[ext])body='<img src="'+pvUrl+'" alt="">';
-   else if(PV.vid[ext])body='<video src="'+pvUrl+'" controls playsinline></video>';
-   else if(PV.aud[ext])body='<audio src="'+pvUrl+'" controls style="width:100%"></audio>';
-   else{body='<iframe src="'+pvUrl+'" title="PDF preview"></iframe>';foot='<button class="sec sm" onclick="pvFull()">Open full screen</button>'+foot}
-  }else if(PV.txt.includes(ext)||(raw.type||"").startsWith("text/")){
-   pvBlob=raw;let t=await raw.text();if(id!==pvId)return;const big=t.length>3e5;if(big)t=t.slice(0,3e5);
-   body="<pre>"+esc(t)+"</pre>"+(big?"<p>Showing the first 300,000 characters. Download the file to see all of it.</p>":"")
-  }else{pvBlob=raw;body="<p>Preview is not available for this file type. You can still download it.</p>"}
-  pvName=name;$("mB").innerHTML=body;$("mF").innerHTML=foot;$("mF").style.display=""
+  if(PV.img[ext]||PV.vid[ext]||PV.aud[ext]){
+   const u=await api.url(f,tok);if(id!==pvId)return;const er=' onerror="pvFb()"';
+   $("mB").innerHTML=PV.img[ext]?'<img src="'+u+'" alt=""'+er+'>':PV.vid[ext]?'<video src="'+u+'" controls playsinline preload="metadata"'+er+'></video>':'<audio src="'+u+'" controls style="width:100%"'+er+'></audio>';
+   $("mF").innerHTML='<button class="sm" onclick="pvDl()">Download</button>';$("mF").style.display=""
+  }else await pvBlobView(f,tok,id)
  }catch(e){if(id===pvId){closeM();toast("Could not open the file: "+e.message,1)}}}
-function vw(i){const f=vFiles[i];if(f)previewFile(()=>api.url(f,vTok),f.name)}
-function aVw(n,i){const f=aFiles[n]&&aFiles[n][i];if(f)previewFile(()=>api.url(f),f.name)}
-
+function pvFb(){if(!pvF)return;const id=pvId;pvBlobView(pvF,pvT,id).catch(e=>{if(id===pvId){closeM();toast("Could not open the file: "+e.message,1)}})}
+function vw(i){const f=vFiles[i];if(f)previewFile(f,vTok)}
+function aVw(n,i){const f=aFiles[n]&&aFiles[n][i];if(f)previewFile(f,null)}
+function pf(i){const f=vFiles[i];if(!f)return;const e=extOf(f.name);if(PV.img[e]||PV.vid[e]||PV.aud[e])api.url(f,vTok).catch(()=>{});else fetchBlob(f,vTok).catch(()=>{})}
+function prefetchVault(){api.warm(vFiles).then(()=>{let c=0;for(const f of vFiles.slice(0,8)){const e=extOf(f.name);
+ if(PV.img[e]&&f.size<=2e6)api.url(f,vTok).then(u=>{new Image().src=u}).catch(()=>{});
+ else if((e==="pdf"||PV.txt.includes(e))&&f.size<=1.5e6&&c<5){c++;fetchBlob(f,vTok).catch(()=>{})}}}).catch(()=>{})}
+let qrP=null;function loadQR(){if(window.qrcode)return Promise.resolve();return qrP||(qrP=new Promise((ok,no)=>{const x=document.createElement("script");x.src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js";x.onload=ok;x.onerror=()=>{qrP=null;no()};document.head.appendChild(x)}))}
 function qrSvg(t){const q=qrcode(0,"M");q.addData(t);q.make();const n=q.getModuleCount(),m=2;let d="";
  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))d+="M"+(c+m)+" "+(r+m)+"h1v1h-1z";
  const z=n+2*m;return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+z+" "+z+'" shape-rendering="crispEdges"><rect width="'+z+'" height="'+z+'" fill="#fff"/><path d="'+d+'" fill="#14213d"/></svg>'}
 function shareLink(n,pw){return location.href.split("#")[0]+"#locker="+n+"&p="+encodeURIComponent(pw)}
 function showShare(n,pw){
- const u=shareLink(n,pw);let qr="";try{qr='<div class="qrp">'+qrSvg(u)+"</div>"}catch(e){}
+ const u=shareLink(n,pw);const qr='<div id="qrBox"></div>';
  openM("Locker "+pad(n)+" is locked",'<div class="shr"><span class="tag">LOCKER '+pad(n)+'</span><p class="warn">Open it on any device with this link or QR code. They include your password, so share them only with people you trust.</p><input id="shU" readonly value="'+esc(u)+'" onfocus="this.select()">'+qr+"</div>",
-  '<button class="sm" onclick="copyShare()">Copy link</button>'+(navigator.share?'<button class="sec sm" onclick="nativeShare()">Share</button>':"")+'<button class="sec sm" onclick="closeM()">Done</button>')}
+  '<button class="sm" onclick="copyShare()">Copy link</button>'+(navigator.share?'<button class="sec sm" onclick="nativeShare()">Share</button>':"")+'<button class="sec sm" onclick="closeM()">Done</button>');loadQR().then(()=>{const b=$("qrBox");if(b&&!$("mdl").hidden)b.innerHTML='<div class="qrp">'+qrSvg(u)+"</div>"}).catch(()=>{})}
 function copyShare(){const el=$("shU");if(!el)return;el.select();const ok=()=>toast("Link copied.");
  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(el.value).then(ok,()=>{document.execCommand("copy");ok()});else{try{document.execCommand("copy");ok()}catch(e){toast("Press and hold the link to copy it.",1)}}}
 function nativeShare(){const el=$("shU");if(el)navigator.share({title:"Locker24",text:"Open my locker",url:el.value}).catch(()=>{})}
@@ -476,7 +496,7 @@ function edRender(){const t=$("notes").value,l=curLang();
  $("nHint").textContent=nLang==="auto"&&t.trim()?"Detected: "+LN[l]:"";sync()}
 $("nLang").innerHTML='<option value="auto">Auto-detect</option>'+Object.keys(LN).map(k=>'<option value="'+k+'">'+LN[k]+"</option>").join("");
 $("nLang").onchange=e=>{nLang=e.target.value;edRender()};
-$("notes").addEventListener("input",edRender);$("notes").addEventListener("scroll",sync);
+let erq=0;$("notes").addEventListener("input",()=>{if(erq)return;erq=requestAnimationFrame(()=>{erq=0;edRender()})});$("notes").addEventListener("scroll",sync);
 $("nPaste").onclick=async()=>{
  try{const c=await navigator.clipboard.readText();if(!c)return toast("The clipboard is empty.",1);
   const t=$("notes"),s=t.selectionStart,e=t.selectionEnd,v=t.value,nv=v.slice(0,s)+c+v.slice(e);
@@ -509,5 +529,5 @@ const copyNotes=()=>copyText(vText);
 $("nCopy").onclick=()=>{const v=$("notes").value;v?copyText(v):toast("There is nothing to copy.",1)};
 edRender();
 
-quickGrid();loadGrid();autoOpen();setInterval(()=>{if($("home").classList.contains("on"))loadGrid()},30000);
+quickGrid();loadGrid();autoOpen();setInterval(()=>{if(!document.hidden&&$("home").classList.contains("on"))loadGrid()},30000);document.addEventListener("visibilitychange",()=>{if(!document.hidden&&$("home").classList.contains("on"))loadGrid()});setTimeout(()=>loadQR().catch(()=>{}),2500);
 </script></body></html>
