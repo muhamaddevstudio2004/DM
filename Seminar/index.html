@@ -445,6 +445,31 @@ html[dir="rtl"] .hv-tx{text-align:right}
 .slide .tr.l1{text-transform:none;color:var(--dc);margin-top:12px}
 .slide .tr i{border-bottom:2px dotted var(--gd)}
 .slide .tcn{color:#6C6280;margin-bottom:8px}
+.slide .bd .tr{align-items:center}
+.slide .tr .tl{flex:1}
+.slide .tr i{display:none}
+.slide .tr .tn{flex:none;width:1.7em;height:1.7em;border-radius:50%;background:var(--dc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em;margin-inline-end:.6em}
+.slide .tr .pgn{flex:none;min-width:1.9em;background:var(--gd);color:#fff;border-radius:999px;padding:.08em .5em;text-align:center;font-weight:700;font-size:.85em}
+.slide .tr.l1{box-shadow:0 2px 6px rgba(46,33,68,.1);padding:.3em .6em}
+.slide .tr.l2 .pgn,.slide .tr.l3 .pgn{background:none;color:var(--dc)}
+/* TOC flow cards (slides) */
+.slide .bd.fl{display:grid;grid-template-columns:repeat(var(--c,4),minmax(0,1fr));gap:56px 44px;align-content:center;padding:26px 6px 0}
+.slide .bd.fl .tr,.slide .bd.fl .tr.l1{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;margin:0;padding:1.5em .55em .8em;font-size:1.02em;font-weight:700;color:var(--dc);background:linear-gradient(180deg,#fff,#f4f0f9);border:1px solid #e3dcee;border-left:1px solid #e3dcee;border-right:1px solid #e3dcee;border-radius:22px;box-shadow:0 8px 18px rgba(46,33,68,.16),inset 0 2px 0 #fff;min-height:3.8em}
+.slide .bd.fl .tr .tn{position:absolute;top:-.62em;left:50%;transform:translateX(-50%);width:auto;height:auto;min-width:2em;padding:.12em .5em;border-radius:10px 10px 16px 16px;background:var(--dc);color:#fff;border-bottom:4px solid var(--gd);font-size:1em;margin:0;box-shadow:0 4px 8px rgba(46,33,68,.25)}
+.slide .bd.fl .tr .tl{flex:none;margin-top:.5em;line-height:1.25;overflow-wrap:anywhere}
+.slide .bd.fl .tr .pgn{margin-top:.55em;font-size:.72em;padding:.05em .7em;background:var(--gd);color:#fff}
+.slide .bd.fl .tr::after{content:"";position:absolute;right:-36px;top:50%;transform:translateY(-50%);border-left:18px solid var(--gd);border-top:12px solid transparent;border-bottom:12px solid transparent}
+.slide.rtl .bd.fl .tr::after{right:auto;left:-36px;border-left:0;border-right:18px solid var(--gd)}
+.slide .sl-i{position:relative;flex:none;width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.45);color:var(--gl)}
+.slide .sl-i .ic{width:46px;height:46px;stroke-width:1.7}
+.slide .bd.fl .tr .pgn{display:none}
+.slide .bd.fl .tr .ti{flex:none;width:2.4em;height:2.4em;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:.35em;background:none;color:var(--dc);box-shadow:none}
+.slide .bd.fl .tr .ti .ic{width:100%;height:100%;stroke-width:1.6}
+.slide .bd.fl .tr .tl{margin-top:.4em;font-size:1em}
+.slide .bd.fl .tr,.slide .bd.fl .tr.l1{padding:1.7em .55em 1em;min-height:7em}
+.slide .bd.fl .tr:last-of-type::after,.slide .bd.fl.c2 .tr:nth-of-type(2n)::after,.slide .bd.fl.c3 .tr:nth-of-type(3n)::after,.slide .bd.fl.c4 .tr:nth-of-type(4n)::after,.slide .bd.fl.c5 .tr:nth-of-type(5n)::after{display:none}
+
+
 .slide .ft{left:0;right:0;bottom:0;height:68px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:0 60px;font-size:25px;color:#6C6280;background:#fff;border-top:1px solid #e3dccb;text-align:left}
 .slide .ft .fl{max-width:80%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .slide .ft b{background:var(--dc);color:#fff;border-radius:16px;padding:1px 15px;font-weight:700}
@@ -518,12 +543,12 @@ html[dir="rtl"] .hv-tx{text-align:right}
 .slide .bd.ag .tcn{grid-column:1/3}
 .slide .bd.ag .tr{margin:0;font-size:.8em;display:flex;align-items:center;min-width:0}
 .slide .bd.ag .tr .tl{min-width:0}
-.slide .pic{position:absolute;z-index:2;border:5px solid #fff;border-radius:16px;background:#e9e4f1 center/cover no-repeat;box-shadow:0 0 0 3px var(--gd),0 6px 16px rgba(0,0,0,.25)}
-.slide.pc-r .pic{right:60px;top:160px;bottom:90px;width:400px}
-.slide.pc-l .pic{left:60px;top:160px;bottom:90px;width:400px}
+.slide .pic{position:absolute;z-index:2;border:5px solid #fff;border-radius:16px;background:#f4f0f9 center/contain no-repeat;box-shadow:0 0 0 3px var(--gd),0 6px 16px rgba(0,0,0,.25)}
+.slide.pc-r .pic{right:60px;top:160px;bottom:90px;width:500px}
+.slide.pc-l .pic{left:60px;top:160px;bottom:90px;width:500px}
 .slide.pc-t .pic{left:60px;right:60px;top:156px;height:200px}
-.slide.pc-r .bd{right:488px}
-.slide.pc-l .bd{left:488px}
+.slide.pc-r .bd{right:588px}
+.slide.pc-l .bd{left:588px}
 .slide.pc-t .bd{top:372px}
 .slide .pic.ph{background:#f4f0f9;border:3px dashed var(--dc);box-shadow:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--dc);text-align:center;padding:16px;cursor:pointer;font:700 28px/1.3 var(--cf),sans-serif}
 .slide .pic.ph .ic{width:72px;height:72px;stroke-width:1.5}
@@ -584,6 +609,8 @@ const e=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">
 const KEY="academic-seminar-builder-v1";let curP=-1,view="home",contentTab="info",FZ=12;
 const IC={doc:"M6 2h9l5 5v15H6zM14 2v6h6",dl:"M12 3v12m-5-5 5 5 5-5M5 21h14",print:"M6 9V3h12v6M6 18H4v-8h16v8h-2M7 14h10v7H7z",edit:"M4 20h4L19 9l-4-4L4 16zM13 7l4 4",eye:"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 100 6 3 3 0 000-6",plus:"M12 5v14M5 12h14",trash:"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6",up:"M6 15l6-6 6 6",down:"M6 9l6 6 6-6",image:"M3 4h18v16H3zM3 16l5-5 4 4 3-3 6 6M8 8h.01",text:"M5 6h14M5 11h14M5 16h9",type:"M5 6V4h14v2M12 4v16M9 20h6",list:"M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01",olist:"M10 6h11M10 12h11M10 18h11M4 4l1.5-1V8M4 10.5c0-1.5 3-1.5 3 0 0 1.2-3 2-3 3h3M4 16.5h3l-1.8 2c1.4 0 1.8.6 1.8 1.2s-.6 1.3-1.8 1.3-1.2-.2-1.4-.6",table:"M3 5h18v14H3zM3 10h18M3 15h18M9 5v14M15 5v14",upload:"M12 16V4m-5 5 5-5 5 5M5 20h14",user:"M12 12a4 4 0 100-8 4 4 0 000 8M4 21c0-4 4-6 8-6s8 2 8 6",al:"M4 6h16M4 12h10M4 18h14",ac:"M4 6h16M7 12h10M5 18h14",ar:"M4 6h16M10 12h10M6 18h14",palette:"M12 3a9 9 0 100 18c1.5 0 2-1 1.5-2s0-2 1.5-2h2a3 3 0 003-3c0-5-4-11-8-11zM7.5 11h.01M10 7h.01M15 7h.01",back:"M15 6l-6 6 6 6",x:"M6 6l12 12M18 6L6 18",next:"M9 6l6 6-6 6",star:"M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",lock:"M6 11h12v9H6zM8 11V8a4 4 0 118 0v3",check:"M5 12l5 5 9-10"};
 const TI={h:"type",p:"text",ul:"list",ol:"olist",tbl:"table",img:"image"};
+Object.assign(IC,{"i_book": "M4 4h6a2 2 0 012 2v14a2 2 0 00-2-2H4zM20 4h-6a2 2 0 00-2 2v14a2 2 0 012-2h6z", "i_target": "M12 21a9 9 0 100-18 9 9 0 000 18zM12 16a4 4 0 100-8 4 4 0 000 8zM12 12h.01", "i_search": "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3", "i_gear": "M12 15a3 3 0 100-6 3 3 0 000 6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2", "i_network": "M12 3a2 2 0 100 4 2 2 0 000-4zM5 17a2 2 0 100 4 2 2 0 000-4zM19 17a2 2 0 100 4 2 2 0 000-4zM12 7v4M12 11l-6 6M12 11l6 6", "i_shield": "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4", "i_cloud": "M7 18a4 4 0 010-8 5 5 0 019.6-1A4.5 4.5 0 0117 18z", "i_database": "M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3", "i_chart": "M4 20V4M4 20h16M8 16v-5M13 16V8M18 16v-8", "i_bulb": "M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z", "i_users": "M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2 20c0-3.5 3-6 7-6s7 2.5 7 6M17 4a3.5 3.5 0 010 7M18 14c2.5.5 4 2.5 4 6", "i_globe": "M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18", "i_laptop": "M5 6h14v10H5zM2 20h20", "i_code": "M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16", "i_lock": "M6 11h12v9H6zM8 11V8a4 4 0 118 0v3", "i_chip": "M7 7h10v10H7zM10 10h4v4h-4zM9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4", "i_wifi": "M2 9a15 15 0 0120 0M5 12.5a10 10 0 0114 0M8.5 16a5 5 0 017 0M12 19.5h.01", "i_server": "M4 4h16v6H4zM4 14h16v6H4zM8 7h.01M8 17h.01", "i_rocket": "M12 3c3 2 5 6 5 10l-2 3H9l-2-3c0-4 2-8 5-10zM12 11h.01M9 16l-2 4 3-1M15 16l2 4-3-1", "i_check": "M12 21a9 9 0 100-18 9 9 0 000 18zM8 12l3 3 5-6", "i_list": "M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01", "i_flask": "M9 3h6M10 3v6L4 19a2 2 0 002 2h12a2 2 0 002-2l-6-10V3M7 15h10", "i_graduation": "M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5", "i_money": "M12 21a9 9 0 100-18 9 9 0 000 18zM14.5 9a2.5 2 0 00-2.5-1.5c-1.5 0-2.5.7-2.5 1.8 0 2.5 5 1.2 5 3.7 0 1.1-1 1.8-2.5 1.8A2.7 2 0 019.5 14.5M12 6v2M12 16v2", "i_heart": "M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z", "i_mobile": "M8 2h8v20H8zM11 18h2", "i_camera": "M3 8h4l2-3h6l2 3h4v12H3zM12 17a4 4 0 100-8 4 4 0 000 8z", "i_clock": "M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2", "i_leaf": "M5 19c0-9 5-14 15-14 0 10-5 15-14 15M5 19l8-8", "i_tools": "M14 6a4 4 0 005 5l-9 9-3-3 9-9a4 4 0 00-2-2z", "i_link": "M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3A4 4 0 0011 19l1-1", "i_star": "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z", "i_question": "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9.6 9.2a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1.9-1.1 1.8M12 17.4h.01", "i_flag": "M5 21V4M5 4h12l-2 4 2 4H5", "i_warning": "M12 3l10 18H2zM12 10v5M12 18h.01", "i_scale": "M12 3v18M5 7h14M5 7l-3 7a3 3 0 006 0zM19 7l-3 7a3 3 0 006 0z"});
+const ICONS=["book", "target", "search", "gear", "network", "shield", "cloud", "database", "chart", "bulb", "users", "globe", "laptop", "code", "lock", "chip", "wifi", "server", "rocket", "check", "list", "flask", "graduation", "money", "heart", "mobile", "camera", "clock", "leaf", "tools", "link", "star", "question", "flag", "warning", "scale"];
 IC.bolt="M13 2 4 14h6l-1 8 9-12h-6z";IC.copy="M8 8h12v12H8zM4 16V4h12";
 const ic=n=>`<svg class="ic" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 const FIELDS=[["sup","Supervisor / Doctor"],["uni","University"],["col","College"],["dep","Department"],["year","Academic year"],["course","Course name"],["title","Seminar main title"],["sub","Seminar subtitle"]];
@@ -663,6 +690,7 @@ function parseReport(raw){
   const rawL=L[i];let t=rawL.trim();
   if(!t||/^(-{3,}|\*{3,}|_{3,}|={3,})$/.test(t)||/^```/.test(t)){flush();continue}
   t=t.replace(/^>\s?/,"");
+  {const ik=t.match(/^(?:[-*]\s*)?(?:icon|ئایکۆن|أيقونة)\s*[:：]\s*([A-Za-z_-]+)\s*$/i);if(ik){if(cur&&!skip)cur.icon=ik[1].toLowerCase().replace(/_/g,"-");continue}}
   {const ih=t.match(/^(?:[-*]\s*)?(?:\*\*)?(?:image|picture|visual|img|وێنە|صورة)(?:\s+(?:idea|suggestion|keywords?|hint|url|link|source))?(?:\*\*)?\s*[:：]\s*(.+)$/i);if(ih&&cur&&!skip){const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/);
    if(um)setPicUrl(cur,um[0]);
    else cur.hint=clean(ih[1]).slice(0,120);continue}}
@@ -948,14 +976,15 @@ const AISEC={
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"باکگراوند و پێداچوونەوەی ئەدەبیات",main:"گفتوگۆی سەرەکی",app:"بەکارهێنانەکان و نموونەی دۆخ",chal:"سوود و تەحەدیاتەکان",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان",kw:"وشە سەرەکییەکان"},
  ar:{abs:"الملخص",intro:"المقدمة",obj:"الأهداف",lit:"الخلفية ومراجعة الأدبيات",main:"المناقشة الرئيسية",app:"التطبيقات ودراسة حالة",chal:"المزايا والتحديات",con:"الخاتمة",rec:"التوصيات",ref:"المراجع",kw:"الكلمات المفتاحية"}};
 function aiPrompt(topic,slides,lang){
- const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+slides>0),T=auto?0:Math.min(40,Math.max(6,Math.round(+slides))),S=Math.max(4,T-3);
+ const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+slides>0),T=auto?0:Math.min(40,Math.max(6,Math.round(+slides))),S=T;
  let order,cnt,tot;
  if(auto){order=[N.intro,N.obj,N.lit,"3 to 5 main-topic slides (a specific title chosen by you for each)",N.app,N.chal,N.con,N.rec,"References"].join(" > ");cnt="Choose the best number of content sections yourself: between 7 and 11 including References. Each section becomes ONE slide.";tot="Total presentation: the content sections plus 3 slides added automatically."}
- else{const a=[N.intro];if(S>=5)a.push(N.obj);if(S>=6)a.push(N.lit);const m=S-(a.length+2+(S>=8?1:0)+(S>=9?1:0)+(S>=11?1:0)+1)+1;
-  for(let k=1;k<=Math.max(1,m);k++)a.push("Main topic "+k+" (a specific title chosen by you)");
-  if(S>=8)a.push(N.app);if(S>=9)a.push(N.chal);a.push(N.con);if(S>=11)a.push(N.rec);a.push("References");
-  order=a.join(" > ");cnt="Write EXACTLY "+a.length+" content sections. Each section becomes ONE slide.";tot="Total presentation: "+(a.length+3)+" slides."}
- const langLine=lang=="ckb"?"Write the entire presentation in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all slide titles.":lang=="ar"?"Write the entire presentation in professional academic Modern Standard Arabic, including all slide titles.":"Write the entire presentation in professional academic English.";
+ else{const r=Math.max(1,S-3),pri=["m","obj","lit","app","chal","rec"],has=pri.slice(0,Math.min(r,6)),xm=Math.max(0,r-6),mk=(has.includes("m")?1:0)+xm,a=[N.intro];
+  if(has.includes("obj"))a.push(N.obj);if(has.includes("lit"))a.push(N.lit);
+  for(let k=1;k<=mk;k++)a.push("Main topic "+k+" (a specific title chosen by you)");
+  if(has.includes("app"))a.push(N.app);if(has.includes("chal"))a.push(N.chal);a.push(N.con);if(has.includes("rec"))a.push(N.rec);a.push("References");
+  order=a.map((x,i)=>(i+1)+". "+x).join("\n");cnt="Write EXACTLY "+a.length+" content sections: no more, no fewer. Do not merge, skip, split or add sections. Each section becomes ONE slide. Before you answer, count the ## headings (the numbered ones plus References); the total must be exactly "+a.length+". If it is not, fix it first.";tot="You write EXACTLY "+a.length+" slides (the last one is References). My app adds 3 extra slides by itself (title, contents, thank-you), so do NOT write them and do NOT count them. Never change this number."}
+ const langLine=lang=="ckb"?"Write the entire presentation in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all slide titles.":lang=="ar"?"Write the entire presentation in professional academic Modern Standard Arabic, including all slide titles.":"Write the entire presentation in simple, easy-to-understand English for students whose first language is not English. Use short sentences and common everyday words. Explain every technical term in plain words. Avoid complex vocabulary, idioms and long sentences, but keep the content accurate and academic.";
  return `Act as a university lecturer helping an undergraduate student prepare a professional academic seminar presentation about "${t}".
 
 PRESENTATION STRUCTURE:
@@ -971,10 +1000,15 @@ FORMATTING RULES:
 - Every content slide: ## 1. Slide title (numbered, maximum 6 words).
 - The References slide is not numbered: ## References.
 - Each slide must fit on ONE screen.
-- Use either one short lead sentence (maximum 25 words) followed by 3 to 5 bullets ("- ", 8 to 16 words each), a numbered list for processes, or a definition table.
-- Maximum 90 words per slide.
-- Definition table format: | Term | Definition | with 3 to 5 rows.
-- Use at most 2 tables in the whole seminar.
+- Use either one very short lead sentence (maximum 12 words) followed by 3 to 4 bullets ("- ", 5 to 9 words each, no long sentences), a numbered list for processes, or a definition table.
+- Maximum 45 words per slide. Keep text minimal: slides are read from far away, so use big, short, simple points.
+- TABLES ARE REQUIRED: put the content of about one slide in every three into a Markdown table instead of bullets (for example 3 content slides in a 9-slide seminar). Use a table for: comparisons, types or classifications, advantages vs disadvantages (pros and cons), benefits, features, steps with details, definitions, numbers and statistics, and before/after or old/new comparisons.
+- Table format: a header row, a separator row, then 3 to 4 body rows, 2 or 3 columns only, 1 to 6 words per cell. Example:
+| Advantage | Disadvantage |
+|---|---|
+| Fast | Costly |
+- A table slide has its heading, one optional lead sentence (maximum 12 words) and the table only. No bullets on the same slide.
+- Never put a table on the Introduction, Objectives, Conclusion or References slides.
 - Use ### only if essential, at most once per slide.
 
 IMAGE REQUIREMENTS:
@@ -987,6 +1021,13 @@ Image: https://upload.wikimedia.org/.../file-name.jpg
 - Each slide must have a different image.
 - My app downloads each link and shows the actual picture inside the slide, so never write markdown image syntax, image descriptions, captions, source credits, or any other link text.
 - Do not ask the student to search Google or upload images manually.
+
+ICON REQUIREMENTS:
+- Right after every ## heading line (including References), add exactly ONE line in this form:
+Icon: name
+- name must be ONE word chosen only from this list: book target search gear network shield cloud database chart bulb users globe laptop code lock chip wifi server rocket check list flask graduation money heart mobile camera clock leaf tools link star question flag warning scale.
+- Pick the icon that best matches the topic of that slide (for example network for networking, shield for security, cloud for cloud computing, database for data, chart for statistics, flask for science, heart for health). Use book for the Introduction, target for Objectives, check for the Conclusion, link for References.
+- Write only the word, no link, no symbols, no description.
 
 CONTENT QUALITY:
 - Use a formal academic tone suitable for undergraduate university students.
@@ -1237,7 +1278,7 @@ function acadUI(){const row=(lab,k,arr,cur)=>`<label>${lab}</label><div class="r
  sz(["h1","Heading 1 size (pt)"],[14,16,18,20],16)+sz(["h2","Heading 2 size (pt)"],[12,13,14,16],14)+sz(["h3","Heading 3 size (pt)"],[11,12,13,14],12)+`</div>`}
 function applyCol(){const c=S.color||"#4B3869",m=c.match(/\w\w/g).map(x=>parseInt(x,16)),r=document.documentElement.style;document.documentElement.classList.toggle("no-report-line",S.lineOn===false);r.setProperty("--gd",S.lineColor||"#b8923a");{const g=(S.lineColor||"#b8923a").match(/\w\w/g).map(x=>parseInt(x,16));r.setProperty("--gl","#"+g.map(v=>Math.round(v+(255-v)*.45).toString(16).padStart(2,"0")).join(""))}r.setProperty("--dc",c);const fo=S.font?`"${S.font}"`:null;const rt=S.dir=="rtl";r.setProperty("--ff",fo||(rt?'"Noto Naskh Arabic"':'"Times New Roman"'));r.setProperty("--cf",fo||(rt?'"Noto Naskh Arabic"':"Calibri,Carlito,Arial,sans-serif"));r.setProperty("--cz",{s:.85,m:1,l:1.2}[S.cvs||"m"]);r.setProperty("--ls",S.ls||(rt?1.7:1.5));r.setProperty("--ta",S.al||"justify");r.setProperty("--dk","#"+m.map(v=>Math.round(v*.72).toString(16).padStart(2,"0")).join(""))}
 function tocFZ(){if(S.tocfs)return S.tocfs;const c={};S.pages.forEach(g=>{const v=g.fs||12;c[v]=(c[v]||0)+1});let b=12,m=0;for(const k in c){if(c[k]>m||(c[k]==m&&+k>b)){m=c[k];b=+k}}return b}
-function build(t,doc,exp){const SL=!doc;let K=SL?2.25:1;applyCol();const I=S.info;t.innerHTML="";let n=0,cur,zone="f",ct="",cn="",curPg=null;const rt=S.dir=="rtl",L=rt?RLAB[RL()]:{toc:"Table of Contents",by:"Presented by:",sup:"Supervised by:",course:"Course: "};
+function build(t,doc,exp){const SL=!doc;let K=SL?2.75:1;applyCol();const I=S.info;t.innerHTML="";let n=0,cur,zone="f",ct="",cn="",curPg=null;const rt=S.dir=="rtl",L=rt?RLAB[RL()]:{toc:"Table of Contents",by:"Presented by:",sup:"Supervised by:",course:"Course: "};
  const np=()=>{const p=document.createElement("div");p.className=(SL?"slide":"page")+(S.tpl=="mod"?" mod":"")+(S.tpl=="cv"?" cvp":"")+(rt?" rtl":"");if(rt)p.lang=RL();t.appendChild(p);return p};
  const picApply=p=>{p.classList.remove("pc-r","pc-l","pc-t");const o=p.querySelector(".pic");if(o)o.remove();
  if(!SL||!curPg)return;const pos=pgPos(curPg);if(pos=="n"||(exp&&!curPg.pic))return;
@@ -1245,7 +1286,7 @@ function build(t,doc,exp){const SL=!doc;let K=SL?2.25:1;applyCol();const I=S.inf
  if(curPg.pic){d.style.backgroundImage='url("'+curPg.pic+'")';if(curPg.credit)d.innerHTML='<span class="cr">'+e(curPg.credit)+"</span>"}else d.innerHTML=ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>"+(curPg.hint?"<small>"+e(curPg.hint)+"</small>":"");
  if(!exp){const x=document.createElement("button");x.type="button";x.className="pic-x";x.dataset.rm=d.dataset.pg;x.setAttribute("aria-label","Remove image");x.title="Remove image";x.innerHTML=ic("x");d.appendChild(x)}
  p.appendChild(d)};
- const hdrH=()=>`<div class="sl-h"${curPg?` data-ed="pg:${S.pages.indexOf(curPg)}"`:""}><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
+ const hdrH=()=>`<div class="sl-h"${curPg?` data-ed="pg:${S.pages.indexOf(curPg)}"`:""}><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${curPg&&!isRefPg(curPg)||curPg&&curPg.icon?`<span class="sl-i">${ic(iconFor(curPg))}</span>`:""}${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
  if(S.tpl=="cv"){buildCV(bp);return}
 const names=(I.students||[]).filter(x=>x&&x.trim());
  np().innerHTML=SL?SLCOVER(I,L,names):`<div class="cv"><div class="ct"><div>${[I.uni,I.col,I.dep].filter(Boolean).map(e).join("<br>")}</div>${S.logo?`<img src="${S.logo}" alt="">`:`<div class="lgph" aria-label="Logo placeholder">${ic("image")}<b>LOGO</b></div>`}</div><div class="cm${I.sub||I.course?"":" ns"}"><h1>${e(I.title||"Seminar Title")}</h1>${I.sub?`<div class="sb">${e(I.sub)}</div>`:""}${I.course?`<div class="sb" style="font-size:calc(13pt*var(--cz,1));margin-top:6px">${L.course+e(I.course)}</div>`:""}</div><div class="cb"><div><b class="r">${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div><b class="r">${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div></div><div class="yr">${e(I.year)}</div></div>`;
@@ -1322,17 +1363,25 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    else els.forEach(x=>w.removeChild(x));
    w.remove()}
   els.forEach(el=>placeEl(el))}
- function listPages(title,rs){if(!rs.length)return;const lp=[];curPg=null;ct=title;cn="";FZ=tocFZ();let tc=bp(),cnt=0;if(SL&&rs.length>6)tc.bd.classList.add("ag");lp.push(tc.bd);tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
+ function listPages(title,rs){if(!rs.length)return;
+  if(!SL){listPages1(title,rs);return}
+  const K0=K,n0=n,before=t.lastElementChild,sc=[1,.88,.76,.66,.57,.49,.42,.36];
+  for(let i=0;i<sc.length;i++){K=K0*sc[i];listPages1(title,rs);
+   let c=0,x=before?before.nextElementSibling:t.firstElementChild;while(x){c++;x=x.nextElementSibling}
+   if(c<=1||i==sc.length-1)break;
+   while(before&&before.nextElementSibling)before.nextElementSibling.remove();n=n0;rows.length-=rs.length}
+  K=K0}
+ function listPages1(title,rs){const lp=[],FLW=SL&&rs[0].cls=="l1",cols=rs.length<=5?rs.length:rs.length<=8?4:5,ag=bd=>{if(FLW){bd.classList.add("fl","c"+cols);bd.style.setProperty("--c",cols)}else if(SL&&rs.length>5)bd.classList.add("ag")};curPg=null;ct=title;cn="";FZ=tocFZ();let tc=bp(),cnt=0;ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
   const cont=rt?RLAB[RL()].cont:" (continued)";
-  rs.forEach(r=>{const d=document.createElement("div");d.className="tr "+r.cls;d.innerHTML=`<span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`;r.pg=d.querySelector(".pgn");tc.bd.appendChild(d);cnt++;
+  rs.forEach(r=>{const d=document.createElement("div");d.className="tr "+r.cls;{const mm=SL&&r.cls=="l1"&&/^(\d+)\.\s+(.+)$/.exec(r.txt);d.innerHTML=mm?`<span class="tn">${e(mm[1])}</span><span class="ti">${ic(iconFor(r.ref&&r.ref.pg))}</span><span class="tl">${e(mm[2])}</span><i></i><span class="pgn">000</span>`:SL&&r.cls=="l1"?`<span class="tn">&#9670;</span><span class="ti">${ic(iconFor(r.ref&&r.ref.pg))}</span><span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`:`<span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`}r.pg=d.querySelector(".pgn");tc.bd.appendChild(d);cnt++;
    if(tc.bd.scrollHeight>tc.bd.clientHeight+1&&cnt>1){tc.bd.removeChild(d);const mv=[d],pv=tc.bd.lastElementChild;
     if(pv&&pv.classList.contains("l1")&&cnt>2){tc.bd.removeChild(pv);mv.unshift(pv)}
-    tc=bp();if(SL&&rs.length>6)tc.bd.classList.add("ag");lp.push(tc.bd);tc.bd.innerHTML='<div class="tcn">'+e(title+cont)+"</div>";mv.forEach(x=>tc.bd.appendChild(x));cnt=mv.length}});
+    tc=bp();ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<div class="tcn">'+e(title+cont)+"</div>";mv.forEach(x=>tc.bd.appendChild(x));cnt=mv.length}});
   lp.forEach(bd=>{if(!bd.classList.contains("ag"))return;const k=bd.querySelectorAll(".tr").length,r=Math.ceil(k/2);bd.style.gridTemplateRows=(bd.querySelector(".tcn")?"auto ":"")+"repeat("+r+",auto)";bd.style.gridAutoFlow="column"});
   rows.push(...rs)}
  /* preliminary pages: abstract / acknowledgment, contents, lists */
  FZ=12;O.front.forEach(sec=>{cur=bp();putSec(sec)});
- if(!S.notoc){const rs=[];O.body.forEach(sec=>{rs.push({cls:"l1",txt:(sec.num?sec.num+" ":"")+sec.title,ref:sec});sec.items.forEach(x=>rs.push({cls:"l"+x.lv,txt:(x.num?x.num+" ":"")+x.title,ref:x}))});listPages(L.toc,rs)}
+ if(!S.notoc){const rs=[];O.body.forEach(sec=>{rs.push({cls:"l1",txt:(sec.num?sec.num+" ":"")+sec.title,ref:sec});if(!SL)sec.items.forEach(x=>rs.push({cls:"l"+x.lv,txt:(x.num?x.num+" ":"")+x.title,ref:x}))});listPages(L.toc,rs)}
  if(S.lof)listPages(LL.lof,caps.filter(c=>c.k=="f").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})));
  if(S.lot)listPages(LL.lot,caps.filter(c=>c.k=="t").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})));
  /* main body: continuous flow */
@@ -1347,6 +1396,11 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  try{tameJustify(t)}catch(x){console.warn("justify smoothing skipped",x)}
  t.querySelectorAll(".page .bd").forEach(b=>{if(b.scrollHeight>b.clientHeight+1)console.warn("page overflow")})}
 function SLCOVER(I,L,names){return `<div class="ts"><div class="tc"><div class="t1"><div class="inst" data-ed="info:uni,col,dep"><b>${e(I.uni||"")}</b><span>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</span></div>${S.logo?`<div class="lgc"><img src="${S.logo}" alt=""></div>`:`<div class="lgc ph">${ic("image")}<span>${S.dir=="rtl"?(RL()=="ar"?"الشعار":"لۆگۆ"):"LOGO"}</span></div>`}</div><div class="t2" data-ed="info:title,sub,course">${I.course?`<div class="kick">${e(I.course)}</div>`:""}<h1>${e(I.title||"Seminar Title")}</h1><span class="rule"></span>${I.sub?`<div class="sub">${e(I.sub)}</div>`:""}</div><div class="t3"><div data-ed="stu"><b>${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div data-ed="stu"><b>${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div><div class="yr" data-ed="info:year">${e(I.year||"")}</div></div></div></div>`}
+function iconFor(g){if(!g)return"";if(g.icon&&ICONS.includes(g.icon))return"i_"+g.icon;
+ const q=(g.title||"").toLowerCase().replace(/^[\d.\s]+/,"").trim();
+ for(const l of["en","ckb","ar"]){const N=AISEC[l];const m=[[N.intro,"book"],[N.obj,"target"],[N.lit,"search"],[N.main,"gear"],[N.app,"rocket"],[N.chal,"scale"],[N.con,"check"],[N.rec,"bulb"],[N.ref,"link"],[N.abs,"list"]];for(const[k,v]of m)if(k.toLowerCase()===q)return"i_"+v}
+ const K=[[/secur|privacy|attack|threat|encrypt|safe|ئاسایش|أمن/,"shield"],[/cloud|کلاود|سحاب/,"cloud"],[/network|internet|routing|switch|protocol|تۆڕ|شبك/,"network"],[/wireless|wifi|5g|signal/,"wifi"],[/data|storage|database|داتا|بيانات/,"database"],[/server|hardware|device|cpu|processor/,"server"],[/ai|artificial|machine|learning|intelligen|neural/,"chip"],[/code|program|software|algorithm|develop/,"code"],[/mobile|phone|app\b/,"mobile"],[/health|medic|disease|clinic/,"heart"],[/econom|cost|market|business|money|financ/,"money"],[/educat|universit|student|learn|teach/,"graduation"],[/environment|energy|green|climate/,"leaf"],[/history|timeline|future|trend|evolution/,"clock"],[/user|people|social|team|human/,"users"],[/global|world|web|online/,"globe"],[/analysis|statistic|result|performance|chart|growth/,"chart"],[/science|experiment|research|study|method/,"flask"],[/tool|maintenance|install|configur|setup/,"tools"],[/step|roadmap|plan|process|implement|migrat|stage/,"flag"],[/risk|problem|challenge|limitation|disadvantage/,"warning"],[/benefit|advantage|feature|characteristic/,"star"],[/compar|versus|types?|models?|classif/,"scale"]];
+ for(const[r,v]of K)if(r.test(q))return"i_"+v;return"i_gear"}
 const defPos=()=>S.dir=="rtl"?"l":"r";
 function isRefPg(g){if(g.kind==="ref")return true;const q=(g.title||"").trim().toLowerCase();return /^(references|bibliography)$/.test(q)||["en","ckb","ar"].some(l=>AISEC[l].ref.toLowerCase()===q)}
 function pgPos(g){if(!g||g.pos==="n")return"n";if(g.pos)return g.pos;if(g.pic)return defPos();if((g.hint||g.picUrl)&&!isRefPg(g))return defPos();return"n"}
