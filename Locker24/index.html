@@ -13,6 +13,7 @@ main{max-width:1000px;margin:auto;padding:20px}section{display:none}section.on{d
 .hero{text-align:center;padding:48px 8px}.hero h1{font-size:clamp(28px,6vw,48px);margin:0 0 8px}.hero p{color:var(--mut);font-size:18px}
 button,.btn{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 20px;cursor:pointer;background:var(--navy);color:#fff}
 button.sec{background:#fff;color:var(--navy);border:1px solid var(--line)}button:disabled{opacity:.5;cursor:not-allowed}button.sm{padding:5px 10px;font-size:14px}
+button.dng{background:#fff;color:var(--r);border:1px solid var(--r)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0;box-shadow:0 2px 8px #14213d12}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:18px;perspective:900px}
 .locker{position:relative;height:230px;border-radius:6px;background:#566074;padding:7px;box-shadow:0 10px 18px #14213d40,inset 0 0 0 2px #3d4658;cursor:pointer;transition:transform .3s}
@@ -64,7 +65,9 @@ select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);
 .cg,.cc{margin:0;padding:10px 12px;font:13px/20px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .cg{position:sticky;left:0;min-width:44px;padding:10px 8px;text-align:right;color:#8a94a6;background:#f1f4f8;border-right:1px solid var(--line);user-select:none}
 .cc{flex:1;white-space:pre}
-@media(max-width:719px){.ed{--fs:16px;--lh:24px;height:300px}select{font-size:16px}}
+.vdrop{padding:16px;margin-top:10px}
+#vEdT{min-height:200px;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre;overflow:auto}
+@media(max-width:719px){.ed{--fs:16px;--lh:24px;height:300px}select{font-size:16px}#vEdT{font-size:16px}}
 </style></head><body>
 <div id="demoBar" class="demo" hidden>DEMO MODE: data is stored only in this browser, not in the cloud. It is not secure.</div>
 <header><div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18M9 11v2M15 11v2"/></svg>Locker24</div>
@@ -95,8 +98,14 @@ select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);
 
 <section id="vault"><div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Locker <span id="vNum"></span></h2><button class="sec sm" onclick="closeV()">Close</button></div>
 <p>Time left</p><div class="timer" id="vTimer"></div></div>
-<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h3 style="margin:0">Notes</h3><button class="sec sm" id="cpN" onclick="copyNotes()" hidden>Copy</button></div><div class="notes" id="vNotes"></div></div>
-<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Files</h3><button class="sm" id="dlAll" onclick="dlAll()">Download all</button></div><ul class="files" id="vFiles"></ul></div></section>
+<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h3 style="margin:0">Notes</h3><div class="row" style="gap:8px"><button class="sec sm" id="cpN" onclick="copyNotes()" hidden>Copy</button><button class="sec sm" id="edN" onclick="startEdit()">Edit</button></div></div>
+<div class="notes" id="vNotes"></div>
+<div id="vEd" hidden><textarea id="vEdT" spellcheck="false" autocapitalize="off" autocorrect="off" wrap="off" maxlength="19900" placeholder="Type or paste notes or code here"></textarea>
+<div class="nf"><span></span><span id="vEdC">0 / 19,900</span></div>
+<div class="row" style="margin-top:8px"><button class="sm" id="svN" onclick="saveNotes()">Save notes</button><button class="sec sm" onclick="stopEdit()">Cancel</button></div></div></div>
+<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Files</h3><button class="sm" id="dlAll" onclick="dlAll()">Download all</button></div><ul class="files" id="vFiles"></ul>
+<div class="drop vdrop" id="vDrop">Add files. Max 10 MB each, up to 20 files.<input id="vFi" type="file" multiple hidden></div>
+<div class="bar" id="vBar"><b></b></div></div></section>
 
 <section id="admin"><div class="card"><h2 style="margin-top:0">Admin: Project Status</h2>
 <label for="aPw">Admin password</label><input id="aPw" type="password" autocomplete="current-password">
@@ -105,14 +114,14 @@ select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);
 <p><b>Supabase Connection Status:</b> <span id="aConn"></span></p><p><b>Last Successful Health Check:</b> <span id="aOk"></span></p><p><b>Last Health Check Result:</b> <span id="aRes"></span></p><p id="aStale" style="color:var(--r)" hidden>No successful check in over 36 hours. Check the GitHub Actions run logs.</p></div></div></section>
 <section id="how"><div class="card"><h2 style="margin-top:0">How It Works</h2><div class="steps">
 <div><b>1. Pick</b><br>Choose a free locker from the ten available.</div><div><b>2. Fill</b><br>Add files and notes.</div>
-<div><b>3. Lock</b><br>Set a password. The 24 hour timer starts.</div><div><b>4. Open</b><br>Use the locker number and password on any device.</div>
+<div><b>3. Lock</b><br>Set a password. The 24 hour timer starts.</div><div><b>4. Open</b><br>Use the locker number and password on any device. You can add, change or delete files and notes while it is open.</div>
 <div><b>5. Expire</b><br>After 24 hours everything is deleted and the locker is free again.</div></div></div></section>
 </main>
 <footer><div class="fw">
 <div><h4>About Locker24</h4><p>Temporary private storage. Your files are deleted after 24 hours.</p></div>
 <div><h4>Links</h4><div class="fl"><a onclick="go('how')">How It Works</a><a onclick="go('open')">Open Locker</a><a onclick="go('admin')">Admin</a></div></div>
 <div><h4>Contact</h4><p>WhatsApp: <a href="https://wa.me/9647509628683" target="_blank" rel="noopener">7509628683</a></p></div>
-<div class="fb"><span>Privacy: passwords are hashed and files are private.</span><span>&copy; 2026 Locker24</span></div>
+<div class="fb"><span>Privacy: passwords are hashed and files are private.</span><span>&copy; 2026 Locker24 &middot; Developed by <a href="https://DevMuhamad.com" target="_blank" rel="noopener">DevMuhamad.Com</a></span></div>
 </div></footer>
 <div id="toast"></div>
 <script>
@@ -142,7 +151,14 @@ if(!DEMO){
   lock:(n,tok,pw,notes)=>rpc("lock_locker",{n,tok,pw,note:notes}),
   release:(n,tok)=>rpc("release_locker",{n,tok}),
   open:async(n,pw)=>{const r=await rpc("open_locker",{n,pw});if(r.error)throw new Error("Wrong locker number or password.");return r},
-  async url(f,tok){const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,120,{download:f.name});if(error)throw new Error(error.message);return data.signedUrl}
+  async url(f,tok){const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,120,{download:f.name});if(error)throw new Error(error.message);return data.signedUrl},
+  // edits on an opened locker (password is verified on the server each time)
+  async addOpen(n,pw,file){const path=`${n}/open/${crypto.randomUUID()}_${file.name.replace(/[^\w.\-]/g,"_")}`;
+   const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type});if(error)throw new Error(error.message);
+   let id;try{id=await rpc("open_add_file",{n,pw,fname:file.name,fsize:file.size,fpath:path})}catch(e){await sb.storage.from(BUCKET).remove([path]);throw e}
+   return{id,name:file.name,size:file.size,path}},
+  async removeOpen(n,pw,id){const p=await rpc("open_remove_file",{n,pw,fid:id});if(p)await sb.storage.from(BUCKET).remove([p])},
+  editNotes:(n,pw,notes)=>rpc("open_edit_notes",{n,pw,note:notes})
  };
 }else{
  $("demoBar").hidden=false;
@@ -151,6 +167,7 @@ if(!DEMO){
  const hash=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");
  const rd=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error("Could not read file."));r.readAsDataURL(f)});
  const chk=(d,n,t)=>{if(!d[n]||d[n].tok!==t||d[n].s!="res")throw new Error("Your reservation has expired.")};
+ const chkO=async(d,n,pw)=>{const x=d[n];if(!x||x.s!="locked"||x.h!==await hash(n+pw))throw new Error("Wrong locker number or password.");return x};
  api={
   health:async()=>{throw new Error("Not available in demo mode.")},
   list:async()=>{const d=L();return Object.keys(d).map(i=>({id:+i,used:d[i].s!="free"}))},
@@ -161,12 +178,15 @@ if(!DEMO){
   release:async(n,t)=>{const d=L();if(d[n].tok===t){d[n]={s:"free",files:[]};S(d)}},
   open:async(n,pw)=>{const d=L(),x=d[n];if(!x||x.s!="locked"||x.h!==await hash(n+pw))throw new Error("Wrong locker number or password.");
    return{token:"demo",notes:x.notes,expires_at:new Date(x.exp).toISOString(),now:new Date().toISOString(),files:x.files}},
-  url:async f=>f.path
+  url:async f=>f.path,
+  async addOpen(n,pw,f){const d=L(),x=await chkO(d,n,pw);if(x.files.length>=MAXF)throw new Error("Maximum "+MAXF+" files.");const u=await rd(f),o={id:crypto.randomUUID(),name:f.name,size:f.size,path:u};x.files.push(o);S(d);return o},
+  async removeOpen(n,pw,id){const d=L(),x=await chkO(d,n,pw);x.files=x.files.filter(f=>f.id!=id);S(d)},
+  async editNotes(n,pw,notes){const d=L(),x=await chkO(d,n,pw);x.notes=notes;S(d)}
  };
 }
 
 // ---------- UI ----------
-let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null;
+let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=null,vLang="auto";
 function go(id){const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
 async function loadGrid(){
  try{const l=await api.list();$("grid").innerHTML=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");
@@ -206,16 +226,41 @@ async function openIt(){
  const n=parseInt($("oNum").value,10),pw=$("oPw").value;
  if(!(n>=1&&n<=10)||!pw)return toast("Enter a locker number from 01 to 10 and your password.",1);
  const b=$("openBtn");busy(b,1,"Opening...");
- try{const r=await api.open(n,pw);vTok=r.token;vFiles=r.files;$("vNum").textContent=pad(n);renderNotes(r.notes);
+ try{const r=await api.open(n,pw);vTok=r.token;vN=n;vPw=pw;vFiles=r.files;$("vNum").textContent=pad(n);stopEdit();renderNotes(r.notes);
   const off=new Date(r.now)-Date.now(),end=new Date(r.expires_at).getTime();
-  $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sm" onclick="dl(${i})">Download</button></li>`).join(""):"<li>No files.</li>";
-  $("dlAll").style.display=vFiles.length>1?"":"none";$("oPw").value="";go("vault");
+  renderV();$("oPw").value="";go("vault");
   const tick=()=>{const s=Math.floor((end-(Date.now()+off))/1e3);if(s<=0){clearInterval(tmr);toast("This locker has expired.",1);return closeV()}
    $("vTimer").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60)};tick();tmr=setInterval(tick,1000)}
  catch(e){toast(e.message,1)}busy(b,0)}
+function renderV(){
+ $("vFiles").innerHTML=vFiles.length?vFiles.map((f,i)=>`<li><div class="ico">FILE</div><div class="n">${esc(f.name)}<small>${fmt(f.size)}</small></div><button class="sm" onclick="dl(${i})">Download</button><button class="dng sm" onclick="delV(${i})">Delete</button></li>`).join(""):"<li>No files.</li>";
+ $("dlAll").style.display=vFiles.length>1?"":"none"}
 async function dl(i){try{const u=await api.url(vFiles[i],vTok),a=document.createElement("a");a.href=u;a.download=vFiles[i].name;document.body.appendChild(a);a.click();a.remove()}catch(e){toast("Download failed: "+e.message,1)}}
 async function dlAll(){for(let i=0;i<vFiles.length;i++){await dl(i);await new Promise(r=>setTimeout(r,500))}}
-function closeV(){vFiles=[];vTok=null;$("vNotes").textContent="";go("home")}
+async function delV(i){const f=vFiles[i];if(!f||!confirm("Delete "+f.name+"?"))return;
+ try{await api.removeOpen(vN,vPw,f.id);vFiles=vFiles.filter(x=>x.id!==f.id);renderV();toast("File deleted.")}catch(e){toast(e.message,1)}}
+async function addV(list){
+ const fs=[...list];let done=0;const bar=$("vBar");bar.style.display="block";bar.firstChild.style.width="0";
+ for(const f of fs){
+  if(vFiles.length>=MAXF){toast("Maximum "+MAXF+" files.",1);break}
+  if(!OK.test(f.type)){toast(f.name+": file type is not allowed.",1);continue}
+  if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
+  try{const r=await api.addOpen(vN,vPw,f);r.type=f.type;vFiles.push(r);renderV()}catch(e){toast(f.name+": "+e.message,1)}
+  bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"}
+ setTimeout(()=>bar.style.display="none",600)}
+$("vDrop").onclick=()=>$("vFi").click();$("vFi").onchange=e=>{addV(e.target.files);e.target.value=""};
+["dragenter","dragover"].forEach(v=>$("vDrop").addEventListener(v,e=>{e.preventDefault();$("vDrop").classList.add("hov")}));
+["dragleave","drop"].forEach(v=>$("vDrop").addEventListener(v,e=>{e.preventDefault();$("vDrop").classList.remove("hov")}));
+$("vDrop").addEventListener("drop",e=>addV(e.dataTransfer.files));
+function startEdit(){$("vEdT").value=vText;$("vEdC").textContent=vText.length.toLocaleString("en-US")+" / 19,900";$("vEd").hidden=false;$("vNotes").hidden=true;$("edN").hidden=true;$("vEdT").focus()}
+function stopEdit(){$("vEd").hidden=true;$("vNotes").hidden=false;$("edN").hidden=false}
+$("vEdT").addEventListener("input",()=>{$("vEdC").textContent=$("vEdT").value.length.toLocaleString("en-US")+" / 19,900"});
+async function saveNotes(){
+ const t=$("vEdT").value,enc=vLang!=="auto"?"@@lang="+vLang+"\n"+t:(/^@@lang=/.test(t)?"@@lang=auto\n"+t:t),b=$("svN");
+ busy(b,1,"Saving...");
+ try{await api.editNotes(vN,vPw,enc);renderNotes(enc);stopEdit();toast("Notes saved.")}
+ catch(e){toast(e.message,1)}busy(b,0)}
+function closeV(){vFiles=[];vTok=vN=vPw=null;$("vNotes").textContent="";$("vEdT").value="";stopEdit();go("home")}
 async function adminCheck(){
  const b=$("aBtn"),pw=$("aPw").value;if(!pw)return toast("Enter the admin password.",1);
  busy(b,1,"Checking...");
@@ -297,7 +342,7 @@ function parseNotes(n){const m=/^@@lang=(\w+)\n/.exec(n||"");
  if(m&&(m[1]==="auto"||m[1]==="plain"||LANGS[m[1]]))return{lang:m[1],text:n.slice(m[0].length)};
  return{lang:"auto",text:n||""}}
 let vText="";
-function renderNotes(n){const p=parseNotes(n),el=$("vNotes");vText=p.text;
+function renderNotes(n){const p=parseNotes(n),el=$("vNotes");vText=p.text;vLang=p.lang;
  if(!p.text.trim()){el.className="notes";el.textContent="No notes.";$("cpN").hidden=true;return}
  $("cpN").hidden=false;const l=p.lang==="auto"?detect(p.text):p.lang;
  if(l==="plain"){el.className="notes";el.textContent=p.text;return}
