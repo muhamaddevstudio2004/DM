@@ -84,6 +84,32 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
 }
 @media(min-width:720px) and (max-width:1099px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1100px){main,.fw{max-width:1100px}.ed{height:340px}.cvb{max-height:560px}.grid{grid-template-columns:repeat(5,1fr)}}
+
+/* ===== Locker theme: steel + safety amber ===== */
+:root{--acc:#f59e0b;--acc2:#d98400;--steel:#27344d;--steel2:#1b2740}
+body{background:#e8ecf2}
+header{background:linear-gradient(#2c3b57,#1b2740);border-bottom:3px solid var(--acc);color:#fff}
+.logo{color:#fff}.logo svg{stroke:#fbbf24}
+nav a{color:#d6deeb}nav a.act{color:#fff;box-shadow:inset 0 -3px 0 var(--acc)}
+.badge{background:var(--acc);color:#1b2740}
+button:not(.sec):not(.dng){background:var(--acc);color:#1b2740}
+button:not(.sec):not(.dng):hover:not(:disabled){background:var(--acc2)}
+button.sec{border-color:#b9c3d3}
+.spin{border-color:#1b274055;border-top-color:#1b2740}
+.hero{margin:6px 0 10px;border-radius:16px;border:1px solid #b9c3d3;
+ background:repeating-linear-gradient(90deg,#dfe5ee 0 74px,#c3ccda 74px 76px,#dfe5ee 76px 80px);
+ box-shadow:inset 0 0 0 4px #fff8,0 4px 14px #14213d1a}
+.hero h1{color:var(--steel2);text-shadow:0 1px 0 #fff}
+.hero p{color:#44516a}
+.hero .row{padding-bottom:4px}
+.card{border-top:3px solid #8a97ad}
+h2{color:var(--steel2)}
+.plate{background:var(--steel2);color:#fbbf24;border:1px solid #fbbf24}
+.mine{background:#fff7e0;border-color:#f1c668;border-top-color:var(--acc)}
+.mine b{color:#8a5a00}
+footer{background:var(--steel2);border-top:3px solid var(--acc);color:#c8d2e3}
+.fw h4{color:#93a4bf}.fw a{color:#fbbf24}.fb{border-top-color:#3a4a68;color:#93a4bf}
+.timer{color:var(--steel2)}
 </style></head><body>
 <div id="demoBar" class="demo" hidden>DEMO MODE: data is stored only in this browser, not in the cloud. It is not secure.</div>
 <header><div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18M9 11v2M15 11v2"/></svg>Locker24</div>
@@ -92,6 +118,7 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
 <section id="home" class="on">
 <div class="hero"><h1>Your Files. Your Locker. 24 Hours.</h1><p>Store your files securely and access them anywhere.</p>
 <div class="row" style="justify-content:center"><button onclick="document.getElementById('lockers').scrollIntoView({behavior:'smooth'})">Find a Locker</button><button class="sec" onclick="go('open')">Open My Locker</button></div></div>
+<div id="mine" class="card mine" hidden></div>
 <h2 id="lockers">Choose a locker</h2><div id="full" class="card" hidden>All 10 lockers are in use. Please try again later.</div>
 <div class="grid" id="grid"></div></section>
 
@@ -205,8 +232,19 @@ let cur=null,tok=null,mf=[],blobs={},tmr=null,vFiles=[],vTok=null,vN=null,vPw=nu
 function go(id){const lv=cur&&id!=="mgr"?leaveLocker():null;document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("act",a.dataset.v==id));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==id));clearInterval(tmr);window.scrollTo(0,0);if(id=="home")lv?lv.then(loadGrid):loadGrid()}
 async function loadGrid(){
  try{const l=await api.list();const h=l.map(x=>`<div class="locker ${x.used?"used":""}" onclick="pick(${x.id})" role="button" tabindex="0" aria-label="Locker ${pad(x.id)} ${x.used?"in use":"available"}"><div class="door"><span class="plate">${pad(x.id)}</span><div class="vents"></div><div class="handle"></div><div class="keyh"></div><div class="led"><i></i>${x.used?"In Use":"Available"}</div></div></div>`).join("");if(loadGrid.h!==h){loadGrid.h=h;$("grid").innerHTML=h}
-  $("full").hidden=!l.every(x=>x.used)}catch(e){toast("Could not load lockers. Check your network.",1)}}
+  $("full").hidden=!l.every(x=>x.used);showMine(l)}catch(e){toast("Could not load lockers. Check your network.",1)}}
+const DEVK="l24_mine";
+function myLock(){try{const m=JSON.parse(localStorage.getItem(DEVK)||"null");if(m&&m.n&&m.exp>Date.now())return m;localStorage.removeItem(DEVK)}catch(e){}return null}
+function markMine(n,r){try{const e=r&&r.expires_at?new Date(r.expires_at).getTime():NaN;localStorage.setItem(DEVK,JSON.stringify({n,exp:isNaN(e)?Date.now()+864e5:e}))}catch(e){}}
+const leftTxt=m=>{const h=Math.max(1,Math.ceil((m.exp-Date.now())/36e5));return h+(h==1?" hour":" hours")};
+function showMine(l){let m=myLock();const b=$("mine");
+ if(m&&l&&!(l.find(x=>x.id===m.n)||{}).used){try{localStorage.removeItem(DEVK)}catch(e){}m=null}
+ b.hidden=!m;if(m)b.innerHTML='<b>You have Locker '+pad(m.n)+'.</b> Each device can lock one locker at a time, so other people can use the rest. It frees up in about '+leftTxt(m)+'. <button class="sm" onclick="go(\'open\')">Open My Locker</button>'}
 async function pick(n){
+ const m=myLock();
+ if(m){let used=true;try{const l=await api.list();used=!!(l.find(x=>x.id===m.n)||{}).used}catch(e){}
+  if(used)return toast("You already have Locker "+pad(m.n)+". One locker per device. It frees up in about "+leftTxt(m)+".",1);
+  try{localStorage.removeItem(DEVK)}catch(e){}}
  try{const t=await api.reserve(n);if(!t){toast("This locker was just taken. Please choose another.",1);return loadGrid()}
   cur=n;tok=t;mf=[];blobs={};$("mNum").textContent=pad(n);$("notes").value=$("p1").value=$("p2").value="";nLang="auto";$("nLang").value="auto";edRender();renderM();go("mgr")}
  catch(e){toast(e.message,1)}}
@@ -224,7 +262,7 @@ async function lockIt(){
  const a=$("p1").value;if(a.length<6)return toast("Password must have at least 6 characters.",1);
  if(a!==$("p2").value)return toast("Passwords do not match.",1);
  const b=$("lockBtn");busy(b,1,"Locking...");
- try{await api.lock(cur,tok,a,encodeNotes());toast("Locker "+pad(cur)+" is locked for 24 hours.");cur=tok=null;go("home")}
+ try{const lr=await api.lock(cur,tok,a,encodeNotes());markMine(cur,lr);toast("Locker "+pad(cur)+" is locked for 24 hours.");cur=tok=null;go("home")}
  catch(e){toast(e.message,1)}busy(b,0)}
 async function leaveLocker(){const n=cur,t=tok,fs=mf.slice();cur=tok=null;mf=[];
  for(const f of fs){try{await api.removeFile(n,t,f.id)}catch(e){}}
