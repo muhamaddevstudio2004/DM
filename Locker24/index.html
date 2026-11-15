@@ -145,7 +145,6 @@ nav{overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
 const SUPABASE_URL="https://egbcsqvlhbeigemtnyrf.supabase.co", SUPABASE_ANON_KEY="sb_publishable_QyJzRAkEUWe-_hB8_3XGgA_ZYkn31rY";
 // =======================================================================
 const $=id=>document.getElementById(id),BUCKET="locker-files",MAXMB=10,MAXF=20;
-const OK=/^(image\/(png|jpe?g|gif|webp)|application\/pdf|text\/plain|application\/(msword|zip|vnd\.openxmlformats-officedocument\..*))$/;
 const DEMO=!SUPABASE_URL||!SUPABASE_ANON_KEY;
 const pad=n=>String(n).padStart(2,"0"),fmt=b=>b>1e6?(b/1e6).toFixed(1)+" MB":Math.ceil(b/1e3)+" KB";
 function toast(m,bad){const t=$("toast");t.textContent=m;t.style.background=bad?"#b3261e":"#1f9d55";t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",4000)}
@@ -160,7 +159,7 @@ if(!DEMO){
   list:()=>rpc("list_lockers"),
   reserve:n=>rpc("reserve_locker",{n}),
   async upload(n,tok,file){const path=`${n}/${tok}/${crypto.randomUUID()}_${file.name.replace(/[^\w.\-]/g,"_")}`;
-   const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type});if(error)throw new Error(error.message);
+   const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type||"application/octet-stream"});if(error)throw new Error(error.message);
    const id=await rpc("add_file",{n,tok,fname:file.name,fsize:file.size,fpath:path});return{id,name:file.name,size:file.size,path}},
   async removeFile(n,tok,id){const p=await rpc("remove_file",{n,tok,fid:id});if(p)await sb.storage.from(BUCKET).remove([p])},
   health:async pw=>{const r=await rpc("admin_health",{pw});if(r.error)throw new Error(r.error=="blocked"?"Too many attempts. Try again in 15 minutes.":"Wrong admin password.");return r},
@@ -170,7 +169,7 @@ if(!DEMO){
   async url(f,tok){const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,120,{download:f.name});if(error)throw new Error(error.message);return data.signedUrl},
   // edits on an opened locker (password is verified on the server each time)
   async addOpen(n,pw,file){const path=`${n}/open/${crypto.randomUUID()}_${file.name.replace(/[^\w.\-]/g,"_")}`;
-   const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type});if(error)throw new Error(error.message);
+   const{error}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type||"application/octet-stream"});if(error)throw new Error(error.message);
    let id;try{id=await rpc("open_add_file",{n,pw,fname:file.name,fsize:file.size,fpath:path})}catch(e){await sb.storage.from(BUCKET).remove([path]);throw e}
    return{id,name:file.name,size:file.size,path}},
   async removeOpen(n,pw,id){const p=await rpc("open_remove_file",{n,pw,fid:id});if(p)await sb.storage.from(BUCKET).remove([p])},
@@ -216,8 +215,7 @@ async function addFiles(list){
  const fs=[...list];let done=0;const bar=$("bar");bar.style.display="block";bar.firstChild.style.width="0";
  for(const f of fs){
   if(mf.length>=MAXF){toast("Maximum "+MAXF+" files.",1);break}
-  if(!OK.test(f.type)){toast(f.name+": file type is not allowed.",1);continue}
-  if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
+    if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
   try{const r=await api.upload(cur,tok,f);r.type=f.type;blobs[r.id]=URL.createObjectURL(f);mf.push(r);renderM()}catch(e){toast(f.name+": "+e.message,1)}
   bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"}
  setTimeout(()=>bar.style.display="none",600)}
@@ -259,8 +257,7 @@ async function addV(list){
  const fs=[...list];let done=0;const bar=$("vBar");bar.style.display="block";bar.firstChild.style.width="0";
  for(const f of fs){
   if(vFiles.length>=MAXF){toast("Maximum "+MAXF+" files.",1);break}
-  if(!OK.test(f.type)){toast(f.name+": file type is not allowed.",1);continue}
-  if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
+    if(f.size>MAXMB*1048576){toast(f.name+": file is larger than "+MAXMB+" MB.",1);continue}
   try{const r=await api.addOpen(vN,vPw,f);r.type=f.type;vFiles.push(r);renderV()}catch(e){toast(f.name+": "+e.message,1)}
   bar.firstChild.style.width=Math.round(++done/fs.length*100)+"%"}
  setTimeout(()=>bar.style.display="none",600)}
