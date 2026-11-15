@@ -161,7 +161,7 @@ img{-webkit-user-drag:none}
 <p><button id="openBtn" onclick="openIt()">Open Locker</button></p></div></section>
 
 <section id="vault"><div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Locker <span id="vNum"></span></h2><button class="sec sm" onclick="closeV()">Close</button></div>
-<p>Time left</p><div class="timer" id="vTimer"></div></div>
+<p>Time left</p><div class="timer" id="vTimer"></div><p style="margin:12px 0 0"><button class="sm" onclick="showShare(vN,vPw)">Share link and QR</button></p></div>
 <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h3 style="margin:0">Notes</h3><div class="row" style="gap:8px"><button class="sec sm" id="cpN" onclick="copyNotes()" hidden>Copy</button><button class="sec sm" id="edN" onclick="startEdit()">Edit</button></div></div>
 <div class="notes" id="vNotes"></div>
 <div id="vEd" hidden><textarea id="vEdT" spellcheck="false" autocapitalize="off" autocorrect="off" wrap="off" maxlength="19900" placeholder="Type or paste notes or code here"></textarea>
