@@ -17,10 +17,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
 .btn.sm{padding:7px 9px}.btn svg{width:18px;height:18px}.btn:disabled{opacity:.5}
 .top{background:var(--navy);border-bottom:3px solid var(--gold);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5;padding-top:calc(12px + env(safe-area-inset-top,0px))}
-.top b{color:#fff;font-size:18px;flex:1}.logo{width:42px;height:42px;border-radius:12px;background:var(--gold);display:grid;place-items:center;color:var(--navy)}
+.top b{color:#fff;font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.logo{width:42px;height:42px;border-radius:12px;background:var(--gold);display:grid;place-items:center;color:var(--navy)}
 .top .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.35);padding:9px 10px}.top .btn.gold{background:var(--gold);color:var(--navy);border-color:var(--gold)}
-.wrap{max-width:1080px;margin:0 auto;padding:16px 16px 110px;display:grid;gap:20px}
-@media(min-width:900px){.wrap{grid-template-columns:1fr 360px;align-items:start}.prev{position:sticky;top:90px}}
+html{-webkit-text-size-adjust:100%}body{overflow-x:hidden}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 16px 110px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}.wrap>*{min-width:0}
+@media(min-width:900px){.wrap{grid-template-columns:minmax(0,1fr) 360px;align-items:start}.prev{position:sticky;top:90px}}
 @media(max-width:899px){.wrap[data-v=live] #ed{display:none}.wrap[data-v=edit] #pvw{display:none}}
 .ttl{margin:8px 0 6px;font-size:28px;line-height:1.2;color:var(--navy)}.bar{width:64px;height:5px;border-radius:3px;background:var(--gold);margin-bottom:12px}
 .sub{margin:0 0 16px;color:var(--mute)}
@@ -29,10 +30,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
 input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
 input[type=color]{padding:2px;height:40px}input[type=checkbox]{width:auto}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1 1 120px}.row>.btn{flex:0 0 auto}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1 1 120px;min-width:0}.row>.btn{flex:0 0 auto}
 .link{background:var(--soft);border:1.5px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px}
 .url{display:flex;gap:8px;background:var(--soft);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;align-items:center;word-break:break-all;direction:ltr}
-.url span{flex:1}.err{color:#b91c1c;font-size:13px}
+.url span{flex:1;min-width:0;overflow-wrap:anywhere}.err{color:#b91c1c;font-size:13px}
 .lg{max-width:420px;margin:0 auto;padding:24px 16px}
 .dev{text-align:center;color:var(--mute);font-size:13px;padding:0 16px 24px}.dev a{color:var(--navy);font-weight:600}
 .tabs{position:fixed;bottom:0;left:0;right:0;display:flex;gap:12px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;border-top:3px solid var(--gold);z-index:5}
@@ -66,6 +67,15 @@ input[type=color]{padding:2px;height:40px}input[type=checkbox]{width:auto}
 .bio .av.ph{display:flex;align-items:center;justify-content:center;margin:0 auto 12px;cursor:pointer;color:#52525b}.av.ph svg{width:28px;height:28px}
 .addl{display:block;width:100%;margin:10px 0;padding:12px;border:2px dashed currentColor;background:transparent;color:inherit;border-radius:14px;opacity:.65;cursor:pointer;font-size:14px}
 .addl:before{content:"+ "}
+.bio{overflow:hidden}.bio .av{display:block;margin:0 auto 12px}
+.bio .cv{position:relative;margin:-48px -20px 0;height:clamp(150px,36vw,230px);overflow:hidden}
+.prev .bio .cv{margin:-32px -16px 0;height:150px}
+.cv img{width:100%;height:100%;object-fit:cover;display:block}
+.cv::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,var(--bg) 100%);pointer-events:none}
+.cv.ph{display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--bt) 45%,var(--bg)),color-mix(in srgb,var(--bt) 10%,var(--bg)))}
+.cv.ph span{position:relative;z-index:1;opacity:.75}
+.bio .in.hascv .av,.bio .in.hascv .av.ph{margin-top:-58px;position:relative;z-index:1;border:4px solid var(--bg)}
+@media(min-width:640px){.bio:not(.ed) .in{max-width:520px}}
 </style>
 </head>
 <body>
@@ -98,6 +108,11 @@ function renderBio(root,d,ed){
   const bg=hex(d.background_color,'#ffffff'),bt=hex(d.button_color,'#111111'),tx=hex(d.text_color,'#111111');
   const dk=lum(bg)<.5;root.className='bio'+(dk?' dk':'')+(ed?' ed':'');root.style.cssText=`--bg:${bg};--bt:${bt};--tx:${tx};--glow:${dk?'#3b6fd8':'#a9bff0'};--card:${dk?`color-mix(in srgb,${bg} 90%,#ffffff)`:'#ffffff'}`;
   const inn=el('div','in'),shape=['round','rounded','square'].includes(d.avatar_shape)?d.avatar_shape:'round';
+  const cvu=d.cover_url&&safeUrl(d.cover_url);let cvEl=null;
+  if(cvu||ed){cvEl=el('div','cv'+(cvu?'':' ph'));
+    if(cvu){const im=el('img');im.src=cvu;im.alt='';cvEl.append(im)}else cvEl.append(el('span','','Tap to add a cover'));
+    if(ed){cvEl.style.cursor='pointer';cvEl.setAttribute('role','button');cvEl.setAttribute('aria-label','Change cover');cvEl.onclick=ed.cover}
+    inn.classList.add('hascv')}
   if(d.avatar_url&&safeUrl(d.avatar_url)){const im=el('img','av '+shape);im.src=safeUrl(d.avatar_url);im.alt=ed?'Change picture':'';if(ed){im.style.cursor='pointer';im.onclick=ed.avatar}inn.append(im)}
   else if(ed){const ph=el('div','av ph '+shape,((d.display_name||'?').trim()[0]||'?').toUpperCase());ph.style.fontSize='32px';ph.style.fontWeight='500';ph.setAttribute('role','button');ph.setAttribute('aria-label','Add picture');ph.onclick=ed.avatar;inn.append(ph)}
   const txt=(tag,val,ph,field,max)=>{
@@ -120,7 +135,7 @@ function renderBio(root,d,ed){
     const tx2=el('span','tx');tx2.append(el('span','t',l.title));const subt=subOf(u||l.url);if(subt)tx2.append(el('span','s',subt));
     const ch=document.createElement('i');ch.dataset.lucide='chevron-right';ch.className='ch';
     a.append(ic,tx2,ch);inn.append(a)});
-  root.replaceChildren(inn);lucide.createIcons();
+  root.replaceChildren(...(cvEl?[cvEl,inn]:[inn]));lucide.createIcons();
 }
 
 /* ---- Router: #username = public page, empty hash = dashboard ---- */
@@ -197,6 +212,7 @@ async function showDash(user){
    <section class="card"><h2>Your public link</h2><div class="url"><span id="pu"></span><button class="btn sm" id="cp">Copy</button></div>
     <div class="row" style="margin-top:10px"><span id="st"></span><button class="btn pri" id="pub"></button></div></section>
    <section class="card"><h2>Profile</h2>
+    <label>Cover image (JPG, PNG or WebP, max 2MB)</label><input type="file" id="cv" accept="image/jpeg,image/png,image/webp"><button class="btn sm" id="rc" type="button" style="margin-top:8px">Remove cover</button>
     <label>Profile picture (JPG, PNG or WebP, max 2MB)</label><input type="file" id="av" accept="image/jpeg,image/png,image/webp">
     <label>Display name</label><input id="dn" maxlength="60">
     <label>Username (letters and numbers, 3 to 30)</label><input id="un" maxlength="30">
@@ -223,7 +239,8 @@ async function showDash(user){
   [['#dn','display_name'],['#bio','bio'],['#sh','avatar_shape'],['#bs','button_style'],['#bg','background_color'],['#bt','button_color'],['#tx','text_color']].forEach(([i,k])=>$(i).oninput=e=>{P[k]=e.target.value;if(['#bg','#bt','#tx'].includes(i)){P.theme_id='custom';$('#th').value='custom'}preview()});
   $('#th').onchange=e=>{const t=THEMES[e.target.value];P.theme_id=e.target.value;if(t){[P.background_color,P.button_color,P.text_color]=t;set('#bg',t[0]);set('#bt',t[1]);set('#tx',t[2])}preview()};
   $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
-  $('#pub').onclick=togglePublish;$('#av').onchange=uploadAvatar;
+  $('#pub').onclick=togglePublish;$('#av').onchange=e=>uploadAvatar(e,'avatar');$('#cv').onchange=e=>uploadAvatar(e,'cover');
+  $('#rc').onclick=async()=>{const{error}=await sb.from('profiles').update({cover_url:null}).eq('id',S.p.id);if(error)return toast('Could not remove');S.p.cover_url=null;preview();toast('Cover removed')};
   $('#al').onclick=addLink;
   drawLinks();preview();status();
 }
@@ -242,20 +259,21 @@ async function togglePublish(){
   const{error}=await sb.from('profiles').update({is_published:v}).eq('id',S.p.id);
   if(error)return toast('Could not update');S.p.is_published=v;status();toast(v?'Published':'Unpublished');
 }
-async function uploadAvatar(e){
+async function uploadAvatar(e,kind){
+  kind=kind==='cover'?'cover':'avatar';const col=kind==='cover'?'cover_url':'avatar_url';
   const f=e.target.files[0];if(!f)return;
   if(!['image/jpeg','image/png','image/webp'].includes(f.type))return toast('Use a JPG, PNG or WebP image');
   if(f.size>2*1024*1024)return toast('Image must be under 2MB');
   try{
-    const bmp=await createImageBitmap(f),r=Math.min(1,512/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');
+    const bmp=await createImageBitmap(f),r=Math.min(1,(kind==='cover'?1200:512)/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');
     c.width=Math.round(bmp.width*r);c.height=Math.round(bmp.height*r);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
     const blob=await new Promise(r=>c.toBlob(r,'image/webp',.85));
-    const path=S.p.id+'/avatar.webp';
+    const path=S.p.id+'/'+kind+'.webp';
     const up=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:'image/webp',cacheControl:'3600'});
     if(up.error)throw up.error;
     const url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
-    const{error}=await sb.from('profiles').update({avatar_url:url}).eq('id',S.p.id);
-    if(error)throw error;S.p.avatar_url=url;preview();toast('Picture updated');
+    const{error}=await sb.from('profiles').update({[col]:url}).eq('id',S.p.id);
+    if(error)throw error;S.p[col]=url;preview();toast('Picture updated');
   }catch{toast('Upload failed')}
 }
 
@@ -309,6 +327,7 @@ function drawSocials(){
 }
 const ED={
   avatar:()=>$('#av').click(),
+  cover:()=>$('#cv').click(),
   text:async(k,v)=>{if(S.p[k]===v)return;S.p[k]=v;const f=$(k==='display_name'?'#dn':'#bio');if(f)f.value=v;
     const{error}=await sb.from('profiles').update({[k]:v}).eq('id',S.p.id);error?toast('Could not save'):toast('Saved')},
   link:l=>linkSheet(l),
