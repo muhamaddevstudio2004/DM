@@ -267,14 +267,17 @@ async function uploadAvatar(e,kind){
   try{
     const bmp=await createImageBitmap(f),r=Math.min(1,(kind==='cover'?1200:512)/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');
     c.width=Math.round(bmp.width*r);c.height=Math.round(bmp.height*r);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
-    const blob=await new Promise(r=>c.toBlob(r,'image/webp',.85));
-    const path=S.p.id+'/'+kind+'.webp';
-    const up=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:'image/webp',cacheControl:'3600'});
+    const tb=t=>new Promise(r=>c.toBlob(r,t,.85));
+    let blob=await tb('image/webp');if(!blob||blob.type!=='image/webp')blob=await tb('image/jpeg');
+    if(!blob)throw new Error('Could not process the image');
+    const path=S.p.id+'/'+kind+(blob.type==='image/webp'?'.webp':'.jpg');
+    const up=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type,cacheControl:'3600'});
     if(up.error)throw up.error;
     const url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
     const{error}=await sb.from('profiles').update({[col]:url}).eq('id',S.p.id);
     if(error)throw error;S.p[col]=url;preview();toast('Picture updated');
-  }catch{toast('Upload failed')}
+  }catch(err){toast('Upload failed: '+((err&&err.message)||'unknown error').slice(0,80))}
+  e.target.value='';
 }
 
 /* Links */
