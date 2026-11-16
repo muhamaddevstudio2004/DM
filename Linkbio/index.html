@@ -154,7 +154,7 @@ function showLogin(){
 
 /* ---- Dashboard ---- */
 let S={p:null,links:[],soc:[]};
-const pubUrl=()=>location.origin+'/#'+S.p.username;
+const pubUrl=()=>location.origin+location.pathname+'#'+S.p.username;
 async function showDash(user){
   loading();
   const[p,l,s]=await Promise.all([sb.from('profiles').select('*').eq('id',user.id).maybeSingle(),sb.from('links').select('*').eq('user_id',user.id).order('position'),sb.from('social_links').select('*').eq('user_id',user.id)]);
