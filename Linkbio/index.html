@@ -47,7 +47,7 @@ input[type=color]{padding:2px;height:38px}input[type=checkbox]{width:auto}
 <div id="toast" role="status"></div>
 <script>
 /* ---- CONFIG: publishable (anon) key only. Never put service_role here. ---- */
-const CFG={url:'https://eonhogpurbaxuswwwflm.supabase.co',key:'sb_publishable_BqtCxtW3NuCxVD9NLU6kAw_eA4dJRF5'};
+const CFG={url:'YOUR_SUPABASE_URL',key:'YOUR_SUPABASE_PUBLISHABLE_KEY'};
 const sb=supabase.createClient(CFG.url,CFG.key,{auth:{flowType:'pkce',persistSession:true,detectSessionInUrl:true}});
 const $=s=>document.querySelector(s),app=$('#app');
 const ICONS={link:'link',website:'globe',instagram:'instagram',facebook:'facebook',youtube:'youtube',x:'x',tiktok:'music-2',whatsapp:'message-circle',telegram:'send',snapchat:'ghost',email:'mail',phone:'phone',shop:'shopping-bag',star:'star'};
@@ -100,7 +100,7 @@ function msg(h,p){const d=el('div','center');const i=el('div');i.append(el('h1',
 function showLogin(){
   const d=el('div','center'),i=el('div');
   const b=el('button','btn pri','Continue with Google');
-  b.onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/'}});
+  b.onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
   i.append(el('h1','','Your links, one page'),el('p','','Sign in to create and publish your Link Bio.'),b);d.append(i);app.replaceChildren(d);
 }
 
