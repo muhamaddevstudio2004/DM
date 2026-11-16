@@ -97,11 +97,27 @@ async function showPublic(u){
 }
 function msg(h,p){const d=el('div','center');const i=el('div');i.append(el('h1','',h),el('p','',p));d.append(i);app.replaceChildren(d)}
 
+const em=u=>u.toLowerCase()+'@users.devmuhamad.com';
 function showLogin(){
-  const d=el('div','center'),i=el('div');
-  const b=el('button','btn pri','Continue with Google');
-  b.onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
-  i.append(el('h1','','Your links, one page'),el('p','','Sign in to create and publish your Link Bio.'),b);d.append(i);app.replaceChildren(d);
+  app.innerHTML=`<div class="center"><form id="lf" style="width:100%;max-width:340px;text-align:left"><h1 style="text-align:center;font-size:22px">Your links, one page</h1>
+  <label for="lu">Username</label><input id="lu" autocomplete="username" maxlength="30">
+  <label for="lp">Password</label><input id="lp" type="password" autocomplete="current-password">
+  <div class="err" id="le" style="margin-top:8px"></div>
+  <div class="row" style="margin-top:12px"><button class="btn pri" type="submit">Sign in</button><button class="btn" id="lc" type="button">Create account</button></div></form></div>`;
+  const err=m=>{$('#le').textContent=m};
+  const val=()=>{const u=$('#lu').value.trim(),p=$('#lp').value;
+    if(!/^[A-Za-z0-9]{3,30}$/.test(u))return err('Username must be 3 to 30 letters or numbers, with no spaces.');
+    if(p.length<8)return err('Password must be at least 8 characters.');err('');return[u,p]};
+  $('#lf').onsubmit=async e=>{e.preventDefault();const v=val();if(!v)return;
+    const{error}=await sb.auth.signInWithPassword({email:em(v[0]),password:v[1]});
+    if(error)return err('Wrong username or password.');route()};
+  $('#lc').onclick=async()=>{const v=val();if(!v)return;
+    const{data:ok}=await sb.rpc('username_available',{uname:v[0]});
+    if(!ok)return err('That username is taken or reserved.');
+    const{data,error}=await sb.auth.signUp({email:em(v[0]),password:v[1],options:{data:{username:v[0]}}});
+    if(error)return err('Could not create the account. Try another username.');
+    if(!data.session)return err('Turn off "Confirm email" in Supabase Auth settings, then try again.');
+    route()};
 }
 
 /* ---- Dashboard ---- */
