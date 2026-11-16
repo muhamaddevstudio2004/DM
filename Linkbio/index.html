@@ -115,7 +115,7 @@ function showLogin(){
     const{data:ok}=await sb.rpc('username_available',{uname:v[0]});
     if(!ok)return err('That username is taken or reserved.');
     const{data,error}=await sb.auth.signUp({email:em(v[0]),password:v[1],options:{data:{username:v[0]}}});
-    if(error)return err('Could not create the account. Try another username.');
+    if(error)return err('Could not create the account: '+error.message);
     if(!data.session)return err('Turn off "Confirm email" in Supabase Auth settings, then try again.');
     route()};
 }
