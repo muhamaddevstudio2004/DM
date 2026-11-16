@@ -1281,11 +1281,11 @@ function tocFZ(){if(S.tocfs)return S.tocfs;const c={};S.pages.forEach(g=>{const 
 function build(t,doc,exp){const SL=!doc;let K=SL?2.75:1;applyCol();const I=S.info;t.innerHTML="";let n=0,cur,zone="f",ct="",cn="",curPg=null;const rt=S.dir=="rtl",L=rt?RLAB[RL()]:{toc:"Table of Contents",by:"Presented by:",sup:"Supervised by:",course:"Course: "};
  const np=()=>{const p=document.createElement("div");p.className=(SL?"slide":"page")+(S.tpl=="mod"?" mod":"")+(S.tpl=="cv"?" cvp":"")+(rt?" rtl":"");if(rt)p.lang=RL();t.appendChild(p);return p};
  const picApply=p=>{p.classList.remove("pc-r","pc-l","pc-t");const o=p.querySelector(".pic");if(o)o.remove();
- if(!SL||!curPg)return;const pos=pgPos(curPg);if(pos=="n"||(exp&&!curPg.pic))return;
+ if(!SL||!curPg)return;const pos=pgPos(curPg);if(pos=="n")return;
  p.classList.add("pc-"+pos);const d=document.createElement("div");d.className="pic"+(curPg.pic?"":" ph");d.dataset.pg=S.pages.indexOf(curPg);
  if(curPg.pic){d.style.backgroundImage='url("'+curPg.pic+'")';if(curPg.credit)d.innerHTML='<span class="cr">'+e(curPg.credit)+"</span>"}else d.innerHTML=ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>"+(curPg.hint?"<small>"+e(curPg.hint)+"</small>":"");
  if(!exp){const x=document.createElement("button");x.type="button";x.className="pic-x";x.dataset.rm=d.dataset.pg;x.setAttribute("aria-label","Remove image");x.title="Remove image";x.innerHTML=ic("x");d.appendChild(x)}
- p.appendChild(d)};
+ if(exp&&!curPg.pic)d.style.visibility="hidden";p.appendChild(d)};
  const hdrH=()=>`<div class="sl-h"${curPg?` data-ed="pg:${S.pages.indexOf(curPg)}"`:""}><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${curPg&&!isRefPg(curPg)||curPg&&curPg.icon?`<span class="sl-i">${ic(iconFor(curPg))}</span>`:""}${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
  if(S.tpl=="cv"){buildCV(bp);return}
 const names=(I.students||[]).filter(x=>x&&x.trim());
@@ -1346,11 +1346,11 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  const ONEK=["en","ckb","ar"].flatMap(l=>[AISEC[l].intro,AISEC[l].con,AISEC[l].ref]).map(x=>x.toLowerCase());
  const isOne=sec=>{if(sec.k==="ref")return true;const q=(sec.title||"").toLowerCase().replace(/^[\d.\s]+/,"").trim();return ONEK.includes(q)||/^(introduction|conclusions?|references|bibliography)$/.test(q)};
  function putSec(sec){curPg=sec.pg;ct=sec.title;cn=/^\d+\./.test(sec.num||"")?sec.num.replace(".",""):"";if(SL){if(cur&&cur.bd.children.length)cur=bp();else if(cur){cur.p.querySelector(".sl-h").outerHTML=hdrH();picApply(cur.p)}}if(sec.pg.kind=="ch"&&sec.pg.startNewPage&&cur&&cur.bd&&cur.bd.children.length)cur=bp();const fs=sec.pg.fs||12;
-  if(SL&&(isOne(sec)||pgPos(sec.pg)!="n")){const c0=cur,n0=n,K0=K,sc=sec.k==="ref"?[.85,.78,.7,.62,.55,.5,.45,.4,.36]:[1,.92,.85,.78,.72,.66,.6,.55,.5,.45,.4];
+  if(SL){const c0=cur,n0=n,K0=K,one=isOne(sec)||pgPos(sec.pg)!="n",sc=sec.k==="ref"?[.85,.78,.7,.62,.55,.5,.45,.4,.36]:one?[1,.92,.85,.78,.72,.66,.6,.55,.5,.45,.4]:[1,.92,.85,.78,.72,.66];
    for(let ix=0;ix<sc.length;ix++){K=K0*sc[ix];c0.p.classList.toggle("tight",ix>=3);c0.bd.style.fontSize=(FZ*K)+"pt";secEls(sec,fs).forEach(el=>placeEl(el));
     if(cur===c0||ix==sc.length-1)break;
     while(c0.p.nextSibling)c0.p.nextSibling.remove();cur=c0;n=n0;c0.bd.innerHTML="";cm.forEach(c=>{if(c.el&&!c.el.isConnected)c.el=null})}
-   K=K0;return}
+   if(!one&&cur!==c0){while(c0.p.nextSibling)c0.p.nextSibling.remove();cur=c0;n=n0;c0.bd.innerHTML="";cm.forEach(c=>{if(c.el&&!c.el.isConnected)c.el=null});K=K0;c0.p.classList.remove("tight");c0.bd.style.fontSize=(FZ*K)+"pt";secEls(sec,fs).forEach(el=>placeEl(el))}K=K0;return}
   const els=secEls(sec,fs);
   /* keep a short section together: if it does not fit in the rest of this page but fits on one page, start it on the next page */
   if(zone=="b"&&S.keepSec!==0&&cur&&cur.bd.children.length){
@@ -1658,6 +1658,7 @@ function fixRtlMarkers(root){
    m.textContent=ord?n+".":"•";
    m.style.cssText="position:absolute;top:0;right:-"+pad+"px;width:"+pad+"px;text-align:center;font-weight:normal;pointer-events:none";
    li.insertBefore(m,li.firstChild)})})}
+function ellipsize(root){root.querySelectorAll(".sl-t,.ft .fl,.pic .cr").forEach(el=>{if(el.scrollWidth<=el.clientWidth+1)return;const t=el.textContent;let lo=0,hi=t.length;while(lo<hi){const m=(lo+hi+1)>>1;el.textContent=t.slice(0,m)+"…";if(el.scrollWidth<=el.clientWidth+1)lo=m;else hi=m-1}el.textContent=t.slice(0,lo)+"…";el.style.textOverflow="clip"})}
 async function snapAll(L){
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:1280px;z-index:1";document.body.appendChild(w);const out=[];
  try{scrollTo(0,0);for(const g of S.pages){if(g.pic&&/^https?:/i.test(g.pic)){const d=await urlToData(g.pic);if(d)g.pic=d}}await fontLoad();await imgPend();build(w,0,true);fixRtlMarkers(w);
@@ -1665,9 +1666,9 @@ async function snapAll(L){
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
    pg.forEach((e,j)=>{e.style.display=j==i?"block":"none"});
-   await new Promise(r=>requestAnimationFrame(()=>r()));
-   const c=await html2canvas(pg[i],{scale:innerWidth<900?1.5:2,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:1280,windowHeight:720});
-   out.push({d:c.toDataURL("image/jpeg",.9),alt:(pg[i].innerText||"").replace(/\s+/g," ").trim().slice(0,300)});
+   await new Promise(r=>requestAnimationFrame(()=>r()));ellipsize(pg[i]);
+   const c=await html2canvas(pg[i],{scale:2,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:1280,windowHeight:720});
+   out.push({d:c.toDataURL("image/jpeg",.92),alt:(pg[i].innerText||"").replace(/\s+/g," ").trim().slice(0,300)});
    c.width=c.height=0}
  }finally{w.remove()}
  return out}
