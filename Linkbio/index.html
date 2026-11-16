@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DevMuhamad</title>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.452.0/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--ink:#18181b;--mute:#71717a;--line:#e4e4e7;--soft:#f4f4f5}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#fff}
+button,input,select,textarea{font:inherit;color:inherit}
+.center{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.btn.pri{background:var(--ink);color:#fff;border-color:var(--ink)}.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.btn.sm{padding:6px 8px}.btn svg{width:16px;height:16px}
+.wrap{max-width:1080px;margin:0 auto;padding:16px;display:grid;gap:20px}
+@media(min-width:900px){.wrap{grid-template-columns:1fr 360px;align-items:start}.prev{position:sticky;top:16px}}
+header.top{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:16px}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+input[type=color]{padding:2px;height:38px}input[type=checkbox]{width:auto}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1 1 120px}.row>.btn{flex:0 0 auto}
+.link{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.url{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;align-items:center;word-break:break-all}
+.url span{flex:1}.err{color:#b91c1c;font-size:13px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.on{opacity:1}
+/* bio page (public + preview) */
+.bio{min-height:100vh;padding:48px 20px;text-align:center;background:var(--bg);color:var(--tx)}
+.prev .bio{min-height:520px;border-radius:24px;border:1px solid var(--line);padding:32px 16px}
+.bio .in{max-width:440px;margin:0 auto}.bio .av{width:96px;height:96px;object-fit:cover;background:rgba(128,128,128,.2);margin-bottom:12px}
+.av.round{border-radius:50%}.av.rounded{border-radius:22px}.av.square{border-radius:0}
+.bio h1{margin:0;font-size:22px}.bio p{margin:6px 0 16px;opacity:.8;white-space:pre-wrap}
+.soc{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}.soc a{color:var(--tx);display:grid;place-items:center;width:40px;height:40px}
+.bio .lk{display:flex;gap:10px;justify-content:center;align-items:center;margin:10px 0;padding:14px;background:var(--bt);color:var(--bx);text-decoration:none;border:2px solid var(--bt);font-weight:500;transition:transform .15s}
+.lk:hover{transform:translateY(-2px)}.lk.pill{border-radius:999px}.lk.rounded{border-radius:14px}.lk.square{border-radius:0}.lk.outline{background:transparent;color:var(--tx);border-color:var(--bt);border-radius:14px}
+.bio svg{width:20px;height:20px}
+.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:s .8s linear infinite;margin:auto}@keyframes s{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><div class="center"><div class="spin"></div></div></div>
+<div id="toast" role="status"></div>
+<script>
+/* ---- CONFIG: publishable (anon) key only. Never put service_role here. ---- */
+const CFG={url:'YOUR_SUPABASE_URL',key:'YOUR_SUPABASE_PUBLISHABLE_KEY'};
+const sb=supabase.createClient(CFG.url,CFG.key,{auth:{flowType:'pkce',persistSession:true,detectSessionInUrl:true}});
+const $=s=>document.querySelector(s),app=$('#app');
+const ICONS={link:'link',website:'globe',instagram:'instagram',facebook:'facebook',youtube:'youtube',x:'x',tiktok:'music-2',whatsapp:'message-circle',telegram:'send',snapchat:'ghost',email:'mail',phone:'phone',shop:'shopping-bag',star:'star'};
+const SOCIALS=['instagram','tiktok','facebook','whatsapp','telegram','youtube','snapchat','x','website','email'];
+const THEMES={light:['#ffffff','#111111','#111111'],dark:['#111111','#ffffff','#ffffff'],stone:['#f4f4f5','#27272a','#18181b']};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)};
+const icon=n=>{const i=document.createElement('i');i.dataset.lucide=ICONS[n]||'link';return i};
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+function safeUrl(u){try{const x=new URL(String(u).trim());return['http:','https:','mailto:','tel:'].includes(x.protocol)?x.href:null}catch{return null}}
+const hex=(c,d)=>/^#[0-9a-f]{6}$/i.test(c)?c:d;
+const lum=c=>{const n=parseInt(c.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255};
+
+/* ---- Shared renderer: public page and live preview ---- */
+function renderBio(root,d){
+  const bg=hex(d.background_color,'#ffffff'),bt=hex(d.button_color,'#111111'),tx=hex(d.text_color,'#111111');
+  const outline=d.button_style==='outline';
+  root.className='bio';root.style.cssText=`--bg:${bg};--bt:${bt};--tx:${tx};--bx:${lum(bt)>.55?'#111':'#fff'}`;
+  const inn=el('div','in');
+  if(d.avatar_url&&safeUrl(d.avatar_url)){const im=el('img','av '+(['round','rounded','square'].includes(d.avatar_shape)?d.avatar_shape:'round'));im.src=safeUrl(d.avatar_url);im.alt='';inn.append(im)}
+  if(d.display_name)inn.append(el('h1','',d.display_name));
+  if(d.bio)inn.append(el('p','',d.bio));
+  const soc=el('div','soc');
+  (d.socials||[]).forEach(s=>{const u=safeUrl(s.url);if(!u||!ICONS[s.platform])return;const a=el('a');a.href=u;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',s.platform);a.append(icon(s.platform));soc.append(a)});
+  if(soc.children.length)inn.append(soc);
+  (d.links||[]).forEach(l=>{const u=safeUrl(l.url);if(!u)return;const a=el('a','lk '+(['pill','rounded','square','outline'].includes(d.button_style)?d.button_style:'rounded'));a.href=u;a.target='_blank';a.rel='noopener noreferrer';a.append(icon(l.icon),el('span','',l.title));inn.append(a)});
+  root.replaceChildren(inn);lucide.createIcons();
+}
+
+/* ---- Router: #username = public page, empty hash = dashboard ---- */
+const loading=()=>app.replaceChildren(Object.assign(el('div','center'),{innerHTML:'<div class="spin"></div>'}));
+async function route(){
+  const u=decodeURIComponent(location.hash.slice(1)).trim();
+  if(u)return showPublic(u);
+  const{data:{session}}=await sb.auth.getSession();
+  if(location.search.includes('code='))history.replaceState(null,'',location.pathname);
+  session?showDash(session.user):showLogin();
+}
+addEventListener('hashchange',route);
+sb.auth.onAuthStateChange(e=>{if(e==='SIGNED_OUT')route()});
+
+async function showPublic(u){
+  loading();
+  const{data,error}=await sb.rpc('get_public_profile',{uname:u});
+  if(error)return msg('Something went wrong','The service is temporarily unavailable. Please try again shortly.');
+  if(!data)return msg('Page not found',`There is no published page for "${u}".`);
+  document.title=(data.display_name||u)+' | Link Bio';renderBio(app,data);
+}
+function msg(h,p){const d=el('div','center');const i=el('div');i.append(el('h1','',h),el('p','',p));d.append(i);app.replaceChildren(d)}
+
+function showLogin(){
+  const d=el('div','center'),i=el('div');
+  const b=el('button','btn pri','Continue with Google');
+  b.onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/'}});
+  i.append(el('h1','','Your links, one page'),el('p','','Sign in to create and publish your Link Bio.'),b);d.append(i);app.replaceChildren(d);
+}
+
+/* ---- Dashboard ---- */
+let S={p:null,links:[],soc:[]};
+const pubUrl=()=>location.origin+'/#'+S.p.username;
+async function showDash(user){
+  loading();
+  const[p,l,s]=await Promise.all([sb.from('profiles').select('*').eq('id',user.id).maybeSingle(),sb.from('links').select('*').eq('user_id',user.id).order('position'),sb.from('social_links').select('*').eq('user_id',user.id)]);
+  if(p.error||!p.data)return msg('Could not load your profile','Please refresh or sign in again.');
+  S={p:p.data,links:l.data||[],soc:s.data||[]};
+  app.innerHTML=`<div class="wrap"><header class="top"><strong>DevMuhamad</strong><button class="btn" id="out">Sign out</button></header>
+  <main>
+   <section class="card"><h2>Your public link</h2><div class="url"><span id="pu"></span><button class="btn sm" id="cp">Copy</button></div>
+    <div class="row" style="margin-top:10px"><span id="st"></span><button class="btn pri" id="pub"></button></div></section>
+   <section class="card"><h2>Profile</h2>
+    <label>Profile picture (JPG, PNG or WebP, max 2MB)</label><input type="file" id="av" accept="image/jpeg,image/png,image/webp">
+    <label>Display name</label><input id="dn" maxlength="60">
+    <label>Username (letters and numbers, 3 to 30)</label><input id="un" maxlength="30">
+    <label>Bio</label><textarea id="bio" rows="3" maxlength="280"></textarea>
+    <div class="err" id="perr"></div><button class="btn pri" id="sp" style="margin-top:10px">Save profile</button></section>
+   <section class="card"><h2>Links <span id="cnt" style="font-weight:400;color:var(--mute)"></span></h2><div id="ll"></div><button class="btn" id="al">Add link</button></section>
+   <section class="card"><h2>Social media</h2><div id="sl"></div></section>
+   <section class="card"><h2>Appearance</h2>
+    <div class="row"><div><label>Theme</label><select id="th"><option value="light">Light</option><option value="dark">Dark</option><option value="stone">Stone</option><option value="custom">Custom</option></select></div>
+    <div><label>Image shape</label><select id="sh"><option value="round">Round</option><option value="rounded">Rounded</option><option value="square">Square</option></select></div>
+    <div><label>Button style</label><select id="bs"><option value="rounded">Rounded</option><option value="pill">Pill</option><option value="square">Square</option><option value="outline">Outline</option></select></div></div>
+    <div class="row"><div><label>Background</label><input type="color" id="bg"></div><div><label>Buttons</label><input type="color" id="bt"></div><div><label>Text</label><input type="color" id="tx"></div></div>
+    <button class="btn pri" id="sa" style="margin-top:12px">Save appearance</button></section>
+   <section class="card"><h2>Account</h2><p style="margin:0;color:var(--mute)">Signed in with Google. Your email is never shown publicly.</p></section>
+  </main><aside class="prev"><div id="pv"></div></aside></div>`;
+  $('#out').onclick=()=>sb.auth.signOut();
+  $('#cp').onclick=()=>navigator.clipboard.writeText(pubUrl()).then(()=>toast('Link copied'),()=>toast('Copy failed'));
+  const P=S.p,set=(i,v)=>$(i).value=v??'';
+  set('#dn',P.display_name);set('#un',P.username);set('#bio',P.bio);set('#th',P.theme_id);set('#sh',P.avatar_shape);set('#bs',P.button_style);set('#bg',P.background_color);set('#bt',P.button_color);set('#tx',P.text_color);
+  [['#dn','display_name'],['#bio','bio'],['#sh','avatar_shape'],['#bs','button_style'],['#bg','background_color'],['#bt','button_color'],['#tx','text_color']].forEach(([i,k])=>$(i).oninput=e=>{P[k]=e.target.value;if(['#bg','#bt','#tx'].includes(i)){P.theme_id='custom';$('#th').value='custom'}preview()});
+  $('#th').onchange=e=>{const t=THEMES[e.target.value];P.theme_id=e.target.value;if(t){[P.background_color,P.button_color,P.text_color]=t;set('#bg',t[0]);set('#bt',t[1]);set('#tx',t[2])}preview()};
+  $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
+  $('#pub').onclick=togglePublish;$('#av').onchange=uploadAvatar;
+  $('#al').onclick=addLink;
+  drawLinks();drawSocials();preview();status();
+}
+const status=()=>{$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Published':'Not published';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
+const preview=()=>renderBio($('#pv'),{...S.p,links:S.links.filter(l=>l.is_active),socials:S.soc});
+async function saveProfile(appearanceOnly){
+  const P=S.p;$('#perr').textContent='';
+  const un=$('#un').value.trim();
+  if(!/^[A-Za-z0-9]{3,30}$/.test(un))return $('#perr').textContent='Username must be 3 to 30 letters or numbers, with no spaces.';
+  const{error}=await sb.from('profiles').update({username:un,display_name:P.display_name,bio:P.bio,theme_id:P.theme_id,background_color:P.background_color,button_color:P.button_color,text_color:P.text_color,avatar_shape:P.avatar_shape,button_style:P.button_style}).eq('id',P.id);
+  if(error){$('#perr').textContent=error.code==='23505'?'That username is taken.':error.code==='23514'?'That username is reserved or invalid.':'Could not save. Try again.';return}
+  P.username=un;status();toast('Saved');
+}
+async function togglePublish(){
+  const v=!S.p.is_published;
+  const{error}=await sb.from('profiles').update({is_published:v}).eq('id',S.p.id);
+  if(error)return toast('Could not update');S.p.is_published=v;status();toast(v?'Published':'Unpublished');
+}
+async function uploadAvatar(e){
+  const f=e.target.files[0];if(!f)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(f.type))return toast('Use a JPG, PNG or WebP image');
+  if(f.size>2*1024*1024)return toast('Image must be under 2MB');
+  try{
+    const bmp=await createImageBitmap(f),r=Math.min(1,512/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');
+    c.width=Math.round(bmp.width*r);c.height=Math.round(bmp.height*r);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    const blob=await new Promise(r=>c.toBlob(r,'image/webp',.85));
+    const path=S.p.id+'/avatar.webp';
+    const up=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:'image/webp',cacheControl:'3600'});
+    if(up.error)throw up.error;
+    const url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
+    const{error}=await sb.from('profiles').update({avatar_url:url}).eq('id',S.p.id);
+    if(error)throw error;S.p.avatar_url=url;preview();toast('Picture updated');
+  }catch{toast('Upload failed')}
+}
+
+/* Links */
+function drawLinks(){
+  const box=$('#ll');box.replaceChildren();$('#cnt').textContent=`(${S.links.length}/15)`;
+  S.links.forEach((l,i)=>{
+    const d=el('div','link'),t=el('input'),u=el('input'),ic=el('select'),ac=el('input');
+    t.value=l.title;t.maxLength=80;t.placeholder='Title';u.value=l.url;u.placeholder='https://';
+    Object.keys(ICONS).forEach(k=>{const o=el('option','',k);o.value=k;ic.append(o)});ic.value=l.icon||'link';
+    ac.type='checkbox';ac.checked=l.is_active;ac.setAttribute('aria-label','Enabled');
+    const save=async()=>{
+      const url=safeUrl(u.value);if(!url||!t.value.trim())return toast('Enter a title and a valid URL');
+      l.title=t.value.trim();l.url=url;l.icon=ic.value;l.is_active=ac.checked;u.value=url;
+      const{error}=await sb.from('links').update({title:l.title,url:l.url,icon:l.icon,is_active:l.is_active}).eq('id',l.id);
+      error?toast('Could not save link'):(preview(),toast('Saved'));
+    };
+    [t,u,ic,ac].forEach(x=>x.onchange=save);
+    const mv=(dir)=>async()=>{const j=i+dir;if(j<0||j>=S.links.length)return;[S.links[i],S.links[j]]=[S.links[j],S.links[i]];
+      await Promise.all(S.links.map((x,n)=>x.position!==n?(x.position=n,sb.from('links').update({position:n}).eq('id',x.id)):null));drawLinks();preview()};
+    const btn=(n,f,lab)=>{const b=el('button','btn sm');b.type='button';b.setAttribute('aria-label',lab);b.append(icon(n));b.onclick=f;return b};
+    const del=btn('trash-2',async()=>{const{error}=await sb.from('links').delete().eq('id',l.id);if(error)return toast('Could not delete');S.links.splice(i,1);drawLinks();preview()},'Delete');
+    const r1=el('div','row'),r2=el('div','row');r1.append(t,u);r2.append(ic,el('label','','Enabled'),ac,btn('arrow-up',mv(-1),'Move up'),btn('arrow-down',mv(1),'Move down'),del);
+    r2.querySelector('label').style.cssText='margin:0;flex:0 0 auto';d.append(r1,r2);box.append(d);
+  });
+  $('#al').disabled=S.links.length>=15;lucide.createIcons();
+}
+async function addLink(){
+  if(S.links.length>=15)return;
+  const{data,error}=await sb.from('links').insert({user_id:S.p.id,title:'New link',url:'https://example.com',icon:'link',position:S.links.length}).select().single();
+  if(error)return toast('Could not add link');S.links.push(data);drawLinks();preview();
+}
+
+/* Socials: saving an empty field removes the icon */
+function drawSocials(){
+  const box=$('#sl');box.replaceChildren();
+  SOCIALS.forEach(pf=>{
+    const cur=S.soc.find(s=>s.platform===pf),i=el('input');
+    i.value=cur?(pf==='email'?cur.url.replace(/^mailto:/,''):cur.url):'';i.placeholder=pf==='email'?'name@example.com':'https://';
+    const lab=el('label','',pf[0].toUpperCase()+pf.slice(1));
+    i.onchange=async()=>{
+      let v=i.value.trim();if(pf==='email'&&v&&!v.startsWith('mailto:'))v='mailto:'+v;
+      const cu=S.soc.find(s=>s.platform===pf);
+      if(!v){if(cu){await sb.from('social_links').delete().eq('id',cu.id);S.soc=S.soc.filter(s=>s!==cu)}preview();return}
+      const url=safeUrl(v);if(!url)return toast('Enter a valid URL');
+      const{data,error}=await sb.from('social_links').upsert({user_id:S.p.id,platform:pf,url},{onConflict:'user_id,platform'}).select().single();
+      if(error)return toast('Could not save');S.soc=S.soc.filter(s=>s.platform!==pf).concat(data);preview();toast('Saved');
+    };
+    box.append(lab,i);
+  });
+}
+route();
+</script>
+</body>
+</html>
