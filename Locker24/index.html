@@ -218,6 +218,7 @@ if(!DEMO){
   health:async pw=>{const r=await rpc("admin_health",{pw});if(r.error)throw new Error(r.error=="blocked"?"Too many attempts. Try again in 15 minutes.":"Wrong admin password.");return r},
   lock:(n,tok,pw,notes)=>rpc("lock_locker",{n,tok,pw,note:notes}),
   release:(n,tok)=>rpc("release_locker",{n,tok}),
+  sweep:async()=>{const r=await rpc("sweep_expired");const ps=(r&&r.paths)||[];if(ps.length)await sb.storage.from(BUCKET).remove(ps)},
   open:async(n,pw)=>{const r=await rpc("open_locker",{n,pw});if(r.error)throw new Error("Wrong locker number or password.");return r},
   async url(f){const c=uc.get(f.path);if(c&&Date.now()-c.t<5e5)return c.u;const{data,error}=await sb.storage.from(BUCKET).createSignedUrl(f.path,600);if(error)throw new Error(error.message);uc.set(f.path,{u:data.signedUrl,t:Date.now()});return data.signedUrl},
   async warm(fs){const ps=fs.map(f=>f.path).filter(x=>{const c=uc.get(x);return !c||Date.now()-c.t>=5e5});if(!ps.length)return;const{data,error}=await sb.storage.from(BUCKET).createSignedUrls(ps,600);if(error||!data)return;data.forEach((d,i)=>{if(d&&d.signedUrl)uc.set(d.path||ps[i],{u:d.signedUrl,t:Date.now()})})},
@@ -242,6 +243,7 @@ if(!DEMO){
  const chk=(d,n,t)=>{if(!d[n]||d[n].tok!==t||d[n].s!="res")throw new Error("Your reservation has expired.")};
  const chkO=async(d,n,pw)=>{const x=d[n];if(!x||x.s!="locked"||x.h!==await hash(n+pw))throw new Error("Wrong locker number or password.");return x};
  api={
+  sweep:async()=>{},
   health:async()=>{throw new Error("Not available in demo mode.")},
   adminList:async()=>{throw new Error("Not available in demo mode.")},adminView:async()=>{throw new Error("Not available in demo mode.")},adminClear:async()=>{throw new Error("Not available in demo mode.")},
   list:async()=>{const d=L();return Object.keys(d).map(i=>({id:+i,used:d[i].s!="free"}))},
@@ -268,7 +270,7 @@ function drawGrid(l,wait){const h=gridHtml(l,wait);if(loadGrid.h!==h){loadGrid.h
 function quickGrid(){let l=null;try{const c=JSON.parse(localStorage.getItem(GK)||"null");if(c&&c.l&&Date.now()-c.t<6e5)l=c.l}catch(e){}
  if(l)drawGrid(l);else drawGrid(Array.from({length:10},(_,i)=>({id:i+1,used:false})),true)}
 async function loadGrid(){
- try{const l=await api.list();drawGrid(l);try{localStorage.setItem(GK,JSON.stringify({t:Date.now(),l}))}catch(e){}
+ try{try{await api.sweep()}catch(e){}const l=await api.list();drawGrid(l);try{localStorage.setItem(GK,JSON.stringify({t:Date.now(),l}))}catch(e){}
   $("full").hidden=!l.every(x=>x.used);showMine(l)}catch(e){toast("Could not load lockers. Check your network.",1)}}
 const DEVK="l24_mine";
 function myLock(){try{const m=JSON.parse(localStorage.getItem(DEVK)||"null");if(m&&m.n&&m.exp>Date.now())return m;localStorage.removeItem(DEVK)}catch(e){}return null}
@@ -372,7 +374,7 @@ async function adminCheck(){
  $("aPw").value="";busy(b,0)}
 const ST={available:"Free",reserved:"Reserved",locked:"Locked",expired:"Expired"};
 async function adminLoad(){
- try{aData=await api.adminList(admPw);aFiles={};
+ try{try{await api.sweep()}catch(e){}aData=await api.adminList(admPw);aFiles={};
   $("aLk").innerHTML="<h3>Lockers</h3>"+aData.map(x=>{const used=x.status&&x.status!=="available",lt=x.status==="locked"&&x.expires_at?" &middot; "+leftTxt({exp:new Date(x.expires_at).getTime()})+" left":"";
    return '<div class="card" style="margin:8px 0"><div class="row" style="justify-content:space-between"><b>Locker '+pad(x.id)+"</b><span>"+(ST[x.status]||esc(x.status||"Free"))+lt+"</span></div>"+
    (used?(x.status==="locked"?'<p style="margin:8px 0">Password: <code id="ap'+x.id+'">&bull;&bull;&bull;&bull;&bull;&bull;</code> <button class="sec sm" onclick="aPwToggle('+x.id+')">Show</button></p>':"")+
