@@ -79,7 +79,7 @@ const $=s=>document.querySelector(s),app=$('#app');
 const ICONS={link:'link',website:'globe',instagram:'instagram',facebook:'facebook',youtube:'youtube',x:'x',tiktok:'music-2',whatsapp:'message-circle',telegram:'send',snapchat:'ghost',email:'mail',phone:'phone',shop:'shopping-bag',star:'star'};
 const BRAND={whatsapp:'#25D366',snapchat:'#FFD400',instagram:'#E1306C',tiktok:'#25F4EE',telegram:'#2AABEE',youtube:'#FF2D2D',facebook:'#1877F2',x:'#A1A1AA',email:'#EA4335'};
 const SOCIALS=['instagram','tiktok','facebook','whatsapp','telegram','youtube','snapchat','x','website','email'];
-const THEMES={midnight:['#0b0e14','#3b82f6','#e5e7eb'],light:['#ffffff','#111111','#111111'],dark:['#111111','#ffffff','#ffffff'],stone:['#f4f4f5','#27272a','#18181b']};
+const THEMES={midnight:['#0a1124','#3b82f6','#e5e7eb'],light:['#ffffff','#111111','#111111'],dark:['#111111','#ffffff','#ffffff'],stone:['#f4f4f5','#27272a','#18181b']};
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)};
 const icon=n=>{const i=document.createElement('i');i.dataset.lucide=ICONS[n]||'link';return i};
 function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
@@ -109,11 +109,7 @@ function renderBio(root,d,ed){
     return n};
   if(ed||d.display_name)inn.append(txt('h1',d.display_name,'Your name','display_name',60));
   if(ed||d.bio)inn.append(txt('p',d.bio,'Write a short bio','bio',280));
-  const soc=el('div','soc');
-  (d.socials||[]).forEach(s=>{const u=safeUrl(s.url);if(!u||!ICONS[s.platform])return;const a=el('a');a.href=u;a.setAttribute('aria-label',s.platform);if(BRAND[s.platform])a.style.setProperty('--b',BRAND[s.platform]);
-    if(ed)a.onclick=e=>{e.preventDefault();ed.social()};else{a.target='_blank';a.rel='noopener noreferrer'}
-    a.append(icon(s.platform));soc.append(a)});
-  if(soc.children.length)inn.append(soc);
+
   if((d.links||[]).length)inn.append(el('div','sec','Links'));
   (d.links||[]).forEach(l=>{const u=safeUrl(l.url);if(!u&&!ed)return;
     const a=el('a','lk '+(['pill','rounded','square','outline'].includes(d.button_style)?d.button_style:'rounded'));
@@ -181,17 +177,19 @@ async function showDash(user){
   const[p,l,s]=await Promise.all([sb.from('profiles').select('*').eq('id',user.id).maybeSingle(),sb.from('links').select('*').eq('user_id',user.id).order('position'),sb.from('social_links').select('*').eq('user_id',user.id)]);
   if(p.error||!p.data)return msg('Could not load your profile','Please refresh or sign in again.');
   S={p:p.data,links:l.data||[],soc:s.data||[]};
+  let mig=false;try{mig=localStorage.getItem('mid1:'+user.id)==='1'}catch{}
+  if(!mig){const m=THEMES.midnight,u2={theme_id:'midnight',background_color:m[0],button_color:m[1],text_color:m[2]};
+    Object.assign(S.p,u2);await sb.from('profiles').update(u2).eq('id',user.id);try{localStorage.setItem('mid1:'+user.id,'1')}catch{}}
   let seeded=false;try{seeded=localStorage.getItem('seeded:'+user.id)==='1'}catch{}
-  if(!seeded&&S.links.length===0&&S.soc.length===0){
+  if(!seeded&&S.links.length===0){
     const P0=S.p,up={};
     if(!P0.display_name||P0.display_name.toLowerCase()===P0.username.toLowerCase())up.display_name='Sara Ahmed';
     if(!P0.bio)up.bio='Student, designer and coffee lover. Everything I share is right here.';
-    if(!P0.theme_id||P0.theme_id==='light')Object.assign(up,{theme_id:'midnight',background_color:'#0b0e14',button_color:'#3b82f6',text_color:'#e5e7eb'});
+    if(!P0.theme_id||P0.theme_id==='light')Object.assign(up,{theme_id:'midnight',background_color:'#0a1124',button_color:'#3b82f6',text_color:'#e5e7eb'});
     if(Object.keys(up).length){Object.assign(S.p,up);await sb.from('profiles').update(up).eq('id',user.id)}
-    const ex=[['My portfolio','https://example.com','website'],['Latest YouTube video','https://youtube.com','youtube'],['Message me on WhatsApp','https://wa.me/','whatsapp'],['Download my CV','https://example.com/cv','link']].map((x,i)=>({user_id:user.id,title:x[0],url:x[1],icon:x[2],position:i}));
-    const so=[['instagram','https://instagram.com/'],['tiktok','https://tiktok.com/'],['telegram','https://t.me/'],['youtube','https://youtube.com/']].map(x=>({user_id:user.id,platform:x[0],url:x[1]}));
-    const[li,sc]=await Promise.all([sb.from('links').insert(ex).select(),sb.from('social_links').insert(so).select()]);
-    S.links=(li.data||[]).sort((x,y)=>x.position-y.position);S.soc=sc.data||[];
+    const ex=[['Message me on WhatsApp','https://wa.me/9647500000000','whatsapp'],['Snapchat','https://snapchat.com/@yourname','snapchat'],['Instagram','https://instagram.com/yourname','instagram'],['TikTok','https://tiktok.com/@yourname','tiktok'],['My portfolio','https://example.com','website']].map((x,i)=>({user_id:user.id,title:x[0],url:x[1],icon:x[2],position:i}));
+    const li=await sb.from('links').insert(ex).select();
+    S.links=(li.data||[]).sort((x,y)=>x.position-y.position);
     try{localStorage.setItem('seeded:'+user.id,'1')}catch{}
   }
   app.innerHTML=`<header class="top"><div class="logo"><i data-lucide="link-2"></i></div><b>Link Bio Builder</b><button class="btn gold" id="cp2" aria-label="Copy link"><i data-lucide="copy"></i></button><button class="btn" id="out" aria-label="Sign out"><i data-lucide="log-out"></i></button></header>
@@ -205,7 +203,7 @@ async function showDash(user){
     <label>Bio</label><textarea id="bio" rows="3" maxlength="280"></textarea>
     <div class="err" id="perr"></div><button class="btn pri" id="sp" style="margin-top:10px">Save profile</button></section>
    <section class="card"><h2>Links <span id="cnt" style="font-weight:400;color:var(--mute)"></span></h2><div id="ll"></div><button class="btn" id="al">Add link</button></section>
-   <section class="card"><h2>Social media</h2><div id="sl"></div></section>
+   
    <section class="card"><h2>Appearance</h2>
     <div class="row"><div><label>Theme</label><select id="th"><option value="midnight">Midnight</option><option value="light">Light</option><option value="dark">Dark</option><option value="stone">Stone</option><option value="custom">Custom</option></select></div>
     <div><label>Image shape</label><select id="sh"><option value="round">Round</option><option value="rounded">Rounded</option><option value="square">Square</option></select></div>
@@ -227,7 +225,7 @@ async function showDash(user){
   $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
   $('#pub').onclick=togglePublish;$('#av').onchange=uploadAvatar;
   $('#al').onclick=addLink;
-  drawLinks();drawSocials();preview();status();
+  drawLinks();preview();status();
 }
 const status=()=>{$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Published':'Not published';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
 const preview=()=>renderBio($('#pv'),{...S.p,links:S.links,socials:S.soc},ED);
