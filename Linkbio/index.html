@@ -83,7 +83,7 @@ function renderBio(root,d,ed){
   root.className='bio'+(ed?' ed':'');root.style.cssText=`--bg:${bg};--bt:${bt};--tx:${tx};--bx:${lum(bt)>.55?'#111':'#fff'}`;
   const inn=el('div','in'),shape=['round','rounded','square'].includes(d.avatar_shape)?d.avatar_shape:'round';
   if(d.avatar_url&&safeUrl(d.avatar_url)){const im=el('img','av '+shape);im.src=safeUrl(d.avatar_url);im.alt=ed?'Change picture':'';if(ed){im.style.cursor='pointer';im.onclick=ed.avatar}inn.append(im)}
-  else if(ed){const ph=el('div','av ph '+shape),ci=document.createElement('i');ci.dataset.lucide='camera';ph.append(ci);ph.setAttribute('role','button');ph.setAttribute('aria-label','Add picture');ph.onclick=ed.avatar;inn.append(ph)}
+  else if(ed){const ph=el('div','av ph '+shape,((d.display_name||'?').trim()[0]||'?').toUpperCase());ph.style.fontSize='32px';ph.style.fontWeight='500';ph.setAttribute('role','button');ph.setAttribute('aria-label','Add picture');ph.onclick=ed.avatar;inn.append(ph)}
   const txt=(tag,val,ph,field,max)=>{
     const n=el(tag,'',val||'');
     if(ed){try{n.contentEditable='plaintext-only'}catch{n.contentEditable='true'}
@@ -98,13 +98,11 @@ function renderBio(root,d,ed){
     if(ed)a.onclick=e=>{e.preventDefault();ed.social()};else{a.target='_blank';a.rel='noopener noreferrer'}
     a.append(icon(s.platform));soc.append(a)});
   if(soc.children.length)inn.append(soc);
-  else if(ed){const b=el('button','addl','Add social icons');b.type='button';b.onclick=ed.social;inn.append(b)}
   (d.links||[]).forEach(l=>{const u=safeUrl(l.url);if(!u&&!ed)return;
     const a=el('a','lk '+(['pill','rounded','square','outline'].includes(d.button_style)?d.button_style:'rounded'));
     if(ed){a.href='#';a.onclick=e=>{e.preventDefault();ed.link(l)};if(l.is_active===false)a.style.opacity='.45'}
     else{a.href=u;a.target='_blank';a.rel='noopener noreferrer'}
     a.append(icon(l.icon),el('span','',l.title));inn.append(a)});
-  if(ed&&(d.links||[]).length<15){const b=el('button','addl','Add link');b.type='button';b.onclick=ed.add;inn.append(b)}
   root.replaceChildren(inn);lucide.createIcons();
 }
 
@@ -162,11 +160,17 @@ async function showDash(user){
   const[p,l,s]=await Promise.all([sb.from('profiles').select('*').eq('id',user.id).maybeSingle(),sb.from('links').select('*').eq('user_id',user.id).order('position'),sb.from('social_links').select('*').eq('user_id',user.id)]);
   if(p.error||!p.data)return msg('Could not load your profile','Please refresh or sign in again.');
   S={p:p.data,links:l.data||[],soc:s.data||[]};
-  if(S.p.bio===null&&S.links.length===0){
-    S.p.bio='Tap here to write your bio.';S.p.display_name='Your name';
-    await sb.from('profiles').update({bio:S.p.bio,display_name:S.p.display_name}).eq('id',user.id);
-    const ins=await sb.from('links').insert([{user_id:user.id,title:'Example link',url:'https://example.com',icon:'link',position:0},{user_id:user.id,title:'Follow me on Instagram',url:'https://instagram.com',icon:'instagram',position:1}]).select();
-    S.links=(ins.data||[]).sort((x,y)=>x.position-y.position);
+  let seeded=false;try{seeded=localStorage.getItem('seeded:'+user.id)==='1'}catch{}
+  if(!seeded&&S.links.length===0&&S.soc.length===0){
+    const P0=S.p,up={};
+    if(!P0.display_name||P0.display_name.toLowerCase()===P0.username.toLowerCase())up.display_name='Sara Ahmed';
+    if(!P0.bio)up.bio='Student, designer and coffee lover. Everything I share is right here.';
+    if(Object.keys(up).length){Object.assign(S.p,up);await sb.from('profiles').update(up).eq('id',user.id)}
+    const ex=[['My portfolio','https://example.com','website'],['Latest YouTube video','https://youtube.com','youtube'],['Message me on WhatsApp','https://wa.me/','whatsapp'],['Download my CV','https://example.com/cv','link']].map((x,i)=>({user_id:user.id,title:x[0],url:x[1],icon:x[2],position:i}));
+    const so=[['instagram','https://instagram.com/'],['tiktok','https://tiktok.com/'],['telegram','https://t.me/'],['youtube','https://youtube.com/']].map(x=>({user_id:user.id,platform:x[0],url:x[1]}));
+    const[li,sc]=await Promise.all([sb.from('links').insert(ex).select(),sb.from('social_links').insert(so).select()]);
+    S.links=(li.data||[]).sort((x,y)=>x.position-y.position);S.soc=sc.data||[];
+    try{localStorage.setItem('seeded:'+user.id,'1')}catch{}
   }
   app.innerHTML=`<header class="top"><div class="logo"><i data-lucide="link-2"></i></div><b>Link Bio Builder</b><button class="btn gold" id="cp2" aria-label="Copy link"><i data-lucide="copy"></i></button><button class="btn" id="out" aria-label="Sign out"><i data-lucide="log-out"></i></button></header>
   <div class="wrap" data-v="edit"><main id="ed"><h1 class="ttl">Link Bio Builder</h1><div class="bar"></div><p class="sub">Build your own link page, then share one link everywhere.</p>
@@ -288,7 +292,6 @@ const ED={
   text:async(k,v)=>{if(S.p[k]===v)return;S.p[k]=v;const f=$(k==='display_name'?'#dn':'#bio');if(f)f.value=v;
     const{error}=await sb.from('profiles').update({[k]:v}).eq('id',S.p.id);error?toast('Could not save'):toast('Saved')},
   link:l=>linkSheet(l),
-  add:async()=>{const n=S.links.length;await addLink();if(S.links.length>n)linkSheet(S.links[S.links.length-1])},
   social:()=>{$('#tE').click();setTimeout(()=>$('#sl').scrollIntoView({behavior:'smooth'}),60)}
 };
 function linkSheet(l){
