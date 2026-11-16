@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -592,17 +592,17 @@ body.lsh-open{overflow:hidden}
 #lsh .lthumb{max-width:100%;max-height:170px;border-radius:10px;display:block;margin:0 auto 8px;object-fit:contain;background:#eee}
 #lsh .lsub{font-size:12px;font-weight:700;color:var(--mut);margin:14px 0 6px;letter-spacing:.03em}
 #lsh .lhint{font-size:12px;color:var(--mut);margin:4px 0 0}
+/* V16: Table of Contents cards - never break a word in the middle */
+.slide .bd.fl{gap:56px 36px}
+.slide .bd.fl .tr,.slide .bd.fl .tr.l1{padding-left:.35em;padding-right:.35em}
+.slide .bd.fl .tr::after{right:-30px;border-left-width:16px}
+.slide.rtl .bd.fl .tr::after{right:auto;left:-30px;border-right-width:16px}
+.slide .bd.fl .tr .tl{width:100%;max-width:100%;box-sizing:border-box;text-align:center;overflow-wrap:normal;word-break:normal;-webkit-hyphens:none;hyphens:none}
 </style></head><body data-tab="edit">
 <div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button><button id="bdocx" aria-label="Download PowerPoint file"></button><button id="bprint" aria-label="Print"></button></div>
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
 <div id="app"><div id="ed"></div><div id="pv"><div id="doc"></div></div></div>
 <script>
-/* app-like: block pinch, ctrl+wheel and keyboard zoom */
-["gesturestart","gesturechange","gestureend"].forEach(n=>document.addEventListener(n,ev=>ev.preventDefault()));
-document.addEventListener("touchmove",ev=>{if(ev.touches&&ev.touches.length>1)ev.preventDefault()},{passive:false});
-document.addEventListener("wheel",ev=>{if(ev.ctrlKey)ev.preventDefault()},{passive:false});
-document.addEventListener("keydown",ev=>{if((ev.ctrlKey||ev.metaKey)&&["+","-","=","0"].includes(ev.key))ev.preventDefault()});
-document.addEventListener("dblclick",ev=>{if(!ev.target.closest("input,textarea"))ev.preventDefault()});
 if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1))document.documentElement.classList.add("ios");
 const $=id=>document.getElementById(id);
 const e=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1387,7 +1387,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  /* main body: continuous flow */
  zone="b";FZ=12;if(O.body.length)cur=bp();
  O.body.forEach(putSec);
- [...t.querySelectorAll(".page,.slide")].forEach(p=>{const b=p.querySelector(".bd");if(b&&!b.children.length)p.remove()});if(SL){const cv=t.querySelector(".slide .tc");if(cv)fitCover(cv);np().innerHTML=SLEND(I,names,rt)};
+ [...t.querySelectorAll(".page,.slide")].forEach(p=>{const b=p.querySelector(".bd");if(b&&!b.children.length)p.remove()});if(SL){const cv=t.querySelector(".slide .tc");if(cv)fitCover(cv);try{fitFlow(t)}catch(x){console.warn("toc fit skipped",x)}np().innerHTML=SLEND(I,names,rt)};
  const rom=n=>{let s="";[[100,"c"],[90,"xc"],[50,"l"],[40,"xl"],[10,"x"],[9,"ix"],[5,"v"],[4,"iv"],[1,"i"]].forEach(([v,r])=>{while(n>=v){s+=r;n-=v}});return s};
  const ro=!SL&&S.pn!="arabic";let fi=0,bi2=0,ai=0;
  const sl=[...t.querySelectorAll(".page,.slide")],tot=sl.filter(p=>p.querySelector(".ft")).length;sl.forEach((p,ix)=>{const f=p.querySelector(".ft");if(!f)return;const v=!ro?++ai:(p.dataset.z=="f"?rom(++fi):++bi2),b=f.querySelector("b");if(b)b.textContent=SL?v+" / "+tot:v;else f.textContent=v;const pb=f.querySelector(".pb");if(pb)pb.style.width=((ix+1)/sl.length*100)+"%"});
@@ -1444,6 +1444,7 @@ async function autoImagesBg(){if(_auto||!S.pages.some(g=>(g.hint||g.picUrl)&&!g.
 async function runAuto(b){const sp=b.querySelector("span"),o=sp.textContent;b.disabled=true;
  try{const[n,t]=await autoImages(i=>{sp.textContent=tr("Finding images…")+" "+i});toast(t?(n?tr("Images added")+": "+n+"/"+t:tr("No images found. Tap a placeholder to add one.")):tr("No image suggestions in this seminar"),5000)}catch(x){toast(tr("Could not reach the image service"),5000)}
  b.disabled=false;sp.textContent=o;changed(true)}
+function fitFlow(t){const els=[...t.querySelectorAll(".slide .bd.fl .tr .tl")];if(!els.length)return;els.forEach(el=>{el.style.fontSize=""});let min=0;els.forEach(el=>{let px=parseFloat(getComputedStyle(el).fontSize)||16;const start=px;while(el.scrollWidth>el.clientWidth+1&&px>start*.5){px-=1;el.style.fontSize=px+"px"}if(!min||px<min)min=px});els.forEach(el=>{el.style.fontSize=min+"px"})}
 function fitCover(tc){const h=tc.querySelector("h1"),sb=tc.querySelector(".sub"),is=tc.querySelector(".inst span");if(is){let q=31;is.style.fontSize=q+"px";while(is.scrollWidth>is.clientWidth+1&&q>18){q-=1;is.style.fontSize=q+"px"}}if(!h)return;const ov=()=>tc.scrollHeight>tc.clientHeight+1;let f=78;while(ov()&&f>34){f-=3;h.style.fontSize=f+"px"}let g=41;while(sb&&ov()&&g>22){g-=2;sb.style.fontSize=g+"px"}}
 function SLEND(I,names,rt){const ar=RL()=="ar",T=!rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"];return `<div class="ts ts2"><div class="tc ce"><div class="ce1" data-ed="info:uni,col,dep">${e(I.uni||"")}<br><small>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</small></div><div><h1>${T[0]}</h1><span class="rule"></span><div class="sub">${T[1]}</div></div><div class="ce3" data-ed="stu">${e(names.join(" · "))}${I.sup?"<br><small>"+e(I.sup)+"</small>":""}</div></div></div>`}
 function tameJustify(t){
