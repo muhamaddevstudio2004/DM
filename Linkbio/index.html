@@ -225,10 +225,16 @@ html.pub .bio{min-height:100%;padding-bottom:28px}
 .pt{flex:1;min-width:0}.pt b{display:block;color:var(--navy);font-size:15px}.pt span{display:block;font-size:13px;color:var(--mute)}
 .pb{display:flex;gap:6px;flex:none}
 .note{margin:6px 0 0;font-size:12px;color:var(--mute)}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 4px}
-.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--navy);font-weight:600;cursor:pointer}
-.chip .dot{width:18px;height:18px;border-radius:50%;border:4px solid}
-.chip.on{border-color:var(--navy);background:var(--soft)}
+.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0 4px}
+.chip{position:relative;display:flex;flex-direction:column;gap:8px;padding:8px;border:2px solid var(--line);border-radius:16px;background:#fff;color:var(--navy);font-weight:600;font-size:14px;cursor:pointer;text-align:start;-webkit-tap-highlight-color:transparent;transition:border-color .15s,transform .12s}
+.chip:active{transform:scale(.97)}
+.chip .pv{height:64px;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:center;gap:7px;border:1px solid rgba(128,128,128,.25)}
+.chip .pv span{display:block;border-radius:6px}
+.chip .pv .a{width:45%;height:8px}.chip .pv .b{width:100%;height:14px}
+.chip .nmx{padding:0 2px 2px;display:flex;align-items:center;justify-content:space-between}
+.chip .ck{width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;display:none;place-items:center}
+.chip .ck svg{width:12px;height:12px}
+.chip.on{border-color:var(--navy);background:var(--soft)}.chip.on .ck{display:grid}
 .card.soon{display:grid;justify-items:center;gap:4px;text-align:center;padding:26px 16px;border-style:dashed;color:var(--mute)}
 .card.soon svg{width:26px;height:26px;color:var(--gold)}.card.soon b{color:var(--navy)}
 </style>
@@ -542,10 +548,6 @@ async function showDash(user){
    <div class="pane" data-pane="design">
     <div class="gh">Colors and style</div>
     <section class="card"><label style="margin-top:0">Quick themes</label><div class="chips" id="chips"></div>
-     <div class="row"><div><label>Theme</label><select id="th"><option value="titanium">Titanium</option><option value="midnight">Midnight</option><option value="light">Light</option><option value="dark">Dark</option><option value="stone">Stone</option><option value="custom">Custom</option></select></div>
-     <div><label>Photo shape</label><select id="sh"><option value="round">Round</option><option value="rounded">Rounded</option><option value="square">Square</option></select></div>
-     <div><label>Link style</label><select id="bs"><option value="rounded">Rounded</option><option value="pill">Pill</option><option value="square">Square</option><option value="outline">Outline</option></select></div></div>
-     <div class="row"><div><label>Background</label><input type="color" id="bg"></div><div><label>Links color</label><input type="color" id="bt"></div><div><label>Text</label><input type="color" id="tx"></div></div>
      <button class="btn pri" id="sa" style="margin-top:12px">Save</button></section>
     <div class="gh">Templates</div>
     <section class="card soon"><i data-lucide="sparkles"></i><b>Background templates</b><span>Ready-made backgrounds are coming soon.</span></section>
@@ -558,16 +560,18 @@ async function showDash(user){
   const setV=v=>{document.querySelector('.wrap').dataset.v=v;document.body.dataset.v=v;$('#tE').classList.toggle('on',v==='edit');$('#tL').classList.toggle('on',v==='live');scrollTo(0,0)};
   $('#tE').onclick=()=>setV('edit');$('#tL').onclick=()=>setV('live');document.body.dataset.v='edit';
   const P=S.p,set=(i,v)=>$(i).value=v??'';
-  set('#dn',P.display_name);set('#un',P.username);set('#bio',P.bio);set('#th',P.theme_id);set('#sh',P.avatar_shape);set('#bs',P.button_style);set('#bg',P.background_color);set('#bt',P.button_color);set('#tx',P.text_color);
-  [['#dn','display_name'],['#bio','bio'],['#sh','avatar_shape'],['#bs','button_style'],['#bg','background_color'],['#bt','button_color'],['#tx','text_color']].forEach(([i,k])=>$(i).oninput=e=>{P[k]=e.target.value;if(['#bg','#bt','#tx'].includes(i)){P.theme_id='custom';$('#th').value='custom'}preview()});
-  $('#th').onchange=e=>{const t=THEMES[e.target.value];P.theme_id=e.target.value;if(t){[P.background_color,P.button_color,P.text_color]=t;set('#bg',t[0]);set('#bt',t[1]);set('#tx',t[2])}preview()};
+  set('#dn',P.display_name);set('#un',P.username);set('#bio',P.bio);
+  [['#dn','display_name'],['#bio','bio']].forEach(([i,k])=>$(i).oninput=e=>{P[k]=e.target.value;preview()});
+  const applyTheme=k=>{const t=THEMES[k];if(!t)return;P.theme_id=k;[P.background_color,P.button_color,P.text_color]=t;preview()};
   $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
   $('#pub').onclick=togglePublish;$('#av').onchange=e=>uploadAvatar(e,'avatar');$('#cv').onchange=e=>uploadAvatar(e,'cover');
   $('#rc').onclick=async()=>{const{error}=await sb.from('profiles').update({cover_url:null}).eq('id',S.p.id);if(error)return toast('Could not remove');S.p.cover_url=null;preview();toast('Cover removed')};
   $('#al').onclick=addLink;const oS=f=>{if(!$('#pvw').offsetParent)$('#tL').click();f()};$('#ml').onclick=()=>oS(mapSheet);$('#p1').onclick=()=>oS(()=>promoSheet(1));$('#p2').onclick=()=>oS(()=>promoSheet(2));$('#mm').onclick=()=>oS(musicSheet);
   $('#bcv').onclick=()=>$('#cv').click();$('#bav').onclick=()=>$('#av').click();
-  Object.keys(THEMES).forEach(k=>{const c=el('button','chip');c.type='button';c.dataset.k=k;const d=el('span','dot');d.style.background=THEMES[k][0];d.style.borderColor=THEMES[k][1];c.append(d,k[0].toUpperCase()+k.slice(1));
-    c.onclick=()=>{$('#th').value=k;$('#th').onchange({target:$('#th')})};$('#chips').append(c)});
+  Object.keys(THEMES).forEach(k=>{const c=el('button','chip'),t=THEMES[k],pv=el('div','pv'),a=el('span','a'),b=el('span','b'),nx=el('div','nmx'),ck=el('span','ck');c.type='button';c.dataset.k=k;
+    pv.style.background=t[0];a.style.background=t[2];b.style.background=t[1];pv.append(a,b);
+    ck.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-9"/></svg>';
+    nx.append(el('span','',k[0].toUpperCase()+k.slice(1)),ck);c.append(pv,nx);c.onclick=()=>applyTheme(k);$('#chips').append(c)});
   document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));
     document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.dataset.pane===b.dataset.p));
     const sg=$('#seg');if(sg.getBoundingClientRect().top<=90)scrollTo(0,sg.offsetTop-80)});
