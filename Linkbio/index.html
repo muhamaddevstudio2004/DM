@@ -273,8 +273,8 @@ function renderBio(root,d,ed){
     const a=el('a','lk '+(['pill','rounded','square','outline'].includes(d.button_style)?d.button_style:'rounded'));
     const rtl=/^[^A-Za-z\u0590-\u08FF]*[\u0590-\u08FF]/.test(l.title||'');a.dir=rtl?'rtl':'ltr';
     if(ed){a.href='#';a.onclick=e=>{e.preventDefault();ed.link(l)};if(l.is_active===false)a.style.opacity='.45'}
-    else{a.href=u;a.rel='noopener noreferrer';a.onclick=e=>{e.preventDefault();confirmOpen(root,u,l.title,bt)}}
-    a.style.setProperty('--i',i);
+    else{a.href=u;a.rel='noopener noreferrer';a.onclick=e=>{e.preventDefault();confirmOpen(root,u,l.title,BRAND[l.icon]||bt)}}
+    a.style.setProperty('--i',i);if(BRAND[l.icon])a.style.setProperty('--b',BRAND[l.icon]);
     const ic=el('span','ic');ic.append(icon(l.icon));
     const tx2=el('span','tx');tx2.append(el('span','t',l.title));const subt=subOf(u||l.url);if(subt)tx2.append(el('span','s',subt));
     const ch=document.createElement('i');ch.dataset.lucide=rtl?'chevron-left':'chevron-right';ch.className='ch';
@@ -338,13 +338,14 @@ function renderBio(root,d,ed){
     const upd=()=>{const e=segE(),cu=Math.max(0,(au.currentTime||0)-S0);
       if(isFinite(e)&&e>S0){if(!seeking)sk.value=Math.min(1000,Math.round(cu/(e-S0)*1000));t2.textContent='-'+fmt(e-S0-cu)}
       t1.textContent=fmt(cu);paint()};
-    const chk=()=>{const c0=au.currentTime||0,e=segE();
-      if(c0<S0-.4)au.currentTime=S0;
-      else if(mm.e>S0&&isFinite(e)&&c0>=e-.05)au.currentTime=S0};
+    let lastSk=0;const seek=v=>{lastSk=Date.now();au.currentTime=v};
+    const chk=()=>{if(au.seeking||Date.now()-lastSk<1500)return;const c0=au.currentTime||0,e=segE();
+      if(c0<S0-.4)seek(S0);
+      else if(mm.e>S0&&isFinite(e)&&c0>=e-.1)seek(S0)};
     const ticker=()=>{if(!mc2.isConnected){clearInterval(lp);return}try{chk();upd()}catch{}};
-    au.onended=()=>{au.currentTime=S0;au.play().catch(()=>{})};
-    au.ontimeupdate=upd;au.onloadedmetadata=()=>{if(S0&&!yid&&au.currentTime<S0)au.currentTime=S0;upd()};au.ondurationchange=upd;
-    au.onplay=()=>{mc2.classList.add('on');clearInterval(lp);lp=setInterval(ticker,120)};
+    au.onended=()=>{seek(S0);au.play().catch(()=>{})};
+    au.onloadedmetadata=()=>{if(S0&&!yid&&au.currentTime<S0)seek(S0);upd()};au.ondurationchange=upd;
+    au.onplay=()=>{mc2.classList.add('on');clearInterval(lp);lp=setInterval(ticker,200)};
     au.onpause=()=>{mc2.classList.remove('on');clearInterval(lp);stop()};au.onplaying=start;au.onwaiting=stop;
     sk.oninput=()=>{seeking=true;paint();const e=segE();if(isFinite(e)&&e>S0)t1.textContent=fmt(sk.value/1000*(e-S0))};
     sk.onchange=()=>{const e=segE();if(isFinite(e)&&e>S0)au.currentTime=S0+sk.value/1000*(e-S0);seeking=false;manual=true;upd()};
@@ -353,12 +354,13 @@ function renderBio(root,d,ed){
     ff.onclick=()=>{manual=true;const e=segE(),c0=au.currentTime||0;au.currentTime=isFinite(e)&&e>0?Math.min(e-.1,c0+10):c0+10};
     if(ed)mc2.onclick=e=>{if(e.target.closest('.mc,.mpr'))return;ed.music()};
     else{
-      const evs=['click','touchend','keydown'];
+      const evs=['click','touchend','pointerup','keydown'];
       const off=()=>evs.forEach(k=>document.removeEventListener(k,first,true));
-      const first=e=>{if(manual){off();return}if(e.target&&e.target.closest&&e.target.closest('.mus'))return;const pr=au.play();if(!yid)pr.then(off,()=>{})};
-      const st0=au.onplaying;au.onplaying=()=>{st0();off()};
-      const tryp=au.play();
-      if(yid)evs.forEach(k=>document.addEventListener(k,first,true));else tryp.catch(()=>evs.forEach(k=>document.addEventListener(k,first,true)));
+      const arm=()=>evs.forEach(k=>document.addEventListener(k,first,true));
+      const first=e=>{au.muted=false;if(!manual&&au.paused&&!(e.target&&e.target.closest&&e.target.closest('.mus')))au.play().catch(()=>{});off()};
+      let told=false;const st0=au.onplaying;au.onplaying=()=>{st0();if(au.muted&&!told){told=true;toast('Tap anywhere for sound')}};
+      const startMuted=()=>{au.muted=true;arm();au.play().catch(()=>{})};
+      if(yid)startMuted();else au.play().catch(startMuted);
       try{if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:d.music_title||'',artist:d.music_artist||'',artwork:cvu2?[{src:cvu2}]:[]})}catch{}
     }
     inn.append(mc2)}
@@ -743,10 +745,10 @@ function loadYT(){return ytLoad||(ytLoad=new Promise(res=>{
 function ytAudio(host,id,start){
   const a={paused:true,onplay:null,onpause:null,onplaying:null,onwaiting:null,onended:null,onloadedmetadata:null,ondurationchange:null,ontimeupdate:null};
   const w=document.createElement('div');w.className='yt';const slot=document.createElement('div');w.append(slot);host.append(w);
-  let p=null,ready=false,want=false,pt=0;
+  let p=null,ready=false,want=false,pt=0,mu=false;
   loadYT().then(()=>{if(!w.isConnected)return;
     p=new YT.Player(slot,{width:'200',height:'200',videoId:id,playerVars:{playsinline:1,controls:0,disablekb:1,fs:0,rel:0,start:Math.floor(start||0)},events:{
-      onReady:()=>{ready=true;a.onloadedmetadata&&a.onloadedmetadata();if(want)p.playVideo()},
+      onReady:()=>{ready=true;if(mu)p.mute();a.onloadedmetadata&&a.onloadedmetadata();if(want)p.playVideo()},
       onStateChange:e=>{const s=e.data;
         if(s===1){a.paused=false;a.onplay&&a.onplay();a.onplaying&&a.onplaying()}
         else if(s===2){a.paused=true;a.onpause&&a.onpause()}
@@ -754,7 +756,9 @@ function ytAudio(host,id,start){
         else if(s===0){a.paused=true;a.onended&&a.onended()}}}})});
   Object.defineProperties(a,{
     currentTime:{get:()=>ready?(p.getCurrentTime()||0):pt,set:v=>{pt=v;if(ready)p.seekTo(v,true)}},
-    duration:{get:()=>ready?(p.getDuration()||NaN):NaN}});
+    duration:{get:()=>ready?(p.getDuration()||NaN):NaN},
+    seeking:{get:()=>false},
+    muted:{get:()=>mu,set:v=>{mu=!!v;if(ready){try{mu?p.mute():p.unMute()}catch{}}}}});
   a.play=()=>{want=true;if(ready)p.playVideo();return Promise.resolve()};
   a.pause=()=>{want=false;if(ready){try{p.pauseVideo()}catch{}}};
   return a}
