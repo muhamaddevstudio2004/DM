@@ -529,7 +529,7 @@ async function showDash(user){
      <label>About you</label><textarea id="bio" rows="3" maxlength="280"></textarea>
      <div class="err" id="perr"></div><button class="btn pri" id="sp" style="margin-top:10px">Save</button></section>
     <div class="gh">Account</div>
-    <section class="card"><p style="margin:0;color:var(--mute)">You are logged in. Your details are private.</p></section>
+    <section class="card"><div class="pr" style="padding-top:0"><div class="pt"><b>Total views</b><span>People who opened your page</span></div><b id="vc" style="font-size:28px;line-height:1;color:var(--navy)">0</b></div><p class="note" style="margin:0 0 10px">Your own visits are not counted.</p><p style="margin:0;color:var(--mute)">You are logged in. Your details are private.</p></section>
    </div>
    <div class="pane" data-pane="cards">
     <div class="gh">Links</div>
@@ -573,7 +573,7 @@ async function showDash(user){
     const sg=$('#seg');if(sg.getBoundingClientRect().top<=90)scrollTo(0,sg.offsetTop-80)});
   drawLinks();preview();status();
 }
-const status=()=>{$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Your page is online':'Your page is offline';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
+const status=()=>{const vc=$('#vc');if(vc)vc.textContent=(Number(S.p.view_count)||0).toLocaleString('en-US');$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Your page is online':'Your page is offline';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
 const preview=()=>{renderBio($('#pv'),{...S.p,links:S.links,socials:S.soc},ED);thumbs()};
 function thumbs(){[['#cvt',S.p.cover_url],['#avt',S.p.avatar_url]].forEach(([i,u])=>{const e=$(i);if(!e)return;const x=u&&safeUrl(u);e.style.backgroundImage=x?'url("'+x.replace(/"/g,'%22')+'")':'none'});
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===S.p.theme_id))}
@@ -843,9 +843,9 @@ async function audioFromVideo(f,say){
   try{ab=await new Promise((res,rej)=>{const pr=ac.decodeAudioData(buf,res,rej);if(pr&&pr.catch)pr.catch(()=>{})})}
   catch{throw new Error('Could not read the sound of this video')}
   finally{try{ac.close()}catch{}}
-  if(ab.duration>1140)throw new Error('Video is too long (max 19 minutes)');
+  if(ab.duration>750)throw new Error('Video is too long (max 12 minutes)');
   await loadLame();
-  const rates=[128,112,96,80,64],want=Math.floor(9*8192/ab.duration),kbps=rates.find(r=>r<=want)||64,ch=kbps>=96&&ab.numberOfChannels>1?2:1;
+  const rates=[128,112,96,80,64,48],want=Math.floor(4.5*8192/ab.duration),kbps=rates.find(r=>r<=want)||48,ch=kbps>=96&&ab.numberOfChannels>1?2:1;
   const enc=new lamejs.Mp3Encoder(ch,ab.sampleRate,kbps),L=ab.getChannelData(0),R=ab.numberOfChannels>1?ab.getChannelData(1):L;
   const n=L.length,B=1152*8,out=[],c16=x=>{x=Math.max(-1,Math.min(1,x));return x<0?x*32768:x*32767};
   for(let i=0,k=0;i<n;i+=B,k++){
@@ -855,13 +855,13 @@ async function audioFromVideo(f,say){
     if(k%30===0){say('Converting to MP3... '+Math.round(i/n*100)+'%');await new Promise(r=>setTimeout(r))}}
   const fl=enc.flush();if(fl.length)out.push(fl);
   const blob=new Blob(out,{type:'audio/mpeg'});
-  if(blob.size>10*1024*1024)throw new Error('The sound is too big, use a shorter video');
+  if(blob.size>5*1024*1024)throw new Error('The sound is too big, use a shorter video');
   return blob}
 async function uploadMusic(f,say,prog){
   const ext=(f.name.split('.').pop()||'').toLowerCase(),ct0={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg'}[ext],
     isV=/^video\//.test(f.type)||['mp4','mov','m4v','webm','3gp','mkv'].includes(ext);
   if(!isV&&!ct0){say('Choose a video or a song file (MP3, M4A, WAV)',1);return false}
-  if(!isV&&f.size>10*1024*1024){say('Audio must be under 10MB (yours is '+(f.size/1048576).toFixed(1)+'MB)',1);return false}
+  if(!isV&&f.size>5*1024*1024){say('Audio must be under 5MB (yours is '+(f.size/1048576).toFixed(1)+'MB)',1);return false}
   try{
     let blob=f,ex=ext,ct=ct0;
     if(isV){blob=await audioFromVideo(f,say);ex='mp3';ct='audio/mpeg';say('Uploading 0%... please wait')}
