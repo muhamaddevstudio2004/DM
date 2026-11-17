@@ -109,6 +109,31 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .sec{display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.12em;font-size:12px}
 .sec::after{content:"";flex:1;height:1px;background:color-mix(in srgb,var(--tx) 14%,transparent)}
 .bio .nm{display:flex;align-items:center;justify-content:center;gap:8px}.nm h1{min-width:0;overflow-wrap:anywhere}.bio .vb{width:26px;height:26px;flex:none}
+.bio .mus{margin:12px 0 0;padding:16px;border-radius:22px;text-align:start;border:1px solid color-mix(in srgb,var(--bt) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--bt) 10%,var(--card)),var(--card))}
+.bio:not(.dk) .mus{box-shadow:0 2px 10px -6px rgba(0,0,0,.18)}
+.mus .mh{display:flex;align-items:center;gap:14px}
+.mus .mcv{width:60px;height:60px;border-radius:14px;object-fit:cover;flex:none;background:color-mix(in srgb,var(--bt) 18%,var(--card))}
+.mus .mcv.ph{display:grid;place-items:center;color:var(--bt)}.mus .mcv.ph svg{width:26px;height:26px}
+.mus .mtx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mus .mtt{font-weight:700;font-size:17px;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mus .mta{font-size:14px;opacity:.6;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mus .wv{width:24px;height:24px;flex:none;opacity:.35;color:var(--tx)}.mus.on .wv{opacity:.9;color:var(--bt)}
+.mus .mpr{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:12px;opacity:.8;direction:ltr;font-variant-numeric:tabular-nums}
+.mus .mpr span{flex:none;min-width:34px}.mus .mpr span:last-child{text-align:right}
+.mus input.sk{flex:1;min-width:0;height:18px;padding:0;margin:0;border:0;border-radius:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.mus input.sk::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(to right,var(--bt) var(--p,0%),color-mix(in srgb,var(--tx) 20%,transparent) var(--p,0%))}
+.mus input.sk::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-4.5px;border-radius:50%;background:var(--tx);border:0}
+.mus input.sk::-moz-range-track{height:5px;border-radius:3px;background:color-mix(in srgb,var(--tx) 20%,transparent)}
+.mus input.sk::-moz-range-progress{height:5px;border-radius:3px;background:var(--bt)}
+.mus input.sk::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--tx);border:0}
+.mus .mc{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:10px}
+.mus .mc button{border:0;background:transparent;color:inherit;cursor:pointer;display:grid;place-items:center;padding:0}
+.mus .mc button:focus-visible{outline:2px solid var(--bt);outline-offset:2px}
+.mus .mc .sb{width:44px;height:44px;border-radius:50%}
+.mus .mc .pp{width:58px;height:58px;border-radius:50%;background:var(--bt)}
+.mus .mc svg{width:26px;height:26px;fill:currentColor}
+.mus .ipause{display:none}.mus.on .ipause{display:block}.mus.on .iplay{display:none}
+.ed .mus{cursor:pointer}
 .bio .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 0}
 .bio .pair.one{grid-template-columns:minmax(0,calc(50% - 6px));justify-content:center}
 .bio .pc{--b:var(--bt);display:block;padding:8px;border-radius:22px;border:1px solid color-mix(in srgb,var(--b) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--b) 13%,var(--card)),color-mix(in srgb,var(--b) 4%,var(--card)));transition:transform .15s}
@@ -178,6 +203,7 @@ function confirmOpen(root,u,title,color){
   row.append(no,go);bx.append(el('h3','','Open this link?'),el('div','mt',title||subOf(u)),...(title?[el('div','mu',subOf(u))]:[]),row);m.append(bx);root.append(m);no.focus();
 }
 function renderBio(root,d,ed){
+  if(window.__au){window.__au.pause();window.__au=null}
   const bg=hex(d.background_color,'#ffffff'),bt=hex(d.button_color,'#111111'),tx=hex(d.text_color,'#111111');
   const dk=lum(bg)<.5;root.className='bio'+(dk?' dk':'')+(ed?' ed':'');root.style.cssText=`--bg:${bg};--bt:${bt};--tx:${tx};--glow:${dk?'#3b6fd8':'#a9bff0'};--card:${dk?`color-mix(in srgb,${bg} 90%,#ffffff)`:'#ffffff'}`;
   const inn=el('div','in'),shape=['round','rounded','square'].includes(d.avatar_shape)?d.avatar_shape:'round';
@@ -235,6 +261,41 @@ function renderBio(root,d,ed){
     if(ed)mc.onclick=e=>{e.preventDefault();ed.map()};
     inn.append(mc)}
   else if(ed){const b=el('button','addl','Add location');b.type='button';b.onclick=ed.map;inn.append(b)}
+  const mu0=safeUrl(d.music_url||''),mus=mu0&&/^https?:/i.test(mu0)?mu0:null;
+  if(mus){
+    const lc=(n,c)=>{const i=document.createElement('i');i.dataset.lucide=n;if(c)i.className=c;return i};
+    const mc2=el('div','mus'),au=new Audio(),hd=el('div','mh'),cvu2=safeUrl(d.music_cover||'');
+    au.preload='metadata';au.loop=true;au.src=mus;window.__au=au;hd.dir='auto';
+    let cov;if(cvu2){cov=el('img','mcv');cov.src=cvu2;cov.alt=''}else{cov=el('div','mcv ph');cov.append(lc('music'))}
+    const tx3=el('div','mtx');tx3.append(el('div','mtt',d.music_title||'Now playing'));if(d.music_artist)tx3.append(el('div','mta',d.music_artist));
+    hd.append(cov,tx3,lc('audio-lines','wv'));
+    const pr2=el('div','mpr'),t1=el('span','','0:00'),sk=document.createElement('input'),t2=el('span','','-0:00');
+    sk.type='range';sk.min='0';sk.max='1000';sk.value='0';sk.className='sk';sk.setAttribute('aria-label','Seek');pr2.append(t1,sk,t2);
+    const btn=(cls,lab,...ics)=>{const b=el('button',cls);b.type='button';b.setAttribute('aria-label',lab);b.append(...ics);return b};
+    const rw=btn('sb','Back 10 seconds',lc('rewind')),pp=btn('pp','Play or pause',lc('play','iplay'),lc('pause','ipause')),ff=btn('sb','Forward 10 seconds',lc('fast-forward'));
+    pp.style.color=lum(bt)>.55?'#111':'#fff';
+    const ct=el('div','mc');ct.append(rw,pp,ff);mc2.append(hd,pr2,ct);
+    let manual=false,seeking=false;
+    const fmt=x=>{if(!isFinite(x))return'0:00';x=Math.max(0,Math.floor(x));return Math.floor(x/60)+':'+String(x%60).padStart(2,'0')};
+    const paint=()=>sk.style.setProperty('--p',(sk.value/10)+'%');
+    const upd=()=>{const dur=au.duration,cur=au.currentTime||0;if(isFinite(dur)&&dur>0){if(!seeking)sk.value=Math.round(cur/dur*1000);t2.textContent='-'+fmt(dur-cur)}t1.textContent=fmt(cur);paint()};
+    au.ontimeupdate=upd;au.onloadedmetadata=upd;au.ondurationchange=upd;
+    au.onplay=()=>mc2.classList.add('on');au.onpause=()=>mc2.classList.remove('on');
+    sk.oninput=()=>{seeking=true;paint();const dur=au.duration;if(isFinite(dur))t1.textContent=fmt(sk.value/1000*dur)};
+    sk.onchange=()=>{const dur=au.duration;if(isFinite(dur))au.currentTime=sk.value/1000*dur;seeking=false;manual=true;upd()};
+    pp.onclick=()=>{manual=true;au.paused?au.play().catch(()=>{}):au.pause()};
+    rw.onclick=()=>{manual=true;au.currentTime=Math.max(0,au.currentTime-10)};
+    ff.onclick=()=>{manual=true;const dd=au.duration;au.currentTime=isFinite(dd)?Math.min(dd-.1,au.currentTime+10):au.currentTime+10};
+    if(ed)mc2.onclick=e=>{if(e.target.closest('.mc,.mpr'))return;ed.music()};
+    else{
+      const evs=['click','touchend','keydown'];
+      const off=()=>evs.forEach(k=>document.removeEventListener(k,first,true));
+      const first=e=>{if(manual){off();return}if(e.target&&e.target.closest&&e.target.closest('.mus'))return;au.play().then(off,()=>{})};
+      au.play().catch(()=>evs.forEach(k=>document.addEventListener(k,first,true)));
+      try{if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:d.music_title||'',artist:d.music_artist||'',artwork:cvu2?[{src:cvu2}]:[]})}catch{}
+    }
+    inn.append(mc2)}
+  else if(ed){const b=el('button','addl','Add music');b.type='button';b.onclick=ed.music;inn.append(b)}
   if(!ed)inn.append(el('div','ft','Made with Link Bio Builder'));
   root.replaceChildren(...(cvEl?[cvEl,inn]:[inn]));lucide.createIcons();
 }
@@ -325,6 +386,7 @@ async function showDash(user){
    <section class="card"><h2>Links <span id="cnt" style="font-weight:400;color:var(--mute)"></span></h2><div id="ll"></div><button class="btn" id="al">Add link</button></section>
    <section class="card"><h2>Image cards</h2><p class="sub" style="margin:0 0 10px">Two square images side by side below your links.</p><div class="row"><button class="btn" id="p1">Card 1</button><button class="btn" id="p2">Card 2</button></div></section>
    <section class="card"><h2>Location</h2><p class="sub" style="margin:0 0 10px">Show a map card at the bottom of your page.</p><button class="btn" id="ml">Edit location</button></section>
+   <section class="card"><h2>Music</h2><p class="sub" style="margin:0 0 10px">A music player card at the end of your page. It starts playing when someone opens your link.</p><button class="btn" id="mm">Edit music</button></section>
    
    <section class="card"><h2>Appearance</h2>
     <div class="row"><div><label>Theme</label><select id="th"><option value="midnight">Midnight</option><option value="light">Light</option><option value="dark">Dark</option><option value="stone">Stone</option><option value="custom">Custom</option></select></div>
@@ -347,7 +409,7 @@ async function showDash(user){
   $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
   $('#pub').onclick=togglePublish;$('#av').onchange=e=>uploadAvatar(e,'avatar');$('#cv').onchange=e=>uploadAvatar(e,'cover');
   $('#rc').onclick=async()=>{const{error}=await sb.from('profiles').update({cover_url:null}).eq('id',S.p.id);if(error)return toast('Could not remove');S.p.cover_url=null;preview();toast('Cover removed')};
-  $('#al').onclick=addLink;const oS=f=>{if(!$('#pvw').offsetParent)$('#tL').click();f()};$('#ml').onclick=()=>oS(mapSheet);$('#p1').onclick=()=>oS(()=>promoSheet(1));$('#p2').onclick=()=>oS(()=>promoSheet(2));
+  $('#al').onclick=addLink;const oS=f=>{if(!$('#pvw').offsetParent)$('#tL').click();f()};$('#ml').onclick=()=>oS(mapSheet);$('#p1').onclick=()=>oS(()=>promoSheet(1));$('#p2').onclick=()=>oS(()=>promoSheet(2));$('#mm').onclick=()=>oS(musicSheet);
   drawLinks();preview();status();
 }
 const status=()=>{$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Published':'Not published';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
@@ -470,6 +532,7 @@ const ED={
   link:l=>linkSheet(l),
   map:()=>mapSheet(),
   promo:n=>promoSheet(n),
+  music:()=>musicSheet(),
   social:()=>{$('#tE').click();setTimeout(()=>$('#sl').scrollIntoView({behavior:'smooth'}),60)}
 };
 function linkSheet(l){
@@ -546,6 +609,58 @@ function promoSheet(n){
     if(raw&&!url)return er.textContent='Enter a valid link starting with https://';save({[cu]:url})};
   rm.onclick=()=>save({[ci]:null,[cu]:null});
   c.append(h,lab('Image (JPG, PNG or WebP, max 2MB)'),fi,lab('Link when tapped (optional)'),u,er,row);box.append(c);
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+async function uploadMusic(f){
+  if(!f)return;
+  const ext=(f.name.split('.').pop()||'').toLowerCase(),ct={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg'}[ext];
+  if(!ct)return toast('Use an MP3, M4A, AAC, WAV or OGG file');
+  if(f.size>10*1024*1024)return toast('Audio must be under 10MB');
+  toast('Uploading music...');
+  try{
+    const path=S.p.id+'/track.'+ext;
+    const up=await sb.storage.from('music').upload(path,f,{upsert:true,contentType:ct,cacheControl:'3600'});
+    if(up.error)throw up.error;
+    const url=sb.storage.from('music').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
+    const{error}=await sb.from('profiles').update({music_url:url}).eq('id',S.p.id);
+    if(error)throw error;S.p.music_url=url;preview();toast('Music uploaded');
+  }catch(err){toast('Upload failed: '+((err&&err.message)||'unknown error').slice(0,80))}
+}
+async function uploadMusicCover(f){
+  if(!f)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(f.type))return toast('Use a JPG, PNG or WebP image');
+  if(f.size>2*1024*1024)return toast('Image must be under 2MB');
+  try{
+    const c=await cropImage(f,1,400,'14px');if(!c)return;
+    const tb=t=>new Promise(r=>c.toBlob(r,t,.85));
+    let blob=await tb('image/webp');if(!blob||blob.type!=='image/webp')blob=await tb('image/jpeg');
+    if(!blob)throw new Error('Could not process the image');
+    const path=S.p.id+'/musiccover'+(blob.type==='image/webp'?'.webp':'.jpg');
+    const up=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type,cacheControl:'3600'});
+    if(up.error)throw up.error;
+    const url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
+    const{error}=await sb.from('profiles').update({music_cover:url}).eq('id',S.p.id);
+    if(error)throw error;S.p.music_cover=url;preview();toast('Cover updated');
+  }catch(err){toast('Upload failed: '+((err&&err.message)||'unknown error').slice(0,80))}
+}
+function musicSheet(){
+  const box=$('#sheet');box.replaceChildren();
+  const P=S.p,c=el('div','card'),h=el('h2','','Music card'),t=el('input'),a=el('input'),fa=el('input'),fc=el('input'),er=el('div','err');
+  t.maxLength=80;t.placeholder='Song title';t.value=P.music_title||'';
+  a.maxLength=80;a.placeholder='Artist';a.value=P.music_artist||'';
+  fa.type='file';fa.accept='audio/mpeg,audio/mp4,audio/aac,audio/wav,audio/ogg,.mp3,.m4a,.aac,.wav,.ogg';
+  fc.type='file';fc.accept='image/jpeg,image/png,image/webp';
+  const lab=x=>el('label','',x),row=el('div','row'),sv=el('button','btn pri','Save text'),rm=el('button','btn','Remove'),cl=el('button','btn','Close');
+  [sv,rm,cl].forEach(b=>b.type='button');row.style.marginTop='12px';row.append(sv,rm,cl);
+  const close=()=>box.replaceChildren();box.onclick=e=>{if(e.target===box)close()};cl.onclick=close;
+  fa.onchange=async()=>{await uploadMusic(fa.files[0]);fa.value=''};
+  fc.onchange=async()=>{await uploadMusicCover(fc.files[0]);fc.value=''};
+  const save=async v=>{const{error}=await sb.from('profiles').update(v).eq('id',P.id);
+    if(error)return er.textContent=error.code==='42703'?'Music columns are missing. Run the SQL setup in Supabase first.':'Could not save. Try again.';
+    Object.assign(P,v);close();preview();toast('Saved')};
+  sv.onclick=()=>save({music_title:t.value.trim()||null,music_artist:a.value.trim()||null});
+  rm.onclick=()=>save({music_url:null,music_title:null,music_artist:null,music_cover:null});
+  c.append(h,lab('Audio file (MP3, M4A, AAC, WAV or OGG, max 10MB)'),fa,lab('Cover image (optional)'),fc,lab('Title'),t,lab('Artist'),a,er,row);box.append(c);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 route();
