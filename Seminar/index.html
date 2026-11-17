@@ -350,11 +350,9 @@ html[dir="rtl"] .page *{direction:inherit}
 #top .lg-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top button{min-height:42px;border-radius:10px;font-weight:700;gap:6px;flex:none}
 #top #bpdf{padding:0 16px}
-#top #bprint{min-width:44px;padding:0 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.4);color:#fff}
-#top #bdocx{padding:0 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.4);color:#fff}#top #bdocx:hover{background:rgba(255,255,255,.2)}@media(max-width:480px){#top{gap:6px}#top #bpdf{padding:0 10px}#top #bdocx{padding:0 9px}#top #bprint{min-width:40px;padding:0 9px}#top #lg{gap:7px;font-size:15px}}#top #bprint:hover{background:rgba(255,255,255,.2)}
-#top .bp-t{display:none}
+@media(max-width:480px){#top{gap:6px}#top #bpdf{padding:0 10px}#top #lg{gap:7px;font-size:15px}}
 #top button:focus-visible{outline:3px solid var(--yl);outline-offset:2px}
-@media(min-width:640px){#top{padding-top:11px;padding-bottom:11px}#top #bprint{padding:0 16px}#top .bp-t{display:inline}#top #bpdf{padding:0 20px}}
+@media(min-width:640px){#top{padding-top:11px;padding-bottom:11px}#top #bpdf{padding:0 20px}}
 @media(max-width:340px){#top .lg-t{font-size:15px}#top .lg-mark{width:32px;height:32px}#top #bpdf{padding:0 11px}}
 #nav{background:#fff;border-top:3px solid var(--yl);box-shadow:0 -4px 16px rgba(46,33,68,.08);padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px));gap:6px}
 #nav .tab{background:transparent;color:var(--mut);border:0;border-radius:12px;min-height:58px;gap:4px;font-size:12px;font-weight:600;justify-content:center}
@@ -599,7 +597,7 @@ body.lsh-open{overflow:hidden}
 .slide.rtl .bd.fl .tr::after{right:auto;left:-30px;border-right-width:16px}
 .slide .bd.fl .tr .tl{width:100%;max-width:100%;box-sizing:border-box;text-align:center;overflow-wrap:normal;word-break:normal;-webkit-hyphens:none;hyphens:none}
 </style></head><body data-tab="edit">
-<div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button><button id="bdocx" aria-label="Download PowerPoint file"></button><button id="bprint" aria-label="Print"></button></div>
+<div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button></div>
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
 <div id="app"><div id="ed"></div><div id="pv"><div id="doc"></div></div></div>
 <script>
@@ -1475,11 +1473,10 @@ function tab(t){document.body.dataset.tab=t;document.querySelectorAll(".tab").fo
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>tab(b.dataset.t));
 window.addEventListener("resize",rp);
 $("doc").addEventListener("click",ev=>{if(ev.target.closest(".citation"))ev.preventDefault()});
-$("bprint").onclick=()=>{tab("pv");setTimeout(()=>{try{window.print()}catch(x){alert("Printing is not available here. Use Download PDF.")}},400)};
 /* ---------- Word (.docx) export: real, editable document built from the seminar data ---------- */
 const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
 function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
-function zipStore(files,mime){
+function zipStore(files){
  const enc=new TextEncoder(),parts=[],cd=[];let off=0;
  const d=new Date(),dt=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),dd=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
  files.forEach(([n,u])=>{const nb=enc.encode(n),c=crc32(u);
@@ -1489,7 +1486,7 @@ function zipStore(files,mime){
   cd.push(new Uint8Array(g.buffer),nb);off+=30+nb.length+u.length});
  const cs=cd.reduce((a,b)=>a+b.length,0),en=new DataView(new ArrayBuffer(22));
  en.setUint32(0,0x06054b50,true);en.setUint16(8,files.length,true);en.setUint16(10,files.length,true);en.setUint32(12,cs,true);en.setUint32(16,off,true);
- return new Blob([...parts,...cd,new Uint8Array(en.buffer)],{type:mime||"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})}
+ return new Blob([...parts,...cd,new Uint8Array(en.buffer)],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})}
 const WNS='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
 async function makeDocx(pgn){
  const rt=S.dir=="rtl",I=S.info,TW=9626,enc=new TextEncoder();
@@ -1677,7 +1674,7 @@ async function saveBlob(blob,name){let dl=null;try{dl=window.claude&&await claud
  if(dl)await dl.save({filename:name,data:blob});
  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}}
 const fname=ext=>((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Seminar")+"."+ext;
-$("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
+const exportPdf=async()=>{const b=$("bpdf"),old=b.innerHTML;
  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");
@@ -1685,7 +1682,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   sl.forEach((x,i)=>{if(i)pdf.addPage([W,H],"landscape");pdf.addImage(x.d,"JPEG",0,0,W,H,undefined,"FAST")});
   L.update(97,"Saving file…");await saveBlob(pdf.output("blob"),fname("pdf"));
   L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Try Print and choose Save as PDF.")}
+ }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Please try again.")}
  L.el.remove();b.disabled=false;b.innerHTML=old};
 function makePptx(sl){
  const enc=new TextEncoder(),X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',
@@ -1710,16 +1707,16 @@ function makePptx(sl){
   F.push([`ppt/slides/_rels/slide${i+1}.xml.rels`,enc.encode(rels([["rId1","slideLayout","../slideLayouts/slideLayout1.xml"],["rId2","image","../media/image"+(i+1)+".jpeg"]]))]);
   F.push([`ppt/media/image${i+1}.jpeg`,Uint8Array.from(atob(x.d.split(",")[1]),c=>c.charCodeAt(0))])});
  return zipStore(F,"application/vnd.openxmlformats-officedocument.presentationml.presentation")}
-$("bdocx").onclick=async()=>{const b=$("bdocx"),old=b.innerHTML;
+const exportPptx=async()=>{const b=$("bpdf"),old=b.innerHTML;
  if(!window.html2canvas){alert("The slide library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PowerPoint file"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");
  try{const sl=await snapAll(L);L.update(95,"Building PowerPoint…");await new Promise(r=>setTimeout(r,30));
   await saveBlob(makePptx(sl),fname("pptx"));
   L.done("Your PowerPoint is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("PowerPoint export failed. Try the PDF button instead.\n"+(x&&x.message||""))}
+ }catch(x){if(!(x&&x.code=="declined"))alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
  L.el.remove();b.disabled=false;b.innerHTML=old};
-function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Seminar Builder</span>`;$("bpdf").innerHTML=ic("dl")+"<span>PDF</span>";$("bdocx").innerHTML=ic("dl")+"<span>PPTX</span>";$("bprint").innerHTML=ic("print")+`<span class="bp-t">Print</span>`;
+function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Seminar Builder</span>`;{const dl=({ckb:"داگرتن",ar:"تنزيل"})[UIL]||"Download";$("bpdf").innerHTML=ic("dl")+"<span>"+dl+"</span>";$("bpdf").setAttribute("aria-label",dl)}
 document.querySelector('[data-t="edit"]').innerHTML=`<span class="tab-ic">${ic("edit")}</span><span class="tab-t">Edit</span>`;document.querySelector('[data-t="pv"]').innerHTML=`<span class="tab-ic">${ic("eye")}</span><span class="tab-t">Live</span>`;
 }
 /* ---------- Interface language (English / کوردی / العربية) ---------- */
@@ -1957,5 +1954,154 @@ $("doc").addEventListener("click",ev=>{if(ev.target.closest(".pic,.lgc,a[href^=h
 const _tab=tab;tab=function(t){_tab(t);if(t==="pv"&&!window.LV.hinted){window.LV.hinted=1;toast(tr("Tap any text or image on a slide to edit it"),5000)}};
 })();
 
+{/* ---------- Download codes (server-checked) + admin panel ---------- */
+const SUPABASE_URL="YOUR_SUPABASE_URL";      /* e.g. https://abcdxyz.supabase.co */
+const SUPABASE_ANON_KEY="YOUR_ANON_KEY";     /* Project Settings > API > anon public */
+const WA_NUMBER="9647509628683";
+const cfgOk=()=>SUPABASE_URL.indexOf("YOUR_")!==0&&SUPABASE_ANON_KEY.indexOf("YOUR_")!==0;
+const esc=t=>String(t).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const call=async(fn,body)=>{
+ const r=await fetch(SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY},body:JSON.stringify(body)});
+ if(!r.ok)throw 0;return await r.json()};
+const redeem=async code=>{if(!cfgOk())return"cfg";try{const v=await call("redeem_any",{p_code:code});return typeof v==="string"?v:"net"}catch(x){return"net"}};
+const rpc=async(fn,body)=>{if(!cfgOk())return{error:"cfg"};try{const v=await call(fn,body);return v&&typeof v==="object"?v:{error:"net"}}catch(x){return{error:"net"}}};
+const OV="position:fixed;inset:0;z-index:99999;background:rgba(46,33,68,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
+const DLG={
+ ckb:{dl:"داگرتن",t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی سیمینارەکە کۆدێکت پێویستە.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",invalid:"کۆدەکە دروست نییە.",used:"ئەم کۆدە پێشتر بەکارهاتووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر دراوە. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمی کۆد هێشتا ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی سیمینار وەربگرم."},
+ ar:{dl:"تنزيل",t:"رمز التنزيل",d:"تحتاج إلى رمز لتنزيل السمنار.",ph:"اكتب الرمز",ok:"تأكيد",wa:"الحصول على رمز عبر واتساب",x:"إغلاق",chk:"جارٍ التحقق…",invalid:"الرمز غير صحيح.",used:"تم استخدام هذا الرمز من قبل.",expired:"انتهت صلاحية هذا الرمز.",limit:"محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.",net:"لا يوجد اتصال بالإنترنت. أعد المحاولة.",cfg:"نظام الرموز غير مُعدّ بعد.",msg:"مرحباً، أريد الحصول على رمز لتنزيل السمنار."},
+ en:{dl:"Download",t:"Download code",d:"You need a code to download the seminar.",ph:"Enter code",ok:"Confirm",wa:"Get a code on WhatsApp",x:"Close",chk:"Checking…",invalid:"The code is not valid.",used:"This code has already been used.",expired:"This code has expired.",limit:"Too many attempts. Please wait a moment and try again.",net:"No internet connection. Please try again.",cfg:"The code system is not set up yet.",msg:"Hi, I’d like to get a download code for the seminar."}};
+const gate=action=>{
+ if(document.getElementById("dlg"))return;
+ const L=DLG[UIL]||DLG.en,o=document.createElement("div");o.id="dlg";o.style.cssText=OV;
+ o.innerHTML=`<style>
+ #dlg .dc{background:var(--card,#fff);color:var(--fg,#2E2144);border:1px solid var(--bd,#D9D0E4);border-top:4px solid var(--yl,#d8bb74);border-radius:14px;max-width:380px;width:100%;box-sizing:border-box;padding:22px 20px 16px;box-shadow:0 16px 44px rgba(46,33,68,.28)}
+ #dlg h3{margin:0;color:var(--ac,#4B3869);font-size:19px;font-weight:700}
+ #dlg .rule{width:44px;height:2px;background:var(--yl,#d8bb74);margin:8px 0 12px;border-radius:2px}
+ #dlg p.d{margin:0 0 16px;font-size:14px;color:var(--mut,#6C6280);line-height:1.6}
+ #dlg #dlgc{width:100%;box-sizing:border-box;height:50px;text-align:center;letter-spacing:2px;font-weight:700;font-size:16px;border:1.5px solid var(--bd,#D9D0E4);border-radius:10px;background:var(--card,#fff);color:inherit;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-user-select:text;user-select:text}
+ #dlg #dlgc:focus{border-color:var(--ac,#4B3869);box-shadow:0 0 0 3px rgba(75,56,105,.16)}
+ #dlg #dlgc::placeholder{letter-spacing:0;font-weight:400;color:var(--mut,#6C6280);opacity:.7}
+ #dlg .btn{width:100%;min-height:46px;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box}
+ #dlg #dlgok{background:var(--ac,#4B3869);color:var(--yl,#d8bb74);border:1px solid var(--ac,#4B3869)}
+ #dlg #dlgok:disabled{opacity:.6}
+ #dlg #dlgwa{background:transparent;color:var(--ac,#4B3869);border:1px solid var(--bd,#D9D0E4);margin-top:8px}
+ #dlg #dlgwa svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ #dlg #dlgx{background:transparent;border:0;color:var(--mut,#6C6280);font-weight:500;font-size:14px;min-height:40px;margin-top:4px}
+ </style>
+ <div class="dc" role="dialog" aria-modal="true">
+ <h3>${esc(L.t)}</h3><div class="rule"></div><p class="d">${esc(L.d)}</p>
+ <input id="dlgc" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${esc(L.ph)}">
+ <p id="dlge" style="min-height:20px;margin:8px 0 6px;color:#b00020;font-size:13px;text-align:center"></p>
+ <button id="dlgok" class="btn">${esc(L.ok)}</button>
+ <button id="dlgwa" class="btn"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>${esc(L.wa)}</button>
+ <button id="dlgx" class="btn">${esc(L.x)}</button></div>`;
+ document.body.appendChild(o);
+ const inp=o.querySelector("#dlgc"),er=o.querySelector("#dlge"),ok=o.querySelector("#dlgok");let busy=false;
+ const msg=(t,bad)=>{er.style.color=bad?"#b00020":"var(--mut,#6C6280)";er.textContent=t};
+ const close=()=>o.remove();
+ const go=async()=>{if(busy)return;const c=inp.value.replace(/[^A-Za-z0-9]/g,"").toUpperCase();
+  if(c.length<4){msg(L.invalid,true);return}
+  busy=true;ok.disabled=true;msg(L.chk,false);const r=await redeem(c);busy=false;ok.disabled=false;
+  if(r==="ok"){close();action();return}
+  msg(L[r]||L.net,true)};
+ ok.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()};
+ o.querySelector("#dlgx").onclick=close;
+ o.addEventListener("click",e=>{if(e.target===o)close()});
+ o.querySelector("#dlgwa").onclick=()=>{window.open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(L.msg),"_blank")};
+ setTimeout(()=>inp.focus(),50)};
+/* one valid code = one download action: PDF first, then PowerPoint */
+$("bpdf").onclick=()=>gate(async()=>{try{await exportPdf()}catch(x){console.error(x)}try{await exportPptx()}catch(x){console.error(x)}});
+
+/* ---------- admin panel ---------- */
+const AE={bad:"پاسۆردەکە هەڵەیە.",limit:"هەوڵی زۆر درا. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە.",cfg:"سیستەمەکە ڕێکنەخراوە."};
+const timeLeft=iso=>{const ms=new Date(iso)-Date.now();if(!(ms>0))return"بەسەرچوو";const m=Math.floor(ms/6e4),d=Math.floor(m/1440),h=Math.floor(m%1440/60);
+ return d>0?d+" ڕۆژ و "+h+" کاتژمێر":h>0?h+" کاتژمێر و "+(m%60)+" خولەک":m+" خولەک"};
+const openAdmin=()=>{
+ if(document.getElementById("adm"))return;
+ const o=document.createElement("div");o.id="adm";o.style.cssText=OV;
+ o.innerHTML=`<style>
+ #adm .dc{background:var(--card,#fff);color:var(--fg,#2E2144);border:1px solid var(--bd,#D9D0E4);border-top:4px solid var(--yl,#d8bb74);border-radius:14px;max-width:420px;width:100%;max-height:100%;overflow-y:auto;box-sizing:border-box;padding:22px 20px 14px;box-shadow:0 16px 44px rgba(46,33,68,.28)}
+ #adm h3{margin:0;color:var(--ac,#4B3869);font-size:19px}#adm h4{margin:16px 0 8px;color:var(--ac,#4B3869);font-size:15px}
+ #adm .rule{width:44px;height:2px;background:var(--yl,#d8bb74);margin:8px 0 14px;border-radius:2px}
+ #adm input{width:100%;box-sizing:border-box;height:46px;border:1.5px solid var(--bd,#D9D0E4);border-radius:10px;background:var(--card,#fff);color:inherit;padding:0 12px;font-size:16px;outline:none;text-align:center;-webkit-user-select:text;user-select:text}
+ #adm input:focus{border-color:var(--ac,#4B3869);box-shadow:0 0 0 3px rgba(75,56,105,.16)}
+ #adm .btn{width:100%;min-height:44px;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+ #adm .p{background:var(--ac,#4B3869);color:var(--yl,#d8bb74);border:1px solid var(--ac,#4B3869)}
+ #adm .s{background:transparent;color:var(--ac,#4B3869);border:1px solid var(--bd,#D9D0E4);margin-top:8px}
+ #adm .t{background:transparent;border:0;color:var(--mut,#6C6280);font-weight:500;margin-top:4px}
+ #adm .err{min-height:20px;margin:8px 0;color:#b00020;font-size:13px;text-align:center}
+ #adm .tabs{display:flex;gap:6px;margin-bottom:12px}#adm .tabs button{flex:1;min-height:40px;border:1px solid var(--bd,#D9D0E4);border-radius:10px;background:transparent;color:var(--ac,#4B3869);font-weight:600;font-size:14px;cursor:pointer}
+ #adm .tabs button.on{background:var(--ac,#4B3869);color:var(--yl,#d8bb74);border-color:var(--ac,#4B3869)}
+ #adm .g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ #adm .g div{border:1px solid var(--bd,#D9D0E4);border-radius:10px;padding:10px;text-align:center}
+ #adm .g b{display:block;font-size:24px;color:var(--ac,#4B3869)}#adm .g span{font-size:12px;color:var(--mut,#6C6280)}
+ #adm .mk{display:flex;gap:8px;align-items:flex-end}#adm .mk>div{flex:0 0 78px}#adm .mk label{display:block;font-size:12px;color:var(--mut,#6C6280);margin-bottom:4px}#adm .mk .btn{flex:1}
+ #adm .nw{margin-top:10px;border:1px dashed var(--yl,#d8bb74);border-radius:10px;padding:10px;text-align:center}
+ #adm .cd{font-weight:700;letter-spacing:1px;direction:ltr;-webkit-user-select:text;user-select:text;word-break:break-all}
+ #adm .rw{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bd,#D9D0E4);padding:8px 0;font-size:13px}#adm .rw>div{flex:1;min-width:0;text-align:right}#adm .rw small{display:block;color:var(--mut,#6C6280);margin-top:2px}
+ #adm .dl{flex:none;width:auto;min-height:34px;padding:0 10px;border:1px solid var(--bd,#D9D0E4);border-radius:8px;background:transparent;color:#b00020;font-size:12px;cursor:pointer}
+ #adm .rw{border-inline-start:4px solid transparent;padding-inline-start:10px;border-radius:6px}
+ #adm .rw.ok{border-inline-start-color:#2e7d4f;background:rgba(46,125,79,.07)}#adm .rw.ok small{color:#2e7d4f;font-weight:600}
+ #adm .rw.bad{border-inline-start-color:#a4262c;background:rgba(164,38,44,.07)}#adm .rw.bad small{color:#a4262c;font-weight:600}
+ #adm .rw.mu{border-inline-start-color:#9aa0ab}
+ #adm .g .ok b{color:#2e7d4f}#adm .g .bad b{color:#a4262c}#adm .g .mu b{color:var(--mut,#6C6280)}
+ </style><div class="dc" dir="rtl" id="admc"></div>`;
+ document.body.appendChild(o);
+ const box=o.querySelector("#admc");let pw="";const close=()=>o.remove();
+ o.addEventListener("click",e=>{if(e.target===o)close()});
+ const login=()=>{
+  box.innerHTML=`<h3>پەنێلی بەڕێوەبەر</h3><div class="rule"></div>
+  <input id="admp" type="password" dir="ltr" autocomplete="off" placeholder="پاسۆرد">
+  <p class="err" id="adme"></p>
+  <button class="btn p" id="admok">چوونەژوورەوە</button><button class="btn t" id="admx">داخستن</button>`;
+  const inp=box.querySelector("#admp"),err=box.querySelector("#adme"),ok=box.querySelector("#admok");let busy=false;
+  const go=async()=>{if(busy||!inp.value)return;busy=true;ok.disabled=true;err.style.color="var(--mut,#6C6280)";err.textContent="پشکنین…";
+   const r=await rpc("admin_stats",{p_pw:inp.value});busy=false;ok.disabled=false;err.style.color="#b00020";
+   if(r.ok){pw=inp.value;panel(r)}else err.textContent=AE[r.error]||AE.net};
+  ok.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()};box.querySelector("#admx").onclick=close;setTimeout(()=>inp.focus(),50)};
+ const panel=(r,op)=>{
+  op=op||{};const isT=(op.tab||"t")==="t",ns=op.newCodes||null,sg=r.single||{};
+  const stats=isT?[[r.total,"کۆی کۆدەکان"],[r.active,"چالاک"],[r.expired,"بەسەرچوو"],[r.unused,"بەکارنەهاتوو"]]:[[sg.total,"کۆی کۆدەکان"],[sg.unused,"بەکارنەهاتوو"],[sg.used,"بەکارهێنراو"],[sg.expired,"بەسەرچوو"]];
+  const list=isT?(r.codes||[]):(r.singles||[]);
+  const rows=list.map(c=>{
+   let info;
+   if(isT)info=c.revoked?"ڕاگیراوە":"ماوە: "+timeLeft(c.expires_at)+" • بەکارهێنان: "+c.uses+" جار";
+   else info=c.used_at?"بەکارهێنراوە":(new Date(c.expires_at)>Date.now()?"بەکارنەهاتوو • ماوە: "+timeLeft(c.expires_at):"بەسەرچوو");
+   const live=!c.revoked&&(!c.expires_at||new Date(c.expires_at)>Date.now()),cls=c.used_at?"bad":(live?"ok":"mu");return `<div class="rw ${cls}"><div><span class="cd">${esc(c.label)}</span><small>${esc(info)}</small></div><button class="dl" data-c="${esc(c.label)}">سڕینەوە</button></div>`}).join("")||'<p class="err" style="color:var(--mut,#6C6280)">هیچ کۆدێک نییە.</p>';
+  const mk=isT?`<div class="mk"><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>`
+   :`<div class="mk"><div><label>ژمارە (١-٢٥)</label><input id="admn" type="number" min="1" max="25" value="5" inputmode="numeric"></div><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>`;
+  const nw=ns&&ns.length?`<div class="nw">${ns.map(x=>`<div class="cd">${esc(x)}</div>`).join("")}<button class="btn s" id="admcp">${ns.length>1?"کۆپیکردنی هەموو":"کۆپیکردن"}</button></div>`:"";
+  box.innerHTML=`<h3>پەنێلی بەڕێوەبەر</h3><div class="rule"></div>
+  <div class="tabs"><button data-k="t" class="${isT?"on":""}">کاتی</button><button data-k="s" class="${isT?"":"on"}">یەکجاری</button></div>
+  <div class="g">${stats.map(x=>`<div class="${({"چالاک":"ok","بەکارنەهاتوو":"ok","بەکارهێنراو":"bad","بەسەرچوو":"mu"})[x[1]]||""}"><b>${esc(x[0]==null?0:x[0])}</b><span>${x[1]}</span></div>`).join("")}</div>
+  <h4>دروستکردنی کۆد</h4>${mk}<p class="err" id="adme"></p>${nw}
+  <h4>کۆدەکان</h4>${rows}
+  <button class="btn s" id="admrf">نوێکردنەوە</button><button class="btn t" id="admx">داخستن</button>`;
+  const err=box.querySelector("#adme"),tab=isT?"t":"s";
+  const reload=async extra=>{const x=await rpc("admin_stats",{p_pw:pw});if(x.ok)panel(x,Object.assign({tab:tab},extra||{}));else{err.style.color="#b00020";err.textContent=AE[x.error]||AE.net}};
+  box.querySelector("#admx").onclick=close;
+  box.querySelector("#admrf").onclick=()=>reload(ns?{newCodes:ns}:null);
+  box.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>panel(r,{tab:b.dataset.k}));
+  const cp=box.querySelector("#admcp");
+  if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(ns.join("\n"));cp.textContent="کۆپی کرا ✓"}catch(e){cp.textContent="دەستی دیاری بکە و کۆپی بکە"}};
+  box.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{
+   if(!confirm("ئەم کۆدە بسڕدرێتەوە؟\n"+b.dataset.c))return;b.disabled=true;
+   const x=await rpc("admin_delete_code",{p_pw:pw,p_type:isT?"month":"single",p_label:b.dataset.c});
+   if(x.ok)reload(ns?{newCodes:ns.filter(z=>z!==b.dataset.c)}:null);else{b.disabled=false;err.style.color="#b00020";err.textContent=AE[x.error]||AE.net}});
+  box.querySelector("#admmk").onclick=async()=>{const b=box.querySelector("#admmk");b.disabled=true;err.style.color="var(--mut,#6C6280)";err.textContent="دروستکردن…";
+   const d=Math.max(1,Math.min(365,parseInt(box.querySelector("#admd").value,10)||30));let codes;
+   if(isT){const m=await rpc("admin_make_code",{p_pw:pw,p_days:d});if(m.code)codes=[m.code];else{b.disabled=false;err.style.color="#b00020";err.textContent=AE[m.error]||AE.net;return}}
+   else{const n=Math.max(1,Math.min(25,parseInt(box.querySelector("#admn").value,10)||1));const m=await rpc("admin_make_single",{p_pw:pw,p_count:n,p_days:d});
+    if(Array.isArray(m.codes))codes=m.codes;else{b.disabled=false;err.style.color="#b00020";err.textContent=AE[m.error]||AE.net;return}}
+   reload({newCodes:codes})}};
+ login()};
+{let taps=0,tm=0;
+ document.addEventListener("click",e=>{const t=e.target;if(!t.closest||!t.closest(".ftr")||t.closest("a"))return;
+  taps++;clearTimeout(tm);tm=setTimeout(()=>{taps=0},700);
+  if(taps>=3){taps=0;clearTimeout(tm);openAdmin()}},true)}
+/* translations for the two new export messages */
+Object.assign(DICT.ckb,{"PDF export failed. Please try again.":"هەناردەی PDF سەرکەوتوو نەبوو. دووبارە هەوڵ بدەوە.","PowerPoint export failed. Please try again.":"هەناردەی PowerPoint سەرکەوتوو نەبوو. دووبارە هەوڵ بدەوە."});
+Object.assign(DICT.ar,{"PDF export failed. Please try again.":"فشل تصدير PDF. حاول مرة أخرى.","PowerPoint export failed. Please try again.":"فشل تصدير PowerPoint. حاول مرة أخرى."});
+}
 statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));trTree(document.getElementById("nav"));trTree(document.getElementById("ed"));
 </script></body></html>
