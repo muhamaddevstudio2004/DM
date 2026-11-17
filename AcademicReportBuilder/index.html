@@ -1641,6 +1641,11 @@ function openAdmin(){
  #adm .nw .cd{padding:2px 0}
  #adm .rw{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bd,#c9d6ea);padding:8px 0;font-size:13px}#adm .rw>div{flex:1;min-width:0;text-align:right}#adm .rw small{display:block;color:var(--mut,#51627f);margin-top:2px}
  #adm .dl{flex:none;width:auto;min-height:34px;padding:0 10px;border:1px solid var(--bd,#c9d6ea);border-radius:8px;background:transparent;color:#b00020;font-size:12px;cursor:pointer}
+ #adm .rw{border-inline-start:4px solid transparent;padding-inline-start:10px;border-radius:6px}
+ #adm .rw.ok{border-inline-start-color:#2e7d4f;background:rgba(46,125,79,.07)}#adm .rw.ok small{color:#2e7d4f;font-weight:600}
+ #adm .rw.bad{border-inline-start-color:#a4262c;background:rgba(164,38,44,.07)}#adm .rw.bad small{color:#a4262c;font-weight:600}
+ #adm .rw.mu{border-inline-start-color:#9aa0ab}
+ #adm .g .ok b{color:#2e7d4f}#adm .g .bad b{color:#a4262c}#adm .g .mu b{color:var(--mut,#6C6280)}
  </style><div class="dc" dir="rtl" id="admc"></div>`;
  document.body.appendChild(o);
  const box=o.querySelector("#admc");let pw="";const close=()=>o.remove();
@@ -1664,13 +1669,13 @@ function openAdmin(){
    let info;
    if(isT)info=c.revoked?"ڕاگیراوە":"ماوە: "+timeLeft(c.expires_at)+" • بەکارهێنان: "+c.uses+" جار";
    else info=c.used_at?"بەکارهێنراوە":(!c.expires_at?"بەکارنەهاتوو • بێ ئیکسپایەر":(new Date(c.expires_at)>Date.now()?"بەکارنەهاتوو • ماوە: "+timeLeft(c.expires_at):"بەسەرچوو"));
-   return `<div class="rw"><div><span class="cd">${esc(c.label)}</span><small>${esc(info)}</small></div><button class="dl" data-c="${esc(c.label)}">سڕینەوە</button></div>`}).join("")||'<p class="err" style="color:var(--mut,#51627f)">هیچ کۆدێک نییە.</p>';
+   const live=!c.revoked&&(!c.expires_at||new Date(c.expires_at)>Date.now()),cls=c.used_at?"bad":(live?"ok":"mu");return `<div class="rw ${cls}"><div><span class="cd">${esc(c.label)}</span><small>${esc(info)}</small></div><button class="dl" data-c="${esc(c.label)}">سڕینەوە</button></div>`}).join("")||'<p class="err" style="color:var(--mut,#51627f)">هیچ کۆدێک نییە.</p>';
   const mk=isO?"":isT?`<div class="mk"><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>`
    :`<div class="mk"><div><label>ژمارە (١-٢٥)</label><input id="admn" type="number" min="1" max="25" value="5" inputmode="numeric"></div><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>`;
   const nw=ns?`<div class="nw">${ns.map(x=>`<div class="cd">${esc(x)}</div>`).join("")}<button class="btn s" id="admcp">${ns.length>1?"کۆپیکردنی هەموو":"کۆپیکردن"}</button></div>`:"";
   box.innerHTML=`<h3>پەنێلی بەڕێوەبەر</h3><div class="rule"></div>
   <div class="tabs"><button data-k="t" class="${isT?"on":""}">کاتی</button><button data-k="s" class="${!isT&&!isO?"on":""}">یەکجاری</button><button data-k="o" class="${isO?"on":""}">کۆن</button></div>
-  <div class="g">${stats.map(x=>`<div><b>${esc(x[0]==null?0:x[0])}</b><span>${x[1]}</span></div>`).join("")}</div>
+  <div class="g">${stats.map(x=>`<div class="${({"چالاک":"ok","بەکارنەهاتوو":"ok","بەکارهێنراو":"bad","بەسەرچوو":"mu"})[x[1]]||""}"><b>${esc(x[0]==null?0:x[0])}</b><span>${x[1]}</span></div>`).join("")}</div>
   ${isO?"":"<h4>دروستکردنی کۆد</h4>"}${mk}<p class="err" id="adme"></p>${nw}
   <h4>کۆدەکان</h4>${rows}
   <button class="btn s" id="admrf">نوێکردنەوە</button><button class="btn t" id="admx">داخستن</button>`;
