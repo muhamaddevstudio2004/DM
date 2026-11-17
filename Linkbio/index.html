@@ -186,6 +186,11 @@ html.pub,html.pub body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
 html.pub *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 html.pub img{pointer-events:none;-webkit-user-drag:none;user-drag:none}
 html.pub .mus input.sk{touch-action:pan-y}
+/* app-like scrolling: no bounce, no pull-to-refresh, no scrollbar, no extra blank space */
+html.pub,html.pub body{height:100%;overflow:hidden;overscroll-behavior:none}
+html.pub #app{height:100%;height:100dvh;overflow-x:hidden;overflow-y:auto;overscroll-behavior:none;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+html.pub #app::-webkit-scrollbar{display:none}
+html.pub .bio{min-height:100%;padding-bottom:28px}
 </style>
 </head>
 <body>
