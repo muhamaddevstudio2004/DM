@@ -12,7 +12,7 @@
 button,input,select,textarea{font:inherit;color:inherit}
 .center{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
 .btn{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;color:var(--navy);font-weight:600}
-.btn.pri{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 3px 0 var(--gold)}
+.btn.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
 .btn.gold{background:var(--gold);color:var(--navy);border-color:var(--gold)}
 .btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
 .btn.sm{padding:7px 9px}.btn svg{width:18px;height:18px}.btn:disabled{opacity:.5}
@@ -212,6 +212,25 @@ html.pub .bio{min-height:100%;padding-bottom:28px}
 .btn.big{width:100%;padding:15px;font-size:17px;border-radius:14px}
 .btn.txt{border:0;background:transparent;margin-top:8px;width:100%;color:var(--mute);font-weight:500}
 .auth .dev{margin-top:28px;padding:0}
+/* ---- edit page sections ---- */
+.seg{display:flex;gap:4px;padding:4px;background:var(--soft);border:1.5px solid var(--line);border-radius:16px;margin:0 0 6px;position:sticky;top:calc(72px + env(safe-area-inset-top,0px));z-index:4;box-shadow:0 6px 12px -8px rgba(0,0,0,.25)}
+.seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 6px;border:0;border-radius:12px;background:transparent;color:var(--mute);font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.seg button svg{width:18px;height:18px}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.seg button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+.pane{display:none}.pane.on{display:block}
+.gh{margin:20px 6px 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.pr{display:flex;align-items:center;gap:12px;padding:8px 0}.pr+.pr{border-top:1px solid var(--line)}
+.th{width:56px;height:56px;border-radius:14px;flex:none;background:var(--soft) center/cover no-repeat;border:1.5px solid var(--line)}.th.wide{width:88px}
+.pt{flex:1;min-width:0}.pt b{display:block;color:var(--navy);font-size:15px}.pt span{display:block;font-size:13px;color:var(--mute)}
+.pb{display:flex;gap:6px;flex:none}
+.note{margin:6px 0 0;font-size:12px;color:var(--mute)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 4px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--navy);font-weight:600;cursor:pointer}
+.chip .dot{width:18px;height:18px;border-radius:50%;border:4px solid}
+.chip.on{border-color:var(--navy);background:var(--soft)}
+.card.soon{display:grid;justify-items:center;gap:4px;text-align:center;padding:26px 16px;border-style:dashed;color:var(--mute)}
+.card.soon svg{width:26px;height:26px;color:var(--gold)}.card.soon b{color:var(--navy)}
 </style>
 </head>
 <body>
@@ -494,28 +513,43 @@ async function showDash(user){
     try{localStorage.setItem('seeded:'+user.id,'1')}catch{}
   }
   app.innerHTML=`<header class="top"><div class="logo"><i data-lucide="link-2"></i></div><b>Link Bio Builder</b><button class="btn gold" id="cp2" aria-label="Copy link"><i data-lucide="copy"></i></button><button class="btn" id="out" aria-label="Logout"><i data-lucide="log-out"></i></button></header>
-  <div class="wrap" data-v="edit"><main id="ed"><h1 class="ttl">Link Bio Builder</h1><div class="bar"></div><p class="sub">Make your own link page. Share one link everywhere.</p>
+  <div class="wrap" data-v="edit"><main id="ed"><h1 class="ttl">Edit your page</h1><div class="bar"></div><p class="sub">Make your own link page. Share one link everywhere.</p>
    <section class="card"><h2>Your link</h2><div class="url"><span id="pu"></span><button class="btn sm" id="cp">Copy</button></div>
     <div class="row" style="margin-top:10px"><span id="st"></span><button class="btn pri" id="pub"></button></div></section>
-   <section class="card"><h2>Profile</h2>
-    <label>Cover photo (max 2MB)</label><input type="file" id="cv" accept="image/jpeg,image/png,image/webp"><button class="btn sm" id="rc" type="button" style="margin-top:8px">Remove cover</button>
-    <label>Profile photo (max 2MB)</label><input type="file" id="av" accept="image/jpeg,image/png,image/webp">
-    <label>Your name</label><input id="dn" maxlength="60">
-    <label>Username (letters and numbers only)</label><input id="un" maxlength="30">
-    <label>About you</label><textarea id="bio" rows="3" maxlength="280"></textarea>
-    <div class="err" id="perr"></div><button class="btn pri" id="sp" style="margin-top:10px">Save</button></section>
-   <section class="card"><h2>Links <span id="cnt" style="font-weight:400;color:var(--mute)"></span></h2><div id="ll"></div><button class="btn" id="al">Add link</button></section>
-   <section class="card"><h2>Photos</h2><p class="sub" style="margin:0 0 10px">Two square photos under your links.</p><div class="row"><button class="btn" id="p1">Photo 1</button><button class="btn" id="p2">Photo 2</button></div></section>
-   <section class="card"><h2>Location</h2><p class="sub" style="margin:0 0 10px">Show a map on your page.</p><button class="btn" id="ml">Edit location</button></section>
-   <section class="card"><h2>Music</h2><p class="sub" style="margin:0 0 10px">A music player on your page. It plays when someone opens your link.</p><button class="btn" id="mm">Edit music</button></section>
-   
-   <section class="card"><h2>Look</h2>
-    <div class="row"><div><label>Theme</label><select id="th"><option value="titanium">Titanium</option><option value="midnight">Midnight</option><option value="light">Light</option><option value="dark">Dark</option><option value="stone">Stone</option><option value="custom">Custom</option></select></div>
-    <div><label>Photo shape</label><select id="sh"><option value="round">Round</option><option value="rounded">Rounded</option><option value="square">Square</option></select></div>
-    <div><label>Link style</label><select id="bs"><option value="rounded">Rounded</option><option value="pill">Pill</option><option value="square">Square</option><option value="outline">Outline</option></select></div></div>
-    <div class="row"><div><label>Background</label><input type="color" id="bg"></div><div><label>Links color</label><input type="color" id="bt"></div><div><label>Text</label><input type="color" id="tx"></div></div>
-    <button class="btn pri" id="sa" style="margin-top:12px">Save</button></section>
-   <section class="card"><h2>Account</h2><p style="margin:0;color:var(--mute)">You are logged in. Your details are private.</p></section>
+   <nav class="seg" id="seg" aria-label="Sections"><button type="button" class="on" data-p="profile"><i data-lucide="user-round"></i>Profile</button><button type="button" data-p="cards"><i data-lucide="layout-grid"></i>Cards</button><button type="button" data-p="design"><i data-lucide="palette"></i>Design</button></nav>
+   <div class="pane on" data-pane="profile">
+    <div class="gh">Photos</div>
+    <section class="card"><div class="pr"><div class="th wide" id="cvt"></div><div class="pt"><b>Cover photo</b><span>Big photo at the top</span></div><div class="pb"><button class="btn sm" id="bcv" type="button">Change</button><button class="btn sm" id="rc" type="button" aria-label="Remove cover"><i data-lucide="trash-2"></i></button></div></div>
+     <div class="pr"><div class="th" id="avt"></div><div class="pt"><b>Profile photo</b><span>Your face or logo</span></div><div class="pb"><button class="btn sm" id="bav" type="button">Change</button></div></div>
+     <p class="note">JPG, PNG or WebP. Max 2MB.</p>
+     <input type="file" id="cv" hidden accept="image/jpeg,image/png,image/webp"><input type="file" id="av" hidden accept="image/jpeg,image/png,image/webp"></section>
+    <div class="gh">About you</div>
+    <section class="card"><label>Your name</label><input id="dn" maxlength="60">
+     <label>Username (letters and numbers only)</label><input id="un" maxlength="30">
+     <label>About you</label><textarea id="bio" rows="3" maxlength="280"></textarea>
+     <div class="err" id="perr"></div><button class="btn pri" id="sp" style="margin-top:10px">Save</button></section>
+    <div class="gh">Account</div>
+    <section class="card"><p style="margin:0;color:var(--mute)">You are logged in. Your details are private.</p></section>
+   </div>
+   <div class="pane" data-pane="cards">
+    <div class="gh">Links</div>
+    <section class="card"><h2>Your links <span id="cnt" style="font-weight:400;color:var(--mute)"></span></h2><div id="ll"></div><button class="btn" id="al">Add link</button></section>
+    <div class="gh">Extra cards</div>
+    <section class="card"><h2>Photo cards</h2><p class="sub" style="margin:0 0 10px">Two square photos under your links.</p><div class="row"><button class="btn" id="p1">Photo 1</button><button class="btn" id="p2">Photo 2</button></div></section>
+    <section class="card"><h2>Map</h2><p class="sub" style="margin:0 0 10px">Show a map on your page.</p><button class="btn" id="ml">Edit map</button></section>
+    <section class="card"><h2>Music</h2><p class="sub" style="margin:0 0 10px">A music player on your page. It plays when someone opens your link.</p><button class="btn" id="mm">Edit music</button></section>
+   </div>
+   <div class="pane" data-pane="design">
+    <div class="gh">Colors and style</div>
+    <section class="card"><label style="margin-top:0">Quick themes</label><div class="chips" id="chips"></div>
+     <div class="row"><div><label>Theme</label><select id="th"><option value="titanium">Titanium</option><option value="midnight">Midnight</option><option value="light">Light</option><option value="dark">Dark</option><option value="stone">Stone</option><option value="custom">Custom</option></select></div>
+     <div><label>Photo shape</label><select id="sh"><option value="round">Round</option><option value="rounded">Rounded</option><option value="square">Square</option></select></div>
+     <div><label>Link style</label><select id="bs"><option value="rounded">Rounded</option><option value="pill">Pill</option><option value="square">Square</option><option value="outline">Outline</option></select></div></div>
+     <div class="row"><div><label>Background</label><input type="color" id="bg"></div><div><label>Links color</label><input type="color" id="bt"></div><div><label>Text</label><input type="color" id="tx"></div></div>
+     <button class="btn pri" id="sa" style="margin-top:12px">Save</button></section>
+    <div class="gh">Templates</div>
+    <section class="card soon"><i data-lucide="sparkles"></i><b>Background templates</b><span>Ready-made backgrounds are coming soon.</span></section>
+   </div>
   </main><aside class="prev" id="pvw"><p class="sub" style="margin:0 0 10px">Tap your name, text, photo or a link to change it.</p><div id="sheet"></div><div id="pv"></div></aside></div>
   <footer class="dev">Developed by <a href="https://devmuhamad.com">DevMuhamad.com</a></footer>
   <nav class="tabs"><button class="btn on" id="tE"><i data-lucide="pencil"></i>Edit</button><button class="btn" id="tL"><i data-lucide="eye"></i>Preview</button></nav>`;
@@ -531,10 +565,18 @@ async function showDash(user){
   $('#pub').onclick=togglePublish;$('#av').onchange=e=>uploadAvatar(e,'avatar');$('#cv').onchange=e=>uploadAvatar(e,'cover');
   $('#rc').onclick=async()=>{const{error}=await sb.from('profiles').update({cover_url:null}).eq('id',S.p.id);if(error)return toast('Could not remove');S.p.cover_url=null;preview();toast('Cover removed')};
   $('#al').onclick=addLink;const oS=f=>{if(!$('#pvw').offsetParent)$('#tL').click();f()};$('#ml').onclick=()=>oS(mapSheet);$('#p1').onclick=()=>oS(()=>promoSheet(1));$('#p2').onclick=()=>oS(()=>promoSheet(2));$('#mm').onclick=()=>oS(musicSheet);
+  $('#bcv').onclick=()=>$('#cv').click();$('#bav').onclick=()=>$('#av').click();
+  Object.keys(THEMES).forEach(k=>{const c=el('button','chip');c.type='button';c.dataset.k=k;const d=el('span','dot');d.style.background=THEMES[k][0];d.style.borderColor=THEMES[k][1];c.append(d,k[0].toUpperCase()+k.slice(1));
+    c.onclick=()=>{$('#th').value=k;$('#th').onchange({target:$('#th')})};$('#chips').append(c)});
+  document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));
+    document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.dataset.pane===b.dataset.p));
+    const sg=$('#seg');if(sg.getBoundingClientRect().top<=90)scrollTo(0,sg.offsetTop-80)});
   drawLinks();preview();status();
 }
 const status=()=>{$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Your page is online':'Your page is offline';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
-const preview=()=>renderBio($('#pv'),{...S.p,links:S.links,socials:S.soc},ED);
+const preview=()=>{renderBio($('#pv'),{...S.p,links:S.links,socials:S.soc},ED);thumbs()};
+function thumbs(){[['#cvt',S.p.cover_url],['#avt',S.p.avatar_url]].forEach(([i,u])=>{const e=$(i);if(!e)return;const x=u&&safeUrl(u);e.style.backgroundImage=x?'url("'+x.replace(/"/g,'%22')+'")':'none'});
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===S.p.theme_id))}
 async function saveProfile(appearanceOnly){
   const P=S.p;$('#perr').textContent='';
   const un=$('#un').value.trim();
