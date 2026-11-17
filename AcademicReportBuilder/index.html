@@ -1553,8 +1553,8 @@ statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));t
 
 /* ---------- one-time download codes (Supabase) ---------- */
 (function(){
-const SUPABASE_URL="https://niiznyukddmmdqajmpcl.supabase.co";      /* e.g. https://abcdxyz.supabase.co */
-const SUPABASE_ANON_KEY="sb_publishable_wnhwx9LqUR5JnI4A_iVFjA_qvIGv7Lj";     /* Project Settings > API > anon public */
+const SUPABASE_URL="YOUR_SUPABASE_URL";      /* e.g. https://abcdxyz.supabase.co */
+const SUPABASE_ANON_KEY="YOUR_ANON_KEY";     /* Project Settings > API > anon public */
 const WA_NUMBER="9647509628683";
 const T={
  ckb:{t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی ڕاپۆرتەکە کۆدێکت پێویستە.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",bad:"کۆدەکە هەڵەیە.",used:"ئەم کۆدە پێشتر بەکارهێنراوە و بەسەرچووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر درا. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمەکە ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی ڕاپۆرت وەربگرم."},
@@ -1626,13 +1626,17 @@ function openAdmin(){
  #adm .s{background:transparent;color:var(--ac,#143a7b);border:1px solid var(--bd,#c9d6ea);margin-top:8px}
  #adm .t{background:transparent;border:0;color:var(--mut,#51627f);font-weight:500;margin-top:4px}
  #adm .err{min-height:20px;margin:8px 0;color:#b00020;font-size:13px;text-align:center}
+ #adm .tabs{display:flex;gap:6px;margin-bottom:12px}#adm .tabs button{flex:1;min-height:40px;border:1px solid var(--bd,#c9d6ea);border-radius:10px;background:transparent;color:var(--ac,#143a7b);font-weight:600;font-size:14px;cursor:pointer}
+ #adm .tabs button.on{background:var(--ac,#143a7b);color:var(--yl,#d8bb74);border-color:var(--ac,#143a7b)}
  #adm .g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
  #adm .g div{border:1px solid var(--bd,#c9d6ea);border-radius:10px;padding:10px;text-align:center}
  #adm .g b{display:block;font-size:24px;color:var(--ac,#143a7b)}#adm .g span{font-size:12px;color:var(--mut,#51627f)}
- #adm .mk{display:flex;gap:8px;align-items:flex-end}#adm .mk>div{flex:0 0 90px}#adm .mk label{display:block;font-size:12px;color:var(--mut,#51627f);margin-bottom:4px}#adm .mk .btn{flex:1}
+ #adm .mk{display:flex;gap:8px;align-items:flex-end}#adm .mk>div{flex:0 0 78px}#adm .mk label{display:block;font-size:12px;color:var(--mut,#51627f);margin-bottom:4px}#adm .mk .btn{flex:1}
  #adm .nw{margin-top:10px;border:1px dashed var(--yl,#d8bb74);border-radius:10px;padding:10px;text-align:center}
  #adm .cd{font-weight:700;letter-spacing:1px;direction:ltr;-webkit-user-select:text;user-select:text;word-break:break-all}
- #adm .rw{border-bottom:1px solid var(--bd,#c9d6ea);padding:8px 0;font-size:13px}#adm .rw small{display:block;color:var(--mut,#51627f);margin-top:2px}
+ #adm .nw .cd{padding:2px 0}
+ #adm .rw{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bd,#c9d6ea);padding:8px 0;font-size:13px}#adm .rw>div{flex:1;min-width:0;text-align:right}#adm .rw small{display:block;color:var(--mut,#51627f);margin-top:2px}
+ #adm .dl{flex:none;width:auto;min-height:34px;padding:0 10px;border:1px solid var(--bd,#c9d6ea);border-radius:8px;background:transparent;color:#b00020;font-size:12px;cursor:pointer}
  </style><div class="dc" dir="rtl" id="admc"></div>`;
  document.body.appendChild(o);
  const box=o.querySelector("#admc");let pw="";const close=()=>o.remove();
@@ -1647,26 +1651,43 @@ function openAdmin(){
    const r=await rpc("admin_stats",{p_pw:inp.value});busy=false;ok.disabled=false;err.style.color="#b00020";
    if(r.ok){pw=inp.value;panel(r)}else err.textContent=AE[r.error]||AE.net};
   ok.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()};box.querySelector("#admx").onclick=close;setTimeout(()=>inp.focus(),50)}
- function panel(r,newCode){
-  const rows=(r.codes||[]).map(c=>`<div class="rw"><div class="cd">${esc(c.label)}</div><small>${c.revoked?"ڕاگیراوە":"ماوە: "+esc(timeLeft(c.expires_at))} • بەکارهێنان: ${esc(c.uses)} جار</small></div>`).join("")||'<p class="err" style="color:var(--mut,#51627f)">هیچ کۆدێک نییە.</p>';
+ function panel(r,op){
+  op=op||{};const tab=op.tab||"t",isT=tab==="t",isO=tab==="o",ns=op.newCodes||null;
+  const sg=r.single||{};
+  const od=r.old||{};const stats=isT?[[r.total,"کۆی کۆدەکان"],[r.active,"چالاک"],[r.expired,"بەسەرچوو"],[r.unused,"بەکارنەهاتوو"]]:isO?[[od.total,"کۆی کۆدەکان"],[od.unused,"بەکارنەهاتوو"],[od.used,"بەکارهێنراو"],[od.expired,"بەسەرچوو"]]:[[sg.total,"کۆی کۆدەکان"],[sg.unused,"بەکارنەهاتوو"],[sg.used,"بەکارهێنراو"],[sg.expired,"بەسەرچوو"]];
+  const list=isT?(r.codes||[]):isO?(r.olds||[]):(r.singles||[]);
+  const rows=list.map(c=>{
+   let info;
+   if(isT)info=c.revoked?"ڕاگیراوە":"ماوە: "+timeLeft(c.expires_at)+" • بەکارهێنان: "+c.uses+" جار";
+   else info=c.used_at?"بەکارهێنراوە":(!c.expires_at?"بەکارنەهاتوو • بێ ئیکسپایەر":(new Date(c.expires_at)>Date.now()?"بەکارنەهاتوو • ماوە: "+timeLeft(c.expires_at):"بەسەرچوو"));
+   return `<div class="rw"><div><span class="cd">${esc(c.label)}</span><small>${esc(info)}</small></div><button class="dl" data-c="${esc(c.label)}">سڕینەوە</button></div>`}).join("")||'<p class="err" style="color:var(--mut,#51627f)">هیچ کۆدێک نییە.</p>';
+  const mk=isO?"":isT?`<div class="mk"><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>`
+   :`<div class="mk"><div><label>ژمارە (١-٢٥)</label><input id="admn" type="number" min="1" max="25" value="5" inputmode="numeric"></div><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>`;
+  const nw=ns?`<div class="nw">${ns.map(x=>`<div class="cd">${esc(x)}</div>`).join("")}<button class="btn s" id="admcp">${ns.length>1?"کۆپیکردنی هەموو":"کۆپیکردن"}</button></div>`:"";
   box.innerHTML=`<h3>پەنێلی بەڕێوەبەر</h3><div class="rule"></div>
-  <div class="g"><div><b>${esc(r.total)}</b><span>کۆی کۆدەکان</span></div><div><b>${esc(r.active)}</b><span>چالاک</span></div><div><b>${esc(r.expired)}</b><span>بەسەرچوو</span></div><div><b>${esc(r.unused)}</b><span>بەکارنەهاتوو</span></div></div>
-  <h4>دروستکردنی کۆد</h4>
-  <div class="mk"><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>
-  <p class="err" id="adme"></p>
-  ${newCode?`<div class="nw"><div class="cd">${esc(newCode)}</div><button class="btn s" id="admcp">کۆپیکردن</button></div>`:""}
+  <div class="tabs"><button data-k="t" class="${isT?"on":""}">کاتی</button><button data-k="s" class="${!isT&&!isO?"on":""}">یەکجاری</button><button data-k="o" class="${isO?"on":""}">کۆن</button></div>
+  <div class="g">${stats.map(x=>`<div><b>${esc(x[0]==null?0:x[0])}</b><span>${x[1]}</span></div>`).join("")}</div>
+  ${isO?"":"<h4>دروستکردنی کۆد</h4>"}${mk}<p class="err" id="adme"></p>${nw}
   <h4>کۆدەکان</h4>${rows}
   <button class="btn s" id="admrf">نوێکردنەوە</button><button class="btn t" id="admx">داخستن</button>`;
   const err=box.querySelector("#adme");
+  const reload=async(extra)=>{const x=await rpc("admin_stats",{p_pw:pw});if(x.ok)panel(x,Object.assign({tab:tab},extra||{}));else{err.style.color="#b00020";err.textContent=AE[x.error]||AE.net}};
   box.querySelector("#admx").onclick=close;
-  box.querySelector("#admrf").onclick=async()=>{const x=await rpc("admin_stats",{p_pw:pw});x.ok?panel(x,newCode):err.textContent=AE[x.error]||AE.net};
+  box.querySelector("#admrf").onclick=()=>reload(ns?{newCodes:ns}:null);
+  box.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>panel(r,{tab:b.dataset.k}));
   const cp=box.querySelector("#admcp");
-  if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(newCode);cp.textContent="کۆپی کرا ✓"}catch(e){cp.textContent="کۆدەکە دەستی دیاری بکە و کۆپی بکە"}};
-  box.querySelector("#admmk").onclick=async()=>{const b=box.querySelector("#admmk");b.disabled=true;err.style.color="var(--mut,#51627f)";err.textContent="دروستکردن…";
+  if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(ns.join("\n"));cp.textContent="کۆپی کرا ✓"}catch(e){cp.textContent="دەستی دیاری بکە و کۆپی بکە"}};
+  box.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{
+   if(!confirm("ئەم کۆدە بسڕدرێتەوە؟\n"+b.dataset.c))return;b.disabled=true;
+   const x=await rpc("admin_delete_code",{p_pw:pw,p_type:isT?"month":isO?"old":"single",p_label:b.dataset.c});
+   if(x.ok)reload(ns?{newCodes:ns.filter(z=>z!==b.dataset.c)}:null);else{b.disabled=false;err.style.color="#b00020";err.textContent=AE[x.error]||AE.net}});
+  const mkb=box.querySelector("#admmk");if(mkb)mkb.onclick=async()=>{const b=mkb;b.disabled=true;err.style.color="var(--mut,#51627f)";err.textContent="دروستکردن…";
    const d=Math.max(1,Math.min(365,parseInt(box.querySelector("#admd").value,10)||30));
-   const m=await rpc("admin_make_code",{p_pw:pw,p_days:d});
-   if(!m.code){b.disabled=false;err.style.color="#b00020";err.textContent=AE[m.error]||AE.net;return}
-   const x=await rpc("admin_stats",{p_pw:pw});panel(x.ok?x:r,m.code)}}
+   let codes;
+   if(isT){const m=await rpc("admin_make_code",{p_pw:pw,p_days:d});if(m.code)codes=[m.code];else{b.disabled=false;err.style.color="#b00020";err.textContent=AE[m.error]||AE.net;return}}
+   else{const n=Math.max(1,Math.min(25,parseInt(box.querySelector("#admn").value,10)||1));const m=await rpc("admin_make_single",{p_pw:pw,p_count:n,p_days:d});
+    if(Array.isArray(m.codes))codes=m.codes;else{b.disabled=false;err.style.color="#b00020";err.textContent=AE[m.error]||AE.net;return}}
+   reload({newCodes:codes})}}
  login()}
 {let taps=0,tm=0;
 document.addEventListener("click",e=>{const t=e.target;if(!t.closest||!t.closest(".ftr")||t.closest("a"))return;
