@@ -43,7 +43,7 @@ input[type=color]{padding:2px;height:40px}input[type=checkbox]{width:auto}
 #toast.on{opacity:1}
 .bio{min-height:100vh;padding:48px 20px;text-align:center;background:radial-gradient(ellipse 130% 50% at 50% 0%,color-mix(in srgb,var(--glow) 30%,var(--bg)),var(--bg) 72%);color:var(--tx)}
 .prev .bio{min-height:520px;border-radius:24px;border:1.5px solid var(--line);padding:32px 16px}
-.bio .in{max-width:440px;margin:0 auto}.bio .av{width:96px;height:96px;object-fit:cover;background:rgba(128,128,128,.2);margin-bottom:12px}
+.bio .in{max-width:440px;margin:0 auto;text-align:start}.bio .av{width:96px;height:96px;object-fit:cover;background:rgba(128,128,128,.2);margin-bottom:12px}
 .av.round{border-radius:50%}.av.rounded{border-radius:22px}.av.square{border-radius:0}
 .bio h1{margin:0;font-size:28px;font-weight:700;color:inherit}.bio p{margin:6px 0 16px;opacity:.8;white-space:pre-wrap}
 .soc{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}.soc a{--b:var(--bt);color:var(--bc);display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:color-mix(in srgb,var(--b) 22%,var(--card));border:1.5px solid color-mix(in srgb,var(--b) 30%,transparent)}
@@ -64,17 +64,17 @@ input[type=color]{padding:2px;height:40px}input[type=checkbox]{width:auto}
 .ed [contenteditable]{outline:1.5px dashed transparent;outline-offset:3px;border-radius:8px;cursor:text;min-height:1.3em}
 .ed [contenteditable]:hover,.ed [contenteditable]:focus{outline-color:currentColor}
 .ed [contenteditable]:empty::before{content:attr(data-ph);opacity:.5}
-.bio .av.ph{display:flex;align-items:center;justify-content:center;margin:0 auto 12px;cursor:pointer;color:#52525b}.av.ph svg{width:28px;height:28px}
+.bio .av.ph{display:flex;align-items:center;justify-content:center;margin:0;cursor:pointer;color:#52525b}.av.ph svg{width:28px;height:28px}
 .addl{display:block;width:100%;margin:10px 0;padding:12px;border:2px dashed currentColor;background:transparent;color:inherit;border-radius:14px;opacity:.65;cursor:pointer;font-size:14px}
 .addl:before{content:"+ "}
-.bio{overflow:hidden}.bio .av{display:block;margin:0 auto 12px}
+.bio{overflow:hidden}.bio .av{display:block;margin:0}
 .bio .cv{position:relative;margin:-48px -20px 0;aspect-ratio:5/2;max-height:360px;overflow:hidden}
 .prev .bio .cv{margin:-32px -16px 0;max-height:none}
 .cv img{width:100%;height:100%;object-fit:cover;display:block}
 .bio .cv{-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 100%);mask-image:linear-gradient(to bottom,#000 55%,transparent 100%)}
 .cv.ph{display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--bt) 45%,var(--bg)),color-mix(in srgb,var(--bt) 10%,var(--bg)))}
 .cv.ph span{position:relative;z-index:1;opacity:.75}
-.bio .in.hascv .av,.bio .in.hascv .av.ph{margin-top:-58px;position:relative;z-index:1;border:4px solid var(--bg)}
+.bio .in.hascv .hdr{margin-top:-58px}.bio .in.hascv .av,.bio .in.hascv .av.ph{position:relative;z-index:1;border:4px solid var(--bg)}
 @media(min-width:640px){.bio:not(.ed) .in{max-width:520px}}
 .mod{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.6)}
 .mod .bx{width:100%;max-width:360px;background:var(--card);color:var(--tx);border:1.5px solid color-mix(in srgb,var(--b) 40%,transparent);border-radius:24px;padding:22px;text-align:left}
@@ -101,15 +101,21 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 /* ---- polish ---- */
 .bio{background:radial-gradient(ellipse 130% 50% at 50% 0%,color-mix(in srgb,var(--glow) 30%,var(--bg)),transparent 72%),radial-gradient(ellipse 100% 45% at 50% 100%,color-mix(in srgb,var(--glow) 16%,var(--bg)),transparent 70%),var(--bg)}
 .bio .av{box-shadow:0 0 0 1px color-mix(in srgb,var(--bt) 30%,transparent),0 6px 16px -10px rgba(0,0,0,.4)}
-.bio h1{letter-spacing:-.02em}.bio p{max-width:34ch;margin-inline:auto;line-height:1.6}
+.bio h1{letter-spacing:-.02em}.bio p{max-width:46ch;line-height:1.6}
 .bio:not(.dk) .lk{box-shadow:0 2px 10px -6px rgba(0,0,0,.18)}
 .bio .lk .ch{width:20px;height:20px;opacity:.5;color:var(--tx)}
 .bio .lk:active{transform:scale(.98)}
 .bio .lk:focus-visible{outline:2px solid var(--b);outline-offset:3px}
 .sec{display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.12em;font-size:12px}
 .sec::after{content:"";flex:1;height:1px;background:color-mix(in srgb,var(--tx) 14%,transparent)}
-.bio .nm{display:flex;align-items:center;justify-content:center;gap:8px}.nm h1{min-width:0;overflow-wrap:anywhere}.bio .vb{width:26px;height:26px;flex:none}
-.bio .vw{display:inline-block;margin:0 0 6px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--tx);border:1px solid color-mix(in srgb,var(--bt) 28%,transparent);background:color-mix(in srgb,var(--bt) 12%,transparent)}
+.bio .nm{display:flex;align-items:center;justify-content:flex-start;gap:8px}.nm h1{min-width:0;overflow-wrap:anywhere}.bio .vb{width:26px;height:26px;flex:none}
+.bio .hdr{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.bio .cp{margin-left:auto;width:44px;height:44px;flex:none;display:grid;place-items:center;padding:0;cursor:pointer;border-radius:14px;color:var(--tx);border:1px solid color-mix(in srgb,var(--bt) 28%,transparent);background:color-mix(in srgb,var(--bt) 12%,transparent)}
+.bio .cp svg{width:20px;height:20px}.bio .cp:focus-visible{outline:2px solid var(--bt);outline-offset:2px}
+.cp .i2{display:none}.cp.ok .i1{display:none}.cp.ok .i2{display:block;color:var(--bt)}
+.bio .vw{display:flex;align-items:baseline;gap:6px;margin:2px 0 4px;direction:ltr}
+.bio .vw b{font-size:24px;font-weight:800;letter-spacing:-.02em;color:var(--tx)}
+.bio .vw span{font-size:15px;opacity:.6}
 .bio .nm+.vw{margin-top:10px}
 .bio .mus{margin:12px 0 0;padding:16px;border-radius:22px;text-align:start;border:1px solid color-mix(in srgb,var(--bt) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--bt) 10%,var(--card)),var(--card))}
 .bio:not(.dk) .mus{box-shadow:0 2px 10px -6px rgba(0,0,0,.18)}
@@ -160,7 +166,7 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .map .mpri{background:var(--bt);border:1px solid var(--bt)}
 .map .msec{border:1px solid color-mix(in srgb,var(--tx) 22%,transparent);background:color-mix(in srgb,var(--tx) 6%,transparent)}
 .ed .map{cursor:pointer}.ed .map .mp::after{content:"";position:absolute;inset:0}
-.ft{margin-top:30px;font-size:12px;opacity:.4}
+.ft{margin-top:30px;font-size:12px;opacity:.4;text-align:center}
 @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .bio:not(.ed) .lk{animation:up .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*70ms)}
 </style>
@@ -216,10 +222,17 @@ function renderBio(root,d,ed){
     if(cvu){const im=el('img');im.src=cvu;im.alt='';cvEl.append(im)}else cvEl.append(el('span','','Tap to add a cover'));
     if(ed){cvEl.style.cursor='pointer';cvEl.setAttribute('role','button');cvEl.setAttribute('aria-label','Change cover');cvEl.onclick=ed.cover}
     inn.classList.add('hascv')}
-  if(d.avatar_url&&safeUrl(d.avatar_url)){const im=el('img','av '+shape);im.src=safeUrl(d.avatar_url);im.alt=ed?'Change picture':'';if(ed){im.style.cursor='pointer';im.onclick=ed.avatar}inn.append(im)}
-  else if(ed){const ph=el('div','av ph '+shape,((d.display_name||'?').trim()[0]||'?').toUpperCase());ph.style.fontSize='32px';ph.style.fontWeight='500';ph.setAttribute('role','button');ph.setAttribute('aria-label','Add picture');ph.onclick=ed.avatar;inn.append(ph)}
+  const hdr=el('div','hdr');hdr.dir='ltr';
+  if(d.avatar_url&&safeUrl(d.avatar_url)){const im=el('img','av '+shape);im.src=safeUrl(d.avatar_url);im.alt=ed?'Change picture':'';if(ed){im.style.cursor='pointer';im.onclick=ed.avatar}hdr.append(im)}
+  else if(ed){const ph=el('div','av ph '+shape,((d.display_name||'?').trim()[0]||'?').toUpperCase());ph.style.fontSize='32px';ph.style.fontWeight='500';ph.setAttribute('role','button');ph.setAttribute('aria-label','Add picture');ph.onclick=ed.avatar;hdr.append(ph)}
+  const cp=el('button','cp');cp.type='button';cp.setAttribute('aria-label','Copy link');
+  const ci=n=>{const i=document.createElement('i');i.dataset.lucide=n;i.className=n==='check'?'i2':'i1';return i};
+  cp.append(ci('link'),ci('check'));
+  cp.onclick=e=>{e.preventDefault();const url=ed?pubUrl():location.origin+location.pathname+location.hash;
+    navigator.clipboard.writeText(url).then(()=>{toast('Link copied');cp.classList.add('ok');setTimeout(()=>cp.classList.remove('ok'),1600)},()=>toast('Copy failed'))};
+  hdr.append(cp);inn.append(hdr);
   const txt=(tag,val,ph,field,max)=>{
-    const n=el(tag,'',val||'');
+    const n=el(tag,'',val||'');n.dir='auto';
     if(ed){try{n.contentEditable='plaintext-only'}catch{n.contentEditable='true'}
       n.dataset.ph=ph;n.spellcheck=false;
       if(tag==='h1')n.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();n.blur()}};
@@ -228,7 +241,7 @@ function renderBio(root,d,ed){
   if(ed||d.display_name){const nm=el('div','nm');nm.dir='auto';nm.append(txt('h1',d.display_name,'Your name','display_name',60));
     nm.insertAdjacentHTML('beforeend','<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0"/><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0" transform="rotate(45 12 12)"/><path d="M8.2 12.4l2.6 2.6 5-5.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');inn.append(nm)}
   if(ed||d.bio)inn.append(txt('p',d.bio,'Write a short bio','bio',280));
-  inn.append(el('div','vw',fmtViews(d.view_count)));
+  {const vw=el('div','vw');vw.append(el('b','',fmtViews(d.view_count)),el('span','','View'));inn.append(vw)}
 
   if((d.links||[]).length)inn.append(el('div','sec','Links'));
   (d.links||[]).forEach((l,i)=>{const u=safeUrl(l.url);if(!u&&!ed)return;
@@ -328,9 +341,9 @@ async function route(){
 addEventListener('hashchange',route);
 sb.auth.onAuthStateChange(e=>{if(e==='SIGNED_OUT')route()});
 
-const fmtViews=n=>{n=Number(n)||0;if(n<1000)return'1K+ View';
+const fmtViews=n=>{n=Number(n)||0;if(n<1000)return'1K+';
   const f=(v,k)=>{const t=Math.floor(v*10)/10;return(t%1?t.toFixed(1):t+'')+k+(t%1?'':'+')};
-  return(n>=1e6?f(n/1e6,'M'):f(n/1e3,'K'))+' View'};
+  return(n>=1e6?f(n/1e6,'M'):f(n/1e3,'K'))};
 async function countView(u){
   const k='vw:'+u.toLowerCase();
   try{if(localStorage.getItem(k))return null}catch{}
@@ -348,7 +361,7 @@ async function showPublic(u){
   if(!data)return msg('Page not found',`There is no published page for "${u}".`);
   if(loc&&loc.data)Object.assign(data,loc.data);
   document.title=(data.display_name||u)+' | Link Bio';renderBio(app,data);
-  countView(u).then(n=>{if(n!=null){const v=app.querySelector('.vw');if(v)v.textContent=fmtViews(n)}});
+  countView(u).then(n=>{if(n!=null){const v=app.querySelector('.vw b');if(v)v.textContent=fmtViews(n)}});
 }
 function msg(h,p){const d=el('div','center');const i=el('div');i.append(el('h1','',h),el('p','',p));d.append(i);app.replaceChildren(d)}
 
