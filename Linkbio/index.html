@@ -155,6 +155,7 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .mus .mc .pp svg{width:36px;height:36px;fill:currentColor}
 .mus .ipause{display:none}.mus.on .ipause{display:block}.mus.on .iplay{display:none}
 .ed .mus{cursor:pointer}
+.mus{position:relative}.mus .yt{position:fixed;bottom:0;right:0;width:200px;height:200px;opacity:.001;pointer-events:none;z-index:-1;overflow:hidden}
 .bio .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 0}
 .bio .pair.one{grid-template-columns:minmax(0,calc(50% - 6px));justify-content:center}
 .bio .pc{--b:var(--bt);display:block;padding:8px;border-radius:22px;border:1px solid color-mix(in srgb,var(--b) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--b) 13%,var(--card)),color-mix(in srgb,var(--b) 4%,var(--card)));transition:transform .15s}
@@ -307,8 +308,10 @@ function renderBio(root,d,ed){
   const mu0=safeUrl(d.music_url||''),mus=mu0&&/^https?:/i.test(mu0)?mu0:null;
   if(mus){
     const lc=(n,c)=>{const i=document.createElement('i');i.dataset.lucide=n;if(c)i.className=c;return i};
-    const mc2=el('div','mus'),au=new Audio(),hd=el('div','mh'),cvu2=safeUrl(d.music_cover||'');
-    au.preload='metadata';au.loop=true;au.src=mus;window.__au=au;hd.dir='auto';
+    const mm=parseMusic(mus),yid=ytId(mm.base),S0=mm.s||0;
+    const mc2=el('div','mus'),au=yid?ytAudio(mc2,yid,S0):new Audio(),hd=el('div','mh'),cvu2=safeUrl(d.music_cover||'');
+    if(!yid){au.preload='metadata';au.src=mm.base}
+    window.__au=au;hd.dir='auto';
     let cov;if(cvu2){cov=el('img','mcv');cov.src=cvu2;cov.alt=''}else{cov=el('div','mcv ph');cov.append(lc('music'))}
     const tx3=el('div','mtx');tx3.append(el('div','mtt',d.music_title||'Now playing'));if(d.music_artist)tx3.append(el('div','mta',d.music_artist));
     const wv=el('div','wv'),bars=[],rest=[.3,.5,.8,.55,.7,.45,.3],cur=rest.slice(),tg=rest.slice();
@@ -327,23 +330,35 @@ function renderBio(root,d,ed){
     const btn=(cls,lab,...ics)=>{const b=el('button',cls);b.type='button';b.setAttribute('aria-label',lab);b.append(...ics);return b};
     const rw=btn('sb','Back 10 seconds',lc('rewind')),pp=btn('pp','Play or pause',lc('play','iplay'),lc('pause','ipause')),ff=btn('sb','Forward 10 seconds',lc('fast-forward'));
     const ct=el('div','mc');ct.append(rw,pp,ff);mc2.append(hd,pr2,ct);
-    let manual=false,seeking=false;
+    let manual=false,seeking=false,lp=0;
     const fmt=x=>{if(!isFinite(x))return'0:00';x=Math.max(0,Math.floor(x));return Math.floor(x/60)+':'+String(x%60).padStart(2,'0')};
     const paint=()=>sk.style.setProperty('--p',(sk.value/10)+'%');
-    const upd=()=>{const dur=au.duration,cur=au.currentTime||0;if(isFinite(dur)&&dur>0){if(!seeking)sk.value=Math.round(cur/dur*1000);t2.textContent='-'+fmt(dur-cur)}t1.textContent=fmt(cur);paint()};
-    au.ontimeupdate=upd;au.onloadedmetadata=upd;au.ondurationchange=upd;
-    au.onplay=()=>mc2.classList.add('on');au.onpause=()=>{mc2.classList.remove('on');stop()};au.onplaying=start;au.onwaiting=stop;
-    sk.oninput=()=>{seeking=true;paint();const dur=au.duration;if(isFinite(dur))t1.textContent=fmt(sk.value/1000*dur)};
-    sk.onchange=()=>{const dur=au.duration;if(isFinite(dur))au.currentTime=sk.value/1000*dur;seeking=false;manual=true;upd()};
+    /* the song plays only between start (S0) and end (segE) chosen by the owner, then loops */
+    const segE=()=>{const dd=au.duration;let e=mm.e>S0?mm.e:dd;if(isFinite(dd)&&dd>0&&e>dd)e=dd;return e};
+    const upd=()=>{const e=segE(),cu=Math.max(0,(au.currentTime||0)-S0);
+      if(isFinite(e)&&e>S0){if(!seeking)sk.value=Math.min(1000,Math.round(cu/(e-S0)*1000));t2.textContent='-'+fmt(e-S0-cu)}
+      t1.textContent=fmt(cu);paint()};
+    const chk=()=>{const c0=au.currentTime||0,e=segE();
+      if(c0<S0-.4)au.currentTime=S0;
+      else if(mm.e>S0&&isFinite(e)&&c0>=e-.05)au.currentTime=S0};
+    const ticker=()=>{if(!mc2.isConnected){clearInterval(lp);return}try{chk();upd()}catch{}};
+    au.onended=()=>{au.currentTime=S0;au.play().catch(()=>{})};
+    au.ontimeupdate=upd;au.onloadedmetadata=()=>{if(S0&&!yid&&au.currentTime<S0)au.currentTime=S0;upd()};au.ondurationchange=upd;
+    au.onplay=()=>{mc2.classList.add('on');clearInterval(lp);lp=setInterval(ticker,120)};
+    au.onpause=()=>{mc2.classList.remove('on');clearInterval(lp);stop()};au.onplaying=start;au.onwaiting=stop;
+    sk.oninput=()=>{seeking=true;paint();const e=segE();if(isFinite(e)&&e>S0)t1.textContent=fmt(sk.value/1000*(e-S0))};
+    sk.onchange=()=>{const e=segE();if(isFinite(e)&&e>S0)au.currentTime=S0+sk.value/1000*(e-S0);seeking=false;manual=true;upd()};
     pp.onclick=()=>{manual=true;au.paused?au.play().catch(()=>{}):au.pause()};
-    rw.onclick=()=>{manual=true;au.currentTime=Math.max(0,au.currentTime-10)};
-    ff.onclick=()=>{manual=true;const dd=au.duration;au.currentTime=isFinite(dd)?Math.min(dd-.1,au.currentTime+10):au.currentTime+10};
+    rw.onclick=()=>{manual=true;au.currentTime=Math.max(S0,(au.currentTime||0)-10)};
+    ff.onclick=()=>{manual=true;const e=segE(),c0=au.currentTime||0;au.currentTime=isFinite(e)&&e>0?Math.min(e-.1,c0+10):c0+10};
     if(ed)mc2.onclick=e=>{if(e.target.closest('.mc,.mpr'))return;ed.music()};
     else{
       const evs=['click','touchend','keydown'];
       const off=()=>evs.forEach(k=>document.removeEventListener(k,first,true));
-      const first=e=>{if(manual){off();return}if(e.target&&e.target.closest&&e.target.closest('.mus'))return;au.play().then(off,()=>{})};
-      au.play().catch(()=>evs.forEach(k=>document.addEventListener(k,first,true)));
+      const first=e=>{if(manual){off();return}if(e.target&&e.target.closest&&e.target.closest('.mus'))return;const pr=au.play();if(!yid)pr.then(off,()=>{})};
+      const st0=au.onplaying;au.onplaying=()=>{st0();off()};
+      const tryp=au.play();
+      if(yid)evs.forEach(k=>document.addEventListener(k,first,true));else tryp.catch(()=>evs.forEach(k=>document.addEventListener(k,first,true)));
       try{if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:d.music_title||'',artist:d.music_artist||'',artwork:cvu2?[{src:cvu2}]:[]})}catch{}
     }
     inn.append(mc2)}
@@ -702,13 +717,81 @@ function putAudio(path,file,ct,onp){
     x.send(file);
   }));
 }
+/* ---- Music helpers: YouTube, start/end (stored in the URL hash as #s=..&e=..), video -> MP3 ---- */
+function parseMusic(u){u=String(u||'');const i=u.indexOf('#');let s=0,e=0;
+  if(i>=0){const p=new URLSearchParams(u.slice(i+1));s=Math.max(0,Number(p.get('s'))||0);e=Math.max(0,Number(p.get('e'))||0)}
+  return{base:i<0?u:u.slice(0,i),s,e}}
+function buildMusic(b,s,e){const p=[];if(s)p.push('s='+Math.round(s));if(e)p.push('e='+Math.round(e));return b+(p.length?'#'+p.join('&'):'')}
+function parseT(v){v=String(v||'').trim();if(!v)return null;let m;
+  if(/^\d+$/.test(v))return +v;
+  if(m=v.match(/^(\d+):([0-5]?\d)$/))return +m[1]*60+ +m[2];
+  if(m=v.match(/^(\d+):([0-5]?\d):([0-5]?\d)$/))return +m[1]*3600+ +m[2]*60+ +m[3];
+  return false}
+const fmtT=x=>x?Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0'):'';
+function ytId(u){try{const x=new URL(String(u).trim());const h=x.hostname.replace(/^(www|m|music)\./,'');let id='';
+  if(h==='youtu.be')id=x.pathname.split('/')[1]||'';
+  else if(h==='youtube.com'||h==='youtube-nocookie.com'){if(x.pathname==='/watch')id=x.searchParams.get('v')||'';else{const m=x.pathname.match(/^\/(?:shorts|embed|live|v)\/([\w-]{11})/);id=m?m[1]:''}}
+  return /^[\w-]{11}$/.test(id)?id:''}catch{return''}}
+function ytStart(u){try{const x=new URL(String(u).trim()),t=x.searchParams.get('t')||x.searchParams.get('start')||'';
+  const m=t.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);return m?(+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0):0}catch{return 0}}
+let ytLoad=null;
+function loadYT(){return ytLoad||(ytLoad=new Promise(res=>{
+  if(window.YT&&YT.Player)return res();
+  const prev=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{prev&&prev();res()};
+  const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.append(s)}))}
+/* Wraps a hidden YouTube player so it behaves like an <audio> element */
+function ytAudio(host,id,start){
+  const a={paused:true,onplay:null,onpause:null,onplaying:null,onwaiting:null,onended:null,onloadedmetadata:null,ondurationchange:null,ontimeupdate:null};
+  const w=document.createElement('div');w.className='yt';const slot=document.createElement('div');w.append(slot);host.append(w);
+  let p=null,ready=false,want=false,pt=0;
+  loadYT().then(()=>{if(!w.isConnected)return;
+    p=new YT.Player(slot,{width:'200',height:'200',videoId:id,playerVars:{playsinline:1,controls:0,disablekb:1,fs:0,rel:0,start:Math.floor(start||0)},events:{
+      onReady:()=>{ready=true;a.onloadedmetadata&&a.onloadedmetadata();if(want)p.playVideo()},
+      onStateChange:e=>{const s=e.data;
+        if(s===1){a.paused=false;a.onplay&&a.onplay();a.onplaying&&a.onplaying()}
+        else if(s===2){a.paused=true;a.onpause&&a.onpause()}
+        else if(s===3){a.onwaiting&&a.onwaiting()}
+        else if(s===0){a.paused=true;a.onended&&a.onended()}}}})});
+  Object.defineProperties(a,{
+    currentTime:{get:()=>ready?(p.getCurrentTime()||0):pt,set:v=>{pt=v;if(ready)p.seekTo(v,true)}},
+    duration:{get:()=>ready?(p.getDuration()||NaN):NaN}});
+  a.play=()=>{want=true;if(ready)p.playVideo();return Promise.resolve()};
+  a.pause=()=>{want=false;if(ready){try{p.pauseVideo()}catch{}}};
+  return a}
+function loadLame(){return window.lamejs?Promise.resolve():new Promise((res,rej)=>{
+  const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js';s.onload=res;s.onerror=()=>rej(new Error('Could not load the MP3 converter'));document.head.append(s)})}
+/* Takes the sound out of a video file and turns it into a small MP3 (< 9MB) */
+async function audioFromVideo(f,say){
+  if(f.size>200*1024*1024)throw new Error('Video is too large (max 200MB)');
+  say('Reading video...');
+  const buf=await f.arrayBuffer(),AC=window.AudioContext||window.webkitAudioContext,ac=new AC();let ab;
+  try{ab=await new Promise((res,rej)=>{const pr=ac.decodeAudioData(buf,res,rej);if(pr&&pr.catch)pr.catch(()=>{})})}
+  catch{throw new Error('Could not read the sound of this video')}
+  finally{try{ac.close()}catch{}}
+  if(ab.duration>1140)throw new Error('Video is too long (max 19 minutes)');
+  await loadLame();
+  const rates=[128,112,96,80,64],want=Math.floor(9*8192/ab.duration),kbps=rates.find(r=>r<=want)||64,ch=kbps>=96&&ab.numberOfChannels>1?2:1;
+  const enc=new lamejs.Mp3Encoder(ch,ab.sampleRate,kbps),L=ab.getChannelData(0),R=ab.numberOfChannels>1?ab.getChannelData(1):L;
+  const n=L.length,B=1152*8,out=[],c16=x=>{x=Math.max(-1,Math.min(1,x));return x<0?x*32768:x*32767};
+  for(let i=0,k=0;i<n;i+=B,k++){
+    const e=Math.min(n,i+B),l=new Int16Array(e-i),r=ch===2?new Int16Array(e-i):null;
+    for(let j=i;j<e;j++){if(ch===2){l[j-i]=c16(L[j]);r[j-i]=c16(R[j])}else l[j-i]=c16((L[j]+R[j])/2)}
+    const d=ch===2?enc.encodeBuffer(l,r):enc.encodeBuffer(l);if(d.length)out.push(d);
+    if(k%30===0){say('Converting to MP3... '+Math.round(i/n*100)+'%');await new Promise(r=>setTimeout(r))}}
+  const fl=enc.flush();if(fl.length)out.push(fl);
+  const blob=new Blob(out,{type:'audio/mpeg'});
+  if(blob.size>10*1024*1024)throw new Error('The sound is too big, use a shorter video');
+  return blob}
 async function uploadMusic(f,say,prog){
-  const ext=(f.name.split('.').pop()||'').toLowerCase(),ct={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg'}[ext];
-  if(!ct){say('Use an MP3, M4A, AAC, WAV or OGG file',1);return false}
-  if(f.size>10*1024*1024){say('Audio must be under 10MB (yours is '+(f.size/1048576).toFixed(1)+'MB)',1);return false}
+  const ext=(f.name.split('.').pop()||'').toLowerCase(),ct0={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg'}[ext],
+    isV=/^video\//.test(f.type)||['mp4','mov','m4v','webm','3gp','mkv'].includes(ext);
+  if(!isV&&!ct0){say('Choose a video, or an MP3, M4A, AAC, WAV or OGG file',1);return false}
+  if(!isV&&f.size>10*1024*1024){say('Audio must be under 10MB (yours is '+(f.size/1048576).toFixed(1)+'MB)',1);return false}
   try{
-    const path=S.p.id+'/track.'+ext;
-    await putAudio(path,f,ct,prog);
+    let blob=f,ex=ext,ct=ct0;
+    if(isV){blob=await audioFromVideo(f,say);ex='mp3';ct='audio/mpeg';say('Uploading 0%... please wait')}
+    const path=S.p.id+'/track.'+ex;
+    await putAudio(path,blob,ct,prog);
     const url=sb.storage.from('music').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
     const{error}=await sb.from('profiles').update({music_url:url}).eq('id',S.p.id);
     if(error)throw error;S.p.music_url=url;preview();return true;
@@ -737,30 +820,61 @@ async function uploadMusicCover(f){
 }
 function musicSheet(){
   const box=$('#sheet');box.replaceChildren();
-  const P=S.p,c=el('div','card'),h=el('h2','','Music card'),t=el('input'),a=el('input'),fa=el('input'),fc=el('input'),er=el('div','err'),st=el('div','');
+  const P=S.p,mm=parseMusic(P.music_url||''),c=el('div','card'),h=el('h2','','Music card'),t=el('input'),a=el('input'),fa=el('input'),yl=el('input'),yb=el('button','btn','Use link'),fc=el('input'),ts=el('input'),te=el('input'),er=el('div','err'),st=el('div','');
   st.style.cssText='font-size:13px;margin-top:8px;color:var(--mute)';
   t.maxLength=80;t.placeholder='Song title';t.value=P.music_title||'';
   a.maxLength=80;a.placeholder='Artist';a.value=P.music_artist||'';
-  fa.type='file';fa.accept='audio/mpeg,audio/mp4,audio/aac,audio/wav,audio/ogg,.mp3,.m4a,.aac,.wav,.ogg';
+  fa.type='file';fa.accept='audio/*,video/*,.mp3,.m4a,.aac,.wav,.ogg,.mp4,.mov';
   fc.type='file';fc.accept='image/jpeg,image/png,image/webp';
-  st.textContent=P.music_url?'\u2713 A track is uploaded. Choose a file to replace it.':'No track yet.';
-  const lab=x=>el('label','',x),row=el('div','row'),sv=el('button','btn pri','Save text'),rm=el('button','btn','Remove'),cl=el('button','btn','Close');
+  yl.placeholder='https://youtube.com/watch?v=...';yl.maxLength=300;yb.type='button';
+  ts.placeholder='0:00';ts.value=fmtT(mm.s);te.placeholder='End of song';te.value=fmtT(mm.e);ts.maxLength=te.maxLength=8;
+  st.textContent=P.music_url?(ytId(mm.base)?'✓ A YouTube song is set.':'✓ A track is uploaded. Choose a file to replace it.'):'No track yet.';
+  const lab=x=>el('label','',x),row=el('div','row'),sv=el('button','btn pri','Save'),rm=el('button','btn','Remove'),cl=el('button','btn','Close');
   [sv,rm,cl].forEach(b=>b.type='button');row.style.marginTop='12px';row.append(sv,rm,cl);
+  const yr=el('div','row');yr.append(yl,yb);
+  const tr=el('div','row'),d1=el('div'),d2=el('div');d1.append(lab('Start at (min:sec)'),ts);d2.append(lab('Stop at (min:sec)'),te);tr.append(d1,d2);
+  const hint=el('div','','Only the part between start and stop will play, and it repeats. Leave stop empty to play until the end.');
+  hint.style.cssText='font-size:12px;color:var(--mute);margin-top:4px';
   let busy=false;
   const say=(m,bad)=>{er.textContent=bad?m:'';st.textContent=bad?'':m};
-  const setBusy=b=>{busy=b;[sv,rm,cl,fa,fc].forEach(x=>x.disabled=b)};
+  const setBusy=b=>{busy=b;[sv,rm,cl,fa,fc,yl,yb,ts,te].forEach(x=>x.disabled=b)};
   const close=()=>box.replaceChildren();box.onclick=e=>{if(e.target===box&&!busy)close()};cl.onclick=close;
   fa.onchange=async()=>{const f=fa.files[0];fa.value='';if(!f)return;
     setBusy(true);say('Uploading 0%... please wait');
     const ok=await uploadMusic(f,say,pc=>say('Uploading '+pc+'%... please wait'));
-    setBusy(false);if(ok)say('\u2713 Music uploaded: '+f.name)};
+    if(ok){ts.value='';te.value='';const up={};
+      if(!P.music_title){up.music_title=f.name.replace(/\.[^.]+$/,'').slice(0,80);t.value=up.music_title}
+      if(/ytimg\.com/.test(P.music_cover||''))up.music_cover=null;
+      if(Object.keys(up).length){const r=await sb.from('profiles').update(up).eq('id',P.id);if(!r.error){Object.assign(P,up);preview()}}
+      say('✓ Music uploaded: '+f.name)}
+    setBusy(false)};
+  yb.onclick=async()=>{
+    const raw=yl.value.trim(),id=ytId(raw);
+    if(!id)return say('Paste a valid YouTube link',1);
+    setBusy(true);say('Checking link...');
+    let info=null;
+    try{const r=await fetch('https://www.youtube.com/oembed?format=json&url='+encodeURIComponent('https://www.youtube.com/watch?v='+id));
+      if(r.status===401||r.status===403||r.status===404){setBusy(false);return say('This video cannot be used (private, deleted or embedding is disabled). Try another link.',1)}
+      if(r.ok)info=await r.json()}catch{}
+    const s0=ytStart(raw),v={music_url:buildMusic('https://www.youtube.com/watch?v='+id,s0,0),music_cover:'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'};
+    if(info){v.music_title=String(info.title||'').slice(0,80)||null;v.music_artist=String(info.author_name||'').replace(/ - Topic$/,'').slice(0,80)||null}
+    const{error}=await sb.from('profiles').update(v).eq('id',P.id);
+    setBusy(false);
+    if(error)return say(error.code==='42703'?'Music columns are missing. Run the SQL setup in Supabase first.':'Could not save. Try again.',1);
+    Object.assign(P,v);preview();t.value=P.music_title||'';a.value=P.music_artist||'';ts.value=fmtT(s0);te.value='';yl.value='';
+    say('✓ YouTube song added. Set start and stop below, then press Save.')};
   fc.onchange=async()=>{const f=fc.files[0];fc.value='';if(!f)return;setBusy(true);await uploadMusicCover(f);setBusy(false)};
   const save=async v=>{const{error}=await sb.from('profiles').update(v).eq('id',P.id);
     if(error)return er.textContent=error.code==='42703'?'Music columns are missing. Run the SQL setup in Supabase first.':'Could not save. Try again.';
     Object.assign(P,v);close();preview();toast('Saved')};
-  sv.onclick=()=>save({music_title:t.value.trim()||null,music_artist:a.value.trim()||null});
+  sv.onclick=()=>{const s=parseT(ts.value),e=parseT(te.value);
+    if(s===false||e===false)return er.textContent='Time must look like 1:25 or 85';
+    if(e!=null&&e<=(s||0))return er.textContent='Stop time must be after the start time';
+    const v={music_title:t.value.trim()||null,music_artist:a.value.trim()||null};
+    if(P.music_url)v.music_url=buildMusic(parseMusic(P.music_url).base,s,e);
+    save(v)};
   rm.onclick=()=>save({music_url:null,music_title:null,music_artist:null,music_cover:null});
-  c.append(h,lab('Audio file (MP3, M4A, AAC, WAV or OGG, max 10MB)'),fa,st,lab('Cover image (optional)'),fc,lab('Title'),t,lab('Artist'),a,er,row);box.append(c);
+  c.append(h,lab('Upload a song or a video from your gallery (MP3, M4A, WAV, MP4, MOV... the sound is extracted)'),fa,lab('Or paste a YouTube link'),yr,st,lab('Cover image (optional)'),fc,lab('Title'),t,lab('Artist'),a,tr,hint,er,row);box.append(c);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 route();
