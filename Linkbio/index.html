@@ -109,7 +109,14 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .sec{display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.12em;font-size:12px}
 .sec::after{content:"";flex:1;height:1px;background:color-mix(in srgb,var(--tx) 14%,transparent)}
 .bio .nm{display:flex;align-items:center;justify-content:center;gap:8px}.nm h1{min-width:0;overflow-wrap:anywhere}.bio .vb{width:26px;height:26px;flex:none}
-.bio .map{margin:22px 0 0;border-radius:22px;overflow:hidden;text-align:start;border:1px solid color-mix(in srgb,var(--bt) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--bt) 8%,var(--card)),var(--card))}
+.bio .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 0}
+.bio .pair.one{grid-template-columns:minmax(0,calc(50% - 6px));justify-content:center}
+.bio .pc{--b:var(--bt);display:block;padding:8px;border-radius:22px;border:1px solid color-mix(in srgb,var(--b) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--b) 13%,var(--card)),color-mix(in srgb,var(--b) 4%,var(--card)));transition:transform .15s}
+.bio:not(.dk) .pc{box-shadow:0 2px 10px -6px rgba(0,0,0,.18)}
+.pc img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;background:rgba(128,128,128,.15)}
+.bio .pc.ph{aspect-ratio:1;border:2px dashed currentColor;background:transparent;color:inherit;opacity:.65;font-size:14px;cursor:pointer;display:grid;place-items:center;box-shadow:none}
+.bio a.pc:hover{transform:translateY(-2px)}
+.bio .map{margin:12px 0 0;border-radius:22px;overflow:hidden;text-align:start;border:1px solid color-mix(in srgb,var(--bt) 22%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--bt) 8%,var(--card)),var(--card))}
 .bio:not(.dk) .map{box-shadow:0 2px 10px -6px rgba(0,0,0,.18)}
 .map .mp{position:relative;height:220px;background:color-mix(in srgb,var(--bt) 10%,var(--card))}
 .map iframe{width:100%;height:100%;border:0;display:block}
@@ -168,7 +175,7 @@ function confirmOpen(root,u,title,color){
   go.onclick=()=>{close();if(/^(mailto:|tel:)/i.test(u))location.href=u;else window.open(u,'_blank','noopener,noreferrer')};
   m.onclick=e=>{if(e.target===m)close()};
   document.addEventListener('keydown',kd);
-  row.append(no,go);bx.append(el('h3','','Open this link?'),el('div','mt',title),el('div','mu',subOf(u)),row);m.append(bx);root.append(m);no.focus();
+  row.append(no,go);bx.append(el('h3','','Open this link?'),el('div','mt',title||subOf(u)),...(title?[el('div','mu',subOf(u))]:[]),row);m.append(bx);root.append(m);no.focus();
 }
 function renderBio(root,d,ed){
   const bg=hex(d.background_color,'#ffffff'),bt=hex(d.button_color,'#111111'),tx=hex(d.text_color,'#111111');
@@ -203,6 +210,17 @@ function renderBio(root,d,ed){
     const tx2=el('span','tx');tx2.append(el('span','t',l.title));const subt=subOf(u||l.url);if(subt)tx2.append(el('span','s',subt));
     const ch=document.createElement('i');ch.dataset.lucide=rtl?'chevron-left':'chevron-right';ch.className='ch';
     a.append(ic,tx2,ch);inn.append(a)});
+  const pcs=[1,2].map(n=>({n,img:safeUrl(d['promo'+n+'_img']||''),url:safeUrl(d['promo'+n+'_url']||'')})).filter(x=>x.img||ed);
+  if(pcs.length){
+    const pr=el('div','pair'+(pcs.length===1?' one':''));
+    pcs.forEach(x=>{
+      let c;
+      if(!x.img){c=el('button','pc ph','Add image');c.type='button'}
+      else{c=el(x.url&&!ed?'a':'div','pc');const im=el('img');im.src=x.img;im.alt='';im.loading='lazy';c.append(im)}
+      if(ed)c.onclick=e=>{e.preventDefault();ed.promo(x.n)};
+      else if(x.url){c.href=x.url;c.rel='noopener noreferrer';c.onclick=e=>{e.preventDefault();confirmOpen(root,x.url,'',bt)}}
+      pr.append(c)});
+    inn.append(pr)}
   const mq=mapQ(d.map_query||d.map_address);
   if(mq){
     const enc=encodeURIComponent(mq),mc=el('div','map'),mp=el('div','mp'),fr=document.createElement('iframe');
@@ -213,6 +231,7 @@ function renderBio(root,d,ed){
     const mk=(cls,href,ic,txt)=>{const a=el('a',cls);a.href=href;a.target='_blank';a.rel='noopener noreferrer';const i=document.createElement('i');i.dataset.lucide=ic;a.append(i,el('span','',txt));return a};
     const o=mk('mpri','https://www.google.com/maps/search/?api=1&query='+enc,'external-link','Open in Maps'),g=mk('msec','https://www.google.com/maps/dir/?api=1&destination='+enc,'navigation','Directions');
     o.style.color=lum(bt)>.55?'#111':'#fff';act.append(o,g);bd.append(act);mc.append(mp,bd);
+    if(!ed)[o,g].forEach(a=>a.onclick=e=>{e.preventDefault();confirmOpen(root,a.href,d.map_title||'Visit us',bt)});
     if(ed)mc.onclick=e=>{e.preventDefault();ed.map()};
     inn.append(mc)}
   else if(ed){const b=el('button','addl','Add location');b.type='button';b.onclick=ed.map;inn.append(b)}
@@ -304,6 +323,7 @@ async function showDash(user){
     <label>Bio</label><textarea id="bio" rows="3" maxlength="280"></textarea>
     <div class="err" id="perr"></div><button class="btn pri" id="sp" style="margin-top:10px">Save profile</button></section>
    <section class="card"><h2>Links <span id="cnt" style="font-weight:400;color:var(--mute)"></span></h2><div id="ll"></div><button class="btn" id="al">Add link</button></section>
+   <section class="card"><h2>Image cards</h2><p class="sub" style="margin:0 0 10px">Two square images side by side below your links.</p><div class="row"><button class="btn" id="p1">Card 1</button><button class="btn" id="p2">Card 2</button></div></section>
    <section class="card"><h2>Location</h2><p class="sub" style="margin:0 0 10px">Show a map card at the bottom of your page.</p><button class="btn" id="ml">Edit location</button></section>
    
    <section class="card"><h2>Appearance</h2>
@@ -327,7 +347,7 @@ async function showDash(user){
   $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
   $('#pub').onclick=togglePublish;$('#av').onchange=e=>uploadAvatar(e,'avatar');$('#cv').onchange=e=>uploadAvatar(e,'cover');
   $('#rc').onclick=async()=>{const{error}=await sb.from('profiles').update({cover_url:null}).eq('id',S.p.id);if(error)return toast('Could not remove');S.p.cover_url=null;preview();toast('Cover removed')};
-  $('#al').onclick=addLink;$('#ml').onclick=()=>{if(!$('#pvw').offsetParent)$('#tL').click();mapSheet()};
+  $('#al').onclick=addLink;const oS=f=>{if(!$('#pvw').offsetParent)$('#tL').click();f()};$('#ml').onclick=()=>oS(mapSheet);$('#p1').onclick=()=>oS(()=>promoSheet(1));$('#p2').onclick=()=>oS(()=>promoSheet(2));
   drawLinks();preview();status();
 }
 const status=()=>{$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Published':'Not published';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
@@ -449,6 +469,7 @@ const ED={
     const{error}=await sb.from('profiles').update({[k]:v}).eq('id',S.p.id);error?toast('Could not save'):toast('Saved')},
   link:l=>linkSheet(l),
   map:()=>mapSheet(),
+  promo:n=>promoSheet(n),
   social:()=>{$('#tE').click();setTimeout(()=>$('#sl').scrollIntoView({behavior:'smooth'}),60)}
 };
 function linkSheet(l){
@@ -489,6 +510,42 @@ function mapSheet(){
     if(!v.map_address&&!v.map_query)return er.textContent='Enter an address, coordinates or a Google Maps link.';save(v)};
   rm.onclick=()=>save({map_title:null,map_address:null,map_query:null});
   c.append(h,lab('Title'),t,lab('Address shown on the card'),a,lab('Map location'),q,hint,er,row);box.append(c);
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+async function uploadPromo(n,f){
+  if(!f)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(f.type))return toast('Use a JPG, PNG or WebP image');
+  if(f.size>2*1024*1024)return toast('Image must be under 2MB');
+  try{
+    const c=await cropImage(f,1,800,'14px');if(!c)return;
+    const tb=t=>new Promise(r=>c.toBlob(r,t,.85));
+    let blob=await tb('image/webp');if(!blob||blob.type!=='image/webp')blob=await tb('image/jpeg');
+    if(!blob)throw new Error('Could not process the image');
+    const path=S.p.id+'/promo'+n+(blob.type==='image/webp'?'.webp':'.jpg');
+    const up=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type,cacheControl:'3600'});
+    if(up.error)throw up.error;
+    const url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now(),col='promo'+n+'_img';
+    const{error}=await sb.from('profiles').update({[col]:url}).eq('id',S.p.id);
+    if(error)throw error;S.p[col]=url;preview();toast('Image updated');
+  }catch(err){toast('Upload failed: '+((err&&err.message)||'unknown error').slice(0,80))}
+}
+function promoSheet(n){
+  const box=$('#sheet');box.replaceChildren();
+  const P=S.p,ci='promo'+n+'_img',cu='promo'+n+'_url';
+  const c=el('div','card'),h=el('h2','','Image card '+n),fi=el('input'),u=el('input'),er=el('div','err');
+  fi.type='file';fi.accept='image/jpeg,image/png,image/webp';
+  u.placeholder='https://';u.value=P[cu]||'';u.maxLength=500;
+  const lab=x=>el('label','',x),row=el('div','row'),sv=el('button','btn pri','Save link'),rm=el('button','btn','Remove'),cl=el('button','btn','Close');
+  [sv,rm,cl].forEach(b=>b.type='button');row.style.marginTop='12px';row.append(sv,rm,cl);
+  const close=()=>box.replaceChildren();box.onclick=e=>{if(e.target===box)close()};cl.onclick=close;
+  fi.onchange=async()=>{await uploadPromo(n,fi.files[0]);fi.value=''};
+  const save=async v=>{const{error}=await sb.from('profiles').update(v).eq('id',P.id);
+    if(error)return er.textContent=error.code==='42703'?'Image card columns are missing. Run the SQL setup in Supabase first.':'Could not save. Try again.';
+    Object.assign(P,v);close();preview();toast('Saved')};
+  sv.onclick=()=>{const raw=u.value.trim(),url=raw?safeUrl(raw):null;
+    if(raw&&!url)return er.textContent='Enter a valid link starting with https://';save({[cu]:url})};
+  rm.onclick=()=>save({[ci]:null,[cu]:null});
+  c.append(h,lab('Image (JPG, PNG or WebP, max 2MB)'),fi,lab('Link when tapped (optional)'),u,er,row);box.append(c);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 route();
