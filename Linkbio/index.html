@@ -237,6 +237,36 @@ html.pub .bio{min-height:100%;padding-bottom:28px}
 .chip.on{border-color:var(--navy);background:var(--soft)}.chip.on .ck{display:grid}
 .card.soon{display:grid;justify-items:center;gap:4px;text-align:center;padding:26px 16px;border-style:dashed;color:var(--mute)}
 .card.soon svg{width:26px;height:26px;color:var(--gold)}.card.soon b{color:var(--navy)}
+/* ---- template: Blaugrana ---- */
+.bio.tpl{position:relative;background:radial-gradient(ellipse 120% 42% at 50% 0%,rgba(0,77,152,.38),transparent 70%),radial-gradient(ellipse 100% 38% at 50% 100%,rgba(165,0,68,.30),transparent 70%),var(--bg)}
+.bio.tpl::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;z-index:3;background:linear-gradient(90deg,#004d98 50%,#a50044 50%)}
+.bio.tpl::after{content:"";position:absolute;left:0;right:0;top:0;height:380px;z-index:0;pointer-events:none;opacity:.5;background:repeating-linear-gradient(90deg,rgba(0,77,152,.6) 0 36px,rgba(165,0,68,.6) 36px 72px);-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}
+.bio.tpl .cv{z-index:1}
+.bio.tpl .cv::after{content:"";position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(to top,var(--bg),transparent)}
+.bio.tpl .in{position:relative;z-index:2}
+.bio.tpl .av{box-shadow:0 0 0 2px #edbb00,0 12px 28px -10px rgba(0,0,0,.7)}
+.bio.tpl h1{font-weight:800;letter-spacing:-.025em}
+.bio.tpl .vb{width:28px;height:28px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.bio.tpl p{opacity:.72}
+.bio.tpl .vw b{color:#edbb00}
+.bio.tpl .sec{color:#edbb00;opacity:.85}.bio.tpl .sec::after{background:rgba(237,187,0,.25)}
+.bio.tpl .lk{border:1px solid rgba(237,187,0,.2);background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.025));border-radius:18px;box-shadow:0 10px 24px -14px rgba(0,0,0,.7)}
+.bio.tpl .lk::after{background:#edbb00}
+.bio.tpl .lk .t{color:var(--tx)}
+.bio.tpl .lk .ic{background:rgba(255,255,255,.06);border:1px solid rgba(237,187,0,.22)}
+.bio.tpl .pc,.bio.tpl .map,.bio.tpl .mus{border-color:rgba(237,187,0,.2)}
+/* template cards in the editor */
+.tpl-c{display:flex;gap:14px;align-items:center;width:100%;padding:10px;border:2px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;text-align:start;color:var(--navy);-webkit-tap-highlight-color:transparent;transition:border-color .15s,transform .12s}
+.tpl-c:active{transform:scale(.98)}.tpl-c.on{border-color:var(--navy);background:var(--soft)}
+.tpl-c .mini{width:76px;height:104px;flex:none;border-radius:12px;position:relative;overflow:hidden;background:#0a1230;border:1px solid rgba(0,0,0,.2)}
+.tpl-c .ms{position:absolute;left:0;right:0;top:0;height:46px;background:repeating-linear-gradient(90deg,rgba(0,77,152,.75) 0 9px,rgba(165,0,68,.75) 9px 18px);-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}
+.tpl-c .mb{position:relative;display:grid;place-items:center;margin-top:14px}.tpl-c .mb svg{width:26px;height:26px}
+.tpl-c .mini i{display:block;position:relative;height:14px;margin:7px 8px 0;border-radius:6px;border:1px solid rgba(237,187,0,.45);background:rgba(255,255,255,.08)}
+.tpl-c .tt{flex:1;min-width:0}.tpl-c .tt b{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:17px}
+.tpl-c .d{display:block;margin-top:3px;font-size:13px;color:var(--mute);font-weight:400}
+.pill-p{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:#0a1230;color:#edbb00;font-weight:700}
+.tpl-c .ck{flex:none;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:none;place-items:center}
+.tpl-c .ck svg{width:13px;height:13px}.tpl-c.on .ck{display:grid}
 </style>
 </head>
 <body>
@@ -251,6 +281,10 @@ const ICONS={link:'link',website:'globe',instagram:'instagram',facebook:'faceboo
 const BRAND={whatsapp:'#25D366',snapchat:'#FFD400',instagram:'#E1306C',tiktok:'#25F4EE',telegram:'#2AABEE',youtube:'#FF2D2D',facebook:'#1877F2',x:'#A1A1AA',email:'#EA4335'};
 const SOCIALS=['instagram','tiktok','facebook','whatsapp','telegram','youtube','snapchat','x','website','email'];
 const THEMES={titanium:['#1c1c1e','#a1a1a6','#f5f5f7'],midnight:['#0a1124','#3b82f6','#e5e7eb'],light:['#ffffff','#111111','#111111'],dark:['#111111','#ffffff','#ffffff'],stone:['#f4f4f5','#27272a','#18181b']};
+/* Templates are recognised by their colors, so no database change is needed */
+const BADGE_BG='<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><defs><linearGradient id="bgst" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#004d98"/><stop offset=".25" stop-color="#004d98"/><stop offset=".25" stop-color="#a50044"/><stop offset=".5" stop-color="#a50044"/><stop offset=".5" stop-color="#004d98"/><stop offset=".75" stop-color="#004d98"/><stop offset=".75" stop-color="#a50044"/><stop offset="1" stop-color="#a50044"/></linearGradient></defs><path d="M12 1.2l8.6 2.6v8.3c0 5-3.6 8.5-8.6 10.7C7 20.6 3.4 17.1 3.4 12.1V3.8z" fill="url(#bgst)" stroke="#edbb00" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="12.6" r="3.2" fill="#edbb00" stroke="#0a1230" stroke-width=".9"/></svg>';
+const TPL={blaugrana:{name:'Blaugrana',desc:'Deep navy, gold and club stripes',bg:'#0a1230',bt:'#edbb00',tx:'#f5f2ea',badge:BADGE_BG}};
+const tplOf=d=>{const b=String(d.background_color||'').toLowerCase(),c=String(d.button_color||'').toLowerCase();return Object.keys(TPL).find(k=>TPL[k].bg===b&&TPL[k].bt===c)||null};
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)};
 const icon=n=>{const i=document.createElement('i');i.dataset.lucide=ICONS[n]||'link';return i};
 function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
@@ -285,7 +319,7 @@ function confirmOpen(root,u,title,color){
 function renderBio(root,d,ed){
   if(window.__au){window.__au.pause();window.__au=null}
   const bg=hex(d.background_color,'#ffffff'),bt=hex(d.button_color,'#111111'),tx=hex(d.text_color,'#111111');
-  const dk=lum(bg)<.5;if(!ed)document.documentElement.style.background=bg;root.className='bio'+(dk?' dk':'')+(ed?' ed':'');root.style.cssText=`--bg:${bg};--bt:${bt};--tx:${tx};--glow:${bt};--card:${dk?`color-mix(in srgb,${bg} 90%,#ffffff)`:'#ffffff'}`;
+  const dk=lum(bg)<.5;if(!ed)document.documentElement.style.background=bg;const tp=tplOf(d);root.className='bio'+(dk?' dk':'')+(ed?' ed':'')+(tp?' tpl':'');root.style.cssText=`--bg:${bg};--bt:${bt};--tx:${tx};--glow:${bt};--card:${dk?`color-mix(in srgb,${bg} 90%,#ffffff)`:'#ffffff'}`;
   const inn=el('div','in'),shape=['round','rounded','square'].includes(d.avatar_shape)?d.avatar_shape:'rounded';
   const cvu=d.cover_url&&safeUrl(d.cover_url);let cvEl=null;
   if(cvu||ed){cvEl=el('div','cv'+(cvu?'':' ph'));
@@ -309,7 +343,7 @@ function renderBio(root,d,ed){
       n.onblur=()=>ed.text(field,n.textContent.trim().slice(0,max))}
     return n};
   if(ed||d.display_name){const nm=el('div','nm');nm.dir='auto';nm.append(txt('h1',d.display_name,'Your name','display_name',60));
-    nm.insertAdjacentHTML('beforeend','<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0"/><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0" transform="rotate(45 12 12)"/><path d="M8.2 12.4l2.6 2.6 5-5.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');inn.append(nm)}
+    nm.insertAdjacentHTML('beforeend',tp?TPL[tp].badge:'<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0"/><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0" transform="rotate(45 12 12)"/><path d="M8.2 12.4l2.6 2.6 5-5.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');inn.append(nm)}
   if(ed||d.bio)inn.append(txt('p',d.bio,'Write about yourself','bio',280));
   {const vw=el('div','vw');vw.append(el('b','',fmtViews(d.view_count)),el('span','','View'));inn.append(vw)}
 
@@ -550,7 +584,7 @@ async function showDash(user){
     <section class="card"><label style="margin-top:0">Quick themes</label><div class="chips" id="chips"></div>
      <button class="btn pri" id="sa" style="margin-top:12px">Save</button></section>
     <div class="gh">Templates</div>
-    <section class="card soon"><i data-lucide="sparkles"></i><b>Background templates</b><span>Ready-made backgrounds are coming soon.</span></section>
+    <section class="card"><div id="tpls"></div><p class="note">More templates are coming soon.</p></section>
    </div>
   </main><aside class="prev" id="pvw"><p class="sub" style="margin:0 0 10px">Tap your name, text, photo or a link to change it.</p><div id="sheet"></div><div id="pv"></div></aside></div>
   <footer class="dev">Developed by <a href="https://devmuhamad.com">DevMuhamad.com</a></footer>
@@ -562,6 +596,7 @@ async function showDash(user){
   const P=S.p,set=(i,v)=>$(i).value=v??'';
   set('#dn',P.display_name);set('#un',P.username);set('#bio',P.bio);
   [['#dn','display_name'],['#bio','bio']].forEach(([i,k])=>$(i).oninput=e=>{P[k]=e.target.value;preview()});
+  const applyTpl=k=>{const t=TPL[k];if(!t)return;Object.assign(P,{theme_id:'custom',background_color:t.bg,button_color:t.bt,text_color:t.tx,avatar_shape:'round',button_style:'rounded'});preview();saveProfile(true)};
   const applyTheme=k=>{const t=THEMES[k];if(!t)return;P.theme_id=k;[P.background_color,P.button_color,P.text_color]=t;preview()};
   $('#sp').onclick=saveProfile;$('#sa').onclick=()=>saveProfile(true);
   $('#pub').onclick=togglePublish;$('#av').onchange=e=>uploadAvatar(e,'avatar');$('#cv').onchange=e=>uploadAvatar(e,'cover');
@@ -572,6 +607,9 @@ async function showDash(user){
     pv.style.background=t[0];a.style.background=t[2];b.style.background=t[1];pv.append(a,b);
     ck.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-9"/></svg>';
     nx.append(el('span','',k[0].toUpperCase()+k.slice(1)),ck);c.append(pv,nx);c.onclick=()=>applyTheme(k);$('#chips').append(c)});
+  Object.keys(TPL).forEach(k=>{const t=TPL[k],c=el('button','tpl-c');c.type='button';c.dataset.k=k;
+    c.innerHTML='<div class="mini"><div class="ms"></div><div class="mb">'+t.badge+'</div><i></i><i></i><i></i></div><div class="tt"><b></b><span class="d"></span></div><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-9"/></svg></span>';
+    c.querySelector('b').append(t.name,el('span','pill-p','Premium'));c.querySelector('.d').textContent=t.desc;c.onclick=()=>applyTpl(k);$('#tpls').append(c)});
   document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));
     document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.dataset.pane===b.dataset.p));
     const sg=$('#seg');if(sg.getBoundingClientRect().top<=90)scrollTo(0,sg.offsetTop-80)});
@@ -580,7 +618,8 @@ async function showDash(user){
 const status=()=>{const vc=$('#vc');if(vc)vc.textContent=(Number(S.p.view_count)||0).toLocaleString('en-US');$('#pu').textContent=pubUrl();$('#st').textContent=S.p.is_published?'Your page is online':'Your page is offline';$('#pub').textContent=S.p.is_published?'Unpublish':'Publish'};
 const preview=()=>{renderBio($('#pv'),{...S.p,links:S.links,socials:S.soc},ED);thumbs()};
 function thumbs(){[['#cvt',S.p.cover_url],['#avt',S.p.avatar_url]].forEach(([i,u])=>{const e=$(i);if(!e)return;const x=u&&safeUrl(u);e.style.backgroundImage=x?'url("'+x.replace(/"/g,'%22')+'")':'none'});
-  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===S.p.theme_id))}
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===S.p.theme_id));
+  document.querySelectorAll('.tpl-c').forEach(c=>c.classList.toggle('on',tplOf(S.p)===c.dataset.k))}
 async function saveProfile(appearanceOnly){
   const P=S.p;$('#perr').textContent='';
   const un=$('#un').value.trim();
