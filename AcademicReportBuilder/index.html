@@ -1553,28 +1553,43 @@ statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));t
 
 /* ---------- one-time download codes (Supabase) ---------- */
 (function(){
-const SUPABASE_URL="https://niiznyukddmmdqajmpcl.supabase.co";      /* e.g. https://abcdxyz.supabase.co */
-const SUPABASE_ANON_KEY="sb_publishable_wnhwx9LqUR5JnI4A_iVFjA_qvIGv7Lj";     /* Project Settings > API > anon public */
+const SUPABASE_URL="YOUR_SUPABASE_URL";      /* e.g. https://abcdxyz.supabase.co */
+const SUPABASE_ANON_KEY="YOUR_ANON_KEY";     /* Project Settings > API > anon public */
 const WA_NUMBER="9647509628683";
 const T={
- ckb:{t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی ڕاپۆرتەکە کۆدێکت پێویستە. کۆدەکە تەنها یەکجار بەکاردێت.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",bad:"کۆدەکە هەڵەیە.",used:"ئەم کۆدە پێشتر بەکارهێنراوە و بەسەرچووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر درا. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمەکە ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی ڕاپۆرت وەربگرم."},
- ar:{t:"رمز التحميل",d:"تحتاج إلى رمز لتحميل التقرير. يُستخدم الرمز مرة واحدة فقط.",ph:"اكتب الرمز",ok:"تأكيد",wa:"الحصول على الرمز عبر واتساب",x:"إغلاق",chk:"جارٍ التحقق…",bad:"الرمز غير صحيح.",used:"تم استخدام هذا الرمز من قبل وانتهت صلاحيته.",expired:"انتهت صلاحية هذا الرمز.",limit:"محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.",net:"لا يوجد اتصال بالإنترنت. أعد المحاولة.",cfg:"النظام غير مُعدّ.",msg:"مرحباً، أريد الحصول على رمز تحميل التقرير."},
- en:{t:"Download code",d:"You need a code to download the report. Each code works only once.",ph:"Enter code",ok:"Confirm",wa:"Get a code on WhatsApp",x:"Close",chk:"Checking…",bad:"Invalid code.",used:"This code was already used and has expired.",expired:"This code has expired.",limit:"Too many attempts. Please wait a moment and try again.",net:"No internet connection. Please try again.",cfg:"The system is not configured.",msg:"Hello, I would like to get a download code for the report."}};
+ ckb:{t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی ڕاپۆرتەکە کۆدێکت پێویستە.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",bad:"کۆدەکە هەڵەیە.",used:"ئەم کۆدە پێشتر بەکارهێنراوە و بەسەرچووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر درا. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمەکە ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی ڕاپۆرت وەربگرم."},
+ ar:{t:"رمز التحميل",d:"تحتاج إلى رمز لتحميل التقرير.",ph:"اكتب الرمز",ok:"تأكيد",wa:"الحصول على الرمز عبر واتساب",x:"إغلاق",chk:"جارٍ التحقق…",bad:"الرمز غير صحيح.",used:"تم استخدام هذا الرمز من قبل وانتهت صلاحيته.",expired:"انتهت صلاحية هذا الرمز.",limit:"محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.",net:"لا يوجد اتصال بالإنترنت. أعد المحاولة.",cfg:"النظام غير مُعدّ.",msg:"مرحباً، أريد الحصول على رمز تحميل التقرير."},
+ en:{t:"Download code",d:"You need a code to download the report.",ph:"Enter code",ok:"Confirm",wa:"Get a code on WhatsApp",x:"Close",chk:"Checking…",bad:"Invalid code.",used:"This code was already used and has expired.",expired:"This code has expired.",limit:"Too many attempts. Please wait a moment and try again.",net:"No internet connection. Please try again.",cfg:"The system is not configured.",msg:"Hello, I would like to get a download code for the report."}};
 async function redeem(code){
  if(SUPABASE_URL.indexOf("YOUR_")===0||SUPABASE_ANON_KEY.indexOf("YOUR_")===0)return"cfg";
- try{const r=await fetch(SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/rpc/redeem_code",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY},body:JSON.stringify({p_code:code})});
+ try{const r=await fetch(SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/rpc/redeem_any",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY},body:JSON.stringify({p_code:code})});
   if(!r.ok)return"net";const v=await r.json();return typeof v==="string"?v:"net"}catch(x){return"net"}}
 function gate(action){
  if(document.getElementById("dlg"))return;
  const L=T[UIL]||T.en,o=document.createElement("div");o.id="dlg";
- o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,42,82,.55);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
- o.innerHTML=`<div style="background:var(--card,#fff);color:var(--fg,#0f2a52);border:2px solid var(--yl,#d8bb74);border-radius:16px;max-width:380px;width:100%;padding:20px;box-shadow:0 12px 40px #0004">
- <h3 style="margin:0 0 6px;color:var(--ac,#143a7b);font-size:19px">${L.t}</h3><p style="margin:0 0 14px;font-size:14px;color:var(--mut,#51627f);line-height:1.5">${L.d}</p>
- <input id="dlgc" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${L.ph}" style="width:100%;box-sizing:border-box;height:48px;text-align:center;letter-spacing:3px;font-weight:700;font-size:18px;border:2px solid var(--bd,#c9d6ea);border-radius:12px;background:var(--card,#fff);-webkit-user-select:text;user-select:text">
- <p id="dlge" style="min-height:20px;margin:8px 0;color:#b00020;font-size:13px;text-align:center"></p>
- <button id="dlgok" class="pri" style="width:100%;margin-bottom:8px">${L.ok}</button>
- <button id="dlgwa" style="width:100%;margin-bottom:8px;background:#25D366;border-color:#25D366;color:#fff;font-weight:600">${L.wa}</button>
- <button id="dlgx" style="width:100%">${L.x}</button></div>`;
+ o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,42,82,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
+ o.innerHTML=`<style>
+ #dlg .dc{background:var(--card,#fff);color:var(--fg,#0f2a52);border:1px solid var(--bd,#c9d6ea);border-top:4px solid var(--yl,#d8bb74);border-radius:14px;max-width:380px;width:100%;padding:22px 20px 16px;box-shadow:0 16px 44px rgba(15,42,82,.28)}
+ #dlg h3{margin:0;color:var(--ac,#143a7b);font-size:19px;font-weight:700}
+ #dlg .rule{width:44px;height:2px;background:var(--yl,#d8bb74);margin:8px 0 12px;border-radius:2px}
+ #dlg p.d{margin:0 0 16px;font-size:14px;color:var(--mut,#51627f);line-height:1.6}
+ #dlg #dlgc{width:100%;box-sizing:border-box;height:50px;text-align:center;letter-spacing:2px;font-weight:700;font-size:17px;border:1.5px solid var(--bd,#c9d6ea);border-radius:10px;background:var(--card,#fff);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-user-select:text;user-select:text}
+ #dlg #dlgc:focus{border-color:var(--ac,#143a7b);box-shadow:0 0 0 3px rgba(20,58,123,.14)}
+ #dlg #dlgc::placeholder{letter-spacing:0;font-weight:400;color:var(--mut,#51627f);opacity:.7}
+ #dlg .btn{width:100%;min-height:46px;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+ #dlg #dlgok{background:var(--ac,#143a7b);color:var(--yl,#d8bb74);border:1px solid var(--ac,#143a7b)}
+ #dlg #dlgok:disabled{opacity:.6}
+ #dlg #dlgwa{background:transparent;color:var(--ac,#143a7b);border:1px solid var(--bd,#c9d6ea);margin-top:8px}
+ #dlg #dlgwa svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ #dlg #dlgx{background:transparent;border:0;color:var(--mut,#51627f);font-weight:500;font-size:14px;min-height:40px;margin-top:4px}
+ </style>
+ <div class="dc">
+ <h3>${L.t}</h3><div class="rule"></div><p class="d">${L.d}</p>
+ <input id="dlgc" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${L.ph}">
+ <p id="dlge" style="min-height:20px;margin:8px 0 6px;color:#b00020;font-size:13px;text-align:center"></p>
+ <button id="dlgok" class="btn">${L.ok}</button>
+ <button id="dlgwa" class="btn"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>${L.wa}</button>
+ <button id="dlgx" class="btn">${L.x}</button></div>`;
  document.body.appendChild(o);
  const inp=o.querySelector("#dlgc"),err=o.querySelector("#dlge"),ok=o.querySelector("#dlgok"),close=()=>o.remove();let busy=false;
  const submit=async()=>{if(busy)return;const c=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
@@ -1587,6 +1602,76 @@ function gate(action){
  o.querySelector("#dlgwa").onclick=()=>{window.open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(L.msg),"_blank")};
  o.querySelector("#dlgx").onclick=close;
  setTimeout(()=>inp.focus(),50)}
+/* ---------- admin panel ---------- */
+const esc=t=>String(t).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+async function rpc(fn,body){
+ if(SUPABASE_URL.indexOf("YOUR_")===0||SUPABASE_ANON_KEY.indexOf("YOUR_")===0)return{error:"cfg"};
+ try{const r=await fetch(SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY},body:JSON.stringify(body)});
+  if(!r.ok)return{error:"net"};const v=await r.json();return v&&typeof v==="object"?v:{error:"net"}}catch(x){return{error:"net"}}}
+const AE={bad:"پاسۆردەکە هەڵەیە.",limit:"هەوڵی زۆر درا. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە.",cfg:"سیستەمەکە ڕێکنەخراوە."};
+function timeLeft(iso){const ms=new Date(iso)-Date.now();if(!(ms>0))return"بەسەرچوو";const m=Math.floor(ms/6e4),d=Math.floor(m/1440),h=Math.floor(m%1440/60);
+ return d>0?d+" ڕۆژ و "+h+" کاتژمێر":h>0?h+" کاتژمێر و "+(m%60)+" خولەک":m+" خولەک"}
+function openAdmin(){
+ if(document.getElementById("adm"))return;
+ const o=document.createElement("div");o.id="adm";
+ o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,42,82,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
+ o.innerHTML=`<style>
+ #adm .dc{background:var(--card,#fff);color:var(--fg,#0f2a52);border:1px solid var(--bd,#c9d6ea);border-top:4px solid var(--yl,#d8bb74);border-radius:14px;max-width:420px;width:100%;max-height:100%;overflow-y:auto;box-sizing:border-box;padding:22px 20px 14px;box-shadow:0 16px 44px rgba(15,42,82,.28)}
+ #adm h3{margin:0;color:var(--ac,#143a7b);font-size:19px}#adm h4{margin:16px 0 8px;color:var(--ac,#143a7b);font-size:15px}
+ #adm .rule{width:44px;height:2px;background:var(--yl,#d8bb74);margin:8px 0 14px;border-radius:2px}
+ #adm input{width:100%;box-sizing:border-box;height:46px;border:1.5px solid var(--bd,#c9d6ea);border-radius:10px;background:var(--card,#fff);padding:0 12px;font-size:16px;outline:none;text-align:center;-webkit-user-select:text;user-select:text}
+ #adm input:focus{border-color:var(--ac,#143a7b);box-shadow:0 0 0 3px rgba(20,58,123,.14)}
+ #adm .btn{width:100%;min-height:44px;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+ #adm .p{background:var(--ac,#143a7b);color:var(--yl,#d8bb74);border:1px solid var(--ac,#143a7b)}
+ #adm .s{background:transparent;color:var(--ac,#143a7b);border:1px solid var(--bd,#c9d6ea);margin-top:8px}
+ #adm .t{background:transparent;border:0;color:var(--mut,#51627f);font-weight:500;margin-top:4px}
+ #adm .err{min-height:20px;margin:8px 0;color:#b00020;font-size:13px;text-align:center}
+ #adm .g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ #adm .g div{border:1px solid var(--bd,#c9d6ea);border-radius:10px;padding:10px;text-align:center}
+ #adm .g b{display:block;font-size:24px;color:var(--ac,#143a7b)}#adm .g span{font-size:12px;color:var(--mut,#51627f)}
+ #adm .mk{display:flex;gap:8px;align-items:flex-end}#adm .mk>div{flex:0 0 90px}#adm .mk label{display:block;font-size:12px;color:var(--mut,#51627f);margin-bottom:4px}#adm .mk .btn{flex:1}
+ #adm .nw{margin-top:10px;border:1px dashed var(--yl,#d8bb74);border-radius:10px;padding:10px;text-align:center}
+ #adm .cd{font-weight:700;letter-spacing:1px;direction:ltr;-webkit-user-select:text;user-select:text;word-break:break-all}
+ #adm .rw{border-bottom:1px solid var(--bd,#c9d6ea);padding:8px 0;font-size:13px}#adm .rw small{display:block;color:var(--mut,#51627f);margin-top:2px}
+ </style><div class="dc" dir="rtl" id="admc"></div>`;
+ document.body.appendChild(o);
+ const box=o.querySelector("#admc");let pw="";const close=()=>o.remove();
+ o.addEventListener("click",e=>{if(e.target===o)close()});
+ function login(){
+  box.innerHTML=`<h3>پەنێلی بەڕێوەبەر</h3><div class="rule"></div>
+  <input id="admp" type="password" dir="ltr" autocomplete="off" placeholder="پاسۆرد">
+  <p class="err" id="adme"></p>
+  <button class="btn p" id="admok">چوونەژوورەوە</button><button class="btn t" id="admx">داخستن</button>`;
+  const inp=box.querySelector("#admp"),err=box.querySelector("#adme"),ok=box.querySelector("#admok");let busy=false;
+  const go=async()=>{if(busy||!inp.value)return;busy=true;ok.disabled=true;err.style.color="var(--mut,#51627f)";err.textContent="پشکنین…";
+   const r=await rpc("admin_stats",{p_pw:inp.value});busy=false;ok.disabled=false;err.style.color="#b00020";
+   if(r.ok){pw=inp.value;panel(r)}else err.textContent=AE[r.error]||AE.net};
+  ok.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()};box.querySelector("#admx").onclick=close;setTimeout(()=>inp.focus(),50)}
+ function panel(r,newCode){
+  const rows=(r.codes||[]).map(c=>`<div class="rw"><div class="cd">${esc(c.label)}</div><small>${c.revoked?"ڕاگیراوە":"ماوە: "+esc(timeLeft(c.expires_at))} • بەکارهێنان: ${esc(c.uses)} جار</small></div>`).join("")||'<p class="err" style="color:var(--mut,#51627f)">هیچ کۆدێک نییە.</p>';
+  box.innerHTML=`<h3>پەنێلی بەڕێوەبەر</h3><div class="rule"></div>
+  <div class="g"><div><b>${esc(r.total)}</b><span>کۆی کۆدەکان</span></div><div><b>${esc(r.active)}</b><span>چالاک</span></div><div><b>${esc(r.expired)}</b><span>بەسەرچوو</span></div><div><b>${esc(r.unused)}</b><span>بەکارنەهاتوو</span></div></div>
+  <h4>دروستکردنی کۆد</h4>
+  <div class="mk"><div><label>ماوە (ڕۆژ)</label><input id="admd" type="number" min="1" max="365" value="30" inputmode="numeric"></div><button class="btn p" id="admmk">دروستکردن</button></div>
+  <p class="err" id="adme"></p>
+  ${newCode?`<div class="nw"><div class="cd">${esc(newCode)}</div><button class="btn s" id="admcp">کۆپیکردن</button></div>`:""}
+  <h4>کۆدەکان</h4>${rows}
+  <button class="btn s" id="admrf">نوێکردنەوە</button><button class="btn t" id="admx">داخستن</button>`;
+  const err=box.querySelector("#adme");
+  box.querySelector("#admx").onclick=close;
+  box.querySelector("#admrf").onclick=async()=>{const x=await rpc("admin_stats",{p_pw:pw});x.ok?panel(x,newCode):err.textContent=AE[x.error]||AE.net};
+  const cp=box.querySelector("#admcp");
+  if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(newCode);cp.textContent="کۆپی کرا ✓"}catch(e){cp.textContent="کۆدەکە دەستی دیاری بکە و کۆپی بکە"}};
+  box.querySelector("#admmk").onclick=async()=>{const b=box.querySelector("#admmk");b.disabled=true;err.style.color="var(--mut,#51627f)";err.textContent="دروستکردن…";
+   const d=Math.max(1,Math.min(365,parseInt(box.querySelector("#admd").value,10)||30));
+   const m=await rpc("admin_make_code",{p_pw:pw,p_days:d});
+   if(!m.code){b.disabled=false;err.style.color="#b00020";err.textContent=AE[m.error]||AE.net;return}
+   const x=await rpc("admin_stats",{p_pw:pw});panel(x.ok?x:r,m.code)}}
+ login()}
+{let taps=0,tm=0;
+document.addEventListener("click",e=>{const t=e.target;if(!t.closest||!t.closest(".ftr")||t.closest("a"))return;
+ taps++;clearTimeout(tm);tm=setTimeout(()=>{taps=0},700);
+ if(taps>=3){taps=0;clearTimeout(tm);openAdmin()}},true)}
 {const bp=document.getElementById("bpdf"),bw=document.getElementById("bdocx"),pdfFn=bp.onclick,docxFn=bw.onclick;
  bp.onclick=()=>gate(async()=>{try{await pdfFn.call(bp)}catch(x){console.error(x)}try{await docxFn.call(bw)}catch(x){console.error(x)}})}
 })();
