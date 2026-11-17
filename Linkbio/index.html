@@ -117,7 +117,9 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .mus .mtx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .mus .mtt{font-weight:700;font-size:17px;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mus .mta{font-size:14px;opacity:.6;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mus .wv{width:24px;height:24px;flex:none;opacity:.35;color:var(--tx)}.mus.on .wv{opacity:.9;color:var(--bt)}
+.mus .wv{display:flex;align-items:center;gap:3px;height:28px;flex:none;padding:0 2px}
+.mus .wv i{display:block;width:3px;height:100%;border-radius:2px;background:color-mix(in srgb,var(--tx) 35%,transparent);transform-origin:center;transition:transform .35s ease,background .3s}
+.mus .wv.live i{transition:none;background:var(--bt)}
 .mus .mpr{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:12px;opacity:.8;direction:ltr;font-variant-numeric:tabular-nums}
 .mus .mpr span{flex:none;min-width:34px}.mus .mpr span:last-child{text-align:right}
 .mus input.sk{flex:1;min-width:0;height:18px;padding:0;margin:0;border:0;border-radius:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
@@ -268,7 +270,17 @@ function renderBio(root,d,ed){
     au.preload='metadata';au.loop=true;au.src=mus;window.__au=au;hd.dir='auto';
     let cov;if(cvu2){cov=el('img','mcv');cov.src=cvu2;cov.alt=''}else{cov=el('div','mcv ph');cov.append(lc('music'))}
     const tx3=el('div','mtx');tx3.append(el('div','mtt',d.music_title||'Now playing'));if(d.music_artist)tx3.append(el('div','mta',d.music_artist));
-    hd.append(cov,tx3,lc('audio-lines','wv'));
+    const wv=el('div','wv'),bars=[],rest=[.3,.5,.8,.55,.7,.45,.3],cur=rest.slice(),tg=rest.slice();
+    for(let i=0;i<7;i++){const b=el('i');wv.append(b);bars.push(b)}
+    const draw=()=>bars.forEach((b,i)=>b.style.transform='scaleY('+cur[i].toFixed(3)+')');draw();
+    let raf=0,nt=0;
+    const tick=ts=>{
+      if(ts>=nt){nt=ts+90+Math.random()*90;for(let i=0;i<7;i++){const mid=1-Math.abs(i-3)/4;tg[i]=.16+Math.random()*(.5+mid*.34)}}
+      for(let i=0;i<7;i++)cur[i]+=(tg[i]-cur[i])*.3;
+      draw();raf=requestAnimationFrame(tick)};
+    const start=()=>{if(raf||matchMedia('(prefers-reduced-motion:reduce)').matches)return;wv.classList.add('live');raf=requestAnimationFrame(tick)};
+    const stop=()=>{cancelAnimationFrame(raf);raf=0;wv.classList.remove('live');for(let i=0;i<7;i++)cur[i]=rest[i];draw()};
+    hd.append(cov,tx3,wv);
     const pr2=el('div','mpr'),t1=el('span','','0:00'),sk=document.createElement('input'),t2=el('span','','-0:00');
     sk.type='range';sk.min='0';sk.max='1000';sk.value='0';sk.className='sk';sk.setAttribute('aria-label','Seek');pr2.append(t1,sk,t2);
     const btn=(cls,lab,...ics)=>{const b=el('button',cls);b.type='button';b.setAttribute('aria-label',lab);b.append(...ics);return b};
@@ -280,7 +292,7 @@ function renderBio(root,d,ed){
     const paint=()=>sk.style.setProperty('--p',(sk.value/10)+'%');
     const upd=()=>{const dur=au.duration,cur=au.currentTime||0;if(isFinite(dur)&&dur>0){if(!seeking)sk.value=Math.round(cur/dur*1000);t2.textContent='-'+fmt(dur-cur)}t1.textContent=fmt(cur);paint()};
     au.ontimeupdate=upd;au.onloadedmetadata=upd;au.ondurationchange=upd;
-    au.onplay=()=>mc2.classList.add('on');au.onpause=()=>mc2.classList.remove('on');
+    au.onplay=()=>mc2.classList.add('on');au.onpause=()=>{mc2.classList.remove('on');stop()};au.onplaying=start;au.onwaiting=stop;
     sk.oninput=()=>{seeking=true;paint();const dur=au.duration;if(isFinite(dur))t1.textContent=fmt(sk.value/1000*dur)};
     sk.onchange=()=>{const dur=au.duration;if(isFinite(dur))au.currentTime=sk.value/1000*dur;seeking=false;manual=true;upd()};
     pp.onclick=()=>{manual=true;au.paused?au.play().catch(()=>{}):au.pause()};
