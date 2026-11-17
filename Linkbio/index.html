@@ -611,20 +611,37 @@ function promoSheet(n){
   c.append(h,lab('Image (JPG, PNG or WebP, max 2MB)'),fi,lab('Link when tapped (optional)'),u,er,row);box.append(c);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-async function uploadMusic(f){
-  if(!f)return;
+function putAudio(path,file,ct,onp){
+  return sb.auth.getSession().then(({data:{session}})=>new Promise((res,rej)=>{
+    if(!session)return rej(new Error('Please sign in again'));
+    const x=new XMLHttpRequest();
+    x.open('POST',CFG.url+'/storage/v1/object/music/'+path.split('/').map(encodeURIComponent).join('/'));
+    x.setRequestHeader('Authorization','Bearer '+session.access_token);
+    x.setRequestHeader('apikey',CFG.key);
+    x.setRequestHeader('x-upsert','true');
+    x.setRequestHeader('Content-Type',ct);
+    x.setRequestHeader('Cache-Control','max-age=3600');
+    x.upload.onprogress=e=>{if(e.lengthComputable)onp(Math.round(e.loaded/e.total*100))};
+    x.onload=()=>{if(x.status>=200&&x.status<300)res();else{let m='Upload failed ('+x.status+')';try{m=JSON.parse(x.responseText).message||m}catch{}rej(new Error(m))}};
+    x.onerror=()=>rej(new Error('Network error'));
+    x.send(file);
+  }));
+}
+async function uploadMusic(f,say,prog){
   const ext=(f.name.split('.').pop()||'').toLowerCase(),ct={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg'}[ext];
-  if(!ct)return toast('Use an MP3, M4A, AAC, WAV or OGG file');
-  if(f.size>10*1024*1024)return toast('Audio must be under 10MB');
-  toast('Uploading music...');
+  if(!ct){say('Use an MP3, M4A, AAC, WAV or OGG file',1);return false}
+  if(f.size>10*1024*1024){say('Audio must be under 10MB (yours is '+(f.size/1048576).toFixed(1)+'MB)',1);return false}
   try{
     const path=S.p.id+'/track.'+ext;
-    const up=await sb.storage.from('music').upload(path,f,{upsert:true,contentType:ct,cacheControl:'3600'});
-    if(up.error)throw up.error;
+    await putAudio(path,f,ct,prog);
     const url=sb.storage.from('music').getPublicUrl(path).data.publicUrl+'?v='+Date.now();
     const{error}=await sb.from('profiles').update({music_url:url}).eq('id',S.p.id);
-    if(error)throw error;S.p.music_url=url;preview();toast('Music uploaded');
-  }catch(err){toast('Upload failed: '+((err&&err.message)||'unknown error').slice(0,80))}
+    if(error)throw error;S.p.music_url=url;preview();return true;
+  }catch(err){
+    const m=String((err&&err.message)||'unknown error');
+    say(/bucket not found/i.test(m)?'The "music" bucket does not exist. Run the SQL setup in Supabase first.':/row-level|policy|unauthorized|403/i.test(m)?'Not allowed to upload. Run the SQL policies in Supabase first.':/column/i.test(m)?'Music columns are missing. Run the SQL setup in Supabase first.':'Upload failed: '+m.slice(0,120),1);
+    return false;
+  }
 }
 async function uploadMusicCover(f){
   if(!f)return;
@@ -645,22 +662,30 @@ async function uploadMusicCover(f){
 }
 function musicSheet(){
   const box=$('#sheet');box.replaceChildren();
-  const P=S.p,c=el('div','card'),h=el('h2','','Music card'),t=el('input'),a=el('input'),fa=el('input'),fc=el('input'),er=el('div','err');
+  const P=S.p,c=el('div','card'),h=el('h2','','Music card'),t=el('input'),a=el('input'),fa=el('input'),fc=el('input'),er=el('div','err'),st=el('div','');
+  st.style.cssText='font-size:13px;margin-top:8px;color:var(--mute)';
   t.maxLength=80;t.placeholder='Song title';t.value=P.music_title||'';
   a.maxLength=80;a.placeholder='Artist';a.value=P.music_artist||'';
   fa.type='file';fa.accept='audio/mpeg,audio/mp4,audio/aac,audio/wav,audio/ogg,.mp3,.m4a,.aac,.wav,.ogg';
   fc.type='file';fc.accept='image/jpeg,image/png,image/webp';
+  st.textContent=P.music_url?'\u2713 A track is uploaded. Choose a file to replace it.':'No track yet.';
   const lab=x=>el('label','',x),row=el('div','row'),sv=el('button','btn pri','Save text'),rm=el('button','btn','Remove'),cl=el('button','btn','Close');
   [sv,rm,cl].forEach(b=>b.type='button');row.style.marginTop='12px';row.append(sv,rm,cl);
-  const close=()=>box.replaceChildren();box.onclick=e=>{if(e.target===box)close()};cl.onclick=close;
-  fa.onchange=async()=>{await uploadMusic(fa.files[0]);fa.value=''};
-  fc.onchange=async()=>{await uploadMusicCover(fc.files[0]);fc.value=''};
+  let busy=false;
+  const say=(m,bad)=>{er.textContent=bad?m:'';st.textContent=bad?'':m};
+  const setBusy=b=>{busy=b;[sv,rm,cl,fa,fc].forEach(x=>x.disabled=b)};
+  const close=()=>box.replaceChildren();box.onclick=e=>{if(e.target===box&&!busy)close()};cl.onclick=close;
+  fa.onchange=async()=>{const f=fa.files[0];fa.value='';if(!f)return;
+    setBusy(true);say('Uploading 0%... please wait');
+    const ok=await uploadMusic(f,say,pc=>say('Uploading '+pc+'%... please wait'));
+    setBusy(false);if(ok)say('\u2713 Music uploaded: '+f.name)};
+  fc.onchange=async()=>{const f=fc.files[0];fc.value='';if(!f)return;setBusy(true);await uploadMusicCover(f);setBusy(false)};
   const save=async v=>{const{error}=await sb.from('profiles').update(v).eq('id',P.id);
     if(error)return er.textContent=error.code==='42703'?'Music columns are missing. Run the SQL setup in Supabase first.':'Could not save. Try again.';
     Object.assign(P,v);close();preview();toast('Saved')};
   sv.onclick=()=>save({music_title:t.value.trim()||null,music_artist:a.value.trim()||null});
   rm.onclick=()=>save({music_url:null,music_title:null,music_artist:null,music_cover:null});
-  c.append(h,lab('Audio file (MP3, M4A, AAC, WAV or OGG, max 10MB)'),fa,lab('Cover image (optional)'),fc,lab('Title'),t,lab('Artist'),a,er,row);box.append(c);
+  c.append(h,lab('Audio file (MP3, M4A, AAC, WAV or OGG, max 10MB)'),fa,st,lab('Cover image (optional)'),fc,lab('Title'),t,lab('Artist'),a,er,row);box.append(c);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 route();
