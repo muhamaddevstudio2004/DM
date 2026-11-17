@@ -455,7 +455,7 @@ html[dir="rtl"] .hv-tx{text-align:right}
 #doc .bd [data-pi]{cursor:pointer}#doc .bd [data-pi]:active{background:rgba(216,187,116,.25)}
 @media print{#doc .bd [data-pi]:active{background:none!important}}
 </style></head><body data-tab="edit">
-<div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button><button id="bdocx" aria-label="Download Word file"></button><button id="bprint" aria-label="Print"></button></div>
+<div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button><button id="bdocx" aria-label="Download Word file" style="display:none"></button></div>
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
 <div id="app"><div id="ed"></div><div id="pv"><div id="doc"></div></div></div>
 <script>
@@ -1197,7 +1197,7 @@ function coverSheet(kind,focusLast){const I=S.info;let ttl="Cover",icn="edit",bo
  setTimeout(()=>{const ins=[...o.querySelectorAll("input")],f=focusLast?ins[ins.length-1]:ins[0];if(f)f.focus()},60)}
 $("doc").addEventListener("click",ev=>{const t=ev.target,c=t.closest(".cv [data-cv]");if(c){coverSheet(c.dataset.cv);return}
  const el=t.closest(".bd [data-pi]");if(el)blockSheet(+el.dataset.pi,+el.dataset.bi,1)});
-$("bprint").onclick=()=>{tab("pv");setTimeout(()=>{try{window.print()}catch(x){alert("Printing is not available here. Use Download PDF.")}},400)};
+
 /* ---------- Word (.docx) export: real, editable document built from the report data ---------- */
 const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
 function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
@@ -1379,7 +1379,7 @@ $("bdocx").onclick=async()=>{const b=$("bdocx"),old=b.innerHTML;b.disabled=true;
   if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
   L.done("Your Word file is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("Word export failed. Try the PDF button instead.\n"+(x&&x.message||""))}
+ }catch(x){if(!(x&&x.code=="declined"))alert("Word export failed. Please try again.\n"+(x&&x.message||""))}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
 /* html2canvas draws native list markers on the wrong side in RTL pages; replace them with explicit markers for PDF export */
 function fixRtlMarkers(root){
@@ -1413,9 +1413,9 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
   L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Try Print and choose Save as PDF.")}
+ }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Please try again.")}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
-function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Report Builder</span>`;$("bpdf").innerHTML=ic("dl")+"<span>PDF</span>";$("bdocx").innerHTML=ic("dl")+"<span>DOCX</span>";$("bprint").innerHTML=ic("print")+`<span class="bp-t">Print</span>`;
+function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Report Builder</span>`;{const dl=({ckb:"داگرتن",ar:"تحميل"})[UIL]||"Download";$("bpdf").innerHTML=ic("dl")+"<span>"+dl+"</span>";$("bpdf").setAttribute("aria-label",dl+" PDF + Word")}
 document.querySelector('[data-t="edit"]').innerHTML=`<span class="tab-ic">${ic("edit")}</span><span class="tab-t">Edit</span>`;document.querySelector('[data-t="pv"]').innerHTML=`<span class="tab-ic">${ic("eye")}</span><span class="tab-t">Live</span>`;
 }
 /* ---------- Interface language (English / کوردی / العربية) ---------- */
@@ -1550,4 +1550,44 @@ Object.assign(DICT.ar,{"Replace image":"استبدال الصورة","Upload ima
 Object.assign(DICT.ckb,{"Section":"بەش","Section title":"ناونیشانی بەش","Heading level":"ئاستی ناونیشان","Add below":"زیادکردن لە خوارەوە","Cover":"بەرگ","Done":"تەواو","Start this subtitle on a new page":"ئەم ناونیشانە لاوەکییە لە لاپەڕەیەکی نوێ دەست پێبکات","Start on a new page":"گواستنەوە بۆ لاپەڕەی نوێ","Remove page break":"لابردنی بڕینی لاپەڕە"});
 Object.assign(DICT.ar,{"Section":"قسم","Section title":"عنوان القسم","Heading level":"مستوى العنوان","Add below":"إضافة بالأسفل","Cover":"الغلاف","Done":"تم","Start this subtitle on a new page":"ابدأ هذا العنوان الفرعي في صفحة جديدة","Start on a new page":"النقل إلى صفحة جديدة","Remove page break":"إزالة فاصل الصفحة"});
 statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));trTree(document.getElementById("nav"));trTree(document.getElementById("ed"));
+
+/* ---------- one-time download codes (Supabase) ---------- */
+(function(){
+const SUPABASE_URL="YOUR_SUPABASE_URL";      /* e.g. https://abcdxyz.supabase.co */
+const SUPABASE_ANON_KEY="YOUR_ANON_KEY";     /* Project Settings > API > anon public */
+const WA_NUMBER="9647509628683";
+const T={
+ ckb:{t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی ڕاپۆرتەکە کۆدێکت پێویستە. کۆدەکە تەنها یەکجار بەکاردێت.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",bad:"کۆدەکە هەڵەیە.",used:"ئەم کۆدە پێشتر بەکارهێنراوە و بەسەرچووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر درا. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمەکە ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی ڕاپۆرت وەربگرم."},
+ ar:{t:"رمز التحميل",d:"تحتاج إلى رمز لتحميل التقرير. يُستخدم الرمز مرة واحدة فقط.",ph:"اكتب الرمز",ok:"تأكيد",wa:"الحصول على الرمز عبر واتساب",x:"إغلاق",chk:"جارٍ التحقق…",bad:"الرمز غير صحيح.",used:"تم استخدام هذا الرمز من قبل وانتهت صلاحيته.",expired:"انتهت صلاحية هذا الرمز.",limit:"محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.",net:"لا يوجد اتصال بالإنترنت. أعد المحاولة.",cfg:"النظام غير مُعدّ.",msg:"مرحباً، أريد الحصول على رمز تحميل التقرير."},
+ en:{t:"Download code",d:"You need a code to download the report. Each code works only once.",ph:"Enter code",ok:"Confirm",wa:"Get a code on WhatsApp",x:"Close",chk:"Checking…",bad:"Invalid code.",used:"This code was already used and has expired.",expired:"This code has expired.",limit:"Too many attempts. Please wait a moment and try again.",net:"No internet connection. Please try again.",cfg:"The system is not configured.",msg:"Hello, I would like to get a download code for the report."}};
+async function redeem(code){
+ if(SUPABASE_URL.indexOf("YOUR_")===0||SUPABASE_ANON_KEY.indexOf("YOUR_")===0)return"cfg";
+ try{const r=await fetch(SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/rpc/redeem_code",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY},body:JSON.stringify({p_code:code})});
+  if(!r.ok)return"net";const v=await r.json();return typeof v==="string"?v:"net"}catch(x){return"net"}}
+function gate(action){
+ if(document.getElementById("dlg"))return;
+ const L=T[UIL]||T.en,o=document.createElement("div");o.id="dlg";
+ o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,42,82,.55);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
+ o.innerHTML=`<div style="background:var(--card,#fff);color:var(--fg,#0f2a52);border:2px solid var(--yl,#d8bb74);border-radius:16px;max-width:380px;width:100%;padding:20px;box-shadow:0 12px 40px #0004">
+ <h3 style="margin:0 0 6px;color:var(--ac,#143a7b);font-size:19px">${L.t}</h3><p style="margin:0 0 14px;font-size:14px;color:var(--mut,#51627f);line-height:1.5">${L.d}</p>
+ <input id="dlgc" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${L.ph}" style="width:100%;box-sizing:border-box;height:48px;text-align:center;letter-spacing:3px;font-weight:700;font-size:18px;border:2px solid var(--bd,#c9d6ea);border-radius:12px;background:var(--card,#fff);-webkit-user-select:text;user-select:text">
+ <p id="dlge" style="min-height:20px;margin:8px 0;color:#b00020;font-size:13px;text-align:center"></p>
+ <button id="dlgok" class="pri" style="width:100%;margin-bottom:8px">${L.ok}</button>
+ <button id="dlgwa" style="width:100%;margin-bottom:8px;background:#25D366;border-color:#25D366;color:#fff;font-weight:600">${L.wa}</button>
+ <button id="dlgx" style="width:100%">${L.x}</button></div>`;
+ document.body.appendChild(o);
+ const inp=o.querySelector("#dlgc"),err=o.querySelector("#dlge"),ok=o.querySelector("#dlgok"),close=()=>o.remove();let busy=false;
+ const submit=async()=>{if(busy)return;const c=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(c.length<4){err.textContent=L.bad;return}
+  busy=true;ok.disabled=true;err.style.color="var(--mut,#51627f)";err.textContent=L.chk;
+  const s=await redeem(c);busy=false;ok.disabled=false;err.style.color="#b00020";
+  if(s==="ok"){close();action();return}
+  err.textContent=s==="invalid"?L.bad:(L[s]||L.net)};
+ ok.onclick=submit;inp.onkeydown=ev=>{if(ev.key==="Enter")submit()};
+ o.querySelector("#dlgwa").onclick=()=>{window.open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(L.msg),"_blank")};
+ o.querySelector("#dlgx").onclick=close;
+ setTimeout(()=>inp.focus(),50)}
+{const bp=document.getElementById("bpdf"),bw=document.getElementById("bdocx"),pdfFn=bp.onclick,docxFn=bw.onclick;
+ bp.onclick=()=>gate(async()=>{try{await pdfFn.call(bp)}catch(x){console.error(x)}try{await docxFn.call(bw)}catch(x){console.error(x)}})}
+})();
 </script></body></html>
