@@ -108,6 +108,7 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .bio .lk:focus-visible{outline:2px solid var(--b);outline-offset:3px}
 .sec{display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.12em;font-size:12px}
 .sec::after{content:"";flex:1;height:1px;background:color-mix(in srgb,var(--tx) 14%,transparent)}
+.bio .nm{display:flex;align-items:center;justify-content:center;gap:8px}.nm h1{min-width:0;overflow-wrap:anywhere}.bio .vb{width:26px;height:26px;flex:none}
 .ft{margin-top:30px;font-size:12px;opacity:.4}
 @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .bio:not(.ed) .lk{animation:up .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*70ms)}
@@ -171,7 +172,8 @@ function renderBio(root,d,ed){
       if(tag==='h1')n.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();n.blur()}};
       n.onblur=()=>ed.text(field,n.textContent.trim().slice(0,max))}
     return n};
-  if(ed||d.display_name)inn.append(txt('h1',d.display_name,'Your name','display_name',60));
+  if(ed||d.display_name){const nm=el('div','nm');nm.dir='auto';nm.append(txt('h1',d.display_name,'Your name','display_name',60));
+    nm.insertAdjacentHTML('beforeend','<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0"/><rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="#1d9bf0" transform="rotate(45 12 12)"/><path d="M8.2 12.4l2.6 2.6 5-5.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');inn.append(nm)}
   if(ed||d.bio)inn.append(txt('p',d.bio,'Write a short bio','bio',280));
 
   if((d.links||[]).length)inn.append(el('div','sec','Links'));
