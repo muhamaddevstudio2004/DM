@@ -76,14 +76,22 @@ input[type=color]{padding:2px;height:40px}input[type=checkbox]{width:auto}
 .cv.ph span{position:relative;z-index:1;opacity:.75}
 .bio .in.hascv .hdr{margin-top:-64px}.bio .in.hascv .av,.bio .in.hascv .av.ph{position:relative;z-index:1;border:5px solid var(--bg)}
 @media(min-width:640px){.bio:not(.ed) .in{max-width:520px}}
-.mod{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.6)}
-.mod .bx{width:100%;max-width:360px;background:var(--card);color:var(--tx);border:1.5px solid color-mix(in srgb,var(--b) 40%,transparent);border-radius:24px;padding:22px;text-align:left}
-.mod h3{margin:0 0 12px;font-size:19px;color:inherit}
-.mod .mt{font-weight:700;font-size:17px;unicode-bidi:plaintext;overflow-wrap:anywhere}
-.mod .mu{font-size:14px;opacity:.6;margin-top:2px;unicode-bidi:plaintext;overflow-wrap:anywhere}
-.mod .mr{display:flex;gap:10px;margin-top:20px}
-.mod .mb{flex:1;padding:13px;border-radius:14px;border:1.5px solid color-mix(in srgb,var(--tx) 25%,transparent);background:transparent;color:inherit;font-weight:600;font-size:15px;cursor:pointer}
-.mod .mb:focus-visible{outline:2px solid var(--b);outline-offset:2px}
+.mod{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(0,0,0,.4);animation:mfade .2s ease}
+@media(min-width:640px){.mod{align-items:center}}
+.mod .sh{width:100%;max-width:380px;display:flex;flex-direction:column;gap:8px;animation:mup .28s cubic-bezier(.2,.9,.3,1)}
+.mod .bx,.mod .no{background:color-mix(in srgb,var(--tx) 12%,var(--card));color:var(--tx);border-radius:18px;overflow:hidden}
+.mod .hd{padding:16px 18px 14px;text-align:center;border-bottom:1px solid color-mix(in srgb,var(--tx) 12%,transparent)}
+.mod .ht{font-size:15px;font-weight:600;line-height:1.35;unicode-bidi:plaintext;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.mod .hu{margin-top:3px;font-size:13px;opacity:.55;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mod .mb{display:block;width:100%;height:56px;padding:0;border:0;background:transparent;color:inherit;font-size:17px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mod .mb:active{background:color-mix(in srgb,var(--tx) 10%,transparent)}
+.mod .no .mb{font-weight:600}
+.mod .go{color:var(--b)}
+.bio:not(.dk) .mod .go{color:color-mix(in srgb,var(--b) 60%,#000)}
+.mod .mb:focus-visible{outline:2px solid var(--b);outline-offset:-2px}
+@keyframes mfade{from{opacity:0}to{opacity:1}}
+@keyframes mup{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+.map .mpo{position:absolute;inset:0;z-index:1;display:block;cursor:pointer}
 @media(max-width:899px){
 body[data-v=live] .top,body[data-v=live] .dev,body[data-v=live] #pvw>.sub{display:none}
 body[data-v=live] .wrap{padding:0;gap:0;max-width:none}
@@ -204,17 +212,19 @@ function subOf(u){
     const t=h+(seg?'/'+seg:'');return t.length>32?t.slice(0,31)+'\u2026':t}catch{return''}}
 function confirmOpen(root,u,title,color){
   const old=root.querySelector('.mod');if(old)old.remove();
-  const m=el('div','mod'),bx=el('div','bx'),row=el('div','mr'),no=el('button','mb','Cancel'),go=el('button','mb','Open');
+  const m=el('div','mod'),sh=el('div','sh'),bx=el('div','bx'),hd=el('div','hd'),no=el('div','no'),
+    cb=el('button','mb','Cancel'),go=el('button','mb go','Open');
   const kd=e=>{if(e.key==='Escape')close()};
   const close=()=>{m.remove();document.removeEventListener('keydown',kd)};
-  bx.style.setProperty('--b',color);
-  go.style.cssText=`background:${color};border-color:${color};color:${lum(hex(color,'#111111'))>.55?'#111':'#fff'}`;
+  m.style.setProperty('--b',color);
   m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','Open this link?');
-  no.type='button';go.type='button';no.onclick=close;
+  cb.type='button';go.type='button';cb.onclick=close;
   go.onclick=()=>{close();if(/^(mailto:|tel:)/i.test(u))location.href=u;else window.open(u,'_blank','noopener,noreferrer')};
   m.onclick=e=>{if(e.target===m)close()};
   document.addEventListener('keydown',kd);
-  row.append(no,go);bx.append(el('h3','','Open this link?'),el('div','mt',title||subOf(u)),...(title?[el('div','mu',subOf(u))]:[]),row);m.append(bx);root.append(m);no.focus();
+  hd.dir='auto';
+  hd.append(el('div','ht',title?'Open \u201c'+title+'\u201d?':'Open this link?'),el('div','hu',subOf(u)));
+  bx.append(hd,go);no.append(cb);sh.append(bx,no);m.append(sh);root.append(m);cb.focus();
 }
 function renderBio(root,d,ed){
   if(window.__au){window.__au.pause();window.__au=null}
@@ -272,14 +282,15 @@ function renderBio(root,d,ed){
   const mq=mapQ(d.map_query||d.map_address);
   if(mq){
     const enc=encodeURIComponent(mq),mc=el('div','map'),mp=el('div','mp'),fr=document.createElement('iframe');
-    fr.src='https://www.google.com/maps?q='+enc+'&hl=en&output=embed';fr.loading='lazy';fr.title='Map';fr.referrerPolicy='no-referrer-when-downgrade';mp.append(fr);
+    fr.src='https://www.google.com/maps?q='+enc+'&hl=en&output=embed';fr.loading='lazy';fr.title='Map';fr.referrerPolicy='no-referrer-when-downgrade';
+    const ov=el('a','mpo');ov.href='https://www.google.com/maps/search/?api=1&query='+enc;ov.target='_blank';ov.rel='noopener noreferrer';ov.setAttribute('aria-label','Open in Maps');mp.append(fr,ov);
     const bd=el('div','mb2');bd.dir='auto';bd.append(el('h3','',d.map_title||'Visit us'));
     if(d.map_address){const ad=el('div','ad'),pin=document.createElement('i');pin.dataset.lucide='map-pin';ad.append(pin,el('span','',d.map_address));bd.append(ad)}
     const act=el('div','act');
     const mk=(cls,href,ic,txt)=>{const a=el('a',cls);a.href=href;a.target='_blank';a.rel='noopener noreferrer';const i=document.createElement('i');i.dataset.lucide=ic;a.append(i,el('span','',txt));return a};
     const o=mk('mpri','https://www.google.com/maps/search/?api=1&query='+enc,'external-link','Open in Maps'),g=mk('msec','https://www.google.com/maps/dir/?api=1&destination='+enc,'navigation','Directions');
     o.style.color=lum(bt)>.55?'#111':'#fff';act.append(o,g);bd.append(act);mc.append(mp,bd);
-    if(!ed)[o,g].forEach(a=>a.onclick=e=>{e.preventDefault();confirmOpen(root,a.href,d.map_title||'Visit us',bt)});
+    if(!ed)[o,g,ov].forEach(a=>a.onclick=e=>{e.preventDefault();confirmOpen(root,a.href,d.map_title||'Visit us',bt)});
     if(ed)mc.onclick=e=>{e.preventDefault();ed.map()};
     inn.append(mc)}
   else if(ed){const b=el('button','addl','Add location');b.type='button';b.onclick=ed.map;inn.append(b)}
