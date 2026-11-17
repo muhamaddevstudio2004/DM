@@ -181,6 +181,11 @@ body[data-v=live] .tabs{background:rgba(255,255,255,.94);-webkit-backdrop-filter
 .ft{margin-top:30px;font-size:12px;opacity:.4;text-align:center}
 @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .bio:not(.ed) .lk{animation:up .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*70ms)}
+/* ---- public page: no zoom, no double-tap zoom, no text selection ---- */
+html.pub,html.pub body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
+html.pub *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html.pub img{pointer-events:none;-webkit-user-drag:none;user-drag:none}
+html.pub .mus input.sk{touch-action:pan-y}
 </style>
 </head>
 <body>
@@ -338,14 +343,22 @@ function renderBio(root,d,ed){
     }
     inn.append(mc2)}
   else if(ed){const b=el('button','addl','Add music');b.type='button';b.onclick=ed.music;inn.append(b)}
-  if(!ed)inn.append(el('div','ft','Made with Link Bio Builder'));
   root.replaceChildren(...(cvEl?[cvEl,inn]:[inn]));lucide.createIcons();
 }
 
+/* ---- Public page lock: viewport zoom, pinch, double-tap, selection ---- */
+const VP=document.querySelector('meta[name=viewport]'),isPub=()=>document.documentElement.classList.contains('pub');
+function setPub(on){document.documentElement.classList.toggle('pub',on);VP.content=on?'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no':'width=device-width,initial-scale=1'}
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>{if(isPub())e.preventDefault()},{passive:false}));
+document.addEventListener('touchmove',e=>{if(isPub()&&e.touches.length>1)e.preventDefault()},{passive:false});
+document.addEventListener('dblclick',e=>{if(isPub())e.preventDefault()},{passive:false});
+document.addEventListener('selectstart',e=>{if(isPub())e.preventDefault()});
+document.addEventListener('wheel',e=>{if(isPub()&&e.ctrlKey)e.preventDefault()},{passive:false});
+document.addEventListener('keydown',e=>{if(isPub()&&(e.ctrlKey||e.metaKey)&&['+','-','=','0'].includes(e.key))e.preventDefault()});
 /* ---- Router: #username = public page, empty hash = dashboard ---- */
 const loading=()=>app.replaceChildren(Object.assign(el('div','center'),{innerHTML:'<div class="spin"></div>'}));
 async function route(){
-  delete document.body.dataset.v;
+  delete document.body.dataset.v;setPub(false);
   const u=decodeURIComponent(location.hash.slice(1)).trim();
   if(u)return showPublic(u);
   const{data:{session}}=await sb.auth.getSession();
@@ -368,7 +381,7 @@ async function countView(u){
   return Number(data);
 }
 async function showPublic(u){
-  loading();
+  setPub(true);loading();
   const[r,loc]=await Promise.all([sb.rpc('get_public_profile',{uname:u}),sb.rpc('get_public_location',{uname:u})]);
   const{data,error}=r;
   if(error)return msg('Something went wrong','The service is temporarily unavailable. Please try again shortly.');
