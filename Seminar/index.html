@@ -1527,7 +1527,7 @@ $("doc").addEventListener("click",ev=>{if(ev.target.closest(".citation"))ev.prev
 /* ---------- Word (.docx) export: real, editable document built from the seminar data ---------- */
 const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
 function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
-function zipStore(files){
+function zipStore(files,mime){
  const enc=new TextEncoder(),parts=[],cd=[];let off=0;
  const d=new Date(),dt=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),dd=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
  files.forEach(([n,u])=>{const nb=enc.encode(n),c=crc32(u);
@@ -1537,7 +1537,7 @@ function zipStore(files){
   cd.push(new Uint8Array(g.buffer),nb);off+=30+nb.length+u.length});
  const cs=cd.reduce((a,b)=>a+b.length,0),en=new DataView(new ArrayBuffer(22));
  en.setUint32(0,0x06054b50,true);en.setUint16(8,files.length,true);en.setUint16(10,files.length,true);en.setUint32(12,cs,true);en.setUint32(16,off,true);
- return new Blob([...parts,...cd,new Uint8Array(en.buffer)],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})}
+ return new Blob([...parts,...cd,new Uint8Array(en.buffer)],{type:mime||"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})}
 const WNS='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
 async function makeDocx(pgn){
  const rt=S.dir=="rtl",I=S.info,TW=9626,enc=new TextEncoder();
@@ -1768,20 +1768,29 @@ const exportPptx=async()=>{const b=$("bpdf"),old=b.innerHTML;
  }catch(x){if(!(x&&x.code=="declined"))alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
  L.el.remove();b.disabled=false;b.innerHTML=old};
 /* V2.21: one rendering pass feeds BOTH files (previously every slide was rendered twice) */
+const showDL=(items)=>{const old=document.getElementById("dlres");if(old)old.remove();
+ const T={ckb:["فایلەکانت ئامادەن","بۆ دابەزاندن لەسەر هەر دوگمەیەک دابگرە","داخستن"],ar:["ملفاتك جاهزة","اضغط على كل زر لتنزيل الملف","إغلاق"],en:["Your files are ready","Tap each button to download the file","Close"]}[UIL]||["Your files are ready","Tap each button to download the file","Close"];
+ const o=document.createElement("div");o.id="dlres";o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(46,33,68,.55);display:flex;align-items:center;justify-content:center;padding:18px";
+ o.innerHTML='<div style="background:#fff;color:#2E2144;border-top:4px solid #d8bb74;border-radius:14px;max-width:380px;width:100%;box-sizing:border-box;padding:22px 20px 16px;text-align:center;box-shadow:0 16px 44px rgba(46,33,68,.3)"><h3 style="margin:0 0 6px;color:#4B3869;font-size:19px">'+e(T[0])+'</h3><p style="margin:0 0 16px;font-size:14px;color:#6C6280">'+e(T[1])+'</p><div id="dlb"></div><button type="button" id="dlx" style="width:100%;min-height:42px;margin-top:6px;border:0;background:transparent;color:#6C6280;font-size:14px">'+e(T[2])+'</button></div>';
+ document.body.appendChild(o);const box=o.querySelector("#dlb");
+ items.forEach(it=>{const bt=document.createElement("button");bt.type="button";bt.style.cssText="width:100%;min-height:48px;margin-bottom:10px;border-radius:10px;background:#4B3869;color:#d8bb74;border:1px solid #4B3869;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px";bt.innerHTML=ic("dl")+"<span>"+e(it.label)+"</span>";bt.onclick=async()=>{try{await saveBlob(it.blob,it.name)}catch(x){if(!(x&&x.code=="declined"))alert("Download failed. Please try again.")}};box.appendChild(bt)});
+ o.querySelector("#dlx").onclick=()=>o.remove();o.addEventListener("click",ev=>{if(ev.target===o)o.remove()})};
+/* V2.27: both files are built first, then each has its own button (iOS blocks a second automatic download) */
 const exportBoth=async()=>{const b=$("bpdf"),old=b.innerHTML;
  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
- const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");let sl=null;
+ const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");let sl=null,items=[];
  try{sl=await snapAll(L);
   try{const W=297,H=167.0625,pdf=new jspdf.jsPDF({unit:"mm",format:[W,H],orientation:"landscape",compress:true});
    sl.forEach((x,i)=>{if(i)pdf.addPage([W,H],"landscape");pdf.addImage(x.d,"JPEG",0,0,W,H,undefined,"FAST")});
-   L.update(96,"Saving file…");await saveBlob(pdf.output("blob"),fname("pdf"))
-  }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Please try again.")}
-  try{L.update(97,"Building PowerPoint…");await new Promise(r=>setTimeout(r,0));await saveBlob(makePptx(sl),fname("pptx"))
-  }catch(x){if(!(x&&x.code=="declined"))alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
+   L.update(96,"Saving file…");items.push({label:"PDF",blob:pdf.output("blob"),name:fname("pdf")})
+  }catch(x){alert("PDF export failed. Please try again.")}
+  try{L.update(97,"Building PowerPoint…");await new Promise(r=>setTimeout(r,0));items.push({label:"PowerPoint (PPTX)",blob:makePptx(sl),name:fname("pptx")})
+  }catch(x){alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
   L.done("Your PowerPoint is ready");await new Promise(r=>setTimeout(r,650))
  }catch(x){alert("PDF export failed. Please try again.")}
- L.el.remove();b.disabled=false;b.innerHTML=old};
+ L.el.remove();b.disabled=false;b.innerHTML=old;
+ if(items.length)showDL(items)};
 function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Seminar Builder</span>`;{const dl=({ckb:"داگرتن",ar:"تنزيل"})[UIL]||"Download";$("bpdf").innerHTML=ic("dl")+"<span>"+dl+"</span>";$("bpdf").setAttribute("aria-label",dl)}
 document.querySelector('[data-t="edit"]').innerHTML=`<span class="tab-ic">${ic("edit")}</span><span class="tab-t">Edit</span>`;document.querySelector('[data-t="pv"]').innerHTML=`<span class="tab-ic">${ic("eye")}</span><span class="tab-t">Live</span>`;
 }
