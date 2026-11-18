@@ -626,6 +626,21 @@ body.lsh-open{overflow:hidden}
 .slide .pic.ph{box-sizing:border-box}
 .slide.pc-r .pic.ph,.slide.pc-l .pic.ph{width:510px}
 .slide.pc-t .pic.ph{height:210px}
+/* V2.26: smaller academic number badges that stay inside the card; Kurdish/Arabic glyph clipping + letter-spacing fixes */
+.slide .bd ol li{padding-left:calc(30px + 1.3em)}
+.slide.rtl .bd ol li{padding-left:16px;padding-right:calc(30px + 1.3em)}
+.slide.tight .bd ol li{padding-left:calc(22px + 1.3em)}
+.slide.rtl.tight .bd ol li{padding-left:10px;padding-right:calc(22px + 1.3em)}
+.slide .bd ol li::before{top:calc(var(--pt) + .7143em * var(--lh) - .9em);width:1.8em;height:1.8em;font:700 .7em/1.8em var(--cf),"Segoe UI",Arial,sans-serif;box-shadow:0 0 0 1.5px var(--gd)}
+.slide .bd ol li::before{left:16px}.slide.rtl .bd ol li::before{left:auto;right:16px}
+.slide.tight .bd ol li::before{left:12px}.slide.rtl.tight .bd ol li::before{left:auto;right:12px}
+.slide.rtl .sl-t{line-height:1.8}
+.slide.rtl .t3 b,.slide.rtl .kick,.slide.rtl .sl-r,.slide.rtl .ce1,.slide.rtl .ce3{letter-spacing:0;text-transform:none;word-spacing:normal;font-family:var(--cf),"Noto Naskh Arabic","Noto Sans Arabic","Segoe UI",Arial,sans-serif}
+.slide.rtl .t3 ul{font-family:var(--cf),"Noto Naskh Arabic","Noto Sans Arabic","Segoe UI",Arial,sans-serif}
+/* V2.27: academic numbered badges - flow layout (grid), badge sized to ONE text line and centred on the first line, never larger than the card */
+.slide.slide.slide.slide .bd ol li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.65em;align-items:start;padding:8px 16px;--bs:.9}
+.slide.slide.slide.slide.tight .bd ol li{padding:3px 10px}
+.slide.slide.slide.slide .bd ol li::before{content:attr(data-n);position:static;left:auto;right:auto;top:auto;box-sizing:border-box;font:700 .72em/1 var(--cf),"Segoe UI",Arial,sans-serif;width:calc(var(--lh)*var(--bs)/.72*1em);height:calc(var(--lh)*var(--bs)/.72*1em);line-height:calc(var(--lh)*var(--bs)/.72*1em);margin-top:calc(var(--lh)*(1 - var(--bs))/2/.72*1em);text-align:center;border-radius:50%;background:linear-gradient(135deg,var(--dc),var(--dk));color:#fff;box-shadow:0 0 0 1.5px var(--gd);direction:ltr}
 </style></head><body data-tab="edit">
 <div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button></div>
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
