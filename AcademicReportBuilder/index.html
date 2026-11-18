@@ -1380,7 +1380,7 @@ $("bdocx").onclick=async()=>{const b=$("bdocx"),old=b.innerHTML;b.disabled=true;
   const blob=await makeDocx(pgn),name=((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Report")+".docx";
   L.update(97,"Saving file…");let dl=null;
   try{dl=window.claude&&await claude.use("downloads")}catch(x){}
-  if(dl)await dl.save({filename:name,data:blob});
+  if(window.__dlc)window.__dlc.push({blob,name});else if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
   L.done("Your Word file is ready");await new Promise(r=>setTimeout(r,650))
  }catch(x){if(!(x&&x.code=="declined"))alert("Word export failed. Please try again.\n"+(x&&x.message||""))}
@@ -1414,7 +1414,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
    c.width=c.height=0}
   L.update(97,"Saving file…");const blob=pdf.output("blob"),name=((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Report")+".pdf";let dl=null;
   try{dl=window.claude&&await claude.use("downloads")}catch(x){}
-  if(dl)await dl.save({filename:name,data:blob});
+  if(window.__dlc)window.__dlc.push({blob,name});else if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
   L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
  }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Please try again.")}
@@ -1703,6 +1703,19 @@ document.addEventListener("click",e=>{const t=e.target;if(!t.closest||!t.closest
  taps++;clearTimeout(tm);tm=setTimeout(()=>{taps=0},700);
  if(taps>=3){taps=0;clearTimeout(tm);openAdmin()}},true)}
 {const bp=document.getElementById("bpdf"),bw=document.getElementById("bdocx"),pdfFn=bp.onclick,docxFn=bw.onclick;
- bp.onclick=()=>gate(async()=>{try{await pdfFn.call(bp)}catch(x){console.error(x)}try{await docxFn.call(bw)}catch(x){console.error(x)}})}
+ const saveOne=async(blob,name)=>{let dl=null;try{dl=window.claude&&await claude.use("downloads")}catch(x){}
+  if(dl)await dl.save({filename:name,data:blob});
+  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}};
+ /* V14: both files are built first, then each gets its own button (iOS blocks a second automatic download) */
+ const showDL=items=>{const old=document.getElementById("dlres");if(old)old.remove();
+  const T={ckb:["فایلەکانت ئامادەن","بۆ دابەزاندن لەسەر هەر دوگمەیەک دابگرە","داخستن"],ar:["ملفاتك جاهزة","اضغط على كل زر لتنزيل الملف","إغلاق"],en:["Your files are ready","Tap each button to download the file","Close"]}[UIL]||["Your files are ready","Tap each button to download the file","Close"];
+  const o=document.createElement("div");o.id="dlres";o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,42,82,.5);display:flex;align-items:center;justify-content:center;padding:18px";
+  o.innerHTML='<div style="background:var(--card,#fff);color:var(--fg,#0f2a52);border-top:4px solid var(--yl,#d8bb74);border-radius:14px;max-width:380px;width:100%;box-sizing:border-box;padding:22px 20px 16px;text-align:center;box-shadow:0 16px 44px rgba(15,42,82,.3)"><h3 style="margin:0 0 6px;color:var(--ac,#143a7b);font-size:19px">'+e(T[0])+'</h3><p style="margin:0 0 16px;font-size:14px;color:var(--mut,#51627f)">'+e(T[1])+'</p><div id="dlb"></div><button type="button" id="dlx" style="width:100%;min-height:42px;margin-top:6px;border:0;background:transparent;color:var(--mut,#51627f);font-size:14px">'+e(T[2])+'</button></div>';
+  document.body.appendChild(o);const box=o.querySelector("#dlb");
+  items.forEach(it=>{const bt=document.createElement("button");bt.type="button";bt.style.cssText="width:100%;min-height:48px;margin-bottom:10px;border-radius:10px;background:var(--ac,#143a7b);color:var(--yl,#d8bb74);border:1px solid var(--ac,#143a7b);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px";
+   bt.innerHTML=ic("dl")+"<span>"+(/\.pdf$/i.test(it.name)?"PDF":"Word (DOCX)")+"</span>";
+   bt.onclick=async()=>{try{await saveOne(it.blob,it.name)}catch(x){if(!(x&&x.code=="declined"))alert("Download failed. Please try again.")}};box.appendChild(bt)});
+  o.querySelector("#dlx").onclick=()=>o.remove();o.addEventListener("click",ev=>{if(ev.target===o)o.remove()})};
+ bp.onclick=()=>gate(async()=>{window.__dlc=[];try{await pdfFn.call(bp)}catch(x){console.error(x)}try{await docxFn.call(bw)}catch(x){console.error(x)}const items=window.__dlc||[];window.__dlc=null;if(items.length)showDL(items)})}
 })();
 </script></body></html>
