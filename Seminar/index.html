@@ -592,7 +592,7 @@ body.lsh-open{overflow:hidden}
 #lsh .lhint{font-size:12px;color:var(--mut);margin:4px 0 0}
 /* V16: Table of Contents cards - never break a word in the middle */
 .slide .bd.fl{gap:56px 36px}
-.slide .bd.fl .tr,.slide .bd.fl .tr.l1{padding-left:.35em;padding-right:.35em}
+.slide .bd.fl .tr,.slide .bd.fl .tr.l1{padding-left:.5em;padding-right:.5em}
 .slide .bd.fl .tr::after{right:-30px;border-left-width:16px}
 .slide.rtl .bd.fl .tr::after{right:auto;left:-30px;border-right-width:16px}
 .slide .bd.fl .tr .tl{width:100%;max-width:100%;box-sizing:border-box;text-align:center;overflow-wrap:normal;word-break:normal;-webkit-hyphens:none;hyphens:none}
@@ -607,11 +607,25 @@ body.lsh-open{overflow:hidden}
 .slide .bd ul li::before,.slide.rtl .bd ul li::before,.slide.tight .bd ul li::before,.slide.rtl.tight .bd ul li::before{top:calc(var(--pt) + (1em * var(--lh) - .42em) / 2)}
 /* V2.20: anti-screenshot watermark - shown in Live preview only, never in PDF/PPTX export */
 .slide .wm{position:absolute;inset:0;z-index:8;pointer-events:none;overflow:hidden;-webkit-user-select:none;user-select:none}
-.slide .wm span{position:absolute;left:50%;width:1400px;margin-left:-700px;text-align:center;white-space:nowrap;font:700 84px/1 Arial,Helvetica,sans-serif;letter-spacing:.02em;color:var(--dc);opacity:.13;transform:rotate(-24deg)}
-.slide .wm span:nth-child(1){top:24%}.slide .wm span:nth-child(2){top:66%}
-.slide .ts~.wm span{color:#fff;opacity:.16}
+.slide .wm div{position:absolute;left:50%;top:50%;width:1400px;margin-left:-700px;text-align:center;color:var(--dc);opacity:.13;transform:translateY(-50%) rotate(-24deg)}
+.slide .wm b{display:block;white-space:nowrap;font:700 84px/1.1 Arial,Helvetica,sans-serif;letter-spacing:.02em}
+.slide .wm i{display:block;white-space:nowrap;direction:rtl;font:normal 700 40px/1.3 "Noto Naskh Arabic","Noto Sans Arabic",Tahoma,Arial,sans-serif;margin-top:14px}
+.slide .ts~.wm div{color:#fff;opacity:.16}
 .x .wm,.x .slide .wm{display:none!important}
 @media print{.slide .wm{display:none!important}}
+/* V2.24: modern academic numbered lists on slides - numbered badge cards (EN / CKB / AR) */
+.slide .bd ol,.slide.rtl .bd ol{list-style:none;padding:0;margin:0 0 14px}
+.slide .bd ol li{--pt:8px;--lh:1.45;position:relative;list-style:none;background:#fff;border:1px solid #e3dcee;border-radius:10px;padding:8px 16px 8px calc(32px + 1.6em);margin:8px 0;box-shadow:0 1px 3px rgba(46,33,68,.08)}
+.slide.rtl .bd ol li{--lh:1.6;padding:8px calc(32px + 1.6em) 8px 16px}
+.slide.tight .bd ol li,.slide.rtl.tight .bd ol li{--pt:3px;--lh:1.3;padding-top:3px;padding-bottom:3px;margin:4px 0;line-height:1.3}
+.slide .bd ol li::before{content:attr(data-n);position:absolute;left:16px;top:calc(var(--pt) + .6098em * var(--lh) - .95em);box-sizing:border-box;width:1.9em;height:1.9em;border-radius:50%;background:linear-gradient(135deg,var(--dc),var(--dk));color:#fff;font:700 .82em/1.9em var(--cf),"Segoe UI",Arial,sans-serif;text-align:center;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--gd)}
+.slide.rtl .bd ol li::before{left:auto;right:16px}
+.slide.tight .bd ol li::before{left:12px}.slide.rtl.tight .bd ol li::before{left:auto;right:12px}
+.slide.tight .bd ol li{padding-left:calc(26px + 1.6em)}.slide.rtl.tight .bd ol li{padding-left:10px;padding-right:calc(26px + 1.6em)}
+/* V2.25: empty image placeholder had content-box sizing (+28px) and covered the text cards; keep it the same size as a loaded picture */
+.slide .pic.ph{box-sizing:border-box}
+.slide.pc-r .pic.ph,.slide.pc-l .pic.ph{width:510px}
+.slide.pc-t .pic.ph{height:210px}
 </style></head><body data-tab="edit">
 <div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button></div>
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
@@ -1292,7 +1306,7 @@ function acadUI(){const row=(lab,k,arr,cur)=>`<label>${lab}</label><div class="r
  sz(["h1","Heading 1 size (pt)"],[14,16,18,20],16)+sz(["h2","Heading 2 size (pt)"],[12,13,14,16],14)+sz(["h3","Heading 3 size (pt)"],[11,12,13,14],12)+`</div>`}
 function applyCol(){const c=S.color||"#4B3869",m=c.match(/\w\w/g).map(x=>parseInt(x,16)),r=document.documentElement.style;document.documentElement.classList.toggle("no-report-line",S.lineOn===false);r.setProperty("--gd",S.lineColor||"#b8923a");{const g=(S.lineColor||"#b8923a").match(/\w\w/g).map(x=>parseInt(x,16));r.setProperty("--gl","#"+g.map(v=>Math.round(v+(255-v)*.45).toString(16).padStart(2,"0")).join(""))}r.setProperty("--dc",c);const fo=S.font?`"${S.font}"`:null;const rt=S.dir=="rtl";r.setProperty("--ff",fo||(rt?'"Noto Naskh Arabic"':'"Times New Roman"'));r.setProperty("--cf",fo||(rt?'"Noto Naskh Arabic"':"Calibri,Carlito,Arial,sans-serif"));r.setProperty("--cz",{s:.85,m:1,l:1.2}[S.cvs||"m"]);r.setProperty("--ls",S.ls||(rt?1.7:1.5));r.setProperty("--ta",S.al||"justify");r.setProperty("--dk","#"+m.map(v=>Math.round(v*.72).toString(16).padStart(2,"0")).join(""))}
 function tocFZ(){if(S.tocfs)return S.tocfs;const c={};S.pages.forEach(g=>{const v=g.fs||12;c[v]=(c[v]||0)+1});let b=12,m=0;for(const k in c){if(c[k]>m||(c[k]==m&&+k>b)){m=c[k];b=+k}}return b}
-function build(t,doc,exp){const SL=!doc;let K=SL?2.75:1;applyCol();const I=S.info;t.innerHTML="";let n=0,cur,zone="f",ct="",cn="",curPg=null;const rt=S.dir=="rtl",L=rt?RLAB[RL()]:{toc:"Table of Contents",by:"Presented by:",sup:"Supervised by:",course:"Course: "};
+function build(t,doc,exp){const SL=!doc;let K=SL?2.75:1;applyCol();const I=S.info;t.innerHTML="";let n=0,cur,zone="f",ct="",cn="",curPg=null,LTK="";const rt=S.dir=="rtl",L=rt?RLAB[RL()]:{toc:"Table of Contents",by:"Presented by:",sup:"Supervised by:",course:"Course: "};
  const np=()=>{const p=document.createElement("div");p.className=(SL?"slide":"page")+(S.tpl=="mod"?" mod":"")+(S.tpl=="cv"?" cvp":"")+(rt?" rtl":"");if(rt)p.lang=RL();t.appendChild(p);return p};
  const picApply=p=>{p.classList.remove("pc-r","pc-l","pc-t");const o=p.querySelector(".pic");if(o)o.remove();
  if(!SL||!curPg)return;const pos=pgPos(curPg);if(pos=="n")return;
@@ -1300,7 +1314,7 @@ function build(t,doc,exp){const SL=!doc;let K=SL?2.75:1;applyCol();const I=S.inf
  if(curPg.pic){d.style.backgroundImage='url("'+curPg.pic+'")';if(curPg.credit)d.innerHTML='<span class="cr">'+e(curPg.credit)+"</span>"}else d.innerHTML=ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>"+(curPg.hint?"<small>"+e(curPg.hint)+"</small>":"");
  if(!exp){const x=document.createElement("button");x.type="button";x.className="pic-x";x.dataset.rm=d.dataset.pg;x.setAttribute("aria-label","Remove image");x.title="Remove image";x.innerHTML=ic("x");d.appendChild(x)}
  if(exp&&!curPg.pic)d.style.visibility="hidden";p.appendChild(d)};
- const hdrH=()=>`<div class="sl-h"${curPg?` data-ed="pg:${S.pages.indexOf(curPg)}"`:""}><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${curPg&&!isRefPg(curPg)||curPg&&curPg.icon?`<span class="sl-i">${ic(iconFor(curPg))}</span>`:""}${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
+ const hdrH=()=>`<div class="sl-h"${curPg?` data-ed="pg:${S.pages.indexOf(curPg)}"`:LTK?` data-ed="lt:${LTK}"`:""}><span class="sl-n">${e(cn)}</span><span class="sl-t">${e(ct)}</span>${curPg&&!isRefPg(curPg)||curPg&&curPg.icon?`<span class="sl-i">${ic(iconFor(curPg))}</span>`:""}${I.course||I.year?`<span class="sl-r">${e(I.course||I.year)}</span>`:""}</div>`;const bp=()=>{const p=np();n++;p.innerHTML=SL?hdrH()+`<div class="bd"></div><div class="ft"><span class="fl">${e([I.uni,I.title].filter(Boolean).join(" · "))}</span><b>${n}</b><i class="pb"></i></div>`:`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;if(SL)picApply(p);const bd=p.querySelector(".bd");bd.style.fontSize=(FZ*K)+"pt";return{p,bd}};
  if(S.tpl=="cv"){buildCV(bp);return}
 const names=(I.students||[]).filter(x=>x&&x.trim());
  np().innerHTML=SL?SLCOVER(I,L,names):`<div class="cv"><div class="ct"><div>${[I.uni,I.col,I.dep].filter(Boolean).map(e).join("<br>")}</div>${S.logo?`<img src="${S.logo}" alt="">`:`<div class="lgph" aria-label="Logo placeholder">${ic("image")}<b>LOGO</b></div>`}</div><div class="cm${I.sub||I.course?"":" ns"}"><h1>${e(I.title||"Seminar Title")}</h1>${I.sub?`<div class="sb">${e(I.sub)}</div>`:""}${I.course?`<div class="sb" style="font-size:calc(13pt*var(--cz,1));margin-top:6px">${L.course+e(I.course)}</div>`:""}</div><div class="cb"><div><b class="r">${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div><b class="r">${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div></div><div class="yr">${e(I.year)}</div></div>`;
@@ -1377,27 +1391,27 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    else els.forEach(x=>w.removeChild(x));
    w.remove()}
   els.forEach(el=>placeEl(el))}
- function listPages(title,rs){if(!rs.length)return;
-  if(!SL){listPages1(title,rs);return}
+ function listPages(title,rs,key){if(!rs.length)return;
+  if(!SL){listPages1(title,rs,key);return}
   const K0=K,n0=n,before=t.lastElementChild,sc=[1,.88,.76,.66,.57,.49,.42,.36];
-  for(let i=0;i<sc.length;i++){K=K0*sc[i];listPages1(title,rs);
+  for(let i=0;i<sc.length;i++){K=K0*sc[i];listPages1(title,rs,key);
    let c=0,x=before?before.nextElementSibling:t.firstElementChild;while(x){c++;x=x.nextElementSibling}
    if(c<=1||i==sc.length-1)break;
    while(before&&before.nextElementSibling)before.nextElementSibling.remove();n=n0;rows.length-=rs.length}
   K=K0}
- function listPages1(title,rs){const lp=[],FLW=SL&&rs[0].cls=="l1",cols=rs.length<=5?rs.length:rs.length<=8?4:5,ag=bd=>{if(FLW){bd.classList.add("fl","c"+cols);bd.style.setProperty("--c",cols)}else if(SL&&rs.length>5)bd.classList.add("ag")};curPg=null;ct=title;cn="";FZ=tocFZ();let tc=bp(),cnt=0;ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
+ function listPages1(title,rs,key){const lp=[],FLW=SL&&rs[0].cls=="l1",cols=rs.length<=5?rs.length:rs.length<=8?4:5,ag=bd=>{if(FLW){bd.classList.add("fl","c"+cols);bd.style.setProperty("--c",cols)}else if(SL&&rs.length>5)bd.classList.add("ag")};curPg=null;LTK=key||"";ct=title;cn="";FZ=tocFZ();let tc=bp(),cnt=0;ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
   const cont=rt?RLAB[RL()].cont:" (continued)";
   rs.forEach(r=>{const d=document.createElement("div");d.className="tr "+r.cls;{const mm=SL&&r.cls=="l1"&&/^(\d+)\.\s+(.+)$/.exec(r.txt);d.innerHTML=mm?`<span class="tn">${e(mm[1])}</span><span class="ti">${ic(iconFor(r.ref&&r.ref.pg))}</span><span class="tl">${e(mm[2])}</span><i></i><span class="pgn">000</span>`:SL&&r.cls=="l1"?`<span class="tn">&#9670;</span><span class="ti">${ic(iconFor(r.ref&&r.ref.pg))}</span><span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`:`<span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`}r.pg=d.querySelector(".pgn");if(SL&&r.ref&&r.ref.pg)d.dataset.ed="ptitle:"+S.pages.indexOf(r.ref.pg);tc.bd.appendChild(d);cnt++;
    if(tc.bd.scrollHeight>tc.bd.clientHeight+1&&cnt>1){tc.bd.removeChild(d);const mv=[d],pv=tc.bd.lastElementChild;
     if(pv&&pv.classList.contains("l1")&&cnt>2){tc.bd.removeChild(pv);mv.unshift(pv)}
     tc=bp();ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<div class="tcn">'+e(title+cont)+"</div>";mv.forEach(x=>tc.bd.appendChild(x));cnt=mv.length}});
   lp.forEach(bd=>{if(!bd.classList.contains("ag"))return;const k=bd.querySelectorAll(".tr").length,r=Math.ceil(k/2);bd.style.gridTemplateRows=(bd.querySelector(".tcn")?"auto ":"")+"repeat("+r+",auto)";bd.style.gridAutoFlow="column"});
-  rows.push(...rs)}
+  LTK="";rows.push(...rs)}
  /* preliminary pages: abstract / acknowledgment, contents, lists */
  FZ=12;O.front.forEach(sec=>{cur=bp();putSec(sec)});
- if(!S.notoc){const rs=[];O.body.forEach(sec=>{rs.push({cls:"l1",txt:(sec.num?sec.num+" ":"")+sec.title,ref:sec});if(!SL)sec.items.forEach(x=>rs.push({cls:"l"+x.lv,txt:(x.num?x.num+" ":"")+x.title,ref:x}))});listPages(L.toc,rs)}
- if(S.lof)listPages(LL.lof,caps.filter(c=>c.k=="f").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})));
- if(S.lot)listPages(LL.lot,caps.filter(c=>c.k=="t").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})));
+ if(!S.notoc){const rs=[];O.body.forEach(sec=>{rs.push({cls:"l1",txt:(sec.num?sec.num+" ":"")+sec.title,ref:sec});if(!SL)sec.items.forEach(x=>rs.push({cls:"l"+x.lv,txt:(x.num?x.num+" ":"")+x.title,ref:x}))});listPages((S.lt&&S.lt.toc)||L.toc,rs,"toc")}
+ if(S.lof)listPages((S.lt&&S.lt.lof)||LL.lof,caps.filter(c=>c.k=="f").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})),"lof");
+ if(S.lot)listPages((S.lt&&S.lt.lot)||LL.lot,caps.filter(c=>c.k=="t").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})),"lot");
  /* main body: continuous flow */
  zone="b";FZ=12;if(O.body.length)cur=bp();
  O.body.forEach(putSec);
@@ -1407,6 +1421,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  const sl=[...t.querySelectorAll(".page,.slide")],tot=sl.filter(p=>p.querySelector(".ft")).length;sl.forEach((p,ix)=>{const f=p.querySelector(".ft");if(!f)return;const v=!ro?++ai:(p.dataset.z=="f"?rom(++fi):++bi2),b=f.querySelector("b");if(b)b.textContent=SL?v+" / "+tot:v;else f.textContent=v;const pb=f.querySelector(".pb");if(pb)pb.style.width=((ix+1)/sl.length*100)+"%"});
  const pn=el=>{const p=el&&el.closest&&el.closest(".page,.slide"),f=p&&p.querySelector(".ft");return f?(f.querySelector("b")||f).textContent.split(" / ")[0]:""};
  rows.forEach(r=>{r.pg.textContent=pn(r.ref.el);if(!r.pg.textContent)console.warn("TOC entry without page:",r.txt)});
+ if(SL)try{numberLists(t)}catch(x){console.warn("list numbering skipped",x)}
  try{tameJustify(t)}catch(x){console.warn("justify smoothing skipped",x)}
  t.querySelectorAll(".page .bd").forEach(b=>{if(b.scrollHeight>b.clientHeight+1)console.warn("page overflow")})}
 function SLCOVER(I,L,names){return `<div class="ts"><div class="tc"><div class="t1"><div class="inst" data-ed="info:uni,col,dep"><b>${e(I.uni||"")}</b><span>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</span></div>${S.logo?`<div class="lgc"><img src="${S.logo}" alt=""></div>`:`<div class="lgc ph">${ic("image")}<span>${S.dir=="rtl"?(RL()=="ar"?"الشعار":"لۆگۆ"):"LOGO"}</span></div>`}</div><div class="t2" data-ed="info:title,sub,course">${I.course?`<div class="kick">${e(I.course)}</div>`:""}<h1>${e(I.title||"Seminar Title")}</h1><span class="rule"></span>${I.sub?`<div class="sub">${e(I.sub)}</div>`:""}</div><div class="t3"><div data-ed="stu"><b>${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div data-ed="stu"><b>${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div><div class="yr" data-ed="info:year">${e(I.year||"")}</div></div></div></div>`}
@@ -1458,7 +1473,11 @@ async function autoImagesBg(){if(_auto||!S.pages.some(g=>(g.hint||g.picUrl)&&!g.
 async function runAuto(b){const sp=b.querySelector("span"),o=sp.textContent;b.disabled=true;
  try{const[n,t]=await autoImages(i=>{sp.textContent=tr("Finding images…")+" "+i});toast(t?(n?tr("Images added")+": "+n+"/"+t:tr("No images found. Tap a placeholder to add one.")):tr("No image suggestions in this seminar"),5000)}catch(x){toast(tr("Could not reach the image service"),5000)}
  b.disabled=false;sp.textContent=o;changed(true)}
-function fitFlow(t){const els=[...t.querySelectorAll(".slide .bd.fl .tr .tl")];if(!els.length)return;els.forEach(el=>{el.style.fontSize=""});let min=0;els.forEach(el=>{let px=parseFloat(getComputedStyle(el).fontSize)||16;const start=px;while(el.scrollWidth>el.clientWidth+1&&px>start*.5){px-=1;el.style.fontSize=px+"px"}if(!min||px<min)min=px});els.forEach(el=>{el.style.fontSize=min+"px"})}
+function numberLists(t){t.querySelectorAll(".slide .bd ol").forEach(ol=>{let n=parseInt(ol.getAttribute("start"),10)||1;[...ol.children].forEach(li=>{if(li.tagName=="LI")li.dataset.n=n++})})}
+function fitFlow(t){const els=[...t.querySelectorAll(".slide .bd.fl .tr .tl")];if(!els.length)return;els.forEach(el=>{el.style.fontSize=""});
+ /* V2.23: measure the real text width with a Range. scrollWidth misses text that spills to the LEFT in RTL (Kurdish/Arabic), so long words were cut off. */
+ const rg=document.createRange(),wide=el=>{const sc=el.offsetWidth?el.getBoundingClientRect().width/el.offsetWidth:1;let m=0;rg.selectNodeContents(el);[...rg.getClientRects()].forEach(r=>{if(r.width>m)m=r.width});return Math.max(el.scrollWidth,m/sc)>el.clientWidth+1};
+ let min=0;els.forEach(el=>{let px=parseFloat(getComputedStyle(el).fontSize)||16;const start=px;while(wide(el)&&px>start*.4){px-=1;el.style.fontSize=px+"px"}if(!min||px<min)min=px});els.forEach(el=>{el.style.fontSize=min+"px"})}
 function fitCover(tc){const h=tc.querySelector("h1"),sb=tc.querySelector(".sub"),is=tc.querySelector(".inst span");if(is){let q=31;is.style.fontSize=q+"px";while(is.scrollWidth>is.clientWidth+1&&q>18){q-=1;is.style.fontSize=q+"px"}}if(!h)return;const ov=()=>tc.scrollHeight>tc.clientHeight+1;let f=78;while(ov()&&f>34){f-=3;h.style.fontSize=f+"px"}let g=41;while(sb&&ov()&&g>22){g-=2;sb.style.fontSize=g+"px"}}
 function SLEND(I,names,rt){const ar=RL()=="ar",T=!rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"];return `<div class="ts ts2"><div class="tc ce"><div class="ce1" data-ed="info:uni,col,dep">${e(I.uni||"")}<br><small>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</small></div><div><h1>${T[0]}</h1><span class="rule"></span><div class="sub">${T[1]}</div></div><div class="ce3" data-ed="stu">${e(names.join(" · "))}${I.sup?"<br><small>"+e(I.sup)+"</small>":""}</div></div></div>`}
 function tameJustify(t){
@@ -1482,7 +1501,7 @@ const IMC={};function imgPend(){const p=[];S.pages.forEach(g=>g.blocks.forEach(b
 const FL={},SAMP="ابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆهەیێ";
 function fontLoad(){const f=S.font||(S.dir=="rtl"?"Noto Naskh Arabic":"");if(!f||FL[f]||!document.fonts)return Promise.resolve(false);
  return Promise.all([400,700].map(w=>document.fonts.load(w+' 16px "'+f+'"',SAMP))).then(()=>{FL[f]=1;return true}).catch(()=>{FL[f]=1;return false})}
-function addWM(root){root.querySelectorAll(".slide").forEach(sl=>{if(sl.querySelector(":scope>.wm"))return;const w=document.createElement("div");w.className="wm";w.setAttribute("aria-hidden","true");w.innerHTML="<span>CopyRight DevMuhamad.com</span><span>CopyRight DevMuhamad.com</span>";sl.appendChild(w)})}
+function addWM(root){root.querySelectorAll(".slide").forEach(sl=>{if(sl.querySelector(":scope>.wm"))return;const w=document.createElement("div");w.className="wm";w.setAttribute("aria-hidden","true");w.innerHTML="<div><b>CopyRight DevMuhamad.com</b><i>ئەم watermark ـە لە دابەزاندن لادەدرێت</i></div>";sl.appendChild(w)})}
 function fit(){const d=$("doc"),w=$("pv").clientWidth-20,s=Math.min(1,w/1280);d.style.cssText=`width:1280px;transform:scale(${s});transform-origin:top left;margin-left:${Math.max(0,(w-1280*s)/2)}px`;build(d);addWM(d);d.style.marginBottom=(-d.offsetHeight*(1-s))+"px";fontLoad().then(ch=>{if(ch)fit()});imgPend().then(n=>{if(n)fit()})}
 function rp(){if($("pv").offsetParent===null)return;clearTimeout(rp.t);rp.t=setTimeout(fit,200)}
 /* ---------- tabs, print, pdf ---------- */
@@ -1662,7 +1681,7 @@ async function makeDocx(pgn){
 
 /* html2canvas draws native list markers on the wrong side in RTL pages; replace them with explicit markers for PDF export */
 function fixRtlMarkers(root){
- root.querySelectorAll(".page.rtl ul,.page.rtl ol,.slide.rtl ol").forEach(l=>{
+ root.querySelectorAll(".page.rtl ul,.page.rtl ol").forEach(l=>{
   const pad=Math.round(parseFloat(getComputedStyle(l).paddingRight))||24,ord=l.tagName=="OL";
   let n=(parseInt(l.getAttribute("start"),10)||1)-1;
   l.style.listStyle="none";
@@ -1960,8 +1979,10 @@ function sBlk(i,k,isNew){const g=S.pages[i],b=g&&g.blocks[k];if(!b)return;const 
    else{b.text=String(v.text||"").replace(/\s+$/,"");if(b.t=="tbl")b.cap=(v.cap||"").trim();else{if(dd.lt)b.t=dd.lt;if(dd.ta)b.ta=dd.ta;else delete b.ta}}
    if(b.t=="img"?!b.src&&!String(b.note).trim():!String(b.text).trim()){const x=g.blocks.indexOf(b);if(x>=0)g.blocks.splice(x,1)}}})}
 function sTitle(i){const g=S.pages[i];if(!g)return;show("Section title",row("Section title",inp("title",g.title)),{g,done(){const v=val();g.title=(v.title||"").trim()||g.title}})}
+function sLT(k){const D=S.dir=="rtl"?RLAB[RL()]:{toc:"Table of Contents",lof:"List of Figures",lot:"List of Tables"},cur=(S.lt&&S.lt[k])||D[k]||"";
+ show(k=="toc"?"Table of Contents":"Section title",row("Section title",inp("title",cur)),{done(){const v=(val().title||"").trim();S.lt=S.lt||{};if(v&&v!==D[k])S.lt[k]=v;else delete S.lt[k]}})}
 function open(id){const p=String(id).split(":");
- if(p[0]=="info")sInfo(p[1]);else if(p[0]=="stu")sStu();else if(p[0]=="ref")sRef(p.slice(1).join(":"));else if(p[0]=="pic")sPic(+p[1]);else if(p[0]=="pg")sPg(+p[1]);else if(p[0]=="ptitle")sTitle(+p[1]);else if(p[0]=="b")sBlk(+p[1],+p[2])}
+ if(p[0]=="info")sInfo(p[1]);else if(p[0]=="stu")sStu();else if(p[0]=="ref")sRef(p.slice(1).join(":"));else if(p[0]=="pic")sPic(+p[1]);else if(p[0]=="pg")sPg(+p[1]);else if(p[0]=="ptitle")sTitle(+p[1]);else if(p[0]=="lt")sLT(p[1]);else if(p[0]=="b")sBlk(+p[1],+p[2])}
 window.LV={open};
 /* --- actions inside the sheet --- */
 ov.addEventListener("click",ev=>{const t=ev.target;
