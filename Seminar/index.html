@@ -465,7 +465,8 @@ html[dir="rtl"] .hv-tx{text-align:right}
 .slide .bd.fl .tr .ti .ic{width:100%;height:100%;stroke-width:1.6}
 .slide .bd.fl .tr .tl{margin-top:.4em;font-size:1em}
 .slide .bd.fl .tr,.slide .bd.fl .tr.l1{padding:1.7em .55em 1em;min-height:7em}
-.slide .bd.fl .tr:last-of-type::after,.slide .bd.fl.c2 .tr:nth-of-type(2n)::after,.slide .bd.fl.c3 .tr:nth-of-type(3n)::after,.slide .bd.fl.c4 .tr:nth-of-type(4n)::after,.slide .bd.fl.c5 .tr:nth-of-type(5n)::after{display:none}
+.slide .bd.fl.dn .tr,.slide .bd.fl.dn .tr.l1{padding:1.3em .3em .65em;min-height:0}.slide .bd.fl.dn .tr .ti{width:1.9em;height:1.9em;margin-top:.15em}.slide .bd.fl.dn .tr .tl{margin-top:.25em;line-height:1.18}
+.slide .bd.fl .tr:last-of-type::after,.slide .bd.fl.c2 .tr:nth-of-type(2n)::after,.slide .bd.fl.c3 .tr:nth-of-type(3n)::after,.slide .bd.fl.c4 .tr:nth-of-type(4n)::after,.slide .bd.fl.c5 .tr:nth-of-type(5n)::after,.slide .bd.fl.c6 .tr:nth-of-type(6n)::after,.slide .bd.fl.c7 .tr:nth-of-type(7n)::after{display:none}
 
 
 .slide .ft{left:0;right:0;bottom:0;height:68px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:0 60px;font-size:25px;color:#6C6280;background:#fff;border-top:1px solid #e3dccb;text-align:left}
@@ -1013,13 +1014,16 @@ function openHelp(){closeHelp();document.documentElement.classList.add("hw-lock"
  o.querySelector(".hw-go").onclick=()=>{closeHelp();openUR()};
  document.body.appendChild(o);document.addEventListener("keydown",helpKey);o.querySelector(".hw-go").focus()}
 /* ---------- AI prompt + AI-text cleaner ---------- */
-const AIS={t:"",p:"auto",l:null};
+const AIS={t:"",p:"auto",l:null,d:""};try{AIS.d=(localStorage.getItem("arb_dept")||"").slice(0,60)}catch(x){}
+function deptName(raw){return String(raw||"").replace(/\s+/g," ").trim().slice(0,60).replace(/^(?:department|dept\.?)\s+of\s+/i,"").replace(/\s*(?:department|dept\.?|dep\.?)$/i,"").replace(/^(?:بەشی|قسم)\s+/,"").trim()}
+function deptLabel(raw,cur){const n=deptName(raw);if(!n)return"";const rest=String(cur||"").split("|").slice(1).join("|").trim();const base=/[\u0600-\u06FF]/.test(n)?String(raw).replace(/\s+/g," ").trim():n+" Department";return base+(rest?" | "+rest:"")}
 const AISEC={
  en:{abs:"Abstract",intro:"Introduction",obj:"Objectives",lit:"Background and Literature Review",main:"Main Discussion",app:"Applications and Case Study",chal:"Advantages and Challenges",con:"Conclusion",rec:"Recommendations",ref:"References",kw:"Keywords"},
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"باکگراوند و پێداچوونەوەی ئەدەبیات",main:"گفتوگۆی سەرەکی",app:"بەکارهێنانەکان و نموونەی دۆخ",chal:"سوود و تەحەدیاتەکان",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان",kw:"وشە سەرەکییەکان"},
  ar:{abs:"الملخص",intro:"المقدمة",obj:"الأهداف",lit:"الخلفية ومراجعة الأدبيات",main:"المناقشة الرئيسية",app:"التطبيقات ودراسة حالة",chal:"المزايا والتحديات",con:"الخاتمة",rec:"التوصيات",ref:"المراجع",kw:"الكلمات المفتاحية"}};
-function aiPrompt(topic,slides,lang){
+function aiPrompt(topic,slides,lang,dept){
  const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+slides>0),T=auto?0:Math.min(40,Math.max(6,Math.round(+slides))),S=T;
+ const dn=deptName(dept),deptBlk=dn?"\nDEPARTMENT PERSPECTIVE:\nThe student studies in the "+dn+" department. Prepare the seminar from the viewpoint of the "+dn+" field: choose the angle, terminology, examples and applications that matter most to "+dn+" students and professionals, while the main subject stays \""+(topic||"").trim()+"\". Do not put the department name in the seminar title and do not turn the seminar into a description of the department.\n":"";
  let order,cnt,tot;
  if(auto){order=[N.intro,N.obj,N.lit,"3 to 5 main-topic slides (a specific title chosen by you for each)",N.app,N.chal,N.con,N.rec,"References"].join(" > ");cnt="Choose the best number of content sections yourself: between 7 and 11 including References. Each section becomes ONE slide.";tot="Total presentation: the content sections plus 3 slides added automatically."}
  else{const r=Math.max(1,S-3),pri=["m","obj","lit","app","chal","rec"],has=pri.slice(0,Math.min(r,6)),xm=Math.max(0,r-6),mk=(has.includes("m")?1:0)+xm,a=[N.intro];
@@ -1029,7 +1033,7 @@ function aiPrompt(topic,slides,lang){
   order=a.map((x,i)=>(i+1)+". "+x).join("\n");cnt="Write EXACTLY "+a.length+" content sections: no more, no fewer. Do not merge, skip, split or add sections. Each section becomes ONE slide. Before you answer, count the ## headings (the numbered ones plus References); the total must be exactly "+a.length+". If it is not, fix it first.";tot="You write EXACTLY "+a.length+" slides (the last one is References). My app adds 3 extra slides by itself (title, contents, thank-you), so do NOT write them and do NOT count them. Never change this number."}
  const langLine=lang=="ckb"?"Write the entire presentation in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all slide titles.":lang=="ar"?"Write the entire presentation in professional academic Modern Standard Arabic, including all slide titles.":"Write the entire presentation in simple, easy-to-understand English for students whose first language is not English. Use short sentences and common everyday words. Explain every technical term in plain words. Avoid complex vocabulary, idioms and long sentences, but keep the content accurate and academic.";
  return `Act as a university lecturer helping an undergraduate student prepare a professional academic seminar presentation about "${t}".
-
+${deptBlk}
 PRESENTATION STRUCTURE:
 ${cnt}
 The title slide, agenda slide and thank-you slide are added automatically by my app.
@@ -1144,7 +1148,7 @@ async function runGen(raw){
   for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"||(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;if(SCR)S.pages.forEach(g=>{if(!isRefPg(g)&&(g.hint||g.picUrl||g.pic))g.pos="l"});
+  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}if(SCR)S.pages.forEach(g=>{if(!isRefPg(g)&&(g.hint||g.picUrl||g.pic))g.pos="l"});
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
   /* 5 formatting check */
@@ -1169,6 +1173,7 @@ function openUR(){if($("ur"))return;
 <main class="ur-main"><div class="ur-wrap">
 <details class="ur-guide ur-ai" id="aiBox" open><summary><b>AI prompt helper</b><small>This only prepares a prompt for ChatGPT or Gemini. It does not write the seminar.</small></summary>
 <input id="aiT" type="text" dir="auto" placeholder="Seminar Title:" aria-label="Seminar Title" autocomplete="off">
+<input id="aiD" type="text" dir="auto" placeholder="Department: (e.g. IT)" aria-label="Department" autocomplete="off" style="margin-top:8px">
 <div class="ai-line"><span>Number of slides</span><input id="aiN" type="number" inputmode="numeric" min="5" max="40" placeholder="Auto" style="width:150px;height:44px;box-sizing:border-box;text-align:center;border:2px solid var(--bd);border-radius:22px;background:var(--card);font-weight:700;color:var(--ac)"></div>
 <div class="ai-line"><span>Seminar language</span><div class="ai-row" id="aiL"><button type="button" data-v="en">English</button><button type="button" data-v="ckb">کوردی</button><button type="button" data-v="ar">العربية</button></div></div>
 <button type="button" class="pri" id="aiC">${ic("copy")}<span>Copy AI prompt</span></button><p class="ur-status" id="aiS" role="status" aria-live="polite"></p>
@@ -1185,8 +1190,9 @@ function openUR(){if($("ur"))return;
  ta.value=URD;upd();
  if(AIS.l==null)AIS.l=S.dir=="rtl"?(S.rlang=="ar"?"ar":"ckb"):"en";
  const aT=$("aiT"),aV=$("aiV"),aS=$("aiS");
- const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
+ const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l,AIS.d);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
  aT.value=AIS.t;aT.oninput=()=>{AIS.t=aT.value;aiUpd()};
+ const aD=$("aiD");aD.value=AIS.d;aD.oninput=()=>{AIS.d=aD.value.slice(0,60);try{localStorage.setItem("arb_dept",AIS.d)}catch(x){}aiUpd()};
  $("aiN").oninput=()=>{const v=Math.round(+$("aiN").value);AIS.p=v>0?Math.min(40,Math.max(5,v)):"auto";aiUpd()};
  $("aiL").onclick=ev=>{const b=ev.target.closest("button");if(b){AIS.l=b.dataset.v;aiUpd()}};
  $("aiC").onclick=async()=>{if(!AIS.t.trim()){aS.style.color="#b00020";aS.textContent="Write the topic first.";aT.focus();return}aiUpd();
@@ -1414,7 +1420,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    if(c<=1||i==sc.length-1)break;
    while(before&&before.nextElementSibling)before.nextElementSibling.remove();n=n0;rows.length-=rs.length}
   K=K0}
- function listPages1(title,rs,key){const lp=[],FLW=SL&&rs[0].cls=="l1",cols=rs.length<=5?rs.length:rs.length<=8?4:5,ag=bd=>{if(FLW){bd.classList.add("fl","c"+cols);bd.style.setProperty("--c",cols)}else if(SL&&rs.length>5)bd.classList.add("ag")};curPg=null;LTK=key||"";ct=title;cn="";FZ=tocFZ();let tc=bp(),cnt=0;ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
+ function listPages1(title,rs,key){const lp=[],FLW=SL&&rs[0].cls=="l1",cols=rs.length<=5?rs.length:rs.length<=8?4:rs.length<=10?5:rs.length<=18?6:7,ag=bd=>{if(FLW){bd.classList.add("fl","c"+cols);bd.style.setProperty("--c",cols);if(rs.length>10)bd.classList.add("dn");bd.style.rowGap=Math.max(14,Math.round(56*K/2.75))+"px";bd.style.paddingTop=Math.max(10,Math.round(26*K/2.75))+"px"}else if(SL&&rs.length>5)bd.classList.add("ag")};curPg=null;LTK=key||"";ct=title;cn="";FZ=tocFZ();let tc=bp(),cnt=0;ag(tc.bd);lp.push(tc.bd);tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
   const cont=rt?RLAB[RL()].cont:" (continued)";
   rs.forEach(r=>{const d=document.createElement("div");d.className="tr "+r.cls;{const mm=SL&&r.cls=="l1"&&/^(\d+)\.\s+(.+)$/.exec(r.txt);d.innerHTML=mm?`<span class="tn">${e(mm[1])}</span><span class="ti">${ic(iconFor(r.ref&&r.ref.pg))}</span><span class="tl">${e(mm[2])}</span><i></i><span class="pgn">000</span>`:SL&&r.cls=="l1"?`<span class="tn">&#9670;</span><span class="ti">${ic(iconFor(r.ref&&r.ref.pg))}</span><span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`:`<span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`}r.pg=d.querySelector(".pgn");if(SL&&r.ref&&r.ref.pg)d.dataset.ed="ptitle:"+S.pages.indexOf(r.ref.pg);tc.bd.appendChild(d);cnt++;
    if(tc.bd.scrollHeight>tc.bd.clientHeight+1&&cnt>1){tc.bd.removeChild(d);const mv=[d],pv=tc.bd.lastElementChild;
@@ -1517,10 +1523,10 @@ const FL={},SAMP="ابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆهەی
 function fontLoad(){const f=S.font||(S.dir=="rtl"?"Noto Naskh Arabic":"");if(!f||FL[f]||!document.fonts)return Promise.resolve(false);
  return Promise.all([400,700].map(w=>document.fonts.load(w+' 16px "'+f+'"',SAMP))).then(()=>{FL[f]=1;return true}).catch(()=>{FL[f]=1;return false})}
 function addWM(root){root.querySelectorAll(".slide").forEach(sl=>{if(sl.querySelector(":scope>.wm"))return;const w=document.createElement("div");w.className="wm";w.setAttribute("aria-hidden","true");w.innerHTML="<div><b>CopyRight DevMuhamad.com</b><i>ئەم watermark ـە لە دابەزاندن لادەدرێت</i></div>";sl.appendChild(w)})}
-function fit(){const d=$("doc"),w=$("pv").clientWidth-20,s=Math.min(1,w/1280);d.style.cssText=`width:1280px;transform:scale(${s});transform-origin:top left;margin-left:${Math.max(0,(w-1280*s)/2)}px`;build(d);addWM(d);d.style.marginBottom=(-d.offsetHeight*(1-s))+"px";fontLoad().then(ch=>{if(ch)fit()});imgPend().then(n=>{if(n)fit()})}
+function fit(reset){const d=$("doc"),w=$("pv").clientWidth-20,s=Math.min(1,w/1280),de=document.documentElement,keep=!reset&&$("pv").offsetParent!==null&&d.childNodes.length>0,y0=window.scrollY,h0=de.scrollHeight,ps=d._fs,hold=keep?d.offsetHeight:0;d.style.cssText=`width:1280px;transform:scale(${s});transform-origin:top left;margin-left:${Math.max(0,(w-1280*s)/2)}px`;if(hold)d.style.minHeight=hold+"px";build(d);addWM(d);d.style.minHeight="";d.style.marginBottom=(-d.offsetHeight*(1-s))+"px";d._fs=s;if(keep){let ny=y0;if(ps&&Math.abs(ps-s)>.002&&h0>0)ny=y0*de.scrollHeight/h0;window.scrollTo({top:ny,left:window.scrollX,behavior:"instant"})}fontLoad().then(ch=>{if(ch)fit()});imgPend().then(n=>{if(n)fit()})}
 function rp(){if($("pv").offsetParent===null)return;clearTimeout(rp.t);rp.t=setTimeout(fit,200)}
 /* ---------- tabs, print, pdf ---------- */
-function tab(t){document.body.dataset.tab=t;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t));if(t=="pv")fit()}
+function tab(t){document.body.dataset.tab=t;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t));if(t=="pv")fit(true)}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>tab(b.dataset.t));
 window.addEventListener("resize",rp);
 $("doc").addEventListener("click",ev=>{if(ev.target.closest(".citation"))ev.preventDefault()});
