@@ -548,7 +548,7 @@ function parseReport(raw){
   if(!t||/^(-{3,}|\*{3,}|_{3,}|={3,})$/.test(t)||/^```/.test(t)){if(!t&&list&&keepList(i,list))continue;flush();continue}
   t=t.replace(/^>\s?/,"");
    {const ih=t.match(/^(?:[-*]\s*)?(?:\*\*)?(?:image|picture|visual|img|وێنە|صورة)(?:\s+(?:idea|suggestion|keywords?|hint|url|link|source))?(?:\*\*)?\s*[:：]\s*(.+)$/i);
-    if(ih){if(cur&&!skip&&kindOf(cur)!="ref"){flush();const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/);addImg(um?um[0]:"",um?"":clean(ih[1]).slice(0,120))}continue}}
+    if(ih){if(cur&&!skip&&kindOf(cur)!="ref"){flush();const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/),kw=clean(ih[1].replace(/https?:\/\/[^\s)<>"'\]]+/g," ")).replace(/^[\s|•\-–—:;,]+|[\s|•\-–—:;,]+$/g,"").replace(/\s+/g," ");addImg(um?um[0]:"",kw.slice(0,120))}continue}}
    {const iu=t.match(/https?:\/\/[^\s)<>"'\]]*(?:\.(?:jpe?g|png|gif|webp|avif)(?:[?#][^\s)<>"'\]]*)?|upload\.wikimedia\.org[^\s)<>"'\]]*|images\.unsplash\.com[^\s)<>"'\]]*|images\.pexels\.com[^\s)<>"'\]]*|cdn\.pixabay\.com[^\s)<>"'\]]*)/i);
     if(iu&&cur&&!skip&&kindOf(cur)!="ref"&&t.length<iu[0].length+90){flush();addImg(iu[0],"");continue}}
   // A contents heading must not cause the rest of a plain-text report to be discarded.
@@ -698,7 +698,11 @@ const AISEC={
  en:{abs:"Abstract",intro:"Introduction",obj:"Objectives",lit:"Literature Review",met:"Methodology",main:"Main Content",res:"Results",dis:"Discussion",con:"Conclusion",rec:"Recommendations",ref:"References"},
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"پێداچوونەوەی ئەدەبیات",met:"میتۆدۆلۆجی",main:"ناوەڕۆکی سەرەکی",res:"ئەنجامەکان",dis:"گفتوگۆ",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان"},
  ar:{abs:"الملخص",intro:"المقدمة",obj:"الأهداف",lit:"مراجعة الأدبيات",met:"المنهجية",main:"المحتوى الرئيسي",res:"النتائج",dis:"المناقشة",con:"الخاتمة",rec:"التوصيات",ref:"المراجع"}};
-function aiPrompt(topic,pages,lang){
+const AI_ANGLES=["a practical, application-first angle: explain the topic through how it is actually used and built","a how-it-works angle: follow the mechanism or process step by step, from input to output","a comparison angle: compare the topic with 2 or 3 real alternatives and justify when each is the better choice","a design-and-implementation angle: describe how a student or engineer would plan, build and test a real project","a problems-and-limitations angle: focus on challenges, failure points, security, safety or ethical issues and how they are handled","a history-and-evolution angle: show how the topic developed, which versions or generations exist, and what changed each time","a future-trends angle: focus on current industry adoption, new standards and where the field is heading","a case-study angle: build the report around ONE specific real-world example and analyse it in depth","a concept-first teaching angle: start from first principles with simple analogies, then move to technical detail","an evaluation angle: focus on performance, measurement, cost, energy or efficiency, with realistic numbers","a local-context angle: connect the topic to Iraq and the Kurdistan Region (education, industry, infrastructure) wherever it is genuinely relevant","a systems angle: show how the topic connects with the other parts of the larger system it belongs to"];
+const AI_DOMAINS=["smart agriculture and irrigation","healthcare and patient monitoring","education and laboratories","smart homes and buildings","energy, solar power and smart grids","industry and factory automation","environment and air or water quality monitoring","transport, vehicles and logistics","security and access control","retail, warehouses and supply chains","smart cities and public services","research and student projects"];
+const AI_SIGS=["one short, concrete worked example with real values","one step-by-step walkthrough of a complete process","one clear comparison table of 3 or 4 real options (only if the report has no other table in that section)","a short list of common mistakes and how to avoid them","a short real-world mini case study with a measurable result","a short checklist the reader could follow","one carefully explained diagram-style description of how the parts connect"];
+const AI_IMGPLAN=["real photographs of the actual subject, taken in a lab or workshop setting","clear technical diagrams or schematics that show how the parts connect","close-up photographs of key components or details","photographs of the subject being used in real applications","a mix: one overview photograph, one diagram, and the rest application photographs"];
+function aiPrompt(topic,pages,lang,seed){
   const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+pages>0),P=auto?0:Math.min(40,Math.max(1,Math.round(+pages)));
   let secs,lenLine,guide,imgN;
   if(auto){
@@ -714,40 +718,55 @@ function aiPrompt(topic,pages,lang){
    lenLine="Length: about "+P+" A4 page"+(P>1?"s":"")+" (around "+W+" words in total, references excluded).";
    guide=(keys.includes("abs")?"the abstract about 150 words; ":"")+"each other section about "+per+" words, except the "+N.intro+" which must be SHORT: only 90 to 130 words in 1 or 2 short paragraphs (references excluded).";
    imgN="exactly "+Math.max(1,Math.min(12,Math.round(P/2)))}
+  const sd=(seed==null?Math.floor(Math.random()*4294967296):Math.floor(seed*4294967296))>>>0;let _s=sd;
+  const rnd=()=>{_s=(_s+0x6D2B79F5)>>>0;let z=_s;z=Math.imul(z^z>>>15,z|1);z^=z+Math.imul(z^z>>>7,z|61);return((z^z>>>14)>>>0)/4294967296};
+  const pick=(a,n)=>{const b=a.slice(),o=[];while(o.length<n&&b.length)o.push(b.splice(Math.floor(rnd()*b.length),1)[0]);return o};
+  const vcode=sd.toString(36).toUpperCase().padStart(7,"0").slice(-7),[vA,vB]=pick(AI_ANGLES,2),[vD]=pick(AI_DOMAINS,1),[vS]=pick(AI_SIGS,1),[vI]=pick(AI_IMGPLAN,1);
   const order=secs.join(" > ");
   const langLine=lang=="ckb"?"Write the entire report in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all section titles. Use the Kurdish section titles listed above.":lang=="ar"?"Write the entire report in professional Modern Standard Arabic, including all section titles. Use the Arabic section titles listed above.":"Write the entire report in formal academic English.";
-  return `Act as a university lecturer helping an undergraduate student write a professional academic report about "${t}".
+  return `Act as an experienced university lecturer and subject expert helping an undergraduate student write a professional, original academic report about "${t}". The report will be graded by a lecturer, so depth, accuracy, clear explanation and originality matter more than length.
 
 REPORT LENGTH:
 ${lenLine}
 The cover page, table of contents and page numbers (A4 layout) are added automatically by my app.
 
+UNIQUE VERSION (important):
+Many students are asking for a report on the same topic at the same time, and every student must receive a clearly DIFFERENT report: different angle, different examples, different section titles, different wording and different images. Do not write the most common textbook version. Use this variation plan (code ${vcode}):
+- Main angle: ${vA}.
+- Secondary angle: ${vB}.
+- Context for the examples and applications: ${vD} (use it wherever it fits the topic naturally; otherwise use the closest relevant field).
+- Signature element to include once in the main content: ${vS}.
+- Choose your own specific, descriptive section titles; do not use the generic default titles for the main-topic sections.
+- Choose examples, product or model names, numbers and scenarios that are less obvious than the first ones that come to mind, but keep every fact correct.
+
 STRUCTURE (exact Markdown):
-- Line 1 only: # Report title (once; no subtitle, author, date or table of contents).
+- Line 1 only: # Report title (once; specific and academic; no subtitle, author, date or table of contents).
 - Main sections: ## 1. Section title (numbered, maximum 8 words). ${N.abs} and ${N.ref} are NOT numbered: ## ${N.abs} and ## ${N.ref}.
-- Subsections: ### 1.1 Subsection name (only when really needed).
+- Subsections: ### 1.1 Subsection name (use them in the main-topic sections whenever they make the explanation clearer).
 - Sections in this order: ${order}.
 - Length guide: ${guide}
 - Bullet lists with "- ", numbered lists with "1. ", tables with pipes: | Header | Header |. Use at most 2 tables in the whole report.
 
-IMAGE REQUIREMENTS:
-- Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line in exactly this form:
-Image: https://upload.wikimedia.org/.../file-name.jpg
-- Never add an image line to ${N.abs}, ${N.con}, ${N.ref}, or to a section that contains a table.
-- The line must contain ONLY a DIRECT link to a real image file that opens in a browser and ends in .jpg, .jpeg, .png or .webp. Never write keywords, titles, descriptions or any other text on this line.
-- Use your web search or browsing tool to find a suitable image for each place, and check that the link really exists before writing it. Prefer images hosted on upload.wikimedia.org (Wikimedia Commons), images.unsplash.com or images.pexels.com.
-- Never guess, invent or reconstruct a link or a file name from memory. Only write links you actually found and verified.
-- Each image must be professional, high quality, academic, landscape and relevant to that section's content, and all images must be different.
-- My app downloads each link and places the real picture inside the report page, so never write markdown image syntax, image descriptions, captions, source credits or any other link text.
-- Do not ask the student to search Google or upload images manually.
-
-CONTENT QUALITY:
-- Formal academic tone suitable for university students; clear short paragraphs; no filler.
-- Define every technical term clearly.
-- Include concrete facts, figures, dates, standards or real examples instead of vague statements.
+CONTENT QUALITY (explain the topic well):
+- Formal academic tone suitable for university students; clear short paragraphs; no filler and no generic opening phrases such as "in today's digital world".
+- Cover the topic properly: what it is and why it matters, how it works (the real mechanism, architecture or process, step by step), its main parts or types, real applications with named examples, advantages, limitations and risks, and how it compares with alternatives.
+- Explain each idea in plain language first, then give the technical detail. Define every technical term the first time it appears.
+- Include concrete facts instead of vague statements: real model or standard names, specifications, numbers with units, dates, protocols, formulas or typical values. Every fact must be correct; if you are not sure of a number, describe it qualitatively.
+- Every section must say something specific about "${t}". Do not repeat the same point in different sections.
 - The introduction must be SHORT: 1 or 2 short paragraphs, about 90 to 130 words in total (never more than 150 words), covering the background, the importance and the main problem. Keep it short so that the image placed at its end fits on the same page.
-- The conclusion must contain the key findings in 3 to 4 clear points.
-- References: list 4 to 6 real, verifiable sources in APA style, one source per bullet. Never invent sources, authors, publication dates or links.
+- The conclusion must contain the key findings in 3 to 4 clear points that follow from the report, not a copy of the introduction.
+- References: list 4 to 6 real, verifiable sources in APA style, one source per bullet (official documentation, standards, textbooks or journal papers). Never invent sources, authors, publication dates or links.
+
+IMAGE REQUIREMENTS:
+- Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line.
+- Never add an image line to ${N.abs}, ${N.con}, ${N.ref}, or to a section that contains a table.
+- Image plan for this report: ${vI}. All images must be different and each must show something that the section really talks about.
+- Write each image line in exactly this form, with specific ENGLISH search keywords (2 to 5 words, even when the report is not in English) naming the real thing that is visible in the picture, the way a photograph on Wikimedia Commons would be titled:
+Image: wind turbine blade close-up
+- Use concrete nouns, not ideas: write a specific product, component, device, place or diagram name. Never write general words such as "technology", "concept", "network", "innovation" or "future".
+- OPTIONAL: if you can browse the web and have really opened the image, you may add its direct link after the keywords, separated by a vertical bar, like: Image: wind turbine blade close-up | https://upload.wikimedia.org/.../file.jpg . The link must end in .jpg, .jpeg, .png or .webp. Never guess or invent a link; when you are not sure, write the keywords only.
+- My app finds the picture, downloads it and places it inside the report page, so never write markdown image syntax, captions, descriptions, source credits or any other link text.
+- Do not ask the student to search Google or upload images manually.
 
 LANGUAGE:
 ${langLine}
@@ -794,11 +813,25 @@ function detectScript(raw){
   const ku=(t.match(/[ڕڵۆێەڤپچژگکی]/g)||[]).length;
   return ku>=3?"ckb":"ar"}
 function toast(m,ms){let t=$("tst");if(!t){t=document.createElement("div");t.id="tst";t.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#2b2340;color:#fff;padding:10px 18px;border-radius:22px;font:600 14px/1.3 system-ui,sans-serif;z-index:9998;max-width:86vw;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.3)";document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(t._t);if(ms)t._t=setTimeout(()=>{t.hidden=true},ms)}
+const USEDIMG=new Set();
+const shufTop=(a,n)=>{const t=a.slice(0,n);for(let i=t.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[t[i],t[j]]=[t[j],t[i]]}return t.concat(a.slice(n))};
+async function pickImg(cands){
+ for(const c of shufTop(cands.filter(x=>!USEDIMG.has(x.id)),6)){
+  try{const r=await fetch(c.url);if(!r.ok)continue;const bl=await r.blob(),d=await new Promise(res=>shrink(bl,1000,"image/jpeg",res));USEDIMG.add(c.id);return{d}}catch(x){}}
+ return null}
+async function findImgCommons(q){
+ const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=24&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1000";
+ const j=await (await fetch(u)).json(),ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index),c=[];
+ for(const p of ps){const ii=(p.imageinfo||[])[0];if(!ii||!/^image\/(jpeg|png)$/.test(ii.mime)||ii.width<700||ii.width<ii.height)continue;c.push({id:"c"+p.pageid,url:ii.thumburl||ii.url})}
+ return pickImg(c)}
+async function findImgOpenverse(q){
+ const j=await (await fetch("https://api.openverse.org/v1/images/?q="+encodeURIComponent(q)+"&page_size=20&aspect_ratio=wide&mature=false")).json(),c=[];
+ for(const r of (j.results||[])){if(!r.id||(r.width&&r.width<700))continue;c.push({id:"o"+r.id,url:r.thumbnail||("https://api.openverse.org/v1/images/"+r.id+"/thumb/")})}
+ return pickImg(c)}
 async function findImg(q){
- const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=12&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiurlwidth=1000";
- const j=await (await fetch(u)).json(),ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);
- for(const p of ps){const ii=(p.imageinfo||[])[0];if(!ii||!/^image\/(jpeg|png)$/.test(ii.mime)||ii.width<900||ii.width<ii.height)continue;
-  try{const bl=await (await fetch(ii.thumburl||ii.url)).blob(),d=await new Promise(r=>shrink(bl,1000,"image/jpeg",r));return{d}}catch(x){}}
+ const w=String(q||"").split(/\s+/).filter(Boolean),tries=[w.join(" ")];if(w.length>3)tries.push(w.slice(0,3).join(" "));if(w.length>2)tries.push(w.slice(0,2).join(" "));
+ for(const t of tries){try{const r=await findImgCommons(t);if(r)return r}catch(x){}}
+ for(const t of tries){try{const r=await findImgOpenverse(t);if(r)return r}catch(x){}}
  return null}
 async function urlToData(u){
  const viaImg=src=>new Promise((res,rej)=>{const im=new Image(),to=setTimeout(()=>rej(0),15000);im.crossOrigin="anonymous";im.onerror=()=>{clearTimeout(to);rej(0)};im.onload=()=>{clearTimeout(to);try{if(im.width<200||im.height<120)return rej(0);const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.82))}catch(e){rej(e)}};im.src=src});
@@ -808,10 +841,10 @@ async function urlToData(u){
 const canLoad=u=>new Promise(res=>{const im=new Image(),to=setTimeout(()=>res(false),12000);im.onload=()=>{clearTimeout(to);res(im.width>=100)};im.onerror=()=>{clearTimeout(to);res(false)};im.src=u});
 const rbPend=()=>{const a=[];S.pages.forEach(g=>g.blocks.forEach(b=>{if(b.t=="img"&&!b.src&&(b.url||b.hint))a.push(b)}));return a};
 let _linkFail=0;
-async function autoImages(cb){_linkFail=0;const tg=rbPend();let n=0,i=0;
+async function autoImages(cb){_linkFail=0;USEDIMG.clear();const tg=rbPend();let n=0,i=0;
  for(const b of tg){cb&&cb(++i+"/"+tg.length);try{let r=null;
   if(b.url){const d=await urlToData(b.url);if(d)r=d;else if(await canLoad(b.url))r=b.url;else _linkFail++}
-  if(!r&&b.hint){const h=b.hint,f=(await findImg(h))||(h.split(/\s+/).length>3?await findImg(h.split(/\s+/).slice(0,3).join(" ")):null);if(f)r=f.d}
+  if(!r&&b.hint){const f=await findImg(b.hint);if(f)r=f.d}
   if(r){b.src=r;delete b.url;delete b.hint;n++;save();rp()}}catch(x){}}
  return[n,tg.length]}
 let _auto=false;
@@ -874,11 +907,11 @@ function openUR(){if($("ur"))return;
  ta.value=URD;upd();
  if(AIS.l==null)AIS.l=S.dir=="rtl"?(S.rlang=="ar"?"ar":"ckb"):"en";
  const aT=$("aiT"),aV=$("aiV"),aS=$("aiS");
- const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
+ const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l,AIS.seed);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
  aT.value=AIS.t;aT.oninput=()=>{AIS.t=aT.value;aiUpd()};
  $("aiN").oninput=()=>{const v=Math.round(+$("aiN").value);AIS.p=v>0?Math.min(40,Math.max(1,v)):"auto";aiUpd()};
  $("aiL").onclick=ev=>{const b=ev.target.closest("button");if(b){AIS.l=b.dataset.v;aiUpd()}};
- $("aiC").onclick=async()=>{if(!AIS.t.trim()){aS.style.color="#b00020";aS.textContent="Write the topic first.";aT.focus();return}aiUpd();
+ $("aiC").onclick=async()=>{if(!AIS.t.trim()){aS.style.color="#b00020";aS.textContent="Write the topic first.";aT.focus();return}AIS.seed=Math.random();aiUpd();
   try{await navigator.clipboard.writeText(aV.value);aS.style.color="#1f5c4a";aS.textContent="Prompt copied. Paste it into ChatGPT or Gemini, then copy the answer."}
   catch(x){aV.hidden=false;aV.focus();aV.select();aS.style.color="#b00020";aS.textContent="Could not copy automatically. Select the prompt below and copy it."}};
  if(AIS.p!=="auto")$("aiN").value=AIS.p;
