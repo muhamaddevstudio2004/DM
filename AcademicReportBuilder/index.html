@@ -476,7 +476,7 @@ const ic=n=>`<svg class="ic" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 const FIELDS=[["sup","Supervisor / Doctor"],["uni","University"],["col","College"],["dep","Department"],["year","Academic year"],["course","Course name"],["title","Report main title"],["sub","Report subtitle"]];
 const TYPES={h:"Subtitle",p:"Paragraph",ul:"Bullet list",ol:"Numbered list",tbl:"Table",img:"Image"};
 const HINT={ul:"One item per line",ol:"One item per line",tbl:"Header 1 | Header 2\nCell | Cell",p:"Write or paste text. A new line starts a new paragraph."};
-let S=load();if(!Array.isArray(S.refs))S.refs=[];S.refs.forEach((r,i)=>{if(!r.id)r.id="ref-legacy-"+i});if(!S.citeStyle)S.citeStyle="apa";S.tpl="report";if(S.lineOn===undefined)S.lineOn=false;if(!S.lineColor)S.lineColor="#b8923a";
+let S=load();if(!Array.isArray(S.refs))S.refs=[];S.refs.forEach((r,i)=>{if(!r.id)r.id="ref-legacy-"+i});if(!S.citeStyle)S.citeStyle="apa";S.tpl="report";if(S.lineOn===undefined)S.lineOn=false;if(S.lof===undefined)S.lof=1;if(!S.lineColor)S.lineColor="#b8923a";
 function seed(){return{info:{students:["Student"],sup:"Dr.Muhamad",uni:"Erbil Polytechnic University",col:"Soran Technical College",dep:"IT Department | Morning",year:"2026-2027",course:"",title:"REPORT TITLE",sub:""},logo:"",pages:[
 {title:"Introduction",blocks:[{t:"p",text:"Write the introduction of your report here. Each page of the editor becomes a numbered section with its own title."}]},
 {title:"Purpose and Objectives",blocks:[{t:"p",text:"The purpose of our visit was:"},{t:"ul",text:"to identify the main equipment\nto understand how data travels to the home"}]},
@@ -899,6 +899,7 @@ function openUR(){if($("ur"))return;
 /* ---------- document builder ---------- */
 const allImg=()=>S.pages.flatMap(g=>g.blocks).filter(x=>x.t=="img");
 const dispT=t=>String(t==null?"":t).replace(/^\s*(?:\d+(?:\.\d+)+[.)]?|\d+[.)])\s+/,"").trim();
+const autoCap=(b,t)=>{let h=String(b.hint||"").replace(/[_\-]+/g," ").replace(/\s+/g," ").trim()||String(t||"").trim();return h?h.charAt(0).toUpperCase()+h.slice(1):""};
 const capT=c=>String(c||"").replace(/^\s*(?:figure|fig\.?|table|وێنەی?|خشتەی?|الشكل|شكل|الجدول|جدول)\s*\d+\s*[:.\-–]?\s*/i,"").trim();
 function kindOf(pg){const k=pg.kind;if(k&&k!="auto")return k;const t=dispT(pg.title);
  if(/^(abstract|executive summary|کورتە|پوختە|ملخص)$/i.test(t))return "abs";
@@ -953,12 +954,12 @@ function referenceHTML(r,i){
  const detail=[src?`<em>${e(src)}</em>`:"",vol?`, <em>${e(vol)}</em>`:"",iss?`(${e(iss)})`:"",pages?`, ${e(pages)}`:"",pub?`. ${e(pub)}`:""].filter(Boolean).join("");
  return `${a?e(a)+" ":""}(${e(y)}). ${t?`<em>${e(t)}</em>. `:""}${detail}${detail&&!detail.endsWith(".")?".":""}${link}`;
 }
-function blockEls(b,cl){const o=[],mk=(t,h)=>{const n=document.createElement(t);n.innerHTML=h;return n},tx=String(b.text||""),ls=tx.split("\n").map(s=>s.trim()).filter(Boolean);
+function blockEls(b,cl,ct){const o=[],mk=(t,h)=>{const n=document.createElement(t);n.innerHTML=h;return n},tx=String(b.text||""),ls=tx.split("\n").map(s=>s.trim()).filter(Boolean);
  if(b.t=="h")o.push(mk("h2",e(tx)));
  else if(b.t=="p")ls.forEach(l=>o.push(mk("p",b.linkify===false?citeText(e(l)):linkifyHTML(citeText(e(l))))));
  else if(b.t=="ul"||b.t=="ol"){if(ls.length){const n=mk(b.t,ls.map(l=>"<li>"+(b.linkify===false?e(l):linkifyHTML(e(l)))+"</li>").join(""));if(b.t=="ol"&&b.start>1)n.start=+b.start;o.push(n)}}
  else if(b.t=="tbl"&&ls.length){const r=ls.map(l=>l.split("|").map(c=>b.linkify===false?e(c.trim()):linkifyHTML(e(c.trim()))));const head=r[0]||[],body=r.slice(1);o.push(mk("table",(b.cap?`<caption>${e(cl||"")}${e(capT(b.cap))}</caption>`:"")+`<thead><tr>${head.map(x=>`<th scope="col">${x}</th>`).join("")}</tr></thead><tbody>${body.map(row=>`<tr>${head.map((_,i)=>`<td>${row[i]||""}</td>`).join("")}</tr>`).join("")}</tbody>`))}
- else if(b.t=="img"&&b.src){const layout=b.layout||"left",sk=b.sz||"m",width={a:"32%",s:"20%",m:"32%",l:"44%"}[sk]||"32%",vert=layout=="top"||layout=="bottom"||layout=="center",cap={a:300,s:150,m:230,l:330}[sk]||230,note=b.note?`<div class="image-copy">${e(b.note).replace(/\n/g,"<br>")}</div>`:"";const img=`<img class="academic-report-image" src="${b.src}" alt="Report illustration" style="width:${vert?"auto":width};max-width:100%;max-height:${vert?cap:360}px;object-fit:contain">`;let content=layout=="right"?img+note:layout=="top"?img+note:layout=="bottom"?note+img:img+note;const f=mk("figure",`<div class="image-layout ${layout}">${content}</div>`+(b.cap?`<figcaption>${e(cl||"")}${e(capT(b.cap))}</figcaption>`:""));f.style.textAlign="center";if(!b.cap)f.classList.add("nocap");if(vert)f.dataset.fit=cap;f.dataset.gi=allImg().indexOf(b);o.push(f)}
+ else if(b.t=="img"&&b.src){const fc=b.cap||(cl?ct:"");const layout=b.layout||"left",sk=b.sz||"m",width={a:"32%",s:"20%",m:"32%",l:"44%"}[sk]||"32%",vert=layout=="top"||layout=="bottom"||layout=="center",cap={a:300,s:150,m:230,l:330}[sk]||230,note=b.note?`<div class="image-copy">${e(b.note).replace(/\n/g,"<br>")}</div>`:"";const img=`<img class="academic-report-image" src="${b.src}" alt="Report illustration" style="width:${vert?"auto":width};max-width:100%;max-height:${vert?cap:360}px;object-fit:contain">`;let content=layout=="right"?img+note:layout=="top"?img+note:layout=="bottom"?note+img:img+note;const f=mk("figure",`<div class="image-layout ${layout}">${content}</div>`+(fc?`<figcaption>${e(cl||"")}${e(capT(fc))}</figcaption>`:""));f.style.textAlign="center";if(!fc)f.classList.add("nocap");if(vert)f.dataset.fit=cap;f.dataset.gi=allImg().indexOf(b);o.push(f)}
  else if(b.t=="img"&&!b.src&&(b.url||b.hint)){const f=mk("figure",ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>");f.className="img-ph";f.dataset.gi=allImg().indexOf(b);o.push(f)}
  return o}
 function buildCV(bp){const I=S.info;let cur=bp();cur.bd.innerHTML=`<div class="cvh"><h1>${e((I.students||[])[0]||"Your Name")}</h1><div class="cj">${e(I.title)}</div><div class="cc">${e(I.sub)}</div></div>`;
@@ -1013,14 +1014,15 @@ function applyCol(){const c=S.color||"#143a7b",m=c.match(/\w\w/g).map(x=>parseIn
 function tocFZ(){if(S.tocfs)return S.tocfs;const c={};S.pages.forEach(g=>{const v=g.fs||12;c[v]=(c[v]||0)+1});let b=12,m=0;for(const k in c){if(c[k]>m||(c[k]==m&&+k>b)){m=c[k];b=+k}}return b}
 function build(t){applyCol();const I=S.info;t.innerHTML="";let n=0,cur,zone="f";const rt=S.dir=="rtl",L=rt?RLAB[RL()]:{toc:"Table of Contents",by:"Prepared by:",sup:"Supervised by:",course:"Course: "};
  const np=()=>{const p=document.createElement("div");p.className="page"+(S.tpl=="mod"?" mod":"")+(S.tpl=="cv"?" cvp":"")+(rt?" rtl":"");if(rt)p.lang=RL();t.appendChild(p);return p};
- const bp=()=>{const p=np();n++;p.innerHTML=`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;const bd=p.querySelector(".bd");bd.style.fontSize=FZ+"pt";return{p,bd}};
+ const pend=[];const bp=()=>{const p=np();n++;p.innerHTML=`<div class="bd"></div><div class="ft">${n}</div>`;p.dataset.z=zone;const bd=p.querySelector(".bd");bd.style.fontSize=FZ+"pt";return{p,bd}};
  if(S.tpl=="cv"){buildCV(bp);return}
 const names=(I.students||[]).filter(x=>x&&x.trim());
  np().innerHTML=`<div class="cv"><div class="ct"><div data-cv="top">${[I.uni,I.col,I.dep].filter(Boolean).map(e).join("<br>")}</div>${S.logo?`<img src="${S.logo}" alt="">`:`<div class="lgph" aria-label="Logo placeholder">${ic("image")}<b>LOGO</b></div>`}</div><div class="cm${I.sub||I.course?"":" ns"}" data-cv="title"><h1>${e(I.title||"Report Title")}</h1>${I.sub?`<div class="sb">${e(I.sub)}</div>`:""}${I.course?`<div class="sb" style="font-size:calc(13pt*var(--cz,1));margin-top:6px">${L.course+e(I.course)}</div>`:""}</div><div class="cb"><div data-cv="stu"><b class="r">${L.by}</b><ul>${names.map(x=>"<li>"+e(x)+"</li>").join("")}</ul></div><div data-cv="sup"><b class="r">${L.sup}</b><ul>${I.sup?"<li>"+e(I.sup)+"</li>":""}</ul></div></div><div class="yr" data-cv="yr">${e(I.year)}</div></div>`;
   const LL=rt?RLAB[RL()]:{lof:"List of Figures",lot:"List of Tables",fig:"Figure ",tab:"Table "};
  const O=outline(),cm=new Map(),caps=[],rows=[];let fn=0,tn=0;
  O.front.concat(O.body).forEach(sec=>sec.pg.blocks.forEach(b=>{const has=String(b.cap||"").trim();
-  if(b.t=="img"&&b.src&&has){const c={k:"f",label:LL.fig+(++fn)+": ",text:capT(b.cap)};cm.set(b,c);caps.push(c)}
+  const ac=b.t=="img"&&b.src&&!has?autoCap(b,sec.title):"";
+  if(b.t=="img"&&b.src&&(has||ac)){const c={k:"f",label:LL.fig+(++fn)+": ",text:capT(has||ac)};cm.set(b,c);caps.push(c)}
   else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:LL.tab+(++tn)+": ",text:capT(b.cap)};cm.set(b,c);caps.push(c)}}));
  const isHd=x=>x.tagName=="H1"||x.tagName=="H2"||x.tagName=="H3";
  const over=()=>cur.bd.scrollHeight>cur.bd.clientHeight+1;
@@ -1029,7 +1031,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  const sz=(el,fs)=>{const g=el.tagName,m={H1:S.h1||16,H2:S.h2||14,H3:S.h3||12};el.style.fontSize=(g in m?m[g]:g=="TABLE"?+(fs*.92).toFixed(2):fs)+"pt";return el};
  const whole=el=>{const g=el.tagName;if(g=="P")return Math.round(el.offsetHeight/lh(el))<=4;if(g=="UL"||g=="OL")return el.children.length<=3;return true};
  function toNext(el){cur.bd.removeChild(el);const mv=[el];let pv;
-  while((pv=cur.bd.lastElementChild)&&isHd(pv)){cur.bd.removeChild(pv);mv.unshift(pv)}
+  while((pv=cur.bd.lastElementChild)&&(isHd(pv)||pv.dataset.lead=="1")){cur.bd.removeChild(pv);mv.unshift(pv)}
   cur=bp();mv.forEach(x=>cur.bd.appendChild(x))}
  function trySplit(el){const g=el.tagName;
   if(g=="P"){const w=el.textContent.split(/\s+/).filter(Boolean),h=lh(el),tot=Math.round(el.offsetHeight/h);let lo=1,hi=w.length-1,k=0;
@@ -1074,8 +1076,9 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   if(sec.k==="ref"){sec.pg.blocks.forEach((b,bi)=>blockEls(b).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;el.classList.add("ref-blk");out.push(sz(el,fs))}));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.innerHTML=referenceHTML(r,i);out.push(sz(d,fs))});return out}
   sec.pg.blocks.forEach((b,bi)=>{
    if(b.t=="h"){const x=im[bi];if(!x)return;const hh=mkH(x.lv==3?"h3":"h2",(x.num?x.num+" ":"")+x.title);hh.dataset.pi=pi;hh.dataset.bi=bi;if(b.newPage)hh.dataset.np="1";x.el=hh;out.push(sz(hh,fs));return}
-   const c=cm.get(b);blockEls(b,c&&c.label).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;out.push(sz(el,fs));if(c&&!c.el&&(el.tagName=="FIGURE"||el.tagName=="TABLE"))c.el=el})});
+   const c=cm.get(b);blockEls(b,c&&c.label,c&&c.text).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;out.push(sz(el,fs));if(c&&!c.el&&(el.tagName=="FIGURE"||el.tagName=="TABLE"))c.el=el})});
   return out}
+ function flushPend(){const bd=cur.bd;while(pend.length){const k=[...bd.children],at=k.findIndex(x=>!isHd(x)&&x.dataset.lead!="1"),f=pend[0];bd.insertBefore(f,at<0?null:k[at].nextSibling);if(over()&&!fitFig(f)){bd.removeChild(f);return}pend.shift()}}
  function putSec(sec){if(sec.pg.startNewPage&&cur&&cur.bd&&cur.bd.children.length)cur=bp();const fs=sec.pg.fs||12;
   const els=secEls(sec,fs);
   /* keep a short section together: if it does not fit in the rest of this page but fits on one page, start it on the next page */
@@ -1088,7 +1091,9 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
     els.forEach(x=>w.removeChild(x));sp.remove();if(fits)cur=bp()}
    else els.forEach(x=>w.removeChild(x));
    w.remove()}
-  els.forEach(el=>{if(el.dataset&&el.dataset.np=="1"&&cur.bd.children.length){const mv=[];let pv;while((pv=cur.bd.lastElementChild)&&isHd(pv)){cur.bd.removeChild(pv);mv.unshift(pv)}cur=bp();mv.forEach(x=>cur.bd.appendChild(x))}placeEl(el)})}
+  els.forEach((el,i)=>{if(el.tagName=="P"&&/[:\uFF1A]\s*$/.test(el.textContent)){const nx=els[i+1];if(nx&&/^(UL|OL|TABLE)$/.test(nx.tagName))el.dataset.lead="1"}
+  if(zone=="b"&&el.tagName=="FIGURE"&&el.dataset.fit&&cur.bd.children.length){if(pend.length){pend.push(el);return}cur.bd.appendChild(el);if(over()&&!fitFig(el)){cur.bd.removeChild(el);pend.push(el);return}return}
+  if(el.dataset&&el.dataset.np=="1"&&cur.bd.children.length){const mv=[];let pv;while((pv=cur.bd.lastElementChild)&&isHd(pv)){cur.bd.removeChild(pv);mv.unshift(pv)}cur=bp();mv.forEach(x=>cur.bd.appendChild(x))}const pg0=cur;placeEl(el);if(pend.length&&cur!==pg0)flushPend()})}
  function listPages(title,rs){if(!rs.length)return;FZ=tocFZ();let tc=bp(),cnt=0;tc.bd.innerHTML='<h1 class="sh">'+e(title)+"</h1>";
   const cont=rt?RLAB[RL()].cont:" (continued)";
   rs.forEach(r=>{const d=document.createElement("div");d.className="tr "+r.cls;d.innerHTML=`<span class="tl">${e(r.txt)}</span><i></i><span class="pgn">000</span>`;r.pg=d.querySelector(".pgn");tc.bd.appendChild(d);cnt++;
@@ -1103,7 +1108,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  if(S.lot)listPages(LL.lot,caps.filter(c=>c.k=="t").map(c=>({cls:"lf",txt:c.label+c.text,ref:c})));
  /* main body: continuous flow */
  zone="b";FZ=12;if(O.body.length)cur=bp();
- O.body.forEach(putSec);
+ O.body.forEach(putSec);while(pend.length)placeEl(pend.shift());
  [...t.querySelectorAll(".page")].forEach(p=>{const b=p.querySelector(".bd");if(b&&!b.children.length)p.remove()});
  const rom=n=>{let s="";[[100,"c"],[90,"xc"],[50,"l"],[40,"xl"],[10,"x"],[9,"ix"],[5,"v"],[4,"iv"],[1,"i"]].forEach(([v,r])=>{while(n>=v){s+=r;n-=v}});return s};
  const ro=S.pn!="arabic";let fi=0,bi2=0,ai=0;
@@ -1133,10 +1138,10 @@ const IMC={};function imgPend(){const p=[];S.pages.forEach(g=>g.blocks.forEach(b
 const FL={},SAMP="ابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆهەیێ";
 function fontLoad(){const f=S.font||(S.dir=="rtl"?"Noto Naskh Arabic":"");if(!f||FL[f]||!document.fonts)return Promise.resolve(false);
  return Promise.all([400,700].map(w=>document.fonts.load(w+' 16px "'+f+'"',SAMP))).then(()=>{FL[f]=1;return true}).catch(()=>{FL[f]=1;return false})}
-function fit(){const d=$("doc"),w=$("pv").clientWidth-20,s=Math.min(1,w/794);d.style.cssText=`width:794px;transform:scale(${s});transform-origin:top left;margin-left:${Math.max(0,(w-794*s)/2)}px`;build(d);d.style.marginBottom=(-d.offsetHeight*(1-s))+"px";fontLoad().then(ch=>{if(ch)fit()});imgPend().then(n=>{if(n)fit()})}
+function fit(reset){const d=$("doc"),w=$("pv").clientWidth-20,s=Math.min(1,w/794),de=document.documentElement,keep=!reset&&$("pv").offsetParent!==null&&d.childNodes.length>0,y0=window.scrollY,h0=de.scrollHeight,ps=d._fs,hold=keep?d.offsetHeight:0;d.style.cssText=`width:794px;transform:scale(${s});transform-origin:top left;margin-left:${Math.max(0,(w-794*s)/2)}px`;if(hold)d.style.minHeight=hold+"px";build(d);d.style.minHeight="";d.style.marginBottom=(-d.offsetHeight*(1-s))+"px";d._fs=s;if(keep){let ny=y0;if(ps&&Math.abs(ps-s)>.002&&h0>0)ny=y0*de.scrollHeight/h0;window.scrollTo({top:ny,left:window.scrollX,behavior:"instant"})}fontLoad().then(ch=>{if(ch)fit()});imgPend().then(n=>{if(n)fit()})}
 function rp(){if($("pv").offsetParent===null)return;clearTimeout(rp.t);rp.t=setTimeout(fit,200)}
 /* ---------- tabs, print, pdf ---------- */
-function tab(t){document.body.dataset.tab=t;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t));if(t=="pv")fit()}
+function tab(t){document.body.dataset.tab=t;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t));if(t=="pv")fit(true)}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>tab(b.dataset.t));
 window.addEventListener("resize",rp);
 $("doc").addEventListener("click",ev=>{if(ev.target.closest(".citation"))ev.preventDefault()});
@@ -1277,7 +1282,8 @@ async function makeDocx(pgn){
  /* ---- captions / outline ---- */
  const O=outline(),cm=new Map(),caps=[];let fn=0,tn=0,cn=0;
  O.front.concat(O.body).forEach(sec=>sec.pg.blocks.forEach(b=>{const has=String(b.cap||"").trim();
-  if(b.t=="img"&&b.src&&has){const c={k:"f",label:L.fig+(++fn)+": ",text:capT(b.cap),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}
+  const ac=b.t=="img"&&b.src&&!has?autoCap(b,sec.title):"";
+  if(b.t=="img"&&b.src&&(has||ac)){const c={k:"f",label:L.fig+(++fn)+": ",text:capT(has||ac),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}
   else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(b.cap),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
  const capP=(txt,fs,c)=>P(R(txt,{i:!rt,sz:Math.round(fs*2*.9)}),{keepNext:0,jc:"center",sp:'w:before="40" w:after="120" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
  /* ---- block (dom) -> xml ---- */
@@ -1328,7 +1334,7 @@ async function makeDocx(pgn){
    citationList().forEach((r,i)=>{const d=document.createElement("div");d.innerHTML=referenceHTML(r,i);out+=P(runsOf(d,{sz:fs*2}),{ind:'w:left="720" w:hanging="720"',sp:'w:after="150"',jc:"left"})});return out}
   sec.pg.blocks.forEach((b,bi)=>{
    if(b.t=="h"){const x=im[bi];if(!x)return;out+=P(R((x.num?x.num+" ":"")+x.title),{style:x.lv==3?"Heading3":"Heading2",pb:!!b.newPage});return}
-   const c=cm.get(b);blockEls(b,c&&c.label).forEach(el=>out+=conv(el,fs,c,b))});
+   const c=cm.get(b);blockEls(b,c&&c.label,c&&c.text).forEach(el=>out+=conv(el,fs,c,b))});
   return out};
  let first=true,front="";
  O.front.forEach(sec=>{front+=mkSec(sec,true,first);first=false});
