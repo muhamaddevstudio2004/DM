@@ -1147,7 +1147,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  function hf(el){if(zone!="b"||S.hf===0||isHd(el))return false;
   const bd=cur.bd,k=[...bd.children];k.pop();let h=-1;for(let i=k.length-1;i>=0;i--)if(isHd(k[i])){h=i;break}
   if(h<0)return false;while(h>0&&isHd(k[h-1]))h--;if(h<1)return false;
-  const ch=k.slice(h),a=ch[0],z=ch[ch.length-1];if(z.offsetTop+z.offsetHeight-a.offsetTop>bd.clientHeight*.6)return false;
+  const ch=k.slice(h),a=ch[0],z=ch[ch.length-1];if(z.offsetTop+z.offsetHeight-a.offsetTop>bd.clientHeight*.88)return false;
   if(shrinkFit())return true;
   ch.forEach(x=>{if(x.tagName=="FIGURE"&&x.dataset.fit&&figIm(x))figIm(x).style.maxHeight=x.dataset.fit+"px"});
   ch.forEach(x=>bd.removeChild(x));bd.removeChild(el);cur=bp();ch.forEach(x=>cur.bd.appendChild(x));placeEl(el);return true}
