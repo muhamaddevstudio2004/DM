@@ -548,9 +548,9 @@ function parseReport(raw){
   if(!t||/^(-{3,}|\*{3,}|_{3,}|={3,})$/.test(t)||/^```/.test(t)){if(!t&&list&&keepList(i,list))continue;flush();continue}
   t=t.replace(/^>\s?/,"");
    {const ih=t.match(/^(?:[-*]\s*)?(?:\*\*)?(?:image|picture|visual|img|وێنە|صورة)(?:\s+(?:idea|suggestion|keywords?|hint|url|link|source))?(?:\*\*)?\s*[:：]\s*(.+)$/i);
-    if(ih){if(cur&&!skip&&kindOf(cur)!="ref"){flush();const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/),kw=clean(ih[1].replace(/https?:\/\/[^\s)<>"'\]]+/g," ")).replace(/^[\s|•\-–—:;,]+|[\s|•\-–—:;,]+$/g,"").replace(/\s+/g," ");addImg(um?um[0]:"",kw.slice(0,120))}continue}}
+    if(ih){if(cur&&!skip&&!noImg(cur)){flush();const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/),kw=clean(ih[1].replace(/https?:\/\/[^\s)<>"'\]]+/g," ")).replace(/^[\s|•\-–—:;,]+|[\s|•\-–—:;,]+$/g,"").replace(/\s+/g," ");addImg(um?um[0]:"",kw.slice(0,120))}continue}}
    {const iu=t.match(/https?:\/\/[^\s)<>"'\]]*(?:\.(?:jpe?g|png|gif|webp|avif)(?:[?#][^\s)<>"'\]]*)?|upload\.wikimedia\.org[^\s)<>"'\]]*|images\.unsplash\.com[^\s)<>"'\]]*|images\.pexels\.com[^\s)<>"'\]]*|cdn\.pixabay\.com[^\s)<>"'\]]*)/i);
-    if(iu&&cur&&!skip&&kindOf(cur)!="ref"&&t.length<iu[0].length+90){flush();addImg(iu[0],"");continue}}
+    if(iu&&cur&&!skip&&!noImg(cur)&&t.length<iu[0].length+90){flush();addImg(iu[0],"");continue}}
   // A contents heading must not cause the rest of a plain-text report to be discarded.
   // Skip only obvious dotted-leader TOC rows; resume importing as soon as real body text appears.
   if(skip){if(/(?:\.{2,}|…{2,}|·{2,})\s*[\d٠-٩]+\s*$/.test(t)||/^[\d٠-٩]+\s*$/.test(t))continue;skip=false;cur={title:rt?RLAB[RL()].intro:"Introduction",blocks:[]};pages.push(cur)}
@@ -763,13 +763,15 @@ CONTENT QUALITY (explain the topic well):
 - References: list 4 to 6 real, verifiable sources in APA style, one source per bullet (official documentation, standards, textbooks or journal papers). Never invent sources, authors, publication dates or links.
 
 IMAGE REQUIREMENTS:
+- RELEVANCE RULE (most important): every image must show the exact subject of "${t}" or of the section where it is placed (the real device, component, process or a diagram of it). Do not add decorative, symbolic, stock or loosely related pictures (people, offices, cities, generic computers, abstract backgrounds). If you cannot find a picture that clearly shows the subject of a section, leave that Image line out; no picture is better than an unrelated picture.
 - Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line.
 - Never add an image line to ${N.abs}, ${N.con}, ${N.ref}, or to a section that contains a table.
-- Image plan for this report: ${vI}. Do not use the most obvious keyword wording; make each line specific and different, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture. All images must be different and each must show something that the section really talks about.
+- Image plan for this report: ${vI}. Make each line different only by its view word, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture, but never drop the subject name. All images must be different and each must show something that the section really talks about.
 - Write each image line in exactly this form, with specific ENGLISH search keywords (2 to 5 words, even when the report is not in English) naming the real thing that is visible in the picture, the way a photograph on Wikimedia Commons would be titled:
 Image: wind turbine blade close-up
+- Every Image line must start with the core name of the main subject of "${t}" (the exact device, product, technology or object, written in English letters), followed by 1 to 3 words that describe the view, for example: Image: <subject name> top view. The picture must show that real subject itself or a diagram of it, never a loosely related object, a vehicle, a building, a crowd of people or a place.
 - Use concrete nouns, not ideas: write a specific product, component, device, place or diagram name. Never write general words such as "technology", "concept", "network", "innovation" or "future".
-- OPTIONAL: if you can browse the web and have really opened the image, you may add its direct link after the keywords, separated by a vertical bar, like: Image: wind turbine blade close-up | https://upload.wikimedia.org/.../file.jpg . The link must end in .jpg, .jpeg, .png or .webp. Never guess or invent a link; when you are not sure, write the keywords only.
+- EXTERNAL REAL IMAGE (strongly preferred): the picture must be an existing image from the web, never an AI-generated or invented one. If you can browse the web, open a real page, choose a real photograph or diagram that clearly shows the subject, and add its direct link after the keywords, separated by a vertical bar, like: Image: wind turbine blade close-up | https://upload.wikimedia.org/.../Wind_turbine_blade_close-up.jpg . The link must be a direct file link ending in .jpg, .jpeg, .png or .webp, and the file name or address should contain the subject name (Wikimedia Commons, university and manufacturer pages are best). Add the link only if you really opened the image and confirmed that it shows the subject. Never guess, invent or reconstruct a link; when you are not sure, write the keywords only.
 - My app finds the picture, downloads it and places it inside the report page, so never write markdown image syntax, captions, descriptions, source credits or any other link text.
 - Do not ask the student to search Google or upload images manually.
 
@@ -818,58 +820,69 @@ function detectScript(raw){
   const ku=(t.match(/[ڕڵۆێەڤپچژگکی]/g)||[]).length;
   return ku>=3?"ckb":"ar"}
 function toast(m,ms){let t=$("tst");if(!t){t=document.createElement("div");t.id="tst";t.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#2b2340;color:#fff;padding:10px 18px;border-radius:22px;font:600 14px/1.3 system-ui,sans-serif;z-index:9998;max-width:86vw;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.3)";document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(t._t);if(ms)t._t=setTimeout(()=>{t.hidden=true},ms)}
-const USEDIMG=new Set();
+const USEDIMG=new Set(),POOLS=new Map();
+/* V19: topic anchor - images must really be about the report topic (e.g. ESP32), not loosely related */
+const IMG_STOP=new Set("a an and the of in on for to with from by using based its is are how what why into via your our their this that these those introduction overview report study analysis design system systems technology technologies application applications basics guide concept concepts role".split(" "));
+const imgNorm=x=>String(x||"").toLowerCase().replace(/<[^>]*>/g," ").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+const topicTok=x=>{const o=[];imgNorm(x).split(" ").forEach(w=>{if(w&&!IMG_STOP.has(w)&&(w.length>=3||/\d/.test(w))&&!o.includes(w))o.push(w)});return o.slice(0,5)};
+const tokHit=(k,n)=>{if(!n)return false;if(n.split(" ").some(w=>w===k||(k.length>=5&&w.startsWith(k))))return true;return /\d/.test(k)&&n.replace(/ /g,"").includes(k)};
+let ANCHOR="",ANC_T=[];
+const setAnchor=(topic,raw)=>{ANCHOR="";ANC_T=[];const tk=topicTok(topic);if(!tk.length)return;const n=imgNorm(raw);if(tk.every(k=>tokHit(k,n))){ANC_T=tk;ANCHOR=tk.join(" ")}};
+const relAll=c=>{const n=imgNorm(c.t),need=ANC_T.length<=2?ANC_T.length:Math.ceil(ANC_T.length*.6);return ANC_T.filter(k=>tokHit(k,n)).length>=need};
+const relAny=c=>{const sp=ANC_T.filter(k=>k.length>=4),tk=sp.length?sp:ANC_T,n=imgNorm(c.t);return tk.some(k=>tokHit(k,n))};
+const relUrl=u=>{if(!ANC_T.length)return true;let d=String(u||"");try{d=decodeURIComponent(d)}catch(x){}return relAny({t:d})};
 let RECENT=[];try{RECENT=JSON.parse(localStorage.getItem("arb_recent_img")||"[]")}catch(x){}
 const rememberImg=k=>{try{RECENT=RECENT.filter(x=>x!==k);RECENT.push(k);RECENT=RECENT.slice(-150);localStorage.setItem("arb_recent_img",JSON.stringify(RECENT))}catch(x){}};
 const imgKey=u=>{try{const p=decodeURIComponent(String(u).split("?")[0]).split("/").filter(Boolean);let f=p[p.length-1]||"";f=f.replace(/^\d+px-/,"").toLowerCase();return/\.(jpe?g|png|webp)$/.test(f)?f:String(u)}catch(x){return String(u)}};
 const BADIMG=/(logo|icon|flag|coat[_ ]of[_ ]arms|signature|stamp|banknote|screenshot of|qr[_ ]code|blank|placeholder|\.svg)/i;
 const shuf=a=>{const t=a.slice();for(let i=t.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[t[i],t[j]]=[t[j],t[i]]}return t};
-async function pickImg(cands,strict){
- const seen=new Set(),L=[];cands.forEach(c=>{const k=imgKey(c.key||c.url);if(!seen.has(k)&&!USEDIMG.has(k)&&!BADIMG.test(k)){seen.add(k);c.k=k;L.push(c)}});
+async function pickImg(cands,strict,rel){
+ const seen=new Set(),L=[];cands.forEach(c=>{const k=imgKey(c.key||c.url);if(!seen.has(k)&&!USEDIMG.has(k)&&!BADIMG.test(k)&&(!rel||rel(c))){seen.add(k);c.k=k;L.push(c)}});
  const ok=L.filter(c=>strict?(c.w>=700&&c.w>=c.h):(c.w>=480));
  const fresh=ok.filter(c=>!RECENT.includes(c.k)),old=ok.filter(c=>RECENT.includes(c.k));
  const order=shuf(fresh.slice(0,10)).concat(fresh.slice(10),shuf(old.slice(0,6)),old.slice(6));
  for(const c of order.slice(0,8)){
-  try{const r=await fetch(c.url);if(!r.ok)continue;const bl=await r.blob(),d=await new Promise(res=>shrink(bl,1000,"image/jpeg",res));if(!d)continue;USEDIMG.add(c.k);rememberImg(c.k);return{d}}catch(x){}}
+  if(USEDIMG.has(c.k))continue;USEDIMG.add(c.k);
+  try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);const r=await fetch(c.url,{signal:ac.signal});clearTimeout(tm);if(!r.ok){USEDIMG.delete(c.k);continue}const bl=await r.blob(),d=await new Promise(res=>shrink(bl,1000,"image/jpeg",res));if(!d){USEDIMG.delete(c.k);continue}rememberImg(c.k);return{d}}catch(x){USEDIMG.delete(c.k)}}
  return null}
 async function candCommons(q){
- const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=30&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1000";
+ const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=30&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiextmetadatafilter=ImageDescription|ObjectName|Categories&iiurlwidth=1000";
  const j=await (await fetch(u)).json(),ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index),c=[];
- for(const p of ps){const ii=(p.imageinfo||[])[0];if(!ii||!/^image\/(jpeg|png)$/.test(ii.mime))continue;c.push({key:ii.url,url:ii.thumburl||ii.url,w:ii.width,h:ii.height})}
+ for(const p of ps){const ii=(p.imageinfo||[])[0];if(!ii||!/^image\/(jpeg|png)$/.test(ii.mime))continue;const em=ii.extmetadata||{},mv=k=>(em[k]&&em[k].value)||"";c.push({key:ii.url,url:ii.thumburl||ii.url,w:ii.width,h:ii.height,t:(p.title||"")+" "+mv("ObjectName")+" "+mv("ImageDescription")+" "+mv("Categories")})}
  return c}
 async function candWikipedia(q){
  const u="https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=10&gsrsearch="+encodeURIComponent(q)+"&prop=pageimages&piprop=thumbnail|original&pithumbsize=1000";
  const j=await (await fetch(u)).json(),ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index),c=[];
- for(const p of ps){const t=p.thumbnail,o=p.original;if(!t||!t.source||!/\.(jpe?g|png)$/i.test((o&&o.source)||t.source))continue;c.push({key:(o&&o.source)||t.source,url:t.source,w:(o&&o.width)||t.width,h:(o&&o.height)||t.height})}
+ for(const p of ps){const t=p.thumbnail,o=p.original;if(!t||!t.source||!/\.(jpe?g|png)$/i.test((o&&o.source)||t.source))continue;c.push({key:(o&&o.source)||t.source,url:t.source,w:(o&&o.width)||t.width,h:(o&&o.height)||t.height,t:(p.title||"")+" "+((o&&o.source)||t.source)})}
  return c}
 async function candOpenverse(q){
  const j=await (await fetch("https://api.openverse.org/v1/images/?q="+encodeURIComponent(q)+"&page_size=20&mature=false")).json(),c=[];
- for(const r of (j.results||[])){if(!r.id)continue;c.push({key:"ov-"+r.id,url:r.thumbnail||("https://api.openverse.org/v1/images/"+r.id+"/thumb/"),w:r.width||800,h:r.height||600})}
+ for(const r of (j.results||[])){if(!r.id)continue;c.push({key:"ov-"+r.id,url:r.thumbnail||("https://api.openverse.org/v1/images/"+r.id+"/thumb/"),w:r.width||800,h:r.height||600,t:(r.title||"")+" "+(r.tags||[]).map(g=>g&&g.name).join(" ")})}
  return c}
 const allOk=async ps=>{const r=await Promise.all(ps.map(p=>p.catch(()=>[])));const m=Math.max(0,...r.map(x=>x.length)),o=[];for(let i=0;i<m;i++)r.forEach(x=>{if(x[i])o.push(x[i])});return o};
+async function imgPool(t,ov){const k=(ov?"1|":"0|")+t;if(POOLS.has(k))return POOLS.get(k);const p=Promise.race([allOk(ov?[candCommons(t),candWikipedia(t),candOpenverse(t)]:[candCommons(t),candWikipedia(t)]),new Promise(r=>setTimeout(()=>r([]),10000))]);POOLS.set(k,p);return p}
 async function findImg(q){
  const w=String(q||"").replace(/[|()]/g," ").split(/\s+/).filter(Boolean);if(!w.length)return null;
- const tries=[w.join(" ")];[w.slice(0,3),w.slice(-3),w.slice(0,2)].forEach(a=>{const t=a.join(" ");if(a.length>=1&&a.length<w.length&&!tries.includes(t))tries.push(t)});
- for(const t of tries){
-  const pool=await allOk([candCommons(t),candWikipedia(t)]);
-  let r=await pickImg(pool,true);if(r)return r}
- for(const t of tries){
-  const pool=await allOk([candCommons(t),candWikipedia(t),candOpenverse(t)]);
-  let r=await pickImg(pool,true)||await pickImg(pool,false);if(r)return r}
+ const tries=[],add=t=>{t=String(t||"").replace(/\s+/g," ").trim();if(t&&!tries.includes(t))tries.push(t)};
+ if(ANC_T.length){const wl=w.filter(x=>!ANC_T.includes(imgNorm(x)));add(w.join(" "));add(ANCHOR+" "+wl.slice(0,2).join(" "));add(ANCHOR+" "+wl.slice(0,1).join(" "));add(ANCHOR)}
+ else{add(w.join(" "));[w.slice(0,3),w.slice(-3),w.slice(0,2)].forEach(a=>{if(a.length>=1&&a.length<w.length)add(a.join(" "))})}
+ tries.slice(0,2).forEach(t=>imgPool(t,false));const lv=!ANC_T.length?[null]:ANC_T.length==1?[relAll]:[relAll,relAny];
+ for(const rel of lv){
+  for(const t of tries){const r=await pickImg(await imgPool(t,false),true,rel);if(r)return r}
+  for(const t of tries){const pool=await imgPool(t,true);const r=await pickImg(pool,true,rel)||await pickImg(pool,false,rel);if(r)return r}}
  return null}
 async function urlToData(u){
- const viaImg=src=>new Promise((res,rej)=>{const im=new Image(),to=setTimeout(()=>rej(0),15000);im.crossOrigin="anonymous";im.onerror=()=>{clearTimeout(to);rej(0)};im.onload=()=>{clearTimeout(to);try{if(im.width<200||im.height<120)return rej(0);const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.82))}catch(e){rej(e)}};im.src=src});
- try{return await viaImg(u)}catch(x){}
- try{return await viaImg("https://wsrv.nl/?w=1000&output=jpg&url="+encodeURIComponent(u))}catch(x){}
+ const viaImg=src=>new Promise((res,rej)=>{const im=new Image(),to=setTimeout(()=>rej(0),8000);im.crossOrigin="anonymous";im.onerror=()=>{clearTimeout(to);rej(0)};im.onload=()=>{clearTimeout(to);try{if(im.width<200||im.height<120)return rej(0);const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.82))}catch(e){rej(e)}};im.src=src});
+ try{return await Promise.any([viaImg(u),viaImg("https://wsrv.nl/?w=1000&output=jpg&url="+encodeURIComponent(u))])}catch(x){}
  return null}
-const canLoad=u=>new Promise(res=>{const im=new Image(),to=setTimeout(()=>res(false),12000);im.onload=()=>{clearTimeout(to);res(im.width>=100)};im.onerror=()=>{clearTimeout(to);res(false)};im.src=u});
+const canLoad=u=>new Promise(res=>{const im=new Image(),to=setTimeout(()=>res(false),6000);im.onload=()=>{clearTimeout(to);res(im.width>=100)};im.onerror=()=>{clearTimeout(to);res(false)};im.src=u});
 const rbPend=()=>{const a=[];S.pages.forEach(g=>g.blocks.forEach(b=>{if(b.t=="img"&&!b.src&&(b.url||b.hint))a.push(b)}));return a};
 let _linkFail=0;
-async function autoImages(cb){_linkFail=0;USEDIMG.clear();const tg=rbPend();let n=0,i=0;
- for(const b of tg){cb&&cb(++i+"/"+tg.length);try{let r=null;
-  if(b.url){const d=await urlToData(b.url);if(d)r=d;else if(await canLoad(b.url))r=b.url;else _linkFail++}
-  if(!r&&b.hint){let f=await findImg(b.hint);if(!f&&S.info&&S.info.title)f=await findImg(S.info.title);if(f)r=f.d}
-  if(r){b.src=r;delete b.url;delete b.hint;n++;save();rp()}}catch(x){}}
+async function autoImages(cb){_linkFail=0;USEDIMG.clear();POOLS.clear();const tg=rbPend();let n=0,i=0,k=0;
+ const one=async b=>{try{let r=null;
+  if(b.url&&relUrl(b.url)){const d=await urlToData(b.url);if(d)r=d;else if(await canLoad(b.url))r=b.url;else _linkFail++}
+  if(!r&&b.hint){let f=await findImg(b.hint);if(!f)f=await findImg(ANCHOR||(S.info&&S.info.title)||"");if(f)r=f.d}
+  if(r){b.src=r;delete b.url;delete b.hint;n++;save();rp()}}catch(x){}cb&&cb(++i+"/"+tg.length)};await Promise.all(Array.from({length:Math.min(4,tg.length)},async()=>{while(k<tg.length)await one(tg[k++])}));
  return[n,tg.length]}
 let _auto=false;
 async function autoImagesBg(){if(_auto||!rbPend().length)return;_auto=true;toast(tr("Finding images…"));
@@ -885,9 +898,9 @@ async function runGen(raw){
    const L=cleanAI(raw).split("\n"),CH=2000,out=[];
   for(let a=0;a<L.length;a+=CH){out.push(...L.slice(a,a+CH).map(x=>x.replace(/\t/g,"  ")));await set(0,Math.min(1,(a+CH)/L.length))}
   /* 2 detect */
-  await set(1,0);const rep=parseReport(out.join("\n"));if(!rep.pages.length)throw new Error("empty");await set(1,1);
+  await set(1,0);const rep=parseReport(out.join("\n"));if(!rep.pages.length)throw new Error("empty");setAnchor(AIS.t,raw);await set(1,1);
   /* 3 organize */
-  for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"||(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
+  for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"?!noImg(g):!!(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
   S.pages=rep.pages;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}
@@ -960,6 +973,7 @@ const allImg=()=>S.pages.flatMap(g=>g.blocks).filter(x=>x.t=="img");
 const dispT=t=>String(t==null?"":t).replace(/^\s*(?:\d+(?:\.\d+)+[.)]?|\d+[.)])\s+/,"").trim();
 const autoCap=(b,t)=>{let h=String(b.hint||"").replace(/[_\-]+/g," ").replace(/\s+/g," ").trim()||String(t||"").trim();return h?h.charAt(0).toUpperCase()+h.slice(1):""};
 const capT=c=>String(c||"").replace(/^\s*(?:figure|fig\.?|table|وێنەی?|خشتەی?|الشكل|شكل|الجدول|جدول)\s*\d+\s*[:.\-–]?\s*/i,"").trim();
+function noImg(pg){if(kindOf(pg)=="ref")return true;const t=dispT(pg.title)||"";return /^\s*(?:[\d٠-٩]+[.)]?\s*)?(?:conclusions?\b|concluding\b|دەرئەنجام|ئەنجامگیری|الخاتمة|خاتمة|الاستنتاج)/i.test(t)}
 function kindOf(pg){const k=pg.kind;if(k&&k!="auto")return k;const t=dispT(pg.title);
  if(/^(abstract|executive summary|کورتە|پوختە|ملخص)$/i.test(t))return "abs";
  if(/^(acknowledg(e)?ments?|سوپاسگوزاری|سوپاس|شکر و تقدیر)$/i.test(t))return "ack";
