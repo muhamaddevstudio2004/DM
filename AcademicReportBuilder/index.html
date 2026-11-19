@@ -1063,10 +1063,20 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   if(over()){im.style.maxHeight=cap+"px";return false}
   let a=lo,b=cap;while(b-a>6){const m=(a+b)>>1;im.style.maxHeight=m+"px";if(over())b=m;else a=m}
   im.style.maxHeight=a+"px";return !over()}
+ function figIm(f){return f.querySelector("img.academic-report-image")}
+ function slack(){const bd=cur.bd,l=bd.lastElementChild;if(!l)return 999;const br=bd.getBoundingClientRect(),lr=l.getBoundingClientRect(),sc=bd.offsetHeight?br.height/bd.offsetHeight:1,cs=getComputedStyle(bd);return(br.bottom-lr.bottom)/sc-(parseFloat(cs.paddingBottom)||0)}
+ function tight(){return over()||slack()<10}
+ function shrinkFit(){const bd=cur.bd,fg=[...bd.querySelectorAll("figure[data-fit]")].filter(f=>figIm(f));if(!fg.length)return false;
+  const sv=fg.map(f=>figIm(f).style.maxHeight),set=m=>fg.forEach(f=>{figIm(f).style.maxHeight=Math.max(90,Math.round(+f.dataset.fit*m))+"px"});
+  set(.45);if(tight()){fg.forEach((f,i)=>figIm(f).style.maxHeight=sv[i]);return false}
+  let a=.45,b=1;while(b-a>.02){const m=(a+b)/2;set(m);if(tight())b=m;else a=m}set(a);
+  if(tight()){fg.forEach((f,i)=>figIm(f).style.maxHeight=sv[i]);return false}return true}
  function hf(el){if(zone!="b"||S.hf===0||isHd(el))return false;
   const bd=cur.bd,k=[...bd.children];k.pop();let h=-1;for(let i=k.length-1;i>=0;i--)if(isHd(k[i])){h=i;break}
   if(h<0)return false;while(h>0&&isHd(k[h-1]))h--;if(h<1)return false;
   const ch=k.slice(h),a=ch[0],z=ch[ch.length-1];if(z.offsetTop+z.offsetHeight-a.offsetTop>bd.clientHeight*.6)return false;
+  if(shrinkFit())return true;
+  ch.forEach(x=>{if(x.tagName=="FIGURE"&&x.dataset.fit&&figIm(x))figIm(x).style.maxHeight=x.dataset.fit+"px"});
   ch.forEach(x=>bd.removeChild(x));bd.removeChild(el);cur=bp();ch.forEach(x=>cur.bd.appendChild(x));placeEl(el);return true}
  function placeEl(el){
   cur.bd.appendChild(el);if(!over())return;
@@ -1140,7 +1150,7 @@ function tameJustify(t){
   if(!loose)return;
   const fr=document.createDocumentFragment();
   lines.forEach((ln,i)=>{const s=document.createElement("span");s.className="jl"+(flags[i]||i==lines.length-1?" jx":"");s.textContent=txt.slice(ln.words[0][0],ln.words[ln.words.length-1][1]);fr.appendChild(s)});
-  p.textContent="";p.appendChild(fr)})}
+  const orig=txt;p.textContent="";p.appendChild(fr);const bd=p.closest(".bd");if(bd&&bd.scrollHeight>bd.clientHeight+1)p.textContent=orig})}
 const IMC={};function imgPend(){const p=[];S.pages.forEach(g=>g.blocks.forEach(b=>{if(b.t=="img"&&b.src&&!IMC[b.src]){IMC[b.src]=1;p.push(new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=b.src}))}}));return Promise.all(p).then(()=>p.length)}
 const FL={},SAMP="ابپتجچحخدرڕزژسشعغفڤقکگلڵمنوۆهەیێ";
 function fontLoad(){const f=S.font||(S.dir=="rtl"?"Noto Naskh Arabic":"");if(!f||FL[f]||!document.fonts)return Promise.resolve(false);
