@@ -476,7 +476,7 @@ const ic=n=>`<svg class="ic" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 const FIELDS=[["sup","Supervisor / Doctor"],["uni","University"],["col","College"],["dep","Department"],["year","Academic year"],["course","Course name"],["title","Report main title"],["sub","Report subtitle"]];
 const TYPES={h:"Subtitle",p:"Paragraph",ul:"Bullet list",ol:"Numbered list",tbl:"Table",img:"Image"};
 const HINT={ul:"One item per line",ol:"One item per line",tbl:"Header 1 | Header 2\nCell | Cell",p:"Write or paste text. A new line starts a new paragraph."};
-let S=load();if(!Array.isArray(S.refs))S.refs=[];S.refs.forEach((r,i)=>{if(!r.id)r.id="ref-legacy-"+i});if(!S.citeStyle)S.citeStyle="apa";S.tpl="report";if(S.lineOn===undefined)S.lineOn=false;if(S.lof===undefined)S.lof=1;if(!S.lineColor)S.lineColor="#b8923a";
+let S=load();if(!Array.isArray(S.refs))S.refs=[];S.refs.forEach((r,i)=>{if(!r.id)r.id="ref-legacy-"+i});if(!S.citeStyle)S.citeStyle="apa";S.tpl="report";if(S.lineOn===undefined)S.lineOn=false;if(!S.lineColor)S.lineColor="#b8923a";
 function seed(){return{info:{students:["Student"],sup:"Dr.Muhamad",uni:"Erbil Polytechnic University",col:"Soran Technical College",dep:"IT Department | Morning",year:"2026-2027",course:"",title:"REPORT TITLE",sub:""},logo:"",pages:[
 {title:"Introduction",blocks:[{t:"p",text:"Write the introduction of your report here. Each page of the editor becomes a numbered section with its own title."}]},
 {title:"Purpose and Objectives",blocks:[{t:"p",text:"The purpose of our visit was:"},{t:"ul",text:"to identify the main equipment\nto understand how data travels to the home"}]},
@@ -1001,6 +1001,7 @@ function acadUI(){const row=(lab,k,arr,cur)=>`<label>${lab}</label><div class="r
  const sz=(k,arr,d)=>row(k[1],k[0],arr.map(v=>[v,v+(v==d?" ★":"")]),S[k[0]]||d);
  return `<div class="card"><label style="font-weight:700">Academic structure</label>`+
  row("Page numbers","pn",[["roman","i, ii… then 1, 2…"],["arabic","1, 2, 3 only"]],S.pn=="arabic"?"arabic":"roman")+
+ row("Start every page with a heading","hf",[[1,"On"],[0,"Off"]],S.hf===0?0:1)+
  row("Keep short sections on one page","keepSec",[[1,"On"],[0,"Off"]],S.keepSec===0?0:1)+
  row("Table of Contents","notoc",[[0,"Show"],[1,"Hide"]],S.notoc?1:0)+
  row("List of Figures (captioned images)","lof",[[0,"Hide"],[1,"Show"]],S.lof?1:0)+
@@ -1062,9 +1063,15 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   if(over()){im.style.maxHeight=cap+"px";return false}
   let a=lo,b=cap;while(b-a>6){const m=(a+b)>>1;im.style.maxHeight=m+"px";if(over())b=m;else a=m}
   im.style.maxHeight=a+"px";return !over()}
+ function hf(el){if(zone!="b"||S.hf===0||isHd(el))return false;
+  const bd=cur.bd,k=[...bd.children];k.pop();let h=-1;for(let i=k.length-1;i>=0;i--)if(isHd(k[i])){h=i;break}
+  if(h<0)return false;while(h>0&&isHd(k[h-1]))h--;if(h<1)return false;
+  const ch=k.slice(h),a=ch[0],z=ch[ch.length-1];if(z.offsetTop+z.offsetHeight-a.offsetTop>bd.clientHeight*.6)return false;
+  ch.forEach(x=>bd.removeChild(x));bd.removeChild(el);cur=bp();ch.forEach(x=>cur.bd.appendChild(x));placeEl(el);return true}
  function placeEl(el){
   cur.bd.appendChild(el);if(!over())return;
   if(isHd(el)){if(cur.bd.children.length>1)toNext(el);return}
+  if(hf(el))return;
   if(el.tagName=="FIGURE"&&fitFig(el))return;
   const has=cur.bd.children.length>1;
   if(has&&!whole(el)&&trySplit(el))return;
@@ -1087,7 +1094,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    const rem=(br.bottom-lr.bottom)/sc-(parseFloat(cs.paddingBottom)||0);
    const w=document.createElement("div");bd.appendChild(w);els.forEach(x=>w.appendChild(x));
    if(over()){const sp=np();sp.innerHTML='<div class="bd"></div>';sp.style.cssText+=";position:absolute;visibility:hidden";const sb=sp.firstChild;sb.style.fontSize=FZ+"pt";sb.appendChild(w);
-    const H=w.offsetHeight,cap=sb.clientHeight,one=sb.scrollHeight<=sb.clientHeight+1,fits=one&&(H<=cap*.7||rem<cap*.4);
+    const H=w.offsetHeight,cap=sb.clientHeight,one=sb.scrollHeight<=sb.clientHeight+1,fits=one&&rem<cap*.4;
     els.forEach(x=>w.removeChild(x));sp.remove();if(fits)cur=bp()}
    else els.forEach(x=>w.removeChild(x));
    w.remove()}
@@ -1557,8 +1564,8 @@ const RLAB={ckb:{toc:"ناوەڕۆک",by:"ئامادەکراوە لەلایەن:
 const RL=()=>S.dir=="rtl"&&S.rlang=="ar"?"ar":"ckb";
 Object.assign(DICT.ckb,{"Replace image":"گۆڕینی وێنە","Upload image":"بارکردنی وێنە","Remove image":"سڕینەوەی وێنە","Tap to add image":"بۆ زیادکردنی وێنە دابگرە","Finding images…":"گەڕان بۆ وێنە…","Images added":"وێنە زیادکرا","tap an image to replace it":"لەسەر وێنەیەک دابگرە بۆ گۆڕین یان سڕینەوە","No images found. Tap a placeholder to add one.":"هیچ وێنەیەک نەدۆزرایەوە. لەسەر شوێنی وێنە دابگرە بۆ زیادکردن.","Could not reach the image service":"نەتوانرا بگاتە خزمەتگوزاری وێنە"});
 Object.assign(DICT.ar,{"Replace image":"استبدال الصورة","Upload image":"رفع صورة","Remove image":"حذف الصورة","Tap to add image":"اضغط لإضافة صورة","Finding images…":"جارٍ البحث عن الصور…","Images added":"تمت إضافة الصور","tap an image to replace it":"اضغط على صورة لاستبدالها أو حذفها","No images found. Tap a placeholder to add one.":"لم يتم العثور على صور. اضغط على العنصر النائب لإضافة صورة.","Could not reach the image service":"تعذر الوصول إلى خدمة الصور"});
-Object.assign(DICT.ckb,{"Section":"بەش","Section title":"ناونیشانی بەش","Heading level":"ئاستی ناونیشان","Add below":"زیادکردن لە خوارەوە","Cover":"بەرگ","Done":"تەواو","Start this subtitle on a new page":"ئەم ناونیشانە لاوەکییە لە لاپەڕەیەکی نوێ دەست پێبکات","Start on a new page":"گواستنەوە بۆ لاپەڕەی نوێ","Remove page break":"لابردنی بڕینی لاپەڕە"});
-Object.assign(DICT.ar,{"Section":"قسم","Section title":"عنوان القسم","Heading level":"مستوى العنوان","Add below":"إضافة بالأسفل","Cover":"الغلاف","Done":"تم","Start this subtitle on a new page":"ابدأ هذا العنوان الفرعي في صفحة جديدة","Start on a new page":"النقل إلى صفحة جديدة","Remove page break":"إزالة فاصل الصفحة"});
+Object.assign(DICT.ckb,{"Start every page with a heading":"هەر لاپەڕەیەک بە ناونیشان دەست پێبکات","Section":"بەش","Section title":"ناونیشانی بەش","Heading level":"ئاستی ناونیشان","Add below":"زیادکردن لە خوارەوە","Cover":"بەرگ","Done":"تەواو","Start this subtitle on a new page":"ئەم ناونیشانە لاوەکییە لە لاپەڕەیەکی نوێ دەست پێبکات","Start on a new page":"گواستنەوە بۆ لاپەڕەی نوێ","Remove page break":"لابردنی بڕینی لاپەڕە"});
+Object.assign(DICT.ar,{"Start every page with a heading":"ابدأ كل صفحة بعنوان","Section":"قسم","Section title":"عنوان القسم","Heading level":"مستوى العنوان","Add below":"إضافة بالأسفل","Cover":"الغلاف","Done":"تم","Start this subtitle on a new page":"ابدأ هذا العنوان الفرعي في صفحة جديدة","Start on a new page":"النقل إلى صفحة جديدة","Remove page break":"إزالة فاصل الصفحة"});
 statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));trTree(document.getElementById("nav"));trTree(document.getElementById("ed"));
 
 /* ---------- one-time download codes (Supabase) ---------- */
