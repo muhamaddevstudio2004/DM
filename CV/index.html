@@ -161,7 +161,11 @@ body.lsh-open{overflow:hidden}
 #lsh .lthumb{display:block;margin:0 auto 10px;width:96px;height:96px;object-fit:cover;background:#F7F3F4;border:2px dashed #D9C3C9}
 #lsh .lthumb.circle{border-radius:50%}#lsh .lthumb.round{border-radius:16px}#lsh .lthumb.portrait{width:76px;height:100px;border-radius:6px}
 @media print{.lvh,#lvfit,#lsh{display:none!important}}
-</style></head>
+</style><style id="wmcss">
+/* Watermark: overlay on the live preview only (#pages). Export builds its own off-screen page, so the downloaded PDF stays clean. */
+#pages .page::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:50;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22794%22 height=%221123%22 viewBox=%220 0 794 1123%22%3E%3Cg transform=%22rotate(-30 397 303)%22 text-anchor=%22middle%22 fill=%22%23842D42%22 fill-opacity=%22.085%22%3E%3Ctext x=%22397%22 y=%22299%22 font-family=%22Arial,Helvetica,sans-serif%22 font-weight=%22700%22 font-size=%2244%22 letter-spacing=%221%22%3ECopyRight DevMuhamad.com%3C/text%3E%3Ctext x=%22397%22 y=%22343%22 font-family=%22'Noto Naskh Arabic','Noto Sans Arabic',Tahoma,Arial,sans-serif%22 font-weight=%22700%22 font-size=%2228%22 direction=%22rtl%22 unicode-bidi=%22embed%22%3E%D8%A6%DB%95%D9%85 watermark %D9%80%D9%80%DB%95 %D9%84%DB%95 %D8%AF%D8%A7%D8%A8%DB%95%D8%B2%D8%A7%D9%86%D8%AF%D9%86 %D9%84%D8%A7%D8%AF%DB%95%D8%AF%D8%B1%DB%8E%D8%AA%3C/text%3E%3C/g%3E%3Cg transform=%22rotate(-30 397 820)%22 text-anchor=%22middle%22 fill=%22%23842D42%22 fill-opacity=%22.085%22%3E%3Ctext x=%22397%22 y=%22816%22 font-family=%22Arial,Helvetica,sans-serif%22 font-weight=%22700%22 font-size=%2244%22 letter-spacing=%221%22%3ECopyRight DevMuhamad.com%3C/text%3E%3Ctext x=%22397%22 y=%22860%22 font-family=%22'Noto Naskh Arabic','Noto Sans Arabic',Tahoma,Arial,sans-serif%22 font-weight=%22700%22 font-size=%2228%22 direction=%22rtl%22 unicode-bidi=%22embed%22%3E%D8%A6%DB%95%D9%85 watermark %D9%80%D9%80%DB%95 %D9%84%DB%95 %D8%AF%D8%A7%D8%A8%DB%95%D8%B2%D8%A7%D9%86%D8%AF%D9%86 %D9%84%D8%A7%D8%AF%DB%95%D8%AF%D8%B1%DB%8E%D8%AA%3C/text%3E%3C/g%3E%3C/svg%3E") 0 0/794px 1123px no-repeat}
+</style>
+</head>
 <body data-view="ed">
 <div id="top"></div>
 <div id="app"><div id="ed"></div><div id="pv"><div id="pages"></div></div></div>
@@ -547,8 +551,8 @@ lvStatus();
 
 addEventListener("resize",()=>{clearTimeout(pvT);pvT=setTimeout(applyScale,80)});
 {/* ---------- Download codes (server-checked) + admin panel ---------- */
-const SUPABASE_URL="https://vrakrvszrksdsgpctkdu.supabase.co";      /* e.g. https://abcdxyz.supabase.co */
-const SUPABASE_ANON_KEY="sb_publishable_p8k6eLPplp_cKWtMY7UKYw_doM1wkfv";     /* Project Settings > API > anon public */
+const SUPABASE_URL="https://vvdqshbgngebqwwyuqpj.supabase.co";      /* e.g. https://abcdxyz.supabase.co */
+const SUPABASE_ANON_KEY="sb_publishable_zGoR1CASdHr0w3FA0ugrsA_3c5EyjGN";     /* Project Settings > API > anon public */
 const WA_NUMBER="9647509628683";
 const cfgOk=()=>SUPABASE_URL.indexOf("YOUR_")!==0&&SUPABASE_ANON_KEY.indexOf("YOUR_")!==0;
 const call=async(fn,body)=>{
@@ -558,8 +562,8 @@ const redeem=async code=>{if(!cfgOk())return"cfg";try{const v=await call("redeem
 const rpc=async(fn,body)=>{if(!cfgOk())return{error:"cfg"};try{const v=await call(fn,body);return v&&typeof v==="object"?v:{error:"net"}}catch(x){return{error:"net"}}};
 const OV="position:fixed;inset:0;z-index:99999;background:rgba(60,20,30,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
 const DLG={
- ckb:{dl:"داگرتن",t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی سیڤییەکە کۆدێکت پێویستە.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",invalid:"کۆدەکە دروست نییە.",used:"ئەم کۆدە پێشتر بەکارهاتووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر دراوە. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمی کۆد هێشتا ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی سیڤی وەربگرم."},
- en:{dl:"Download",t:"Download code",d:"You need a code to download your CV.",ph:"Enter code",ok:"Confirm",wa:"Get a code on WhatsApp",x:"Close",chk:"Checking…",invalid:"The code is not valid.",used:"This code has already been used.",expired:"This code has expired.",limit:"Too many attempts. Please wait a moment and try again.",net:"No internet connection. Please try again.",cfg:"The code system is not set up yet.",msg:"Hi, I’d like to get a download code for my CV."}};
+ ckb:{dl:"داگرتن",t:"کۆدی دابەزاندن",d:"بۆ دابەزاندنی سیڤییەکە کۆدێکت پێویستە. watermark لە فایلی دابەزێنراودا نابێت.",ph:"کۆد بنووسە",ok:"دڵنیاکردنەوە",wa:"وەرگرتنی کۆد لە واتساپ",x:"داخستن",chk:"پشکنین…",invalid:"کۆدەکە دروست نییە.",used:"ئەم کۆدە پێشتر بەکارهاتووە.",expired:"ئەم کۆدە بەسەرچووە.",limit:"هەوڵی زۆر دراوە. کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەوە.",net:"پەیوەندی بە ئینتەرنێتەوە نییە. دووبارە هەوڵ بدەوە.",cfg:"سیستەمی کۆد هێشتا ڕێکنەخراوە.",msg:"سڵاو، دەمەوێت کۆدی دابەزاندنی سیڤی وەربگرم."},
+ en:{dl:"Download",t:"Download code",d:"You need a code to download your CV. The watermark is not in the downloaded file.",ph:"Enter code",ok:"Confirm",wa:"Get a code on WhatsApp",x:"Close",chk:"Checking…",invalid:"The code is not valid.",used:"This code has already been used.",expired:"This code has expired.",limit:"Too many attempts. Please wait a moment and try again.",net:"No internet connection. Please try again.",cfg:"The code system is not set up yet.",msg:"Hi, I’d like to get a download code for my CV."}};
 const gate=action=>{
  if(document.getElementById("dlg"))return;
  const L=DLG[S.ui]||DLG.en,o=document.createElement("div");o.id="dlg";o.style.cssText=OV;
