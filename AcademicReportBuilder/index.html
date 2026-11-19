@@ -693,7 +693,10 @@ function openHelp(){closeHelp();document.documentElement.classList.add("hw-lock"
  o.querySelector(".hw-go").onclick=()=>{closeHelp();openUR()};
  document.body.appendChild(o);document.addEventListener("keydown",helpKey);o.querySelector(".hw-go").focus()}
 /* ---------- AI prompt + AI-text cleaner ---------- */
-const AIS={t:"",p:"auto",l:null};
+const AIS={t:"",p:"auto",l:null,d:""};try{AIS.d=(localStorage.getItem("arb_dept")||"").slice(0,60)}catch(x){}
+/* V18: department name -> prompt perspective + cover line */
+function deptName(raw){return String(raw||"").replace(/\s+/g," ").trim().slice(0,60).replace(/^(?:department|dept\.?)\s+of\s+/i,"").replace(/\s*(?:department|dept\.?|dep\.?)$/i,"").replace(/^(?:بەشی|قسم)\s+/,"").trim()}
+function deptLabel(raw,cur){const n=deptName(raw);if(!n)return"";const rest=String(cur||"").split("|").slice(1).join("|").trim();const base=/[\u0600-\u06FF]/.test(n)?String(raw).replace(/\s+/g," ").trim():n+" Department";return base+(rest?" | "+rest:"")}
 const AISEC={
  en:{abs:"Abstract",intro:"Introduction",obj:"Objectives",lit:"Literature Review",met:"Methodology",main:"Main Content",res:"Results",dis:"Discussion",con:"Conclusion",rec:"Recommendations",ref:"References"},
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"پێداچوونەوەی ئەدەبیات",met:"میتۆدۆلۆجی",main:"ناوەڕۆکی سەرەکی",res:"ئەنجامەکان",dis:"گفتوگۆ",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان"},
@@ -703,7 +706,8 @@ const AI_DOMAINS=["smart agriculture and irrigation","healthcare and patient mon
 const AI_SIGS=["one short, concrete worked example with real values","one step-by-step walkthrough of a complete process","one clear comparison table of 3 or 4 real options (only if the report has no other table in that section)","a short list of common mistakes and how to avoid them","a short real-world mini case study with a measurable result","a short checklist the reader could follow","one carefully explained diagram-style description of how the parts connect"];
 const AI_MODS=["close-up","top view","in use","schematic","laboratory","prototype","installation","components","workshop","circuit board","side view","diagram","assembled","outdoor","classroom"];
 const AI_IMGPLAN=["real photographs of the actual subject, taken in a lab or workshop setting","clear technical diagrams or schematics that show how the parts connect","close-up photographs of key components or details","photographs of the subject being used in real applications","a mix: one overview photograph, one diagram, and the rest application photographs"];
-function aiPrompt(topic,pages,lang,seed){
+function aiPrompt(topic,pages,lang,seed,dept){
+  const dn=deptName(dept),deptBlk=dn?"\nDEPARTMENT PERSPECTIVE:\nThe student studies in the "+dn+" department. Write the report from the viewpoint of the "+dn+" field: choose the angle, terminology, examples and applications that matter most to "+dn+" students and professionals, while the main subject stays \""+(topic||"").trim()+"\". If this conflicts with the variation plan below, the department perspective wins. Do not put the department name in the report title and do not turn the report into a description of the department.\n":"";
   const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+pages>0),P=auto?0:Math.min(40,Math.max(1,Math.round(+pages)));
   let secs,lenLine,guide,imgN;
   if(auto){
@@ -726,7 +730,7 @@ function aiPrompt(topic,pages,lang,seed){
   const order=secs.join(" > ");
   const langLine=lang=="ckb"?"Write the entire report in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all section titles. Use the Kurdish section titles listed above.":lang=="ar"?"Write the entire report in professional Modern Standard Arabic, including all section titles. Use the Arabic section titles listed above.":"Write the entire report in formal academic English.";
   return `Act as an experienced university lecturer and subject expert helping an undergraduate student write a professional, original academic report about "${t}". The report will be graded by a lecturer, so depth, accuracy, clear explanation and originality matter more than length.
-
+${deptBlk}
 REPORT LENGTH:
 ${lenLine}
 The cover page, table of contents and page numbers (A4 layout) are added automatically by my app.
@@ -874,7 +878,7 @@ async function runGen(raw){
  const ST=["Reading report content…","Detecting headings and sections…","Organizing report content…","Creating A4 pages…","Applying academic formatting…","Generating table of contents…","Calculating page numbers…","Preparing the final report…"];
  const LD=mkLoader({title:"Generating report",steps:ST});
  const set=async(i,f)=>{LD.update((i+f)/8*100,ST[i]);LD.steps(i,f);await tickP(f===0||f>=1?70:16)};
- const oldP=S.pages,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font;let w=null;
+ const oldP=S.pages,oldDp=S.info.dep,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font;let w=null;
  try{
   /* 1 read */
   await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}
@@ -886,7 +890,7 @@ async function runGen(raw){
   for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"||(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;
+  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
   /* 5 formatting check */
@@ -903,7 +907,7 @@ async function runGen(raw){
   const importedChars=S.pages.reduce((n,p)=>n+(p.title||"").length+p.blocks.reduce((m,b)=>m+String(b.text||"").length,0),0);
   console.info("Report import complete:",raw.length,"source characters;",importedChars,"characters placed in",S.pages.length,"sections.");
  }catch(x){
-  S.pages=oldP;S.info.title=oldT;S.dir=oldD;S.rlang=oldRl;S.font=oldF;if(w)w.remove();LD.el.remove();throw x}
+  S.pages=oldP;S.info.dep=oldDp;S.info.title=oldT;S.dir=oldD;S.rlang=oldRl;S.font=oldF;if(w)w.remove();LD.el.remove();throw x}
 }
 function openUR(){if($("ur"))return;
  const o=document.createElement("div");o.id="ur";
@@ -911,6 +915,7 @@ function openUR(){if($("ur"))return;
 <main class="ur-main"><div class="ur-wrap">
 <details class="ur-guide ur-ai" id="aiBox" open><summary><b>AI prompt helper</b><small>This only prepares a prompt for ChatGPT or Gemini. It does not write the report.</small></summary>
 <input id="aiT" type="text" dir="auto" placeholder="Report Title:" aria-label="Report Title" autocomplete="off">
+<input id="aiD" type="text" dir="auto" placeholder="Department: (e.g. IT)" aria-label="Department" autocomplete="off" style="margin-top:8px">
 <div class="ai-line"><span>Length (A4 pages)</span><input id="aiN" type="number" inputmode="numeric" min="1" max="40" placeholder="Auto" style="width:150px;height:44px;box-sizing:border-box;text-align:center;border:2px solid var(--bd);border-radius:22px;background:var(--card);font-weight:700;color:var(--ac)"></div>
 <div class="ai-line"><span>Report language</span><div class="ai-row" id="aiL"><button type="button" data-v="en">English</button><button type="button" data-v="ckb">کوردی</button><button type="button" data-v="ar">العربية</button></div></div>
 <button type="button" class="pri" id="aiC">${ic("copy")}<span>Copy AI prompt</span></button><p class="ur-status" id="aiS" role="status" aria-live="polite"></p>
@@ -927,8 +932,9 @@ function openUR(){if($("ur"))return;
  ta.value=URD;upd();
  if(AIS.l==null)AIS.l=S.dir=="rtl"?(S.rlang=="ar"?"ar":"ckb"):"en";
  const aT=$("aiT"),aV=$("aiV"),aS=$("aiS");
- const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l,AIS.seed);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
+ const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l,AIS.seed,AIS.d);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
  aT.value=AIS.t;aT.oninput=()=>{AIS.t=aT.value;aiUpd()};
+ const aD=$("aiD");aD.value=AIS.d;aD.oninput=()=>{AIS.d=aD.value.slice(0,60);try{localStorage.setItem("arb_dept",AIS.d)}catch(x){}aiUpd()};
  $("aiN").oninput=()=>{const v=Math.round(+$("aiN").value);AIS.p=v>0?Math.min(40,Math.max(1,v)):"auto";aiUpd()};
  $("aiL").onclick=ev=>{const b=ev.target.closest("button");if(b){AIS.l=b.dataset.v;aiUpd()}};
  $("aiC").onclick=async()=>{if(!AIS.t.trim()){aS.style.color="#b00020";aS.textContent="Write the topic first.";aT.focus();return}AIS.seed=Math.random();aiUpd();
