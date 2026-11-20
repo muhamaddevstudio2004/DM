@@ -82,7 +82,8 @@ textarea{resize:vertical;min-height:80px}
 .page.rtl .bd td,.page.rtl .bd th{text-align:right}.page.rtl .bd table{line-height:1.5}
 .page.rtl .bd figcaption{font-style:normal}
 .page.rtl .cv ul{padding-left:0;padding-right:20px}.page.rtl .cv{line-height:1.6}
-.citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.bd table{break-inside:auto}.bd tr{break-inside:avoid;page-break-inside:avoid}.bd thead{display:table-header-group}.bd figure{break-inside:avoid;page-break-inside:avoid}.bd h1,.bd h2,.bd h3{break-after:avoid;page-break-after:avoid}.bd img{height:auto;object-fit:contain;max-width:100%}.x .page{margin:0;box-shadow:none;page-break-after:always}.x .page:last-child{page-break-after:auto}
+.citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.page.rtl .ref-entry[dir="ltr"]{padding-left:48px;padding-right:0;text-align:left!important;text-align-last:left!important}
+.page .ref-blk{padding-inline-start:0!important;margin-inline-start:0}.page .ref-blk li[dir]{list-style:none;position:relative;padding-inline-start:1.3em;text-align:start!important;text-align-last:start!important;unicode-bidi:isolate}.page .ref-blk li[dir]::before{content:"•";position:absolute;inset-inline-start:.2em}.page .ref-blk p[dir]{text-align:start!important;text-align-last:start!important}.bd table{break-inside:auto}.bd tr{break-inside:avoid;page-break-inside:avoid}.bd thead{display:table-header-group}.bd figure{break-inside:avoid;page-break-inside:avoid}.bd h1,.bd h2,.bd h3{break-after:avoid;page-break-after:avoid}.bd img{height:auto;object-fit:contain;max-width:100%}.x .page{margin:0;box-shadow:none;page-break-after:always}.x .page:last-child{page-break-after:auto}
 .bd>h1{border-bottom:2px solid var(--gd);padding-bottom:4px}.bd>h1.sh{margin-top:14px;text-transform:uppercase}.bd>h1.sh:first-child{margin-top:0}.cv h1::after{content:"";display:block;width:90px;height:3px;background:var(--gd);margin:12px auto 0}.no-report-line .bd>h1{border-bottom:0;padding-bottom:0}.no-report-line .cv h1::after{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media print{@page{size:A4;margin:0}body{background:#fff}#top,#ed,#nav{display:none!important}#app,#pv{display:block!important;padding:0}#doc{transform:none!important;margin:0!important;width:auto!important}.page{margin:0;box-shadow:none;page-break-after:always}.page:last-child{page-break-after:auto}html.ios .page{zoom:.85;margin:0 auto}}
@@ -752,6 +753,7 @@ STRUCTURE (exact Markdown):
 - Sections in this order: ${order}.
 - Length guide: ${guide}
 - Bullet lists with "- ", numbered lists with "1. ", tables with pipes: | Header | Header |. Use at most 2 tables in the whole report.
+- Never use LaTeX or dollar signs. Write every formula in plain text on its own line, for example: Efficiency Gain (%) = ((C1 - C2) / C1) × 100, and name each symbol in the sentence after it.
 
 CONTENT QUALITY (explain the topic well):
 - Formal academic tone suitable for university students; clear short paragraphs; no filler and no generic opening phrases such as "in today's digital world".
@@ -765,6 +767,7 @@ CONTENT QUALITY (explain the topic well):
 
 IMAGE REQUIREMENTS:
 - RELEVANCE RULE (most important): every image must show the exact subject of "${t}" or of the section where it is placed (the real device, component, process or a diagram of it). Do not add decorative, symbolic, stock or loosely related pictures (people, offices, cities, generic computers, abstract backgrounds). If you cannot find a picture that clearly shows the subject of a section, leave that Image line out; no picture is better than an unrelated picture.
+- ABSTRACT SUBJECTS: if the subject is an idea without a physical object (for example psychology, law, economics, education, management, literature, religion or social studies), do NOT look for photographs. Use only a diagram, framework, model or chart of that exact subject (for example "<subject> framework diagram"), or leave the Image lines out completely. Never use pictures of art, dance, sport, crowds or portraits.
 - Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line.
 - Never add an image line to ${N.abs}, ${N.con}, ${N.ref}, or to a section that contains a table.
 - Image plan for this report: ${vI}. Make each line different only by its view word, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture, but never drop the subject name. All images must be different and each must show something that the section really talks about.
@@ -855,9 +858,11 @@ WRITING STYLE:
 - Include concrete facts: real model or standard names, specifications, numbers with units, dates, formulas or typical values. Every fact must be correct; if you are not sure of a number, describe it qualitatively.
 - Every section must say something specific about "${t}". Do not repeat the same point in different chapters.
 - Bullet lists with "- ", numbered lists with "1. ", tables with pipes: | Header | Header |. Use at most 3 tables in the whole research, and keep every table small.
+- Never use LaTeX or dollar signs. Write every formula in plain text on its own line, for example: Efficiency Gain (%) = ((C1 - C2) / C1) × 100, and name each symbol in the sentence after it.
 
 IMAGE REQUIREMENTS:
 - RELEVANCE RULE (most important): every image must show the exact subject of "${t}" or of the section where it is placed (the real device, component, process or a diagram of it). Do not add decorative, symbolic, stock or loosely related pictures (people, offices, cities, generic computers, abstract backgrounds). If you cannot find a picture that clearly shows the subject of a section, leave that Image line out; no picture is better than an unrelated picture.
+- ABSTRACT SUBJECTS: if the subject is an idea without a physical object (for example psychology, law, economics, education, management, literature, religion or social studies), do NOT look for photographs. Use only a diagram, framework, model or chart of that exact subject (for example "<subject> framework diagram"), or leave the Image lines out completely. Never use pictures of art, dance, sport, crowds or portraits.
 - Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line.
 - Never add an image line to ${G.ded}, ${G.ack}, ${G.abs}, ${G.c[4]}, ${G.ref}, or to a section that contains a table.
 - Image plan: ${vI}. Make each line different only by its view word, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture, but never drop the subject name. All images must be different.
@@ -884,8 +889,21 @@ FINAL OUTPUT RULES:
 - No bold formatting (**).
 - No other code blocks inside it.
 - Follow the exact Markdown structure.`}
+/* V23: AI formulas written in LaTeX ($..$, \frac, \text) are converted to clean plain text */
+const TEXG={alpha:"α",beta:"β",gamma:"γ",delta:"δ",Delta:"Δ",theta:"θ",lambda:"λ",mu:"μ",pi:"π",sigma:"σ",Sigma:"Σ",omega:"ω",rho:"ρ",epsilon:"ε",eta:"η",phi:"φ",tau:"τ",chi:"χ",kappa:"κ"};
+const TEXS={times:"×",cdot:"·",le:"≤",leq:"≤",ge:"≥",geq:"≥",approx:"≈",neq:"≠",pm:"±",rightarrow:"→",to:"→",sum:"Σ",infty:"∞",div:"÷",ldots:"…",dots:"…"};
+function texToText(m){let s=String(m).replace(/\\left|\\right/g,"");
+ for(let i=0;i<4;i++)s=s.replace(/\\(?:text|mathrm|mathbf|mathit|textbf|textit|operatorname|mbox)\s*\{([^{}]*)\}/g,"$1").replace(/_\{([^{}]*)\}/g,"_$1").replace(/\^\{([^{}]*)\}/g,"^$1");
+ for(let i=0;i<5;i++)s=s.replace(/\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g,(_,a,b)=>{a=a.trim();b=b.trim();return (/^[\w.]+$/.test(a)?a:"("+a+")")+" / "+(/^[\w.]+$/.test(b)?b:"("+b+")")});
+ s=s.replace(/\\(?:text|mathrm|mathbf|mathit|textbf|textit|operatorname|mbox)\s*\{([^{}]*)\}/g,"$1").replace(/\\sqrt\s*\{([^{}]*)\}/g,"√($1)");
+ s=s.replace(/\\%/g,"%").replace(/\\[,;:! ]/g," ").replace(/\\([A-Za-z]+)/g,(_,k)=>TEXS[k]||TEXG[k]||k);
+ s=s.replace(/_\{([^{}]*)\}/g,"_$1").replace(/\^\{([^{}]*)\}/g,"^$1").replace(/[{}]/g,"").replace(/\s+/g," ").trim();return s}
+function cleanMath(t){
+ t=t.replace(/\$\$([\s\S]+?)\$\$/g,(_,m)=>"\n"+texToText(m)+"\n").replace(/\\\[([\s\S]+?)\\\]/g,(_,m)=>"\n"+texToText(m)+"\n").replace(/\\\(([\s\S]+?)\\\)/g,(_,m)=>texToText(m));
+ t=t.replace(/\$([A-Za-z\\][^$\n]{0,60})\$/g,(_,m)=>texToText(m));
+ return t.replace(/\\(?:text|mathrm|textbf|mathbf)\s*\{([^{}]*)\}/g,"$1").replace(/\\(times|cdot|approx|pm)\b/g,(_,k)=>TEXS[k])}
 function cleanAI(raw){
- let t=String(raw).replace(/\r\n?/g,"\n").replace(/[\u200b\ufeff]/g,"");
+ let t=cleanMath(String(raw).replace(/\r\n?/g,"\n").replace(/[\u200b\ufeff]/g,""));
  t=t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}\u{2B55}\uFE0F\u200D]/gu,"").replace(/\*\*|__/g,"");
   t=t.replace(/^[ \t]*(?:```|~~~)[\w-]*[ \t]*$/gm,"").replace(/!\[[^\]]*\]\(\s*<?(https?:\/\/[^)\s>]+)>?[^)]*\)/g,"\nImage: $1\n").replace(/!\[[^\]]*\]\([^)]*\)/g,"").replace(/^[ \t]*<?(https?:\/\/\S+?\.(?:jpe?g|png|gif|webp|avif)(?:\?\S*)?|https?:\/\/(?:images\.unsplash\.com|images\.pexels\.com|upload\.wikimedia\.org|cdn\.pixabay\.com)\S*)>?[ \t]*$/gim,"Image: $1");
  let L=t.split("\n");
@@ -908,7 +926,7 @@ function mkLoader({title,steps}){
   steps(i,f){el.querySelectorAll("[data-i]").forEach(li=>{const j=+li.dataset.i,d=j<i||(j==i&&f>=1);li.classList.toggle("done",d);li.classList.toggle("cur",!d&&j==i)})},
   done(msg){el.classList.add("is-done");q(".ld-ttl").textContent="Completed";q(".ld-pct").textContent="100%";q(".ld-bar i").style.width="100%";q(".ld-st").textContent=msg;q(".ld-ic").innerHTML=ic("check");el.querySelectorAll("[data-i]").forEach(li=>{li.classList.add("done");li.classList.remove("cur")})}}}
 function detectScript(raw){
-  const t=String(raw).replace(/https?:\/\/\S+/g,"").replace(/^\s*image\s*:.*$/gim,"");
+  const t=String(raw).replace(/^\s*#{1,6}\s*(?:references|bibliography|works cited|سەرچاوەکان|سەرچاوە|المراجع|المصادر)\s*$[\s\S]*$/im,"").replace(/https?:\/\/\S+/g,"").replace(/^\s*image\s*:.*$/gim,"");
   const a=(t.match(/[\u0600-\u06FF\u0750-\u077F]/g)||[]).length,l=(t.match(/[A-Za-z]/g)||[]).length;
   if(a<10||a<l*0.5)return null;
   const ku=(t.match(/[ڕڵۆێەڤپچژگکی]/g)||[]).length;
@@ -921,7 +939,14 @@ const imgNorm=x=>String(x||"").toLowerCase().replace(/<[^>]*>/g," ").replace(/[^
 const topicTok=x=>{const o=[];imgNorm(x).split(" ").forEach(w=>{if(w&&!IMG_STOP.has(w)&&(w.length>=3||/\d/.test(w))&&!o.includes(w))o.push(w)});return o.slice(0,5)};
 const tokHit=(k,n)=>{if(!n)return false;if(n.split(" ").some(w=>w===k||(k.length>=5&&w.startsWith(k))))return true;return /\d/.test(k)&&n.replace(/ /g,"").includes(k)};
 let ANCHOR="",ANC_T=[];
-const setAnchor=(topic,raw)=>{ANCHOR="";ANC_T=[];const tk=topicTok(topic);if(!tk.length)return;const n=imgNorm(raw);if(tk.every(k=>tokHit(k,n))){ANC_T=tk;ANCHOR=tk.join(" ")}};
+let ANC_STRICT=false;
+const setAnchor=(topic,raw)=>{ANCHOR="";ANC_T=[];ANC_STRICT=false;const n=imgNorm(raw),tk=topicTok(topic);
+ if(tk.length&&tk.every(k=>tokHit(k,n))){ANC_T=tk;ANCHOR=tk.join(" ");return}
+ /* V23: Kurdish/Arabic topic (no Latin words): use the subject words that the Image lines share */
+ const hs=[];String(raw).split("\n").forEach(l=>{const m=/^\s*image\s*:\s*([^|]*)/i.exec(l);if(m){const t=topicTok(m[1]);if(t.length)hs.push(t)}});
+ if(hs.length<2)return;const f={};hs.forEach(t=>t.forEach(k=>f[k]=(f[k]||0)+1));
+ const need=Math.max(2,Math.ceil(hs.length*.5)),ks=Object.keys(f).filter(k=>f[k]>=need).sort((a,b)=>f[b]-f[a]).slice(0,3);
+ if(ks.length){ANC_T=ks;ANCHOR=ks.join(" ");ANC_STRICT=true}};
 const relAll=c=>{const n=imgNorm(c.t),need=ANC_T.length<=2?ANC_T.length:Math.ceil(ANC_T.length*.6);return ANC_T.filter(k=>tokHit(k,n)).length>=need};
 const relAny=c=>{const sp=ANC_T.filter(k=>k.length>=4),tk=sp.length?sp:ANC_T,n=imgNorm(c.t);return tk.some(k=>tokHit(k,n))};
 const relUrl=u=>{if(!ANC_T.length)return true;let d=String(u||"");try{d=decodeURIComponent(d)}catch(x){}return relAny({t:d})};
@@ -960,10 +985,11 @@ async function findImg(q){
  const tries=[],add=t=>{t=String(t||"").replace(/\s+/g," ").trim();if(t&&!tries.includes(t))tries.push(t)};
  if(ANC_T.length){const wl=w.filter(x=>!ANC_T.includes(imgNorm(x)));add(w.join(" "));add(ANCHOR+" "+wl.slice(0,2).join(" "));add(ANCHOR+" "+wl.slice(0,1).join(" "));add(ANCHOR)}
  else{add(w.join(" "));[w.slice(0,3),w.slice(-3),w.slice(0,2)].forEach(a=>{if(a.length>=1&&a.length<w.length)add(a.join(" "))})}
- tries.slice(0,2).forEach(t=>imgPool(t,false));const lv=!ANC_T.length?[null]:ANC_T.length==1?[relAll]:[relAll,relAny];
+ tries.slice(0,2).forEach(t=>imgPool(t,false));const lv=!ANC_T.length?[null]:(ANC_T.length==1||ANC_STRICT)?[relAll]:[relAll,relAny];
+ const hk=topicTok(q).slice(0,3),hn=Math.ceil(hk.length/2),relH=c=>{const n=imgNorm(c.t);return hk.filter(k=>tokHit(k,n)).length>=hn},mix=r=>hk.length?(r?c=>r(c)&&relH(c):relH):r;
  for(const rel of lv){
-  for(const t of tries){const r=await pickImg(await imgPool(t,false),true,rel);if(r)return r}
-  for(const t of tries){const pool=await imgPool(t,true);const r=await pickImg(pool,true,rel)||await pickImg(pool,false,rel);if(r)return r}}
+  for(const t of tries){const r=await pickImg(await imgPool(t,false),true,mix(rel));if(r)return r}
+  for(const t of tries){const pool=await imgPool(t,true);const r=await pickImg(pool,true,mix(rel))||await pickImg(pool,false,mix(rel));if(r)return r}}
  return null}
 async function urlToData(u){
  const viaImg=src=>new Promise((res,rej)=>{const im=new Image(),to=setTimeout(()=>rej(0),8000);im.crossOrigin="anonymous";im.onerror=()=>{clearTimeout(to);rej(0)};im.onload=()=>{clearTimeout(to);try{if(im.width<200||im.height<120)return rej(0);const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.82))}catch(e){rej(e)}};im.src=src});
@@ -997,7 +1023,7 @@ async function runGen(raw){
   for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"?!noImg(g):!!(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}
+  S.pages=rep.pages;S.tcap=1;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}
    if(AIS.m=="grad"){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});if(!String(S.info.sub||"").trim()){const gl=(SCR||(S.dir=="rtl"?RL():"en"));S.info.sub=gl=="ckb"?"توێژینەوەی دەرچوون":gl=="ar"?"بحث التخرج":"Graduation Research"}}
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
@@ -1068,6 +1094,7 @@ function openUR(){if($("ur"))return;
 /* ---------- document builder ---------- */
 const allImg=()=>S.pages.flatMap(g=>g.blocks).filter(x=>x.t=="img");
 const dispT=t=>String(t==null?"":t).replace(/^\s*(?:\d+(?:\.\d+)+[.)]?|\d+[.)])\s+/,"").trim();
+const tblAuto=(sec,b)=>{const bl=sec.pg.blocks,i=bl.indexOf(b);let t="";for(let j=i-1;j>=0;j--)if(bl[j].t=="h"&&String(bl[j].text||"").trim()){t=String(bl[j].text).replace(/^\s*\d+(?:\.\d+)*[.)]?\s*/,"");break}return autoCap({},t||sec.title)};
 const autoCap=(b,t)=>{let h=String(b.hint||"").replace(/[_\-]+/g," ").replace(/\s+/g," ").trim()||String(t||"").trim();return h?h.charAt(0).toUpperCase()+h.slice(1):""};
 const capT=c=>String(c||"").replace(/^\s*(?:figure|fig\.?|table|وێنەی?|خشتەی?|الشكل|شكل|الجدول|جدول)\s*\d+\s*[:.\-–]?\s*/i,"").trim();
 function noImg(pg){if(kindOf(pg)=="ref")return true;const t=dispT(pg.title)||"";return /^\s*(?:[\d٠-٩]+[.)]?\s*)?(?:conclusions?\b|concluding\b|دەرئەنجام|ئەنجامگیری|الخاتمة|خاتمة|الاستنتاج)/i.test(t)}
@@ -1128,7 +1155,7 @@ function blockEls(b,cl,ct){const o=[],mk=(t,h)=>{const n=document.createElement(
  if(b.t=="h")o.push(mk("h2",e(tx)));
  else if(b.t=="p")ls.forEach(l=>o.push(mk("p",b.linkify===false?citeText(e(l)):linkifyHTML(citeText(e(l))))));
  else if(b.t=="ul"||b.t=="ol"){if(ls.length){const n=mk(b.t,ls.map(l=>"<li>"+(b.linkify===false?e(l):linkifyHTML(e(l)))+"</li>").join(""));if(b.t=="ol"&&b.start>1)n.start=+b.start;o.push(n)}}
- else if(b.t=="tbl"&&ls.length){const r=ls.map(l=>l.split("|").map(c=>b.linkify===false?e(c.trim()):linkifyHTML(e(c.trim()))));const head=r[0]||[],body=r.slice(1);o.push(mk("table",(b.cap?`<caption>${e(cl||"")}${e(capT(b.cap))}</caption>`:"")+`<thead><tr>${head.map(x=>`<th scope="col">${x}</th>`).join("")}</tr></thead><tbody>${body.map(row=>`<tr>${head.map((_,i)=>`<td>${row[i]||""}</td>`).join("")}</tr>`).join("")}</tbody>`))}
+ else if(b.t=="tbl"&&ls.length){const r=ls.map(l=>l.split("|").map(c=>b.linkify===false?e(c.trim()):linkifyHTML(e(c.trim()))));const head=r[0]||[],body=r.slice(1);o.push(mk("table",((b.cap||(cl&&ct))?`<caption>${e(cl||"")}${e(capT(b.cap||ct))}</caption>`:"")+`<thead><tr>${head.map(x=>`<th scope="col">${x}</th>`).join("")}</tr></thead><tbody>${body.map(row=>`<tr>${head.map((_,i)=>`<td>${row[i]||""}</td>`).join("")}</tr>`).join("")}</tbody>`))}
  else if(b.t=="img"&&b.src){const fc=b.cap||(cl?ct:"");const layout=b.layout||"left",sk=b.sz||"m",width={a:"32%",s:"20%",m:"32%",l:"44%"}[sk]||"32%",vert=layout=="top"||layout=="bottom"||layout=="center",cap={a:300,s:150,m:230,l:330}[sk]||230,note=b.note?`<div class="image-copy">${e(b.note).replace(/\n/g,"<br>")}</div>`:"";const img=`<img class="academic-report-image" src="${b.src}" alt="Report illustration" style="width:${vert?"auto":width};max-width:100%;max-height:${vert?cap:360}px;object-fit:contain">`;let content=layout=="right"?img+note:layout=="top"?img+note:layout=="bottom"?note+img:img+note;const f=mk("figure",`<div class="image-layout ${layout}">${content}</div>`+(fc?`<figcaption>${e(cl||"")}${e(capT(fc))}</figcaption>`:""));f.style.textAlign="center";if(!fc)f.classList.add("nocap");if(vert)f.dataset.fit=cap;f.dataset.gi=allImg().indexOf(b);o.push(f)}
  else if(b.t=="img"&&!b.src&&(b.url||b.hint)){const f=mk("figure",ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>");f.className="img-ph";f.dataset.gi=allImg().indexOf(b);o.push(f)}
  return o}
@@ -1194,11 +1221,11 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  O.front.concat(O.body).forEach(sec=>sec.pg.blocks.forEach(b=>{const has=String(b.cap||"").trim();
   const ac=b.t=="img"&&b.src&&!has?autoCap(b,sec.title):"";
   if(b.t=="img"&&b.src&&(has||ac)){const c={k:"f",label:LL.fig+(++fn)+": ",text:capT(has||ac)};cm.set(b,c);caps.push(c)}
-  else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:LL.tab+(++tn)+": ",text:capT(b.cap)};cm.set(b,c);caps.push(c)}}));
+  else if(b.t=="tbl"&&(has||S.tcap)&&String(b.text||"").trim()){const c={k:"t",label:LL.tab+(++tn)+": ",text:capT(has||tblAuto(sec,b))};cm.set(b,c);caps.push(c)}}));
  const isHd=x=>x.tagName=="H1"||x.tagName=="H2"||x.tagName=="H3";
  const over=()=>cur.bd.scrollHeight>cur.bd.clientHeight+1;
  const lh=el=>{const c=getComputedStyle(el);return parseFloat(c.lineHeight)||parseFloat(c.fontSize)*1.5};
- const clone=(el,tg)=>{const r=document.createElement(tg||el.tagName);r.style.fontSize=el.style.fontSize;if(el.dataset&&el.dataset.pi!==undefined){r.dataset.pi=el.dataset.pi;r.dataset.bi=el.dataset.bi}return r};
+ const clone=(el,tg)=>{const r=document.createElement(tg||el.tagName);r.style.fontSize=el.style.fontSize;if(el.classList&&el.classList.contains("ref-blk"))r.classList.add("ref-blk");if(el.getAttribute&&el.getAttribute("dir"))r.setAttribute("dir",el.getAttribute("dir"));if(el.dataset&&el.dataset.pi!==undefined){r.dataset.pi=el.dataset.pi;r.dataset.bi=el.dataset.bi}return r};
  const sz=(el,fs)=>{const g=el.tagName,m={H1:S.h1||16,H2:S.h2||14,H3:S.h3||12};el.style.fontSize=(g in m?m[g]:g=="TABLE"?+(fs*.92).toFixed(2):fs)+"pt";return el};
  const whole=el=>{const g=el.tagName;if(g=="P")return Math.round(el.offsetHeight/lh(el))<=4;if(g=="UL"||g=="OL")return el.children.length<=3;return true};
  function toNext(el){cur.bd.removeChild(el);const mv=[el];let pv;
@@ -1214,6 +1241,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    el.textContent=w.join(" ");return false}
   if(g=="UL"||g=="OL"){const li=[...el.children];let k=li.length;
    while(k>0&&over()){k--;el.removeChild(li[k])}
+   if(k>2&&li.length-k===1){k--;el.removeChild(li[k])}
    if(k>=2&&k<li.length){const r=clone(el);if(g=="OL")r.start=(el.start||1)+k;li.slice(k).forEach(x=>r.appendChild(x));cur=bp();placeEl(r);return true}
    li.slice(k).forEach(x=>el.appendChild(x));return false}
   return false}
@@ -1224,6 +1252,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    if(k<w.length){const r=clone(el);r.textContent=w.slice(k).join(" ");cur=bp();placeEl(r)}}
   else if(g=="UL"||g=="OL"){const li=[...el.children];let k=li.length;
    while(k>1&&over()){k--;el.removeChild(li[k])}
+   if(k>2&&li.length-k===1){k--;el.removeChild(li[k])}
    if(k<li.length){const r=clone(el);if(g=="OL")r.start=(el.start||1)+k;li.slice(k).forEach(x=>r.appendChild(x));cur=bp();placeEl(r)}}
   else if(g=="TABLE"){const rw=[...el.rows];let k=rw.length;
    while(k>2&&over()){k--;rw[k].remove()}
@@ -1257,10 +1286,11 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   if(has&&!whole(el)&&trySplit(el))return;
   if(has){toNext(el);if(!over())return}
   splitEl(el)}
- const mkH=(tag,txt,cls)=>{const h=document.createElement(tag);if(cls)h.className=cls;h.textContent=txt;return h};
+ const refDir=t=>/^[^A-Za-z\u0600-\u06FF]*[A-Za-z]/.test(String(t||"").replace(/<[^>]*>/g,""))?"ltr":"rtl";
+const mkH=(tag,txt,cls)=>{const h=document.createElement(tag);if(cls)h.className=cls;h.textContent=txt;return h};
  function secEls(sec,fs){const out=[],im={},pi=S.pages.indexOf(sec.pg);sec.items.forEach(x=>im[x.bi]=x);
   const h=mkH("h1",(sec.num?sec.num+" ":"")+sec.title,"sh");h.dataset.pi=pi;h.dataset.bi="-1";sec.el=h;out.push(sz(h,fs));
-  if(sec.k==="ref"){sec.pg.blocks.forEach((b,bi)=>blockEls(b).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;el.classList.add("ref-blk");out.push(sz(el,fs))}));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.innerHTML=referenceHTML(r,i);out.push(sz(d,fs))});return out}
+  if(sec.k==="ref"){sec.pg.blocks.forEach((b,bi)=>blockEls(b).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;el.classList.add("ref-blk");el.querySelectorAll("li").forEach(x=>x.setAttribute("dir",refDir(x.textContent)));if(el.tagName=="P")el.setAttribute("dir",refDir(el.textContent));out.push(sz(el,fs))}));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.innerHTML=referenceHTML(r,i);d.setAttribute("dir",refDir(d.textContent));out.push(sz(d,fs))});return out}
   sec.pg.blocks.forEach((b,bi)=>{
    if(b.t=="h"){const x=im[bi];if(!x)return;const hh=mkH(x.lv==3?"h3":"h2",(x.num?x.num+" ":"")+x.title);hh.dataset.pi=pi;hh.dataset.bi=bi;if(b.newPage)hh.dataset.np="1";x.el=hh;out.push(sz(hh,fs));return}
    const c=cm.get(b);blockEls(b,c&&c.label,c&&c.text).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;out.push(sz(el,fs));if(c&&!c.el&&(el.tagName=="FIGURE"||el.tagName=="TABLE"))c.el=el})});
@@ -1442,7 +1472,7 @@ async function makeDocx(pgn){
   if(o.style)s+=`<w:pStyle w:val="${o.style}"/>`;if(o.keepNext)s+="<w:keepNext/>";if(o.pb)s+="<w:pageBreakBefore/>";
   if(o.num)s+=`<w:numPr><w:ilvl w:val="0"/><w:numId w:val="${o.num}"/></w:numPr>`;
   if(o.bdr)s+=`<w:pBdr><w:bottom w:val="single" w:sz="${o.bdr[0]}" w:space="1" w:color="${o.bdr[1]}"/></w:pBdr>`;
-  if(rt)s+="<w:bidi/>";if(o.sp)s+=`<w:spacing ${o.sp}/>`;if(o.ind)s+=`<w:ind ${o.ind}/>`;if(o.jc)s+=`<w:jc w:val="${o.jc}"/>`;
+  if(rt&&!o.ltr)s+="<w:bidi/>";if(o.sp)s+=`<w:spacing ${o.sp}/>`;if(o.ind)s+=`<w:ind ${o.ind}/>`;if(o.jc)s+=`<w:jc w:val="${o.jc}"/>`;
   if(o.tiny)s+="";
   const rp=o.tiny?'<w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr>':"";
   if(o.bm){const n=bmid++;runs=`<w:bookmarkStart w:id="${n}" w:name="${o.bm}"/>${runs}<w:bookmarkEnd w:id="${n}"/>`}
@@ -1471,13 +1501,13 @@ async function makeDocx(pgn){
  O.front.concat(O.body).forEach(sec=>sec.pg.blocks.forEach(b=>{const has=String(b.cap||"").trim();
   const ac=b.t=="img"&&b.src&&!has?autoCap(b,sec.title):"";
   if(b.t=="img"&&b.src&&(has||ac)){const c={k:"f",label:L.fig+(++fn)+": ",text:capT(has||ac),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}
-  else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(b.cap),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
+  else if(b.t=="tbl"&&(has||S.tcap)&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(has||tblAuto(sec,b)),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
  const capP=(txt,fs,c)=>P(R(txt,{i:!rt,sz:Math.round(fs*2*.9)}),{keepNext:0,jc:"center",sp:'w:before="40" w:after="120" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
  /* ---- block (dom) -> xml ---- */
  function conv(el,fs,c,b){const t=el.tagName,o={sz:fs*2};
   if(t=="P")return P(runsOf(el,o),{});
   if(t=="UL"||t=="OL"){const nid=t=="OL"?newNum(el.start||1):1,li=[...el.children];
-   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:20}"`,jc:el.classList.contains("ref-blk")?"left":undefined})).join("")}
+   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:20}"`,jc:el.classList.contains("ref-blk")?"left":undefined,ltr:el.classList.contains("ref-blk")&&refDir(x.textContent)=="ltr"})).join("")}
   if(t=="TABLE"){const cap=el.querySelector("caption");let out="";
    if(cap)out+=P(R(cap.textContent,{i:!rt,sz:Math.round(fs*2*.95)}),{keepNext:1,jc:"center",sp:'w:before="60" w:after="80" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
    const hr=[...el.querySelectorAll("thead tr")],br=[...el.querySelectorAll("tbody tr")],nc=Math.max(1,((hr[0]||br[0]||{children:[]}).children.length)),cw=Math.floor(TW/nc),tsz=Math.round(fs*2*.92);
