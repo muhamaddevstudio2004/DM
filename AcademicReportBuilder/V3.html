@@ -65,7 +65,7 @@ textarea{resize:vertical;min-height:80px}
 .hd span{max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ft{position:absolute;bottom:38px;left:0;right:0;text-align:center;font-size:11pt}
 .bd h1{font-size:1.33em;color:var(--dk);margin:0 0 8px;line-height:1.3}.bd h2{font-size:1.08em;margin:10px 0 4px;line-height:1.3}.bd h3{font-size:1em;margin:8px 0 3px;line-height:1.3}.bd caption{caption-side:top;text-align:center;font-style:italic;font-size:.95em;padding-bottom:4px}.page.rtl .bd caption{font-style:normal}
-.bd p{text-align:var(--ta,justify);margin:0 0 8px;overflow-wrap:anywhere}.bd pre.code{direction:ltr;unicode-bidi:isolate;text-align:left;margin:0 0 10px;padding:6px 8px;background:#f4f6fa;border:1px solid #cfd6e4;border-left:3px solid #143A7B;border-radius:4px;font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;counter-reset:ln var(--ln0,0);color:#1b2433}.bd pre.code code{display:block;font:inherit;counter-increment:ln}.bd pre.code.nl code{padding-left:2.5em;text-indent:-2.5em}.bd pre.code .hk{color:#d73a49}.bd pre.code .hs{color:#032f62}.bd pre.code .hc{color:#6a737d;font-style:italic}.bd pre.code .hn,.bd pre.code .hy{color:#005cc5}.bd pre.code .hv{color:#e36209}.bd pre.code .hf,.bd pre.code .ha{color:#6f42c1}.bd pre.code .ht{color:#22863a}.bd pre.code.nl code::before{content:counter(ln);display:inline-block;width:1.9em;margin-right:.6em;text-align:right;text-indent:0;color:#8a94a6}.bd ul,.bd ol{margin:0 0 8px;padding-left:28px;text-align:var(--ta,justify)}
+.bd p{text-align:var(--ta,justify);margin:0 0 8px;overflow-wrap:anywhere}.bd pre.code{direction:ltr;unicode-bidi:isolate;text-align:left;margin:0 0 10px;padding:6px 8px;background:#f4f6fa;border:1px solid #cfd6e4;border-left:3px solid #143A7B;border-radius:4px;font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;counter-reset:ln var(--ln0,0);color:#1b2433}.bd pre.code code{display:block;font:inherit;counter-increment:ln}.bd pre.code.nl code{padding-left:2.5em;text-indent:-2.5em}.bd pre.code .xhk{color:#d73a49}.bd pre.code .xhs{color:#032f62}.bd pre.code .xhc{color:#6a737d;font-style:italic}.bd pre.code .xhn,.bd pre.code .xhy{color:#005cc5}.bd pre.code .xhv{color:#e36209}.bd pre.code .xhf,.bd pre.code .xha{color:#6f42c1}.bd pre.code .xht{color:#22863a}.bd pre.code.nl code::before{content:counter(ln);display:inline-block;width:1.9em;margin-right:.6em;text-align:right;text-indent:0;color:#8a94a6}.bd ul,.bd ol{margin:0 0 8px;padding-left:28px;text-align:var(--ta,justify)}
 .bd table{width:100%;border-collapse:collapse;font-size:.92em;line-height:1.3;margin:6px 0 10px}
 .bd td,.bd th{border:1px solid #444;padding:4px 7px;text-align:left;vertical-align:top;overflow-wrap:anywhere}.bd th{background:var(--dk);color:#fff}
 .bd figure{margin:8px 0;text-align:center}.bd figure img{max-width:100%;max-height:430px}.bd figcaption{font-style:italic;font-size:.85em;line-height:1.3}
@@ -81,8 +81,11 @@ textarea{resize:vertical;min-height:80px}
 .page.rtl .bd ul,.page.rtl .bd ol{padding-left:0;padding-right:28px}
 .page.rtl .bd td,.page.rtl .bd th{text-align:right}.page.rtl .bd table{line-height:1.5}
 .page.rtl .bd figcaption{font-style:normal}
-.page.rtl .cv ul{padding-left:0;padding-right:20px}.page.rtl .cv{line-height:1.6}
-.citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.bd table{break-inside:auto}.bd tr{break-inside:avoid;page-break-inside:avoid}.bd thead{display:table-header-group}.bd figure{break-inside:avoid;page-break-inside:avoid}.bd h1,.bd h2,.bd h3{break-after:avoid;page-break-after:avoid}.bd img{height:auto;object-fit:contain;max-width:100%}.x .page{margin:0;box-shadow:none;page-break-after:always}.x .page:last-child{page-break-after:auto}
+.page.rtl .cv ul{padding-left:0;padding-right:20px}
+.cv ul,.page.rtl .cv ul{list-style:none;padding:0!important;margin:6px 0}.cv li{list-style:none;white-space:nowrap}.cv li::before{content:"•\00a0\00a0";font-weight:bold}
+.lt{unicode-bidi:isolate;direction:ltr}.page.rtl .cv{line-height:1.6}
+.citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.page.rtl .ref-entry[dir="ltr"]{padding-left:48px;padding-right:0;text-align:left!important;text-align-last:left!important}
+.page .ref-blk{padding-inline-start:0!important;margin-inline-start:0}.page .ref-blk li[dir]{list-style:none;position:relative;padding-inline-start:1.3em;text-align:start!important;text-align-last:start!important;unicode-bidi:isolate}.page .ref-blk li[dir]::before{content:"•";position:absolute;inset-inline-start:.2em}.page .ref-blk p[dir]{text-align:start!important;text-align-last:start!important}.bd table{break-inside:auto}.bd tr{break-inside:avoid;page-break-inside:avoid}.bd thead{display:table-header-group}.bd figure{break-inside:avoid;page-break-inside:avoid}.bd h1,.bd h2,.bd h3{break-after:avoid;page-break-after:avoid}.bd img{height:auto;object-fit:contain;max-width:100%}.x .page{margin:0;box-shadow:none;page-break-after:always}.x .page:last-child{page-break-after:auto}
 .bd>h1{border-bottom:2px solid var(--gd);padding-bottom:4px}.bd>h1.sh{margin-top:14px;text-transform:uppercase}.bd>h1.sh:first-child{margin-top:0}.cv h1::after{content:"";display:block;width:90px;height:3px;background:var(--gd);margin:12px auto 0}.no-report-line .bd>h1{border-bottom:0;padding-bottom:0}.no-report-line .cv h1::after{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media print{@page{size:A4;margin:0}body{background:#fff}#top,#ed,#nav{display:none!important}#app,#pv{display:block!important;padding:0}#doc{transform:none!important;margin:0!important;width:auto!important}.page{margin:0;box-shadow:none;page-break-after:always}.page:last-child{page-break-after:auto}html.ios .page{zoom:.85;margin:0 auto}}
@@ -531,8 +534,11 @@ function parseReport(raw){
   const SQLC=/^(?:\s*(?:FROM|WHERE|AND|OR|ORDER BY|GROUP BY|HAVING|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL JOIN|JOIN|ON|SET|VALUES|LIMIT|UNION|OFFSET)\b|\s+[`\w]+\s+(?:INT|INTEGER|BIGINT|VARCHAR|CHAR|TEXT|DATE|DATETIME|TIMESTAMP|FLOAT|DOUBLE|DECIMAL|BOOLEAN|PRIMARY KEY|FOREIGN KEY|UNIQUE|CONSTRAINT)\b|\s*\)\s*(?:ENGINE[^;]*)?;?\s*$)/i;
   const sqlCont=x=>/^\s*(?:FROM|WHERE|AND|OR|ORDER BY|GROUP BY|HAVING|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL JOIN|JOIN|ON|SET|VALUES|LIMIT|UNION|OFFSET)\b/.test(x)||(SQLC.test(x)&&/[,;()]\s*$/.test(x));
   const isCode0=x=>{x=String(x);if(!x.trim()||!CODE_PUNCT.test(x))return false;const a=(x.match(ARB)||[]).length;if(a>x.length*.3)return false;return STRONG.test(x)};
-  const isCode=x=>isSql(x)||isCode0(x);
-  const startsCode=x=>isSql(x)||/^\s*(?:<\?|\?>|<\/?[a-z]|\$\w|[{}]|\/\/|\/\*|\*\/|#\s*include|(?:echo|print|printf|include|require|include_once|require_once|function|if|elseif|else|for|foreach|while|do|switch|case|break|return|class|import)\b)/i.test(x),cmtCode=x=>/^\s*(?:\/\/|\/\*|\*\/|\*\s|#\s|(?:case\b.*|default)\s*:\s*$)/.test(x);
+  const PYC=/^\s*(?:def\s+\w+\s*\(.*\)\s*(?:->.*)?:\s*$|class\s+\w+.*:\s*$|import\s+[\w.,\s]+$|from\s+[\w.]+\s+import\s+\S|(?:if|elif|else|for|while|try|except|finally|with)\b.*:\s*$|print\(.*\)\s*$|[a-z_]\w*\s*=\s*[\w.]+\(.*\)\s*$)/;
+  const SHC=x=>/^\s*(?:\$\s+\S|(?:sudo|apt|apt-get|pip3?|npm|npx|git|cd|mkdir|chmod|chown|systemctl|service|curl|wget|mysql|mysqldump|python3?|php|node|ls|cp|mv|rm|cat|nano|vim|ssh|scp|docker)\s+(?:-|\/|\.|~|apt|apt-get|pip3?|npm|systemctl|service|git|docker|install|update|upgrade|clone|add|commit|push|pull|status|run|start|stop|restart|enable|init|\w+\s*$)\S*.*)/.test(x)&&!/[.!?]\s*$/.test(x)&&!/[\u0600-\u06FF]/.test(x);
+  const BRACE=x=>/\{\s*$/.test(x)&&x.length<=140&&!/[.!?]\s/.test(x)&&!/[\u0600-\u06FF]/.test(x)&&x.trim().length>1;
+  const isCode=x=>isSql(x)||isCode0(x)||BRACE(x)||PYC.test(x)||SHC(x);
+  const startsCode=x=>isSql(x)||BRACE(x)||PYC.test(x)||SHC(x)||/^\s*(?:<\?|\?>|<\/?[a-z]|\$\w|[{}]|\/\/|\/\*|\*\/|#\s*include|(?:echo|print|printf|include|require|include_once|require_once|function|if|elseif|else|for|foreach|while|do|switch|case|break|return|class|import)\b)/i.test(x),cmtCode=x=>/^\s*(?:\/\/|\/\*|\*\/|\*\s|#\s|(?:case\b.*|default)\s*:\s*$)/.test(x);
   const weakCode=x=>{x=String(x);const a=(x.match(ARB)||[]).length;return !!x.trim()&&a<=x.length*.3&&(sqlCont(x)||/[;{}()=$<>\[\]]|^\s{2,}\S/.test(x))&&!/[.!?]\s*$/.test(x)};
   const LABEL_WORDS=/^(?:Syntax|Definition|Example(?: and Output)?|Output|Expected Output|Code Explanation|Explanation|Note|Notes|Result|Results|Description|Purpose|Aim|Objectives?|Procedure|Steps?|Observations?|Tip|Warning|Usage|Input|Answer|Question|شیوازی نووسینی کۆد|پێناسەی کۆدەکە|پێناسە|نموونەیەک بە وێنە لەسەر کۆدەکە|نموونە(?:یەک)?|ئەنجام|باسکردنی کۆدەکە|ڕوونکردنەوە|تێبینی|ئامانج|الصيغة|تعريف|مثال|الناتج|شرح|ملاحظة|وصف)(?:\s*\([^)]{1,25}\))?\s*[:：]/i;
   const markLab=t=>{if(/^\u2063/.test(t))return t;const w=t.trim().split(/\s+/).length;
@@ -544,7 +550,7 @@ function parseReport(raw){
  const hs=[];L.forEach((l,i)=>{const m=l.match(/^\s{0,3}(#{1,6})\s+\S/);if(m)hs.push([i,m[1].length])});
  const md=hs.length>0;let pl=0,tIdx=-1,title="";
  if(md){const lv=[...new Set(hs.map(h=>h[1]))].sort((a,b)=>a-b);pl=lv[0];if(lv.length>1&&hs.filter(h=>h[1]==lv[0]).length==1&&hs[0][1]==lv[0]){tIdx=hs[0][0];pl=lv[1]}}
- const SECN=/^(?:abstract|introduction|conclusions?|references|bibliography|recommendations|methodology|results|discussion|summary|acknowledg(?:e)?ments?|literature review|پێشەکی|ئەنجام|ئەنجامەکان|سەرچاوەکان|کورتە|دەرئەنجام|المقدمة|الخاتمة|المراجع|الملخص|مستخلص|النتائج|التوصيات|المصادر|objectives|aims and objectives|main content|main body|background|findings|analysis|overview|limitations|future work|related work|ئامانجەکان|ناوەڕۆکی سەرەکی|الأهداف|المحتوى الرئيسي)\s*:?$/i,preDrop=new Set(),pre=[];
+ const SECN=/^(?:abstract|introduction|conclusions?|references|bibliography|recommendations|methodology|results|discussion|summary|acknowledg(?:e)?ments?|literature review|پێشەکی|ئەنجام|ئەنجامەکان|سەرچاوەکان|کورتە|دەرئەنجام|المقدمة|الخاتمة|المراجع|الملخص|مستخلص|النتائج|التوصيات|المصادر|objectives|aims and objectives|main content|main body|background|findings|analysis|overview|limitations|future work|related work|ئامانجەکان|ناوەڕۆکی سەرەکی|الأهداف|المحتوى الرئيسي|dedication|پێشکەشکردن|الإهداء|شكر وتقدير|المستخلص)\s*:?$/i,preDrop=new Set(),pre=[];
  if(md){const fsx=hs.find(h=>h[1]<=pl&&h[0]!==tIdx),end=fsx?fsx[0]:L.length,idx=[];
   for(let i=0;i<end;i++){if(i===tIdx)continue;const x=L[i].trim();if(x&&!/^(-{3,}|\*{3,}|_{3,}|={3,}|```)/.test(x))idx.push(i)}
   if(fsx&&idx.length&&idx.length<=2&&idx.every(i=>{const x=L[i].trim();return x.length<=160&&!/^([-*•–·|#]|\d+[.)]\s)/.test(x)})){if(tIdx<0&&!title)title=clean(L[idx[0]].trim());idx.forEach(i=>preDrop.add(i))}}
@@ -566,9 +572,9 @@ function parseReport(raw){
   if(!t||/^(-{3,}|\*{3,}|_{3,}|={3,})$/.test(t)||/^```/.test(t)){if(!t&&list&&keepList(i,list))continue;flush();continue}
   t=t.replace(/^>\s?/,"");
    {const ih=t.match(/^(?:[-*]\s*)?(?:\*\*)?(?:image|picture|visual|img|وێنە|صورة)(?:\s+(?:idea|suggestion|keywords?|hint|url|link|source))?(?:\*\*)?\s*[:：]\s*(.+)$/i);
-    if(ih){if(cur&&!skip&&kindOf(cur)!="ref"){flush();const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/),kw=clean(ih[1].replace(/https?:\/\/[^\s)<>"'\]]+/g," ")).replace(/^[\s|•\-–—:;,]+|[\s|•\-–—:;,]+$/g,"").replace(/\s+/g," ");addImg(um?um[0]:"",kw.slice(0,120))}continue}}
+    if(ih){if(cur&&!skip&&!noImg(cur)){flush();const um=ih[1].match(/https?:\/\/[^\s)<>"'\]]+/),kw=clean(ih[1].replace(/https?:\/\/[^\s)<>"'\]]+/g," ")).replace(/^[\s|•\-–—:;,]+|[\s|•\-–—:;,]+$/g,"").replace(/\s+/g," ");addImg(um?um[0]:"",kw.slice(0,120))}continue}}
    {const iu=t.match(/https?:\/\/[^\s)<>"'\]]*(?:\.(?:jpe?g|png|gif|webp|avif)(?:[?#][^\s)<>"'\]]*)?|upload\.wikimedia\.org[^\s)<>"'\]]*|images\.unsplash\.com[^\s)<>"'\]]*|images\.pexels\.com[^\s)<>"'\]]*|cdn\.pixabay\.com[^\s)<>"'\]]*)/i);
-    if(iu&&cur&&!skip&&kindOf(cur)!="ref"&&t.length<iu[0].length+90){flush();addImg(iu[0],"");continue}}
+    if(iu&&cur&&!skip&&!noImg(cur)&&t.length<iu[0].length+90){flush();addImg(iu[0],"");continue}}
   // A contents heading must not cause the rest of a plain-text report to be discarded.
   // Skip only obvious dotted-leader TOC rows; resume importing as soon as real body text appears.
   if(skip){if(/(?:\.{2,}|…{2,}|·{2,})\s*[\d٠-٩]+\s*$/.test(t)||/^[\d٠-٩]+\s*$/.test(t))continue;skip=false;cur={title:rt?RLAB[RL()].intro:"Introduction",blocks:[]};pages.push(cur)}
@@ -594,7 +600,7 @@ function parseReport(raw){
    const sh=k=>/^\s*SELECT\s+\S/.test(L[k]||"")&&sqlCont(L[k+1]||"");
    if(cur&&!skip&&((startsCode(t)&&isCode(t))||sh(i))){const run=[];let j=i,strong=0;
     while(j<L.length){const x=L[j];if(!x.trim()){const y=(L.slice(j+1).find(q=>q.trim())||"");if(run.length&&(isCode(y)||weakCode(y))&&L.slice(j+1).findIndex(q=>q.trim())===0+0){run.push("");j++;continue}break}
-     if(/^\s*#{1,6}\s/.test(x))break;if(isCode(x)||sh(j)){strong++;run.push(x.replace(/\s+$/,""))}else if(weakCode(x)||cmtCode(x))run.push(x.replace(/\s+$/,""));else break;j++}
+     if(/^\s*#{1,6}\s/.test(x)&&!(run.length&&(()=>{const y=L.slice(j+1).find(q=>q.trim())||"";return isCode(y)||weakCode(y)||cmtCode(y)})()))break;if(isCode(x)||sh(j)){strong++;run.push(x.replace(/\s+$/,""))}else if(weakCode(x)||cmtCode(x))run.push(x.replace(/\s+$/,""));else break;j++}
     if(strong&&run.some(l=>l.trim())){flush();pushCode(run.map(x=>x.replace(/\t/g,"    ")));i=j-1;continue}}
    if(!cur&&!pages.length&&!skip&&!list&&!tbl&&!para.length){pre.push(clean(t));continue}
    {const ct=clean(t),lb=markLab(ct);if(lb!==ct&&para.length)flush();para.push(lb)}
@@ -602,6 +608,16 @@ function parseReport(raw){
  flush();
  if(pre.length){if(pages.length&&pre.length<=2&&pre.every(x=>x.length<=160)){if(!title)title=pre[0]}else{if(!pages.length)pages.push({title:rt?RLAB[RL()].intro:"Introduction",blocks:[]});pages[0].blocks.unshift({t:"p",text:pre.join(" "),cap:""})}}
  pages.forEach(p=>{if(!p.blocks.length)p.blocks.push({t:"p",text:"",cap:""})});
+ {const SCH=/^\w+\s*:\s*(?:INT|BIGINT|SMALLINT|TINYINT|VARCHAR|CHAR|TEXT|DATE|DATETIME|TIMESTAMP|FLOAT|DOUBLE|DECIMAL|BOOLEAN|BOOL|BLOB|ENUM)\b/i,AR=/[\u0600-\u06FF]/,URLL=/^(?:https?:\/\/|localhost\/|www\.)\S+$/i,LBL=/Syntax|Example|Command|Code|Query|URL|شێوازی نووسینی کۆد|نموونە/i;
+  const lastLine=b=>String(b&&b.text||"").split("\n").pop().replace(/\u2063/g,"").trim();
+  pages.forEach(pg=>{const B=pg.blocks;for(let i=0;i<B.length;i++){
+   if(B[i].t=="p"){const m=String(B[i].text||"").match(/^([\s\S]*\u2063[^\u2063\n]+\u2063)[ \t]+((?:https?:\/\/|localhost\/|www\.)\S+|(?:Database|Table) Name\s*:[^\n]*)$/);if(m&&!AR.test(m[2])){B.splice(i,1,Object.assign({},B[i],{text:m[1]}),Object.assign({},B[i],{text:m[2]}));continue}}
+   const b=B[i],pv=B[i-1],ls=String(b.text||"").split("\n").map(x=>x.trim()).filter(Boolean);
+   if((b.t=="ul"||b.t=="ol")&&ls.length&&ls.every(x=>SCH.test(x))){let head=[];
+    if(pv&&pv.t=="p"){const pl=String(pv.text||"").replace(/\u2063/g,"").split("\n").map(x=>x.trim()).filter(Boolean);
+     if(pl.length&&!pl.some(x=>AR.test(x))&&pl.every(x=>/^(?:Database|Table|Collation|Columns?)\b/i.test(x))){head=pl.join("\n").replace(/\s+(?=(?:Collation|Table Name|Database Name)\s*:)/gi,"\n").split("\n");B.splice(i-1,1);i--}}
+    b.t="code";b.text=head.concat(ls).join("\n");b.cap=b.cap||"";delete b.linkify}
+   else if(b.t=="p"&&ls.length==1&&URLL.test(ls[0])&&pv&&(pv.t=="code"||(pv.t=="p"&&LBL.test(lastLine(pv))))){b.t="code";b.text=ls[0];b.cap=b.cap||"";delete b.linkify;if(pv.t=="code"){pv.text+="\n"+b.text;B.splice(i,1);i--}else if(B[i+1]&&B[i+1].t=="code"){b.text+="\n"+B[i+1].text;B.splice(i+1,1)}}}})}
  return{title,pages};
 }
 let URD="",URB=false;
@@ -720,7 +736,10 @@ function openHelp(){closeHelp();document.documentElement.classList.add("hw-lock"
  o.querySelector(".hw-go").onclick=()=>{closeHelp();openUR()};
  document.body.appendChild(o);document.addEventListener("keydown",helpKey);o.querySelector(".hw-go").focus()}
 /* ---------- AI prompt + AI-text cleaner ---------- */
-const AIS={t:"",p:"auto",l:null};
+const AIS={t:"",p:"auto",l:null,d:"",m:"rep"};try{AIS.d=(localStorage.getItem("arb_dept")||"").slice(0,60);AIS.m=localStorage.getItem("arb_mode")==="grad"?"grad":"rep"}catch(x){}
+/* V18: department name -> prompt perspective + cover line */
+function deptName(raw){return String(raw||"").replace(/\s+/g," ").trim().slice(0,60).replace(/^(?:department|dept\.?)\s+of\s+/i,"").replace(/\s*(?:department|dept\.?|dep\.?)$/i,"").replace(/^(?:بەشی|قسم)\s+/,"").trim()}
+function deptLabel(raw,cur){const n=deptName(raw);if(!n)return"";const rest=String(cur||"").split("|").slice(1).join("|").trim();const base=/[\u0600-\u06FF]/.test(n)?String(raw).replace(/\s+/g," ").trim():n+" Department";return base+(rest?" | "+rest:"")}
 const AISEC={
  en:{abs:"Abstract",intro:"Introduction",obj:"Objectives",lit:"Literature Review",met:"Methodology",main:"Main Content",res:"Results",dis:"Discussion",con:"Conclusion",rec:"Recommendations",ref:"References"},
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"پێداچوونەوەی ئەدەبیات",met:"میتۆدۆلۆجی",main:"ناوەڕۆکی سەرەکی",res:"ئەنجامەکان",dis:"گفتوگۆ",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان"},
@@ -730,21 +749,23 @@ const AI_DOMAINS=["smart agriculture and irrigation","healthcare and patient mon
 const AI_SIGS=["one short, concrete worked example with real values","one step-by-step walkthrough of a complete process","one clear comparison table of 3 or 4 real options (only if the report has no other table in that section)","a short list of common mistakes and how to avoid them","a short real-world mini case study with a measurable result","a short checklist the reader could follow","one carefully explained diagram-style description of how the parts connect"];
 const AI_MODS=["close-up","top view","in use","schematic","laboratory","prototype","installation","components","workshop","circuit board","side view","diagram","assembled","outdoor","classroom"];
 const AI_IMGPLAN=["real photographs of the actual subject, taken in a lab or workshop setting","clear technical diagrams or schematics that show how the parts connect","close-up photographs of key components or details","photographs of the subject being used in real applications","a mix: one overview photograph, one diagram, and the rest application photographs"];
-function aiPrompt(topic,pages,lang,seed){
+function aiPrompt(topic,pages,lang,seed,dept,mode){
+ if(mode==="grad")return aiPromptGrad(topic,pages,lang,seed,dept);
+  const dn=deptName(dept),deptBlk=dn?"\nDEPARTMENT PERSPECTIVE:\nThe student studies in the "+dn+" department. Write the report from the viewpoint of the "+dn+" field: choose the angle, terminology, examples and applications that matter most to "+dn+" students and professionals, while the main subject stays \""+(topic||"").trim()+"\". If this conflicts with the variation plan below, the department perspective wins. Do not put the department name in the report title and do not turn the report into a description of the department.\n":"";
   const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+pages>0),P=auto?0:Math.min(40,Math.max(1,Math.round(+pages)));
   let secs,lenLine,guide,imgN;
   if(auto){
    secs=[N.abs,N.intro,N.obj,N.lit,N.met,"2 to 4 main-topic sections (a specific title chosen by you for each)",N.res,N.dis,N.con,N.rec,N.ref];
-   lenLine="Choose the best length yourself: between 6 and 8 A4 pages, which is about 1,400 to 1,800 words in total. Never write fewer than 1,350 words or more than 1,900 words. Leave out any section that does not suit the topic, but always keep "+[N.intro,N.con,N.ref].join(", ")+" and the main-topic sections.";
+   lenLine="Choose the best length yourself: between 5 and 7 A4 pages, which is about 1,150 to 1,600 words in total. Never go above 1,700 words. Leave out any section that does not suit the topic, but always keep "+[N.intro,N.con,N.ref].join(", ")+" and the main-topic sections.";
    guide="the abstract about 120 words; every other section about 120 to 220 words, except the "+N.intro+" which must be SHORT: only 90 to 130 words in 1 or 2 short paragraphs (references excluded).";
    imgN="3 to 5"}
   else{
    const keys=P<=2?["intro","main","con","ref"]:P<=4?["intro","obj","main","con","ref"]:P<=7?["abs","intro","obj","main","res","con","ref"]:P<=12?["abs","intro","obj","lit","met","main","res","dis","con","ref"]:["abs","intro","obj","lit","met","main","res","dis","con","rec","ref"],
-   m=P<=4?1:P<=7?2:P<=12?3:4,W=(P+1)*230;
+   m=P<=4?1:P<=7?2:P<=12?3:4,W=P*230;
    secs=[];keys.forEach(k=>{if(k=="main"){for(let i=1;i<=m;i++)secs.push(m==1?N.main+" (a specific title chosen by you)":"Main topic "+i+" (a specific title chosen by you)")}else secs.push(N[k])});
    const bodyN=keys.filter(k=>k!="abs"&&k!="ref").length-1+m,per=Math.max(60,Math.round((W-(keys.includes("abs")?120:0)-110)/bodyN/10)*10);
-   lenLine="Length: the report must fill "+(P+1)+" A4 pages = about "+W+" words in total, references excluded. This is a HARD RANGE: not fewer than "+Math.round(W*.95/10)*10+" words and not more than "+Math.round(W*1.08/10)*10+" words. My app lays the report out at about 230 words per A4 page, so too few words leaves the report short of "+(P+1)+" pages and too many words adds extra pages. Before you answer, count the words: if the text is below the minimum, add useful detail (examples, explanations, figures); if it is above the maximum, shorten it.";
-   guide=(keys.includes("abs")?"the abstract about 120 words; ":"")+"each other section about "+per+" words (between "+Math.round(per*.9/10)*10+" and "+Math.round(per*1.15/10)*10+"), except the "+N.intro+" which must be SHORT: only 90 to 130 words in 1 or 2 short paragraphs (references excluded).";
+   lenLine="Length: "+P+" A4 page"+(P>1?"s":"")+" of body text = about "+W+" words in total (between "+Math.round(W*.9/10)*10+" and "+Math.round(W*1.05/10)*10+" words, references excluded). This is a HARD LIMIT: my app lays the report out at about 230 words per A4 page, so every extra 230 words adds one more page. Never write more than "+Math.round(W*1.05/10)*10+" words. Before you answer, count the words and shorten the text if it is too long. A report that is longer than requested is a failed answer.";
+   guide=(keys.includes("abs")?"the abstract about 120 words; ":"")+"each other section about "+per+" words (never more than "+Math.round(per*1.15/10)*10+"), except the "+N.intro+" which must be SHORT: only 90 to 130 words in 1 or 2 short paragraphs (references excluded).";
    imgN="exactly "+Math.max(1,Math.min(12,Math.round(P/2)))}
   const sd=(seed==null?Math.floor(Math.random()*4294967296):Math.floor(seed*4294967296))>>>0;let _s=sd;
   const rnd=()=>{_s=(_s+0x6D2B79F5)>>>0;let z=_s;z=Math.imul(z^z>>>15,z|1);z^=z+Math.imul(z^z>>>7,z|61);return((z^z>>>14)>>>0)/4294967296};
@@ -753,7 +774,7 @@ function aiPrompt(topic,pages,lang,seed){
   const order=secs.join(" > ");
   const langLine=lang=="ckb"?"Write the entire report in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all section titles. Use the Kurdish section titles listed above.":lang=="ar"?"Write the entire report in professional Modern Standard Arabic, including all section titles. Use the Arabic section titles listed above.":"Write the entire report in formal academic English.";
   return `Act as an experienced university lecturer and subject expert helping an undergraduate student write a professional, original academic report about "${t}". The report will be graded by a lecturer, so depth, accuracy, clear explanation and originality matter more than length.
-
+${deptBlk}
 REPORT LENGTH:
 ${lenLine}
 The cover page, table of contents and page numbers (A4 layout) are added automatically by my app.
@@ -774,6 +795,7 @@ STRUCTURE (exact Markdown):
 - Sections in this order: ${order}.
 - Length guide: ${guide}
 - Bullet lists with "- ", numbered lists with "1. ", tables with pipes: | Header | Header |. Use at most 2 tables in the whole report.
+- Never use LaTeX or dollar signs. Write every formula in plain text on its own line, for example: Efficiency Gain (%) = ((C1 - C2) / C1) × 100, and name each symbol in the sentence after it.
 
 CONTENT QUALITY (explain the topic well):
 - Formal academic tone suitable for university students; clear short paragraphs; no filler and no generic opening phrases such as "in today's digital world".
@@ -787,14 +809,16 @@ CONTENT QUALITY (explain the topic well):
 - References: list 4 to 6 real, verifiable sources in APA style, one source per bullet (official documentation, standards, textbooks or journal papers). Never invent sources, authors, publication dates or links.
 
 IMAGE REQUIREMENTS:
+- RELEVANCE RULE (most important): every image must show the exact subject of "${t}" or of the section where it is placed (the real device, component, process or a diagram of it). Do not add decorative, symbolic, stock or loosely related pictures (people, offices, cities, generic computers, abstract backgrounds). If you cannot find a picture that clearly shows the subject of a section, leave that Image line out; no picture is better than an unrelated picture.
+- ABSTRACT SUBJECTS: if the subject is an idea without a physical object (for example psychology, law, economics, education, management, literature, religion or social studies), do NOT look for photographs. Use only a diagram, framework, model or chart of that exact subject (for example "<subject> framework diagram"), or leave the Image lines out completely. Never use pictures of art, dance, sport, crowds or portraits.
 - Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line.
 - Never add an image line to ${N.abs}, ${N.con}, ${N.ref}, or to a section that contains a table.
-- Image plan for this report: ${vI}. Do not use the most obvious keyword wording; make each line specific and different, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture. All images must be different and each must show something that the section really talks about.
+- Image plan for this report: ${vI}. Make each line different only by its view word, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture, but never drop the subject name. All images must be different and each must show something that the section really talks about.
 - Write each image line in exactly this form, with specific ENGLISH search keywords (2 to 5 words, even when the report is not in English) naming the real thing that is visible in the picture, the way a photograph on Wikimedia Commons would be titled:
 Image: wind turbine blade close-up
-- EVERY image line must contain the main technical subject of this report (its key product, component, technology or concept name, for example the main term from "${t}") together with what is shown, so that the picture is exactly on-topic. Never write unrelated scenery, people, animals, buildings or generic stock-photo words.
+- Every Image line must start with the core name of the main subject of "${t}" (the exact device, product, technology or object, written in English letters), followed by 1 to 3 words that describe the view, for example: Image: <subject name> top view. The picture must show that real subject itself or a diagram of it, never a loosely related object, a vehicle, a building, a crowd of people or a place.
 - Use concrete nouns, not ideas: write a specific product, component, device, place or diagram name. Never write general words such as "technology", "concept", "network", "innovation" or "future".
-- OPTIONAL: if you can browse the web and have really opened the image, you may add its direct link after the keywords, separated by a vertical bar, like: Image: wind turbine blade close-up | https://upload.wikimedia.org/.../file.jpg . The link must end in .jpg, .jpeg, .png or .webp. Never guess or invent a link; when you are not sure, write the keywords only.
+- EXTERNAL REAL IMAGE (strongly preferred): the picture must be an existing image from the web, never an AI-generated or invented one. If you can browse the web, open a real page, choose a real photograph or diagram that clearly shows the subject, and add its direct link after the keywords, separated by a vertical bar, like: Image: wind turbine blade close-up | https://upload.wikimedia.org/.../Wind_turbine_blade_close-up.jpg . The link must be a direct file link ending in .jpg, .jpeg, .png or .webp, and the file name or address should contain the subject name (Wikimedia Commons, university and manufacturer pages are best). Add the link only if you really opened the image and confirmed that it shows the subject. Never guess, invent or reconstruct a link; when you are not sure, write the keywords only.
 - My app finds the picture, downloads it and places it inside the report page, so never write markdown image syntax, captions, descriptions, source credits or any other link text.
 - Do not ask the student to search Google or upload images manually.
 
@@ -813,10 +837,122 @@ FINAL OUTPUT RULES:
 - No bold formatting (**).
 - No other code blocks inside it.
 - Follow the exact Markdown structure.`}
+/* V22: Graduation Research mode (Kurdistan Region / Iraq university style) */
+const AIG={
+ en:{ded:"Dedication",ack:"Acknowledgment",abs:"Abstract",kw:"Keywords",ref:"References",c:["Introduction","Theoretical Background and Literature Review","Methodology and Implementation","Results and Discussion","Conclusions and Recommendations"],s1:["Background of the Study","Problem Statement","Research Objectives","Importance of the Study","Scope and Limitations","Structure of the Research"],s2p:"Previous Studies",s2g:"Research Gap",s4:["Results","Analysis of the Results","Discussion"],s5:["Conclusions","Recommendations","Suggestions for Future Work"]},
+ ckb:{ded:"پێشکەشکردن",ack:"سوپاسگوزاری",abs:"کورتە",kw:"وشە سەرەکییەکان",ref:"سەرچاوەکان",c:["پێشەکی","چوارچێوەی تیۆری و پێداچوونەوەی ئەدەبیات","میتۆدۆلۆجی و جێبەجێکردن","ئەنجام و گفتوگۆ","دەرئەنجام و پێشنیارەکان"],s1:["پاشخانی توێژینەوە","کێشەی توێژینەوە","ئامانجەکانی توێژینەوە","گرنگی توێژینەوە","سنوور و سنووردارییەکانی توێژینەوە","پێکهاتەی توێژینەوە"],s2p:"توێژینەوە پێشووەکان",s2g:"بۆشایی توێژینەوە",s4:["ئەنجامەکان","شیکردنەوەی ئەنجامەکان","گفتوگۆ"],s5:["دەرئەنجامەکان","پێشنیارەکان","پێشنیار بۆ توێژینەوەی داهاتوو"]},
+ ar:{ded:"الإهداء",ack:"شكر وتقدير",abs:"المستخلص",kw:"الكلمات المفتاحية",ref:"المصادر",c:["المقدمة","الإطار النظري والدراسات السابقة","المنهجية والجانب العملي","النتائج والمناقشة","الاستنتاجات والتوصيات"],s1:["خلفية البحث","مشكلة البحث","أهداف البحث","أهمية البحث","حدود البحث","هيكلية البحث"],s2p:"الدراسات السابقة",s2g:"الفجوة البحثية",s4:["النتائج","تحليل النتائج","المناقشة"],s5:["الاستنتاجات","التوصيات","مقترحات لبحوث مستقبلية"]}};
+function aiPromptGrad(topic,pages,lang,seed,dept){
+ const dn=deptName(dept),t=(topic||"").trim()||"[TOPIC]",G=AIG[lang]||AIG.en,auto=!(+pages>0),P=auto?0:Math.min(60,Math.max(10,Math.round(+pages)));
+ const deptBlk=dn?"\nDEPARTMENT PERSPECTIVE:\nThe student studies in the "+dn+" department. Write the research from the viewpoint of the "+dn+" field: choose the angle, terminology, methods, examples and applications that matter most to "+dn+" students and professionals, while the main subject stays \""+t+"\". If this conflicts with the variation plan below, the department perspective wins. Do not put the department name in the research title and do not turn the research into a description of the department.\n":"";
+ const fr=[.13,.27,.2,.28,.12];let W,cw,lenLine,imgN;
+ if(auto){W=3350;cw=[450,900,700,900,400];lenLine="Choose the length of the five chapters as follows: about 3,350 words in total (Chapter 1 about 450 words, Chapter 2 about 900, Chapter 3 about 700, Chapter 4 about 900, Chapter 5 about 400). After layout this gives about 14 to 17 A4 pages. Never go above 3,600 words in the five chapters.";imgN="3 to 5"}
+ else{W=Math.round((P-3)*230/10)*10;cw=fr.map(f=>Math.round(W*f/10)*10);lenLine="Length: about "+P+" A4 pages in total = about "+W+" words in the five chapters (between "+Math.round(W*.9/10)*10+" and "+Math.round(W*1.05/10)*10+" words; the dedication, acknowledgment, abstract and references are not counted). Per chapter: Chapter 1 about "+cw[0]+" words, Chapter 2 about "+cw[1]+", Chapter 3 about "+cw[2]+", Chapter 4 about "+cw[3]+", Chapter 5 about "+cw[4]+". This is a HARD LIMIT: my app lays the research out at about 230 words per A4 page and starts every chapter on a new page, so every extra 230 words adds one more page. Never write more than "+Math.round(W*1.05/10)*10+" words in the chapters. Before you answer, count the words and shorten the text if it is too long.";imgN="exactly "+Math.max(3,Math.min(10,Math.round(P/4)))}
+ const longRule=W>4200?"\nLONG ANSWER RULE:\nIf you cannot finish the whole research in one message, stop at the end of a complete section and write nothing else. When I reply \"continue\", continue from the next section inside a NEW single Markdown code block, without repeating the title line or any section that is already finished.\n":"";
+ const sd=(seed==null?Math.floor(Math.random()*4294967296):Math.floor(seed*4294967296))>>>0;let _s=sd;
+ const rnd=()=>{_s=(_s+0x6D2B79F5)>>>0;let z=_s;z=Math.imul(z^z>>>15,z|1);z^=z+Math.imul(z^z>>>7,z|61);return((z^z>>>14)>>>0)/4294967296};
+ const pick=(a,n)=>{const b=a.slice(),o=[];while(o.length<n&&b.length)o.push(b.splice(Math.floor(rnd()*b.length),1)[0]);return o};
+ const vcode=sd.toString(36).toUpperCase().padStart(7,"0").slice(-7),[vA]=pick(AI_ANGLES,1),[vI]=pick(AI_IMGPLAN,1),vM=pick(AI_MODS,3);
+ const c1=G.s1.map((x,i)=>"### 1."+(i+1)+" "+x).join("\n"),c4=G.s4.map((x,i)=>"### 4."+(i+1)+" "+x).join("\n"),c5=G.s5.map((x,i)=>"### 5."+(i+1)+" "+x).join("\n");
+ const langLine=lang=="ckb"?"Write the entire research in professional academic Standard Sorani Kurdish (Central Kurdish, Arabic script), including all section titles. Use the Kurdish section titles listed above.":lang=="ar"?"Write the entire research in professional Modern Standard Arabic, including all section titles. Use the Arabic section titles listed above.":"Write the entire research in formal academic English.";
+ return `Act as an experienced university supervisor and subject expert helping an undergraduate student write a complete, original GRADUATION RESEARCH (final-year research project) about "${t}", in the academic style used by universities and colleges in the Kurdistan Region of Iraq and Iraq. It will be read by a supervisor and examined by a committee, so correct structure, accuracy, originality and a formal academic style matter more than length.
+${deptBlk}
+RESEARCH LENGTH:
+${lenLine}
+The cover page, table of contents, lists of figures and tables, and page numbers (A4 layout) are added automatically by my app: do not write them.
+${longRule}
+UNIQUE VERSION:
+Many students write on similar topics, so make this research original: use this main angle (code ${vcode}): ${vA}. Choose your own specific, descriptive titles for the theoretical subsections, and choose examples, models, numbers and scenarios that are less obvious than the first ones that come to mind, but keep every fact correct. Do not make the research longer because of this.
+
+STRUCTURE (exact Markdown, in exactly this order):
+- Line 1 only: # Research title (once; specific and academic; no subtitle, author, date or table of contents).
+- Front matter, NOT numbered, in this order: ## ${G.ded}, then ## ${G.ack}, then ## ${G.abs}.
+- Five numbered chapters, each written as ## N. Chapter title:
+  ## 1. ${G.c[0]}
+  ## 2. ${G.c[1]}
+  ## 3. ${G.c[2]}
+  ## 4. ${G.c[3]}
+  ## 5. ${G.c[4]}
+- Last section, NOT numbered: ## ${G.ref}.
+- Subsections are written as ### 1.1 Subsection title (use ### only for the subsections listed below, and #### only if really essential).
+
+FRONT MATTER RULES:
+- ${G.ded}: a short, generic dedication of 2 or 3 lines (maximum 30 words) that the student can edit later.
+- ${G.ack}: maximum 80 words, thanking the supervisor, the department and the family in a modest academic tone.
+- ${G.abs}: 150 to 200 words in one or two paragraphs covering the problem, the objective, the method and the main findings or conclusion. After it, add one last line in the form "${G.kw}: keyword 1, keyword 2, keyword 3, keyword 4" with 4 to 6 keywords.
+
+CHAPTER RULES:
+- Chapter 1 (${G.c[0]}): begin with one short opening paragraph, then these subsections exactly:
+${c1}
+  The research objectives are one main aim plus 3 to 4 clear, verb-led specific objectives. Use "Research questions or hypotheses" inside the Problem Statement when the topic suits them.
+- Chapter 2 (${G.c[1]}): first 2 to 4 theoretical subsections (### 2.1, ### 2.2 ...) with specific titles chosen by you, explaining the concepts, how the technology or process really works, its main parts or types and its applications. Then the subsection "${G.s2p}": summarize 4 to 6 real, verifiable earlier studies (author, year, what they did, what they found). Write about a study only if you are sure it exists; if you are not sure, describe the research direction in general without inventing authors. Finish with the subsection "${G.s2g}": what earlier work did not cover and how this research fits.
+- Chapter 3 (${G.c[2]}): choose the research method that fits the topic and say so clearly: (a) practical, design or implementation work (engineering, IT): system design, components or tools, implementation steps and testing; (b) laboratory or scientific work: materials, devices and procedure; (c) survey, educational or social study: population, sample, instrument and data analysis; (d) theoretical or review study: how sources were selected and analysed. Use 3 to 4 ### subsections with specific titles suited to the chosen type.
+- Chapter 4 (${G.c[3]}): these subsections exactly:
+${c4}
+  Present the main results in at least one clear table. NEVER invent experimental measurements, survey data or statistics. If the student's own experiment or survey is not available, base this chapter on published data, standard reference values or a worked analysis or case study, and state clearly in the text that the values come from the cited sources or are illustrative.
+- Chapter 5 (${G.c[4]}): these subsections exactly:
+${c5}
+  The conclusions are 4 to 6 clear points that follow from the research (not a copy of the introduction); the recommendations are 4 to 5 practical points.
+- ${G.ref}: list 10 to 15 real, verifiable sources in APA 7 style (textbooks, peer-reviewed papers, standards, official documentation; mostly from the last 10 years), one source per bullet ("- "). Never invent sources, authors, publication dates or links. Cite them inside the text as (Author, Year) only where they are really used.
+
+WRITING STYLE:
+- Formal, impersonal academic style (no "I" or "we"); clear short paragraphs; no filler and no generic opening phrases such as "in today's digital world".
+- Explain each idea in plain language first, then give the technical detail. Define every technical term the first time it appears.
+- Include concrete facts: real model or standard names, specifications, numbers with units, dates, formulas or typical values. Every fact must be correct; if you are not sure of a number, describe it qualitatively.
+- Every section must say something specific about "${t}". Do not repeat the same point in different chapters.
+- Bullet lists with "- ", numbered lists with "1. ", tables with pipes: | Header | Header |. Use at most 3 tables in the whole research, and keep every table small.
+- Never use LaTeX or dollar signs. Write every formula in plain text on its own line, for example: Efficiency Gain (%) = ((C1 - C2) / C1) × 100, and name each symbol in the sentence after it.
+
+IMAGE REQUIREMENTS:
+- RELEVANCE RULE (most important): every image must show the exact subject of "${t}" or of the section where it is placed (the real device, component, process or a diagram of it). Do not add decorative, symbolic, stock or loosely related pictures (people, offices, cities, generic computers, abstract backgrounds). If you cannot find a picture that clearly shows the subject of a section, leave that Image line out; no picture is better than an unrelated picture.
+- ABSTRACT SUBJECTS: if the subject is an idea without a physical object (for example psychology, law, economics, education, management, literature, religion or social studies), do NOT look for photographs. Use only a diagram, framework, model or chart of that exact subject (for example "<subject> framework diagram"), or leave the Image lines out completely. Never use pictures of art, dance, sport, crowds or portraits.
+- Add ${imgN} Image line(s) in total, one at the end of the sections where a picture helps most (maximum one per section), each on its own line.
+- Never add an image line to ${G.ded}, ${G.ack}, ${G.abs}, ${G.c[4]}, ${G.ref}, or to a section that contains a table.
+- Image plan: ${vI}. Make each line different only by its view word, for example by adding a word such as "${vM[0]}", "${vM[1]}" or "${vM[2]}" where it describes the picture, but never drop the subject name. All images must be different.
+- Write each image line in exactly this form, with specific ENGLISH search keywords (2 to 5 words, even when the research is not in English) naming the real thing that is visible in the picture, the way a photograph on Wikimedia Commons would be titled:
+Image: wind turbine blade close-up
+- Every Image line must start with the core name of the main subject of "${t}" (the exact device, product, technology or object, written in English letters), followed by 1 to 3 words that describe the view. The picture must show that real subject itself or a diagram of it, never a loosely related object, a vehicle, a building, a crowd of people or a place.
+- Use concrete nouns, not ideas. Never write general words such as "technology", "concept", "network", "innovation" or "future".
+- EXTERNAL REAL IMAGE (strongly preferred): the picture must be an existing image from the web, never an AI-generated or invented one. If you can browse the web, open a real page, choose a real photograph or diagram that clearly shows the subject, and add its direct link after the keywords, separated by a vertical bar, like: Image: wind turbine blade close-up | https://upload.wikimedia.org/.../Wind_turbine_blade_close-up.jpg . The link must be a direct file link ending in .jpg, .jpeg, .png or .webp. Add the link only if you really opened the image and confirmed that it shows the subject. Never guess, invent or reconstruct a link; when you are not sure, write the keywords only.
+- My app finds the picture, downloads it and places it inside the research, so never write markdown image syntax, captions, descriptions, source credits or any other link text.
+- Do not ask the student to search Google or upload images manually.
+
+LANGUAGE:
+${langLine}
+
+COPY REQUIREMENTS:
+- Write the ENTIRE research inside ONE single Markdown code block (open it with three backticks followed by the word markdown, and close it with three backticks) so I can copy everything with one click using the chat's own Copy button.
+- Include all section titles, paragraphs, lists, tables, Image lines and references. Do not omit any content.
+- Do not create any button, interface, HTML or confirmation message.
+
+FINAL OUTPUT RULES:
+- Output only the research, inside the single code block.
+- No commentary before or after the code block.
+- No emojis.
+- No bold formatting (**).
+- No other code blocks inside it.
+- Follow the exact Markdown structure.`}
+/* V23: AI formulas written in LaTeX ($..$, \frac, \text) are converted to clean plain text */
+const TEXG={alpha:"α",beta:"β",gamma:"γ",delta:"δ",Delta:"Δ",theta:"θ",lambda:"λ",mu:"μ",pi:"π",sigma:"σ",Sigma:"Σ",omega:"ω",rho:"ρ",epsilon:"ε",eta:"η",phi:"φ",tau:"τ",chi:"χ",kappa:"κ"};
+const TEXS={times:"×",cdot:"·",le:"≤",leq:"≤",ge:"≥",geq:"≥",approx:"≈",neq:"≠",pm:"±",rightarrow:"→",to:"→",sum:"Σ",infty:"∞",div:"÷",ldots:"…",dots:"…"};
+function texToText(m){let s=String(m).replace(/\\left|\\right/g,"");
+ for(let i=0;i<4;i++)s=s.replace(/\\(?:text|mathrm|mathbf|mathit|textbf|textit|operatorname|mbox)\s*\{([^{}]*)\}/g,"$1").replace(/_\{([^{}]*)\}/g,"_$1").replace(/\^\{([^{}]*)\}/g,"^$1");
+ for(let i=0;i<5;i++)s=s.replace(/\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g,(_,a,b)=>{a=a.trim();b=b.trim();return (/^[\w.]+$/.test(a)?a:"("+a+")")+" / "+(/^[\w.]+$/.test(b)?b:"("+b+")")});
+ s=s.replace(/\\(?:text|mathrm|mathbf|mathit|textbf|textit|operatorname|mbox)\s*\{([^{}]*)\}/g,"$1").replace(/\\sqrt\s*\{([^{}]*)\}/g,"√($1)");
+ s=s.replace(/\\%/g,"%").replace(/\\[,;:! ]/g," ").replace(/\\([A-Za-z]+)/g,(_,k)=>TEXS[k]||TEXG[k]||k);
+ s=s.replace(/_\{([^{}]*)\}/g,"_$1").replace(/\^\{([^{}]*)\}/g,"^$1").replace(/[{}]/g,"").replace(/\s+/g," ").trim();return s}
+function cleanMath(t){
+ const K=[],ph=x=>{K.push(x);return "\u0001"+(K.length-1)+"\u0001"},phpish=l=>/\$[A-Za-z_]\w*/.test(l)&&(/[;{)]\s*$/.test(l)||/<\?|\?>|=>|->|::/.test(l))||/<\?|\?>/.test(l);
+ t=t.replace(/```[\s\S]*?```/g,ph).split("\n").map(l=>phpish(l)?ph(l):l).join("\n");
+ return cleanMath0(t).replace(/\u0001(\d+)\u0001/g,(_,i)=>K[+i])}
+function cleanMath0(t){
+ t=t.replace(/\$\$([\s\S]+?)\$\$/g,(_,m)=>"\n"+texToText(m)+"\n").replace(/\\\[([\s\S]+?)\\\]/g,(_,m)=>"\n"+texToText(m)+"\n").replace(/\\\(([\s\S]+?)\\\)/g,(_,m)=>texToText(m));
+ t=t.replace(/\$([A-Za-z\\][^$\n]{0,60})\$/g,(_,m)=>texToText(m));
+ return t.replace(/\\(?:text|mathrm|textbf|mathbf)\s*\{([^{}]*)\}/g,"$1").replace(/\\(times|cdot|approx|pm)\b/g,(_,k)=>TEXS[k])}
 const CITE_RX=/\[span_\d+\]\((?:start|end)_span\)|\[cite_(?:start|end)\]|\[cite:\s*[\d,\s\-]+\]|【[^】\n]{0,40}】|:contentReference\[[^\]\n]*\](?:\{[^}\n]*\})?|\(?\boaicite:\d+(?:\{[^}\n]*\})?\)?|\[\d+\]\(\s*\)/g;
 const stripCite=t=>String(t).replace(CITE_RX,"");
 function cleanAI(raw){
- let t=stripCite(String(raw)).replace(/\r\n?/g,"\n").replace(/[\u200b\ufeff]/g,"");
+ let t=cleanMath(stripCite(String(raw)).replace(/\r\n?/g,"\n").replace(/[\u200b\ufeff]/g,""));
  t=t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}\u{2B55}\uFE0F\u200D]/gu,"").replace(/\*\*|__/g,"");
   {const F=/^[ \t]*(?:`{3,}|~{3,})[\w+#.-]*[ \t]*$/,A=t.split("\n");let a=0,z=A.length-1;while(a<=z&&!A[a].trim())a++;while(z>=a&&!A[z].trim())z--;
    if(a<z&&F.test(A[a])&&/^[ \t]*(?:`{3,}|~{3,})[ \t]*$/.test(A[z])&&/^[ \t]*(?:`{3,}|~{3,})[ \t]*(?:markdown|md|text)?[ \t]*$/i.test(A[a])){A.splice(z,1);A.splice(a,1)}
@@ -843,72 +979,83 @@ function mkLoader({title,steps}){
   steps(i,f){el.querySelectorAll("[data-i]").forEach(li=>{const j=+li.dataset.i,d=j<i||(j==i&&f>=1);li.classList.toggle("done",d);li.classList.toggle("cur",!d&&j==i)})},
   done(msg){el.classList.add("is-done");q(".ld-ttl").textContent="Completed";q(".ld-pct").textContent="100%";q(".ld-bar i").style.width="100%";q(".ld-st").textContent=msg;q(".ld-ic").innerHTML=ic("check");el.querySelectorAll("[data-i]").forEach(li=>{li.classList.add("done");li.classList.remove("cur")})}}}
 function detectScript(raw){
-  const t=String(raw).replace(/https?:\/\/\S+/g,"").replace(/^\s*image\s*:.*$/gim,"");
+  const t=String(raw).replace(/^\s*#{1,6}\s*(?:references|bibliography|works cited|سەرچاوەکان|سەرچاوە|المراجع|المصادر)\s*$[\s\S]*$/im,"").replace(/https?:\/\/\S+/g,"").replace(/^\s*image\s*:.*$/gim,"");
   const a=(t.match(/[\u0600-\u06FF\u0750-\u077F]/g)||[]).length,l=(t.match(/[A-Za-z]/g)||[]).length;
   if(a<10||a<l*0.5)return null;
   const ku=(t.match(/[ڕڵۆێەڤپچژگکی]/g)||[]).length;
   return ku>=3?"ckb":"ar"}
 function toast(m,ms){let t=$("tst");if(!t){t=document.createElement("div");t.id="tst";t.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#2b2340;color:#fff;padding:10px 18px;border-radius:22px;font:600 14px/1.3 system-ui,sans-serif;z-index:9998;max-width:86vw;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.3)";document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(t._t);if(ms)t._t=setTimeout(()=>{t.hidden=true},ms)}
-const USEDIMG=new Set();
+const USEDIMG=new Set(),POOLS=new Map();
+/* V19: topic anchor - images must really be about the report topic (e.g. ESP32), not loosely related */
+const IMG_STOP=new Set("a an and the of in on for to with from by using based its is are how what why into via your our their this that these those introduction overview report study analysis design system systems technology technologies application applications basics guide concept concepts role".split(" "));
+const imgNorm=x=>String(x||"").toLowerCase().replace(/<[^>]*>/g," ").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+const topicTok=x=>{const o=[];imgNorm(x).split(" ").forEach(w=>{if(w&&!IMG_STOP.has(w)&&(w.length>=3||/\d/.test(w))&&!o.includes(w))o.push(w)});return o.slice(0,5)};
+const tokHit=(k,n)=>{if(!n)return false;if(n.split(" ").some(w=>w===k||(k.length>=5&&w.startsWith(k))))return true;return /\d/.test(k)&&n.replace(/ /g,"").includes(k)};
+let ANCHOR="",ANC_T=[];
+let ANC_STRICT=false;
+const setAnchor=(topic,raw)=>{ANCHOR="";ANC_T=[];ANC_STRICT=false;const n=imgNorm(raw),tk=topicTok(topic);
+ if(tk.length&&tk.every(k=>tokHit(k,n))){ANC_T=tk;ANCHOR=tk.join(" ");return}
+ /* V23: Kurdish/Arabic topic (no Latin words): use the subject words that the Image lines share */
+ const hs=[];String(raw).split("\n").forEach(l=>{const m=/^\s*image\s*:\s*([^|]*)/i.exec(l);if(m){const t=topicTok(m[1]);if(t.length)hs.push(t)}});
+ if(hs.length<2)return;const f={};hs.forEach(t=>t.forEach(k=>f[k]=(f[k]||0)+1));
+ const need=Math.max(2,Math.ceil(hs.length*.5)),ks=Object.keys(f).filter(k=>f[k]>=need).sort((a,b)=>f[b]-f[a]).slice(0,3);
+ if(ks.length){ANC_T=ks;ANCHOR=ks.join(" ");ANC_STRICT=true}};
+const relAll=c=>{const n=imgNorm(c.t),need=ANC_T.length<=2?ANC_T.length:Math.ceil(ANC_T.length*.6);return ANC_T.filter(k=>tokHit(k,n)).length>=need};
+const relAny=c=>{const sp=ANC_T.filter(k=>k.length>=4),tk=sp.length?sp:ANC_T,n=imgNorm(c.t);return tk.some(k=>tokHit(k,n))};
+const relUrl=u=>{if(!ANC_T.length)return true;let d=String(u||"");try{d=decodeURIComponent(d)}catch(x){}return relAny({t:d})};
 let RECENT=[];try{RECENT=JSON.parse(localStorage.getItem("arb_recent_img")||"[]")}catch(x){}
 const rememberImg=k=>{try{RECENT=RECENT.filter(x=>x!==k);RECENT.push(k);RECENT=RECENT.slice(-150);localStorage.setItem("arb_recent_img",JSON.stringify(RECENT))}catch(x){}};
 const imgKey=u=>{try{const p=decodeURIComponent(String(u).split("?")[0]).split("/").filter(Boolean);let f=p[p.length-1]||"";f=f.replace(/^\d+px-/,"").toLowerCase();return/\.(jpe?g|png|webp)$/.test(f)?f:String(u)}catch(x){return String(u)}};
 const BADIMG=/(logo|icon|flag|coat[_ ]of[_ ]arms|signature|stamp|banknote|screenshot of|qr[_ ]code|blank|placeholder|\.svg)/i;
-const GENERIC=new Set("the a an of and or for with in on to from by at as is are using use used based photo photograph image picture view close closeup close-up up top side front diagram schematic example in-use".split(" "));
-const coreTok=q=>[...new Set(String(q||"").toLowerCase().replace(/[^a-z0-9+#.\- ]/g," ").split(/\s+/).map(t=>t.replace(/^[.\-]+|[.\-]+$/g,"")).filter(t=>t.length>=2&&!GENERIC.has(t)))];
-const anchorTok=tk=>tk.find(t=>/\d/.test(t))||tk.slice().sort((a,b)=>b.length-a.length)[0]||"";
-const relScore=(c,tk)=>{const x=String(c.t||"").toLowerCase().replace(/[_\-]+/g," ");let n=0;tk.forEach(t=>{if(x.includes(t.replace(/[_\-]+/g," ")))n++});return n};
 const shuf=a=>{const t=a.slice();for(let i=t.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[t[i],t[j]]=[t[j],t[i]]}return t};
-async function pickImg(cands,tk,need,anchor,strict){
- const seen=new Set(),L=[];cands.forEach(c=>{const k=imgKey(c.key||c.url);if(!seen.has(k)&&!USEDIMG.has(k)&&!BADIMG.test(k)){seen.add(k);c.k=k;c.sc=relScore(c,tk);L.push(c)}});
- const ok=L.filter(c=>c.sc>=need&&(!anchor||relScore(c,[anchor])>0)&&(strict?(c.w>=700&&c.w>=c.h):(c.w>=480)));
- if(!ok.length)return null;
- const top=Math.max(...ok.map(c=>c.sc)),best=ok.filter(c=>c.sc>=Math.max(need,top-1));
- const fresh=best.filter(c=>!RECENT.includes(c.k)),old=best.filter(c=>RECENT.includes(c.k));
+async function pickImg(cands,strict,rel){
+ const seen=new Set(),L=[];cands.forEach(c=>{const k=imgKey(c.key||c.url);if(!seen.has(k)&&!USEDIMG.has(k)&&!BADIMG.test(k)&&(!rel||rel(c))){seen.add(k);c.k=k;L.push(c)}});
+ const ok=L.filter(c=>strict?(c.w>=700&&c.w>=c.h):(c.w>=480));
+ const fresh=ok.filter(c=>!RECENT.includes(c.k)),old=ok.filter(c=>RECENT.includes(c.k));
  const order=shuf(fresh.slice(0,10)).concat(fresh.slice(10),shuf(old.slice(0,6)),old.slice(6));
  for(const c of order.slice(0,8)){
-  try{const r=await fetch(c.url);if(!r.ok)continue;const bl=await r.blob(),d=await new Promise(res=>shrink(bl,1000,"image/jpeg",res));if(!d)continue;USEDIMG.add(c.k);rememberImg(c.k);return{d}}catch(x){}}
+  if(USEDIMG.has(c.k))continue;USEDIMG.add(c.k);
+  try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);const r=await fetch(c.url,{signal:ac.signal});clearTimeout(tm);if(!r.ok){USEDIMG.delete(c.k);continue}const bl=await r.blob(),d=await new Promise(res=>shrink(bl,1000,"image/jpeg",res));if(!d){USEDIMG.delete(c.k);continue}rememberImg(c.k);return{d}}catch(x){USEDIMG.delete(c.k)}}
  return null}
 async function candCommons(q){
- const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=40&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiextmetadatafilter=ImageDescription|ObjectName|Categories&iiurlwidth=1000";
+ const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=30&gsrsearch="+encodeURIComponent(q+" filetype:bitmap")+"&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiextmetadatafilter=ImageDescription|ObjectName|Categories&iiurlwidth=1000";
  const j=await (await fetch(u)).json(),ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index),c=[];
- for(const p of ps){const ii=(p.imageinfo||[])[0];if(!ii||!/^image\/(jpeg|png)$/.test(ii.mime))continue;const m=ii.extmetadata||{},g=k=>((m[k]||{}).value||"").replace(/<[^>]*>/g," ");
-  c.push({key:ii.url,url:ii.thumburl||ii.url,w:ii.width,h:ii.height,t:(p.title||"")+" "+g("ObjectName")+" "+g("ImageDescription")+" "+g("Categories")})}
+ for(const p of ps){const ii=(p.imageinfo||[])[0];if(!ii||!/^image\/(jpeg|png)$/.test(ii.mime))continue;const em=ii.extmetadata||{},mv=k=>(em[k]&&em[k].value)||"";c.push({key:ii.url,url:ii.thumburl||ii.url,w:ii.width,h:ii.height,t:(p.title||"")+" "+mv("ObjectName")+" "+mv("ImageDescription")+" "+mv("Categories")})}
  return c}
 async function candWikipedia(q){
- const u="https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=10&gsrsearch="+encodeURIComponent(q)+"&prop=pageimages|description&piprop=thumbnail|original&pithumbsize=1000";
+ const u="https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=10&gsrsearch="+encodeURIComponent(q)+"&prop=pageimages&piprop=thumbnail|original&pithumbsize=1000";
  const j=await (await fetch(u)).json(),ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index),c=[];
- for(const p of ps){const t=p.thumbnail,o=p.original;if(!t||!t.source||!/\.(jpe?g|png)$/i.test((o&&o.source)||t.source))continue;c.push({key:(o&&o.source)||t.source,url:t.source,w:(o&&o.width)||t.width,h:(o&&o.height)||t.height,t:(p.title||"")+" "+(p.description||"")})}
+ for(const p of ps){const t=p.thumbnail,o=p.original;if(!t||!t.source||!/\.(jpe?g|png)$/i.test((o&&o.source)||t.source))continue;c.push({key:(o&&o.source)||t.source,url:t.source,w:(o&&o.width)||t.width,h:(o&&o.height)||t.height,t:(p.title||"")+" "+((o&&o.source)||t.source)})}
  return c}
 async function candOpenverse(q){
  const j=await (await fetch("https://api.openverse.org/v1/images/?q="+encodeURIComponent(q)+"&page_size=20&mature=false")).json(),c=[];
- for(const r of (j.results||[])){if(!r.id)continue;c.push({key:"ov-"+r.id,url:r.thumbnail||("https://api.openverse.org/v1/images/"+r.id+"/thumb/"),w:r.width||800,h:r.height||600,t:(r.title||"")+" "+((r.tags||[]).map(x=>x.name).join(" "))})}
+ for(const r of (j.results||[])){if(!r.id)continue;c.push({key:"ov-"+r.id,url:r.thumbnail||("https://api.openverse.org/v1/images/"+r.id+"/thumb/"),w:r.width||800,h:r.height||600,t:(r.title||"")+" "+(r.tags||[]).map(g=>g&&g.name).join(" ")})}
  return c}
 const allOk=async ps=>{const r=await Promise.all(ps.map(p=>p.catch(()=>[])));const m=Math.max(0,...r.map(x=>x.length)),o=[];for(let i=0;i<m;i++)r.forEach(x=>{if(x[i])o.push(x[i])});return o};
+async function imgPool(t,ov){const k=(ov?"1|":"0|")+t;if(POOLS.has(k))return POOLS.get(k);const p=Promise.race([allOk(ov?[candCommons(t),candWikipedia(t),candOpenverse(t)]:[candCommons(t),candWikipedia(t)]),new Promise(r=>setTimeout(()=>r([]),10000))]);POOLS.set(k,p);return p}
 async function findImg(q){
  const w=String(q||"").replace(/[|()]/g," ").split(/\s+/).filter(Boolean);if(!w.length)return null;
- const tk=coreTok(q);if(!tk.length)return null;const anchor=anchorTok(tk),need=Math.max(1,Math.ceil(tk.length*.6));
- const tries=[w.join(" ")];[w.slice(0,3),w.slice(-3)].forEach(a=>{const t=a.join(" ");if(a.length<w.length&&!tries.includes(t))tries.push(t)});
- for(const t of tries){
-  const pool=await allOk([candCommons(t),candWikipedia(t)]);
-  const r=await pickImg(pool,tk,need,anchor,true)||await pickImg(pool,tk,need,anchor,false);if(r)return r}
- for(const t of tries){
-  const pool=await allOk([candCommons(t),candWikipedia(t),candOpenverse(t)]);
-  const r=await pickImg(pool,tk,need,anchor,true)||await pickImg(pool,tk,need,anchor,false)||await pickImg(pool,tk,1,anchor,false);if(r)return r}
+ const tries=[],add=t=>{t=String(t||"").replace(/\s+/g," ").trim();if(t&&!tries.includes(t))tries.push(t)};
+ if(ANC_T.length){const wl=w.filter(x=>!ANC_T.includes(imgNorm(x)));add(w.join(" "));add(ANCHOR+" "+wl.slice(0,2).join(" "));add(ANCHOR+" "+wl.slice(0,1).join(" "));add(ANCHOR)}
+ else{add(w.join(" "));[w.slice(0,3),w.slice(-3),w.slice(0,2)].forEach(a=>{if(a.length>=1&&a.length<w.length)add(a.join(" "))})}
+ tries.slice(0,2).forEach(t=>imgPool(t,false));const lv=!ANC_T.length?[null]:(ANC_T.length==1||ANC_STRICT)?[relAll]:[relAll,relAny];
+ const hk=topicTok(q).slice(0,3),hn=Math.ceil(hk.length/2),relH=c=>{const n=imgNorm(c.t);return hk.filter(k=>tokHit(k,n)).length>=hn},mix=r=>hk.length?(r?c=>r(c)&&relH(c):relH):r;
+ for(const rel of lv){
+  for(const t of tries){const r=await pickImg(await imgPool(t,false),true,mix(rel));if(r)return r}
+  for(const t of tries){const pool=await imgPool(t,true);const r=await pickImg(pool,true,mix(rel))||await pickImg(pool,false,mix(rel));if(r)return r}}
  return null}
 async function urlToData(u){
- const viaImg=src=>new Promise((res,rej)=>{const im=new Image(),to=setTimeout(()=>rej(0),15000);im.crossOrigin="anonymous";im.onerror=()=>{clearTimeout(to);rej(0)};im.onload=()=>{clearTimeout(to);try{if(im.width<200||im.height<120)return rej(0);const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.82))}catch(e){rej(e)}};im.src=src});
- try{return await viaImg(u)}catch(x){}
- try{return await viaImg("https://wsrv.nl/?w=1000&output=jpg&url="+encodeURIComponent(u))}catch(x){}
+ const viaImg=src=>new Promise((res,rej)=>{const im=new Image(),to=setTimeout(()=>rej(0),8000);im.crossOrigin="anonymous";im.onerror=()=>{clearTimeout(to);rej(0)};im.onload=()=>{clearTimeout(to);try{if(im.width<200||im.height<120)return rej(0);const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.82))}catch(e){rej(e)}};im.src=src});
+ try{return await Promise.any([viaImg(u),viaImg("https://wsrv.nl/?w=1000&output=jpg&url="+encodeURIComponent(u))])}catch(x){}
  return null}
-const canLoad=u=>new Promise(res=>{const im=new Image(),to=setTimeout(()=>res(false),12000);im.onload=()=>{clearTimeout(to);res(im.width>=100)};im.onerror=()=>{clearTimeout(to);res(false)};im.src=u});
+const canLoad=u=>new Promise(res=>{const im=new Image(),to=setTimeout(()=>res(false),6000);im.onload=()=>{clearTimeout(to);res(im.width>=100)};im.onerror=()=>{clearTimeout(to);res(false)};im.src=u});
 const rbPend=()=>{const a=[];S.pages.forEach(g=>g.blocks.forEach(b=>{if(b.t=="img"&&!b.src&&(b.url||b.hint))a.push(b)}));return a};
 let _linkFail=0;
-async function autoImages(cb){_linkFail=0;USEDIMG.clear();const tg=rbPend();let n=0,i=0;
- for(const b of tg){cb&&cb(++i+"/"+tg.length);try{let r=null;
-  if(b.url){const d=await urlToData(b.url);if(d)r=d;else if(await canLoad(b.url))r=b.url;else _linkFail++}
-  if(!r&&b.hint){let f=await findImg(b.hint);if(!f&&S.info&&S.info.title)f=await findImg(S.info.title);if(f)r=f.d}
-  if(r){b.src=r;delete b.url;delete b.hint;n++;save();rp()}}catch(x){}}
+async function autoImages(cb){_linkFail=0;USEDIMG.clear();POOLS.clear();const tg=rbPend();let n=0,i=0,k=0;
+ const one=async b=>{try{let r=null;
+  if(b.url&&relUrl(b.url)){const d=await urlToData(b.url);if(d)r=d;else if(await canLoad(b.url))r=b.url;else _linkFail++}
+  if(!r&&b.hint){let f=await findImg(b.hint);if(!f)f=await findImg(ANCHOR||(S.info&&S.info.title)||"");if(f)r=f.d}
+  if(r){b.src=r;delete b.url;delete b.hint;n++;save();rp()}}catch(x){}cb&&cb(++i+"/"+tg.length)};await Promise.all(Array.from({length:Math.min(4,tg.length)},async()=>{while(k<tg.length)await one(tg[k++])}));
  return[n,tg.length]}
 let _auto=false;
 async function autoImagesBg(){if(_auto||!rbPend().length)return;_auto=true;toast(tr("Finding images…"));
@@ -917,19 +1064,20 @@ async function runGen(raw){
  const ST=["Reading report content…","Detecting headings and sections…","Organizing report content…","Creating A4 pages…","Applying academic formatting…","Generating table of contents…","Calculating page numbers…","Preparing the final report…"];
  const LD=mkLoader({title:"Generating report",steps:ST});
  const set=async(i,f)=>{LD.update((i+f)/8*100,ST[i]);LD.steps(i,f);await tickP(f===0||f>=1?70:16)};
- const oldP=S.pages,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font;let w=null;
+ const oldP=S.pages,oldDp=S.info.dep,oldSb=S.info.sub,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font;let w=null;
  try{
   /* 1 read */
   await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}
    const L=cleanAI(raw).split("\n"),CH=2000,out=[];
   for(let a=0;a<L.length;a+=CH){out.push(...L.slice(a,a+CH).map(x=>x.replace(/\t/g,"  ")));await set(0,Math.min(1,(a+CH)/L.length))}
   /* 2 detect */
-  await set(1,0);const rep=parseReport(out.join("\n"));if(!rep.pages.length)throw new Error("empty");await set(1,1);
+  await set(1,0);const rep=parseReport(out.join("\n"));if(!rep.pages.length)throw new Error("empty");setAnchor(AIS.t,raw);await set(1,1);
   /* 3 organize */
-  for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"||(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
+  for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"?!noImg(g):!!(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.pages=rep.pages;if(rep.title)S.info.title=rep.title;
+  S.pages=rep.pages;S.tcap=1;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}
+   if(AIS.m=="grad"){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});if(!String(S.info.sub||"").trim()){const gl=(SCR||(S.dir=="rtl"?RL():"en"));S.info.sub=gl=="ckb"?"توێژینەوەی دەرچوون":gl=="ar"?"بحث التخرج":"Graduation Research"}}
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
   /* 5 formatting check */
@@ -946,14 +1094,16 @@ async function runGen(raw){
   const importedChars=S.pages.reduce((n,p)=>n+(p.title||"").length+p.blocks.reduce((m,b)=>m+String(b.text||"").length,0),0);
   console.info("Report import complete:",raw.length,"source characters;",importedChars,"characters placed in",S.pages.length,"sections.");
  }catch(x){
-  S.pages=oldP;S.info.title=oldT;S.dir=oldD;S.rlang=oldRl;S.font=oldF;if(w)w.remove();LD.el.remove();throw x}
+  S.pages=oldP;S.info.dep=oldDp;S.info.sub=oldSb;S.info.title=oldT;S.dir=oldD;S.rlang=oldRl;S.font=oldF;if(w)w.remove();LD.el.remove();throw x}
 }
 function openUR(){if($("ur"))return;
  const o=document.createElement("div");o.id="ur";
  o.innerHTML=`<header class="ur-top"><div class="ur-top-in"><span class="ur-mark">${ic("upload")}</span><div class="ur-ttl"><b>Upload Report</b><small>Import an existing report into the academic layout</small></div><button type="button" id="urc" class="ur-close" aria-label="Close">${ic("x")}</button></div></header>
 <main class="ur-main"><div class="ur-wrap">
 <details class="ur-guide ur-ai" id="aiBox" open><summary><b>AI prompt helper</b><small>This only prepares a prompt for ChatGPT or Gemini. It does not write the report.</small></summary>
+<div class="ai-line" style="margin:0 0 8px"><div class="ai-row" id="aiM" style="width:100%"><button type="button" data-m="rep" style="flex:1">Report Mode</button><button type="button" data-m="grad" style="flex:1">Graduation Research</button></div></div>
 <input id="aiT" type="text" dir="auto" placeholder="Report Title:" aria-label="Report Title" autocomplete="off">
+<input id="aiD" type="text" dir="auto" placeholder="Department: (e.g. IT)" aria-label="Department" autocomplete="off" style="margin-top:8px">
 <div class="ai-line"><span>Length (A4 pages)</span><input id="aiN" type="number" inputmode="numeric" min="1" max="40" placeholder="Auto" style="width:150px;height:44px;box-sizing:border-box;text-align:center;border:2px solid var(--bd);border-radius:22px;background:var(--card);font-weight:700;color:var(--ac)"></div>
 <div class="ai-line"><span>Report language</span><div class="ai-row" id="aiL"><button type="button" data-v="en">English</button><button type="button" data-v="ckb">کوردی</button><button type="button" data-v="ar">العربية</button></div></div>
 <button type="button" class="pri" id="aiC">${ic("copy")}<span>Copy AI prompt</span></button><p class="ur-status" id="aiS" role="status" aria-live="polite"></p>
@@ -970,9 +1120,11 @@ function openUR(){if($("ur"))return;
  ta.value=URD;upd();
  if(AIS.l==null)AIS.l=S.dir=="rtl"?(S.rlang=="ar"?"ar":"ckb"):"en";
  const aT=$("aiT"),aV=$("aiV"),aS=$("aiS");
- const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l,AIS.seed);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l))};
+ const aiUpd=()=>{aV.value=aiPrompt(AIS.t,AIS.p,AIS.l,AIS.seed,AIS.d,AIS.m);$("aiL").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==AIS.l));$("aiM").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.m==AIS.m));const g=AIS.m=="grad",ph=tr(g?"Research Title:":"Report Title:");aT.placeholder=ph;aT.setAttribute("aria-label",ph.replace(/:$/,""));$("aiN").min=g?10:1;$("aiN").max=g?60:40;$("aiN").placeholder=g?tr("Auto")+" (10–60)":tr("Auto")};
  aT.value=AIS.t;aT.oninput=()=>{AIS.t=aT.value;aiUpd()};
- $("aiN").oninput=()=>{const v=Math.round(+$("aiN").value);AIS.p=v>0?Math.min(40,Math.max(1,v)):"auto";aiUpd()};
+ const aD=$("aiD");aD.value=AIS.d;aD.oninput=()=>{AIS.d=aD.value.slice(0,60);try{localStorage.setItem("arb_dept",AIS.d)}catch(x){}aiUpd()};
+ $("aiN").oninput=()=>{const v=Math.round(+$("aiN").value),g=AIS.m=="grad";AIS.p=v>0?(g?Math.min(60,Math.max(10,v)):Math.min(40,Math.max(1,v))):"auto";aiUpd()};
+ $("aiM").onclick=ev=>{const b=ev.target.closest("button");if(!b)return;AIS.m=b.dataset.m=="grad"?"grad":"rep";try{localStorage.setItem("arb_mode",AIS.m)}catch(x){}if(AIS.p!=="auto"){const v=AIS.p;AIS.p=AIS.m=="grad"?Math.min(60,Math.max(10,v)):Math.min(40,Math.max(1,v));$("aiN").value=AIS.p}aiUpd()};
  $("aiL").onclick=ev=>{const b=ev.target.closest("button");if(b){AIS.l=b.dataset.v;aiUpd()}};
  $("aiC").onclick=async()=>{if(!AIS.t.trim()){aS.style.color="#b00020";aS.textContent="Write the topic first.";aT.focus();return}AIS.seed=Math.random();aiUpd();
   try{await navigator.clipboard.writeText(aV.value);aS.style.color="#1f5c4a";aS.textContent="Prompt copied. Paste it into ChatGPT or Gemini, then copy the answer."}
@@ -995,12 +1147,15 @@ function openUR(){if($("ur"))return;
 /* ---------- document builder ---------- */
 const allImg=()=>S.pages.flatMap(g=>g.blocks).filter(x=>x.t=="img");
 const dispT=t=>String(t==null?"":t).replace(/^\s*(?:\d+(?:\.\d+)+[.)]?|\d+[.)])\s+/,"").trim();
+const nearH=(sec,b)=>{const bl=sec.pg.blocks,i=bl.indexOf(b);for(let j=i-1;j>=0;j--)if(bl[j].t=="h"&&String(bl[j].text||"").trim())return String(bl[j].text).replace(/^\s*\d+(?:\.\d+)*[.)]?\s*/,"");return sec.title};
+const tblAuto=(sec,b)=>autoCap({},nearH(sec,b));
 const autoCap=(b,t)=>{let h=String(b.hint||"").replace(/[_\-]+/g," ").replace(/\s+/g," ").trim()||String(t||"").trim();return h?h.charAt(0).toUpperCase()+h.slice(1):""};
 const capT=c=>String(c||"").replace(/^\s*(?:figure|fig\.?|table|وێنەی?|خشتەی?|الشكل|شكل|الجدول|جدول)\s*\d+\s*[:.\-–]?\s*/i,"").trim();
+function noImg(pg){if(kindOf(pg)=="ref")return true;const t=dispT(pg.title)||"";return /^\s*(?:[\d٠-٩]+[.)]?\s*)?(?:conclusions?\b|concluding\b|دەرئەنجام|ئەنجامگیری|الخاتمة|خاتمة|الاستنتاج)/i.test(t)}
 function kindOf(pg){const k=pg.kind;if(k&&k!="auto")return k;const t=dispT(pg.title);
- if(/^(abstract|executive summary|کورتە|پوختە|ملخص)$/i.test(t))return "abs";
- if(/^(acknowledg(e)?ments?|سوپاسگوزاری|سوپاس|شکر و تقدیر)$/i.test(t))return "ack";
- if(/^(references|bibliography|works cited|سەرچاوەکان|سەرچاوە|المراجع)$/i.test(t))return "ref";
+ if(/^(abstract|executive summary|کورتە|پوختە|ملخص|المستخلص|مستخلص)$/i.test(t))return "abs";
+ if(/^(acknowledg(e)?ments?|dedication|سوپاسگوزاری|سوپاس|شکر و تقدیر|پێشکەشکردن|پیشکەشکردن|پێشکەشی|شكر وتقدير|شكر و تقدير|الإهداء|إهداء|اهداء)$/i.test(t))return "ack";
+ if(/^(references|bibliography|works cited|سەرچاوەکان|سەرچاوە|المراجع|المصادر)$/i.test(t))return "ref";
  if(/^(appendix|appendices|پاشکۆ|ملحق)/i.test(t))return "app";
  return "ch"}
 function outline(){const front=[],body=[];let c=0,app=0;
@@ -1050,6 +1205,8 @@ function referenceHTML(r,i){
  const detail=[src?`<em>${e(src)}</em>`:"",vol?`, <em>${e(vol)}</em>`:"",iss?`(${e(iss)})`:"",pages?`, ${e(pages)}`:"",pub?`. ${e(pub)}`:""].filter(Boolean).join("");
  return `${a?e(a)+" ":""}(${e(y)}). ${t?`<em>${e(t)}</em>. `:""}${detail}${detail&&!detail.endsWith(".")?".":""}${link}`;
 }
+/* V24: Latin text in parentheses inside Kurdish/Arabic text, e.g. (Amdahl, 1967), is kept as one left-to-right unit so the brackets never flip */
+function ltrParen(h){return S.dir==="rtl"?String(h).replace(/(<[^>]*>)|\(([^()<>\u0600-\u06FF]*[A-Za-z][^()<>\u0600-\u06FF]*)\)/g,(m,tag,inner)=>tag?tag:'<span dir="ltr" class="lt">('+inner+')</span>'):h}
 
 /* ---------- code syntax highlighting (academic light theme) ---------- */
 const HLC={hk:"D73A49",hs:"032F62",hc:"6A737D",hn:"005CC5",hv:"E36209",hf:"6F42C1",ht:"22863A",ha:"6F42C1",hy:"005CC5"};
@@ -1059,6 +1216,9 @@ const HLK={
  py:"and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield",
  c:"auto|break|case|char|class|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|namespace|new|private|protected|public|register|return|short|signed|sizeof|static|struct|switch|template|this|typedef|union|unsigned|using|virtual|void|volatile|while|String|boolean|final|import|package|throws|throw|try|catch|finally|extends|implements|interface|abstract|synchronized",
  sql:"SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|ALTER|DROP|TABLE|DATABASE|SCHEMA|INDEX|VIEW|PRIMARY|KEY|FOREIGN|REFERENCES|NOT|NULL|DEFAULT|AUTO_INCREMENT|UNIQUE|CHECK|CONSTRAINT|JOIN|INNER|LEFT|RIGHT|OUTER|FULL|CROSS|ON|AS|AND|OR|IN|BETWEEN|LIKE|IS|EXISTS|UNION|ALL|DISTINCT|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|ASC|DESC|CASE|WHEN|THEN|ELSE|END|USE|SHOW|TABLES|DATABASES|DESCRIBE|TRUNCATE|GRANT|REVOKE|COMMIT|ROLLBACK|BEGIN|TRANSACTION|IF|ADD|COLUMN|MODIFY|RENAME|TO|PROCEDURE|FUNCTION|TRIGGER|RETURNS|DECLARE|WITH|ENGINE|CHARSET|PRIVILEGES|IDENTIFIED|CASCADE|TOP|TEMPORARY|REPLACE"};
+HLK.arduino="void|int|long|short|char|float|double|bool|boolean|byte|word|unsigned|signed|const|static|volatile|if|else|for|while|do|switch|case|break|continue|return|default|struct|class|enum|typedef|new|delete|public|private|protected|namespace|using|String";
+HLK.sh="if|then|else|elif|fi|for|while|do|done|case|esac|in|function|return|exit|export|local|source|echo|cd|sudo|apt|apt-get|pip|pip3|npm|git|mkdir|rm|cp|mv|ls|cat|chmod|chown|grep|sed|awk|curl|wget|systemctl|service|mysql|mysqldump|php|python|python3|node|install|update|upgrade|clone|commit|push|pull|add|status";
+HLK.java="abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|if|implements|import|instanceof|int|interface|long|new|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|try|void|volatile|while|var|string|bool|using|namespace|foreach|get|set|override|virtual|async|await";
 const hlK=(k,f)=>new RegExp("\\b(?:"+k+")\\b",f);
 const HLSTR=/"(?:\\[\s\S]|[^"\\])*"?|'(?:\\[\s\S]|[^'\\])*'?/y,HLNUM=/\b(?:0x[\da-f]+|\d+(?:\.\d+)?)\b/iy,HLCMT=/\/\/[^\n]*|\/\*[\s\S]*?(?:\*\/|$)/y;
 const HLS={
@@ -1067,7 +1227,11 @@ const HLS={
  py:[["hc",/#[^\n]*/y],["hs",/"""[\s\S]*?(?:"""|$)|'{3}[\s\S]*?(?:'{3}|$)|"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?/y],["hn",HLNUM],["hn",/\b(?:True|False|None)\b/y],["hk",hlK(HLK.py,"y")],["hf",/\b[A-Za-z_]\w*(?=\s*\()/y]],
  c:[["hc",HLCMT],["hk",/#\s*(?:include|define|ifdef|ifndef|endif|pragma|if|else)\b[^\n]*/y],["hs",/"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?/y],["hn",HLNUM],["hn",/\b(?:true|false|null|NULL)\b/y],["hk",hlK(HLK.c,"y")],["hf",/\b[A-Za-z_]\w*(?=\s*\()/y]],
  sql:[["hc",/--[^\n]*|#[^\n]*|\/\*[\s\S]*?(?:\*\/|$)/y],["hs",/'(?:''|\\.|[^'\\])*'?|"(?:\\.|[^"\\])*"?/y],["hn",/\b\d+(?:\.\d+)?\b/y],["hy",/\b(?:INT|INTEGER|BIGINT|SMALLINT|TINYINT|MEDIUMINT|VARCHAR|CHAR|TEXT|LONGTEXT|DATE|DATETIME|TIMESTAMP|TIME|YEAR|FLOAT|DOUBLE|DECIMAL|NUMERIC|BOOLEAN|BOOL|BLOB|ENUM|JSON|SERIAL)\b/iy],["hk",hlK(HLK.sql,"iy")],["hf",/\b(?:COUNT|SUM|AVG|MIN|MAX|NOW|CONCAT|UPPER|LOWER|LENGTH|ROUND|COALESCE|IFNULL|DATE_FORMAT|CURDATE|SUBSTRING|TRIM|REPLACE|ABS|CEIL|FLOOR|YEAR|MONTH|DAY|CURRENT_TIMESTAMP)\b(?=\s*\()/iy]],
- gen:[["hc",HLCMT],["hs",HLSTR],["hn",HLNUM]]};
+ arduino:[["hc",HLCMT],["hk",/#\s*(?:include|define|ifdef|ifndef|endif|pragma|if|else)\b[^\n]*/y],["hs",/"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?/y],["hn",HLNUM],["hn",/\b(?:HIGH|LOW|INPUT|OUTPUT|INPUT_PULLUP|LED_BUILTIN|true|false|NULL|nullptr|A\d+)\b/y],["hy",/\b(?:void|int|long|short|char|float|double|bool|boolean|byte|word|unsigned|String|size_t|uint\d+_t|int\d+_t)\b/y],["hk",hlK(HLK.arduino,"y")],["hf",/\b[A-Za-z_]\w*(?=\s*\()/y]],
+ sh:[["hc",/#[^\n]*/y],["hs",/"(?:\\.|[^"\\])*"?|'[^']*'?/y],["hv",/\$\{?[A-Za-z_]\w*\}?|\$[0-9@#?]/y],["hn",HLNUM],["ha",/(?<=\s)--?[A-Za-z][\w-]*/y],["hk",hlK(HLK.sh,"y")]],
+ json:[["ha",/"(?:\\.|[^"\\\n])*"(?=\s*:)/y],["hs",/"(?:\\.|[^"\\\n])*"?/y],["hn",/-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b/y],["hk",/\b(?:true|false|null)\b/y]],
+ java:[["hc",HLCMT],["hs",/"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?/y],["hn",HLNUM],["hn",/\b(?:true|false|null)\b/y],["hk",/@[A-Za-z]\w*/y],["hk",hlK(HLK.java,"y")],["ht",/\b[A-Z][A-Za-z0-9_]*\b/y],["hf",/\b[A-Za-z_]\w*(?=\s*\()/y]],
+ gen:[["hc",/\/\/[^\n]*|#[^\n]*|--[^\n]*|\/\*[\s\S]*?(?:\*\/|$)/y],["hs",/`(?:\\[\s\S]|[^`\\])*`?|"(?:\\[\s\S]|[^"\\])*"?|'(?:\\[\s\S]|[^'\\])*'?/y],["hv",/\$[A-Za-z_]\w*/y],["hn",HLNUM],["hn",/\b(?:true|false|null|None|True|False|NULL|nil|undefined)\b/y],["hk",hlK(HLK.js+"|"+HLK.py+"|"+HLK.c+"|"+HLK.php,"y")],["hf",/\b[A-Za-z_]\w*(?=\s*\()/y]]};
 function hlScan(s,rules){const out=[];let i=0,pl="";while(i<s.length){let h=null;for(const r of rules){r[1].lastIndex=i;const m=r[1].exec(s);if(m&&m[0].length){h=[r[0],m[0]];break}}
  if(h){if(pl){out.push(["",pl]);pl=""}out.push(h);i+=h[1].length}else{pl+=s[i++]}}
  if(pl)out.push(["",pl]);return out}
@@ -1091,25 +1255,29 @@ function hlCss(s){const out=[];let i=0,d=0,pl="";const fl=()=>{if(pl){out.push([
    else if(d==0&&(m=rest.match(/^[.#:]?[A-Za-z_][\w-]*/)))h=["ht",m[0]]}
   if(h){fl();out.push(h);i+=h[1].length}else pl+=s[i++]}
  fl();return out}
-function hlDetect(code,info){info=String(info||"").toLowerCase();const M={php:"php",html:"html",htm:"html",xml:"html",sql:"sql",mysql:"sql",js:"js",javascript:"js",ts:"js",css:"css",py:"py",python:"py",c:"c",cpp:"c","c++":"c",java:"c",cs:"c",csharp:"c"};if(M[info])return M[info];
+function hlDetect(code,info){info=String(info||"").toLowerCase();const M={php:"php",html:"html",htm:"html",xml:"html",sql:"sql",mysql:"sql",js:"js",javascript:"js",ts:"js",css:"css",py:"py",python:"py",c:"c",cpp:"c","c++":"c",java:"java",cs:"java",csharp:"java",kotlin:"java",ino:"arduino",arduino:"arduino",bash:"sh",sh:"sh",shell:"sh",zsh:"sh",cmd:"sh",powershell:"sh",console:"sh",terminal:"sh",json:"json"};if(M[info])return M[info];
  const sqlRx=/^\s*(?:SELECT\b[\s\S]*?\bFROM\b|INSERT\s+INTO\b|UPDATE\s+\S+\s+SET\b|DELETE\s+FROM\b|CREATE\s+(?:TABLE|DATABASE|SCHEMA|INDEX|VIEW|UNIQUE|OR\s+REPLACE|PROCEDURE|FUNCTION|TRIGGER)\b|ALTER\s+TABLE\b|DROP\s+(?:TABLE|DATABASE|INDEX|VIEW)\b|TRUNCATE\b|USE\s+\w+\s*;|SHOW\s+\w+|DESCRIBE\b|GRANT\b)/im;
  if(/<\?(?:php|=)?/.test(code))return "php";
+ if(/^\s*[{\[]\s*$/m.test(code)&&/^\s*"[^"\n]+"\s*:/m.test(code)&&!/[;]\s*$/m.test(code))return "json";
+ if(!/^\s*(?:def |import |from \w+ import|print\()/m.test(code)&&/^#!\/(?:usr\/)?bin\/|^\s*\$\s+\S|^\s*(?:sudo|apt(?:-get)?|pip3?|npm|git|cd|mkdir|chmod|systemctl|mysql(?:dump)?|curl|wget)\s+\S/m.test(code)&&!/[;{}]\s*$/m.test(code))return "sh";
+ if(/\b(?:void\s+(?:setup|loop)\s*\(|pinMode|digitalWrite|digitalRead|analogRead|analogWrite|Serial\.(?:begin|print)|delay\s*\()/.test(code))return "arduino";
  if(sqlRx.test(code))return "sql";
  if(/\$[A-Za-z_]\w*\s*(?:=|;|\)|\[|->|\+\+)/.test(code))return "php";
  if(/^\s*<(?:!doctype|html|head|body|div|form|table|p|h[1-6]|a|span|input|ul|ol|li|style|script|meta|link|img|label|button|select|textarea|nav|header|footer|section|title)\b/im.test(code))return "html";
  if(/^[^{}\n]*\{\s*(?:[\w-]+\s*:[^;{}]+;\s*)+\}?/m.test(code)&&!/\b(?:function|if|for|while)\b/.test(code))return "css";
- if(/#\s*include|\bint\s+main\s*\(|public\s+(?:static\s+)?(?:class|void)|System\.out|std::|using\s+namespace/.test(code))return "c";
+ if(/public\s+(?:static\s+)?(?:class|void)|System\.out|\bString\[\]\s+args|Console\.Write/.test(code))return "java";
+ if(/#\s*include|\bint\s+main\s*\(|std::|using\s+namespace/.test(code))return "c";
  if(/^\s*(?:def\s+\w+\s*\(|import\s+\w+|from\s+\w+\s+import|class\s+\w+.*:|print\s*\()/m.test(code)&&!/[;{}]\s*$/m.test(code))return "py";
  if(/\b(?:function|const|let|var)\b|=>|console\.|document\./.test(code))return "js";
  return "gen"}
-function hlLines(code,info){const lg=hlDetect(code,info);let tk;try{tk=lg=="php"?hlPhp(code):lg=="html"?hlHtml(code):lg=="css"?hlCss(code):hlScan(code,HLS[lg]||HLS.gen)}catch(x){tk=[["",code]]}
- const L=[""];tk.forEach(([c,t])=>{t.split("\n").forEach((pt,k)=>{if(k)L.push("");if(pt)L[L.length-1]+=c?`<span class="${c}">${e(pt)}</span>`:e(pt)})});return L}
-function blockEls(b,cl,ct){const o=[],mk=(t,h)=>{const n=document.createElement(t);n.innerHTML=h;return n},tx=String(b.text||""),ls=tx.split("\n").map(s=>s.trim()).filter(Boolean);
+function hlLines(code,info){if(S.hlc===0)return code.split("\n").map(e);const lg=hlDetect(code,info);let tk;try{tk=lg=="php"?hlPhp(code):lg=="html"?hlHtml(code):lg=="css"?hlCss(code):hlScan(code,HLS[lg]||HLS.gen)}catch(x){tk=[["",code]]}
+ const L=[""];tk.forEach(([c,t])=>{t.split("\n").forEach((pt,k)=>{if(k)L.push("");if(pt)L[L.length-1]+=c?`<span class="x${c}">${e(pt)}</span>`:e(pt)})});return L}
+function blockEls(b,cl,ct){const o=[],mk=(t,h)=>{const n=document.createElement(t);n.innerHTML=ltrParen(h);return n},tx=String(b.text||""),ls=tx.split("\n").map(s=>s.trim()).filter(Boolean);
  if(b.t=="h")o.push(mk("h2",e(tx)));
- else if(b.t=="p")ls.forEach(l=>{const lb=h=>h.replace(/\u2063([^\u2063]+)\u2063/g,"<b>$1</b>");const n=mk("p",lb(b.linkify===false?citeText(e(l)):linkifyHTML(citeText(e(l)))));o.push(n)});
+ else if(b.t=="p")ls.forEach(l=>{const ar=/[\u0600-\u06FF]/.test(l);const lb=h=>h.replace(/\u2063([^\u2063]+)\u2063/g,(m,x)=>"<b>"+(ar?x.replace(/([A-Za-z)\]])([:：])$/,"$1\u200F$2"):x)+"</b>");const n=mk("p",lb(b.linkify===false?citeText(e(l)):linkifyHTML(citeText(e(l)))));if(!ar&&/[A-Za-z]/.test(l))n.style.unicodeBidi="plaintext";o.push(n)});
  else if(b.t=="code"){const cl2=tx.replace(/\r/g,"").replace(/\t/g,"    ").split("\n");while(cl2.length&&!cl2[cl2.length-1].trim())cl2.pop();while(cl2.length&&!cl2[0].trim())cl2.shift();
   if(cl2.length){const hh=hlLines(cl2.join("\n"),b.lang);const n=mk("pre",hh.map(l=>"<code>"+(l||" ")+"</code>").join(""));n.className="code"+(cl2.length>1?" nl":"");n.dir="ltr";o.push(n)}}
- else if(b.t=="ul"||b.t=="ol"){if(ls.length){const n=mk(b.t,ls.map(l=>"<li>"+(b.linkify===false?e(l):linkifyHTML(e(l)))+"</li>").join(""));if(b.t=="ol"&&b.start>1)n.start=+b.start;o.push(n)}}
+ else if(b.t=="ul"||b.t=="ol"){if(ls.length){const n=mk(b.t,ls.map(l=>"<li"+(!/[\u0600-\u06FF]/.test(l)&&/[A-Za-z]/.test(l)?' style="unicode-bidi:plaintext"':"")+">"+(b.linkify===false?e(l):linkifyHTML(e(l)))+"</li>").join(""));if(b.t=="ol"&&b.start>1)n.start=+b.start;o.push(n)}}
  else if(b.t=="tbl"&&ls.length){const r=ls.map(l=>l.split("|").map(c=>b.linkify===false?e(c.trim()):linkifyHTML(e(c.trim()))));const head=r[0]||[],body=r.slice(1);o.push(mk("table",(b.cap?`<caption>${e(cl||"")}${e(capT(b.cap))}</caption>`:"")+`<thead><tr>${head.map(x=>`<th scope="col">${x}</th>`).join("")}</tr></thead><tbody>${body.map(row=>`<tr>${head.map((_,i)=>`<td>${row[i]||""}</td>`).join("")}</tr>`).join("")}</tbody>`))}
  else if(b.t=="img"&&b.src){const fc=b.cap||(cl?ct:"");const layout=b.layout||"left",sk=b.sz||"m",width={a:"32%",s:"20%",m:"32%",l:"44%"}[sk]||"32%",vert=layout=="top"||layout=="bottom"||layout=="center",cap={a:300,s:150,m:230,l:330}[sk]||230,note=b.note?`<div class="image-copy">${e(b.note).replace(/\n/g,"<br>")}</div>`:"";const img=`<img class="academic-report-image" src="${b.src}" alt="Report illustration" style="width:${vert?"auto":width};max-width:100%;max-height:${vert?cap:360}px;object-fit:contain">`;let content=layout=="right"?img+note:layout=="top"?img+note:layout=="bottom"?note+img:img+note;const f=mk("figure",`<div class="image-layout ${layout}">${content}</div>`+(fc?`<figcaption>${e(cl||"")}${e(capT(fc))}</figcaption>`:""));f.style.textAlign="center";if(!fc)f.classList.add("nocap");if(vert)f.dataset.fit=cap;f.dataset.gi=allImg().indexOf(b);o.push(f)}
  else if(b.t=="img"&&!b.src&&(b.url||b.hint)){const f=mk("figure",ic("image")+"<span>"+e(tr("Tap to add image"))+"</span>");f.className="img-ph";f.dataset.gi=allImg().indexOf(b);o.push(f)}
@@ -1154,6 +1322,7 @@ function acadUI(){const row=(lab,k,arr,cur)=>`<label>${lab}</label><div class="r
  return `<div class="card"><label style="font-weight:700">Academic structure</label>`+
  row("Page numbers","pn",[["roman","i, ii… then 1, 2…"],["arabic","1, 2, 3 only"]],S.pn=="arabic"?"arabic":"roman")+
  row("Start every page with a heading","hf",[[1,"On"],[0,"Off"]],S.hf===0?0:1)+
+ row("Code syntax colours","hlc",[[1,"Colour"],[0,"Black & white"]],S.hlc===0?0:1)+
  row("Keep short sections on one page","keepSec",[[1,"On"],[0,"Off"]],S.keepSec===0?0:1)+
  row("Table of Contents","notoc",[[0,"Show"],[1,"Hide"]],S.notoc?1:0)+
  row("List of Figures (captioned images)","lof",[[0,"Hide"],[1,"Show"]],S.lof?1:0)+
@@ -1174,15 +1343,15 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   const LL=rt?RLAB[RL()]:{lof:"List of Figures",lot:"List of Tables",fig:"Figure ",tab:"Table "};
  const O=outline(),cm=new Map(),caps=[],rows=[];let fn=0,tn=0;
  O.front.concat(O.body).forEach(sec=>sec.pg.blocks.forEach(b=>{const has=String(b.cap||"").trim();
-  const ac=b.t=="img"&&b.src&&!has?autoCap(b,sec.title):"";
+  const ac=b.t=="img"&&b.src&&!has?autoCap(b,nearH(sec,b)):"";
   if(b.t=="img"&&b.src&&(has||ac)){const c={k:"f",label:LL.fig+(++fn)+": ",text:capT(has||ac)};cm.set(b,c);caps.push(c)}
-  else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:LL.tab+(++tn)+": ",text:capT(b.cap)};cm.set(b,c);caps.push(c)}}));
+  else if(b.t=="tbl"&&(has||S.tcap)&&String(b.text||"").trim()){const c={k:"t",label:LL.tab+(++tn)+": ",text:capT(has||tblAuto(sec,b))};cm.set(b,c);caps.push(c)}}));
  const isHd=x=>x.tagName=="H1"||x.tagName=="H2"||x.tagName=="H3";
  const over=()=>cur.bd.scrollHeight>cur.bd.clientHeight+1;
  const lh=el=>{const c=getComputedStyle(el);return parseFloat(c.lineHeight)||parseFloat(c.fontSize)*1.5};
- const clone=(el,tg)=>{const r=document.createElement(tg||el.tagName);r.style.fontSize=el.style.fontSize;if(el.dataset&&el.dataset.pi!==undefined){r.dataset.pi=el.dataset.pi;r.dataset.bi=el.dataset.bi}return r};
+ const clone=(el,tg)=>{const r=document.createElement(tg||el.tagName);r.style.fontSize=el.style.fontSize;if(el.classList&&el.classList.contains("ref-blk"))r.classList.add("ref-blk");if(el.getAttribute&&el.getAttribute("dir"))r.setAttribute("dir",el.getAttribute("dir"));if(el.dataset&&el.dataset.pi!==undefined){r.dataset.pi=el.dataset.pi;r.dataset.bi=el.dataset.bi}return r};
  const sz=(el,fs)=>{const g=el.tagName,m={H1:S.h1||16,H2:S.h2||14,H3:S.h3||12};el.style.fontSize=(g in m?m[g]:g=="TABLE"?+(fs*.92).toFixed(2):g=="PRE"?+(fs*.82).toFixed(2):fs)+"pt";return el};
- const whole=el=>{const g=el.tagName;if(g=="P")return Math.round(el.offsetHeight/lh(el))<=4;if(g=="UL"||g=="OL"||g=="PRE")return el.children.length<=(g=="PRE"?7:3);return true};
+ const whole=el=>{const g=el.tagName;if(g=="P")return Math.round(el.offsetHeight/lh(el))<=4;if(g=="UL"||g=="OL"||g=="PRE")return el.children.length<=(g=="PRE"?7:3);if(g=="TABLE")return el.rows.length<=4;return true};
  function toNext(el){cur.bd.removeChild(el);const mv=[el];let pv;
   while((pv=cur.bd.lastElementChild)&&(isHd(pv)||pv.dataset.lead=="1")){cur.bd.removeChild(pv);mv.unshift(pv)}
   cur=bp();mv.forEach(x=>cur.bd.appendChild(x))}
@@ -1196,12 +1365,18 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    el.textContent=w.join(" ");return false}
   if(g=="UL"||g=="OL"){const li=[...el.children];let k=li.length;
    while(k>0&&over()){k--;el.removeChild(li[k])}
+   if(k>2&&li.length-k===1){k--;el.removeChild(li[k])}
    if(k>=2&&k<li.length){const r=clone(el);if(g=="OL")r.start=(el.start||1)+k;li.slice(k).forEach(x=>r.appendChild(x));cur=bp();placeEl(r);return true}
    li.slice(k).forEach(x=>el.appendChild(x));return false}
   if(g=="PRE"){const ln=[...el.children];let k=ln.length;
    while(k>0&&over()){k--;el.removeChild(ln[k])}
    if(k>=3&&ln.length-k>=2){const r=clone(el);r.className=el.className;r.dir="ltr";r.style.setProperty("--ln0",String((+(el.style.getPropertyValue("--ln0")||0))+k));ln.slice(k).forEach(x=>r.appendChild(x));cur=bp();placeEl(r);return true}
    ln.slice(k).forEach(x=>el.appendChild(x));return false}
+  if(g=="TABLE"){const rw=[...el.rows],par=rw.map(x=>x.parentNode);let k=rw.length;
+   while(k>0&&over()){k--;rw[k].remove()}
+   if(k>=3&&rw.length-k===1){k--;rw[k].remove()}
+   if(k>=3&&k<rw.length){const r=clone(el);r.className=el.className;r.appendChild(rw[0].cloneNode(true));rw.slice(k).forEach(x=>r.appendChild(x));cur=bp();placeEl(r);return true}
+   rw.slice(k).forEach((x,i)=>par[k+i].appendChild(x));return false}
   return false}
  function splitEl(el){const g=el.tagName;
   if(g=="P"){const w=el.textContent.split(/\s+/).filter(Boolean);let lo=1,hi=w.length-1,k=1;
@@ -1210,6 +1385,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
    if(k<w.length){const r=clone(el);r.textContent=w.slice(k).join(" ");cur=bp();placeEl(r)}}
   else if(g=="UL"||g=="OL"){const li=[...el.children];let k=li.length;
    while(k>1&&over()){k--;el.removeChild(li[k])}
+   if(k>2&&li.length-k===1){k--;el.removeChild(li[k])}
    if(k<li.length){const r=clone(el);if(g=="OL")r.start=(el.start||1)+k;li.slice(k).forEach(x=>r.appendChild(x));cur=bp();placeEl(r)}}
   else if(g=="PRE"){const ln=[...el.children];let k=ln.length;
    while(k>1&&over()){k--;el.removeChild(ln[k])}
@@ -1233,7 +1409,7 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  function hf(el){if(zone!="b"||S.hf===0||isHd(el))return false;
   const bd=cur.bd,k=[...bd.children];k.pop();let h=-1;for(let i=k.length-1;i>=0;i--)if(isHd(k[i])){h=i;break}
   if(h<0)return false;while(h>0&&isHd(k[h-1]))h--;if(h<1)return false;
-  const ch=k.slice(h),a=ch[0],z=ch[ch.length-1];if(z.offsetTop+z.offsetHeight-a.offsetTop>bd.clientHeight*.6)return false;
+  const ch=k.slice(h),a=ch[0],z=ch[ch.length-1];if(z.offsetTop+z.offsetHeight-a.offsetTop>bd.clientHeight*.88)return false;
   if(shrinkFit())return true;
   ch.forEach(x=>{if(x.tagName=="FIGURE"&&x.dataset.fit&&figIm(x))figIm(x).style.maxHeight=x.dataset.fit+"px"});
   ch.forEach(x=>bd.removeChild(x));bd.removeChild(el);cur=bp();ch.forEach(x=>cur.bd.appendChild(x));placeEl(el);return true}
@@ -1246,10 +1422,11 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
   if(has&&!whole(el)&&trySplit(el))return;
   if(has){toNext(el);if(!over())return}
   splitEl(el)}
- const mkH=(tag,txt,cls)=>{const h=document.createElement(tag);if(cls)h.className=cls;h.textContent=txt;return h};
+ const refDir=t=>/^[^A-Za-z\u0600-\u06FF]*[A-Za-z]/.test(String(t||"").replace(/<[^>]*>/g,""))?"ltr":"rtl";
+const mkH=(tag,txt,cls)=>{const h=document.createElement(tag);if(cls)h.className=cls;h.textContent=txt;return h};
  function secEls(sec,fs){const out=[],im={},pi=S.pages.indexOf(sec.pg);sec.items.forEach(x=>im[x.bi]=x);
   const h=mkH("h1",(sec.num?sec.num+" ":"")+sec.title,"sh");h.dataset.pi=pi;h.dataset.bi="-1";sec.el=h;out.push(sz(h,fs));
-  if(sec.k==="ref"){sec.pg.blocks.forEach((b,bi)=>blockEls(b).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;el.classList.add("ref-blk");out.push(sz(el,fs))}));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.innerHTML=referenceHTML(r,i);out.push(sz(d,fs))});return out}
+  if(sec.k==="ref"){sec.pg.blocks.forEach((b,bi)=>blockEls(b).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;el.classList.add("ref-blk");el.querySelectorAll("li").forEach(x=>x.setAttribute("dir",refDir(x.textContent)));if(el.tagName=="P")el.setAttribute("dir",refDir(el.textContent));out.push(sz(el,fs))}));citationList().forEach((r,i)=>{const d=document.createElement("div");d.className="ref-entry";d.id="ref-"+r.id;d.innerHTML=referenceHTML(r,i);d.setAttribute("dir",refDir(d.textContent));out.push(sz(d,fs))});return out}
   sec.pg.blocks.forEach((b,bi)=>{
    if(b.t=="h"){const x=im[bi];if(!x)return;const hh=mkH(x.lv==3?"h3":"h2",(x.num?x.num+" ":"")+x.title);hh.dataset.pi=pi;hh.dataset.bi=bi;if(b.newPage)hh.dataset.np="1";x.el=hh;out.push(sz(hh,fs));return}
    const c=cm.get(b);blockEls(b,c&&c.label,c&&c.text).forEach(el=>{el.dataset.pi=pi;el.dataset.bi=bi;out.push(sz(el,fs));if(c&&!c.el&&(el.tagName=="FIGURE"||el.tagName=="TABLE"))c.el=el})});
@@ -1257,6 +1434,13 @@ const names=(I.students||[]).filter(x=>x&&x.trim());
  function flushPend(){const bd=cur.bd;while(pend.length){const k=[...bd.children],at=k.findIndex(x=>!isHd(x)&&x.dataset.lead!="1"),f=pend[0];bd.insertBefore(f,at<0?null:k[at].nextSibling);if(over()&&!fitFig(f)){bd.removeChild(f);return}pend.shift()}}
  function putSec(sec){if(sec.pg.startNewPage&&cur&&cur.bd&&cur.bd.children.length)cur=bp();const fs=sec.pg.fs||12;
   const els=secEls(sec,fs);
+  /* References: shrink the list slightly so it stays on ONE page instead of spilling a few lines onto a second page */
+  if(sec.k==="ref"&&zone=="b"){const sp=np();sp.innerHTML='<div class="bd"></div>';sp.style.cssText+=";position:absolute;visibility:hidden";const sb=sp.firstChild;sb.style.fontSize=FZ+"pt";const w=document.createElement("div");sb.appendChild(w);els.forEach(x=>w.appendChild(x));
+   const fit=()=>sb.scrollHeight<=sb.clientHeight+1,body=els.filter(x=>x.tagName!="H1"),sv=body.map(x=>x.style.fontSize);
+   if(!fit()){let f=fs,ok=false;while(f>10){f=Math.round((f-.5)*10)/10;body.forEach(x=>x.style.fontSize=f+"pt");sb.querySelectorAll(".ref-entry,li").forEach(x=>x.style.marginBottom="2px");if(fit()){ok=true;break}}
+    if(!ok){body.forEach((x,i)=>x.style.fontSize=sv[i])}
+    sb.querySelectorAll(".ref-entry,li").forEach(x=>x.style.marginBottom="")}
+   els.forEach(x=>w.removeChild(x));sp.remove()}
   /* keep a short section together: if it does not fit in the rest of this page but fits on one page, start it on the next page */
   if(zone=="b"&&S.keepSec!==0&&cur&&cur.bd.children.length){
    const bd=cur.bd,lastEl=bd.lastElementChild,br=bd.getBoundingClientRect(),lr=lastEl.getBoundingClientRect(),sc=bd.offsetHeight?br.height/bd.offsetHeight:1,cs=getComputedStyle(bd);
@@ -1458,18 +1642,18 @@ async function makeDocx(pgn){
  /* ---- captions / outline ---- */
  const O=outline(),cm=new Map(),caps=[];let fn=0,tn=0,cn=0;
  O.front.concat(O.body).forEach(sec=>sec.pg.blocks.forEach(b=>{const has=String(b.cap||"").trim();
-  const ac=b.t=="img"&&b.src&&!has?autoCap(b,sec.title):"";
+  const ac=b.t=="img"&&b.src&&!has?autoCap(b,nearH(sec,b)):"";
   if(b.t=="img"&&b.src&&(has||ac)){const c={k:"f",label:L.fig+(++fn)+": ",text:capT(has||ac),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}
-  else if(b.t=="tbl"&&has&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(b.cap),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
+  else if(b.t=="tbl"&&(has||S.tcap)&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(has||tblAuto(sec,b)),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
  const capP=(txt,fs,c)=>P(R(txt,{i:!rt,sz:Math.round(fs*2*.9)}),{keepNext:0,jc:"center",sp:'w:before="40" w:after="120" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
  /* ---- block (dom) -> xml ---- */
  function conv(el,fs,c,b){const t=el.tagName,o={sz:fs*2};
   if(t=="P")return P(runsOf(el,o),{keepNext:el.dataset&&el.dataset.lead=="1"?1:0});
   if(t=="PRE"){const ln=[...el.children],co={font:"Courier New",sz:Math.round(fs*2*.8),rtl:0},nl=ln.length>1,st=+(el.style.getPropertyValue("--ln0")||0);
-   const cr=x=>[...x.childNodes].map(n=>{if(n.nodeType==3)return R(n.nodeValue,co);const c=n.className;return R(n.textContent,Object.assign({},co,HLC[c]?{color:HLC[c],i:c=="hc"?1:0}:{}))}).join("");
+   const cr=x=>[...x.childNodes].map(n=>{if(n.nodeType==3)return R(n.nodeValue,co);const c=n.className;return R(n.textContent,Object.assign({},co,HLC[c.slice(1)]?{color:HLC[c.slice(1)],i:c=="xhc"?1:0}:{}))}).join("");
    return ln.map((x,i)=>P(R((nl?String(st+i+1).padStart(2," ")+"  ":""),Object.assign({},co,{color:"8A94A6"}))+cr(x),{ltr:1,shd:"F3F5F8",jc:"left",keepNext:i<ln.length-1?1:0,sp:`w:before="0" w:after="${i==ln.length-1?140:0}" w:line="250" w:lineRule="auto"`})).join("")}
   if(t=="UL"||t=="OL"){const nid=t=="OL"?newNum(el.start||1):1,li=[...el.children];
-   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:20}"`,jc:el.classList.contains("ref-blk")?"left":undefined})).join("")}
+   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:20}"`,jc:el.classList.contains("ref-blk")?"left":undefined,ltr:el.classList.contains("ref-blk")&&refDir(x.textContent)=="ltr"})).join("")}
   if(t=="TABLE"){const cap=el.querySelector("caption");let out="";
    if(cap)out+=P(R(cap.textContent,{i:!rt,sz:Math.round(fs*2*.95)}),{keepNext:1,jc:"center",sp:'w:before="60" w:after="80" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
    const hr=[...el.querySelectorAll("thead tr")],br=[...el.querySelectorAll("tbody tr")],nc=Math.max(1,((hr[0]||br[0]||{children:[]}).children.length)),cw=Math.floor(TW/nc),tsz=Math.round(fs*2*.92);
@@ -1738,6 +1922,8 @@ Object.assign(DICT.ckb,{"Replace image":"گۆڕینی وێنە","Upload image":"
 Object.assign(DICT.ar,{"Replace image":"استبدال الصورة","Upload image":"رفع صورة","Remove image":"حذف الصورة","Tap to add image":"اضغط لإضافة صورة","Finding images…":"جارٍ البحث عن الصور…","Images added":"تمت إضافة الصور","tap an image to replace it":"اضغط على صورة لاستبدالها أو حذفها","No images found. Tap a placeholder to add one.":"لم يتم العثور على صور. اضغط على العنصر النائب لإضافة صورة.","Could not reach the image service":"تعذر الوصول إلى خدمة الصور"});
 Object.assign(DICT.ckb,{"Start every page with a heading":"هەر لاپەڕەیەک بە ناونیشان دەست پێبکات","Section":"بەش","Section title":"ناونیشانی بەش","Heading level":"ئاستی ناونیشان","Add below":"زیادکردن لە خوارەوە","Cover":"بەرگ","Done":"تەواو","Start this subtitle on a new page":"ئەم ناونیشانە لاوەکییە لە لاپەڕەیەکی نوێ دەست پێبکات","Start on a new page":"گواستنەوە بۆ لاپەڕەی نوێ","Remove page break":"لابردنی بڕینی لاپەڕە"});
 Object.assign(DICT.ar,{"Start every page with a heading":"ابدأ كل صفحة بعنوان","Section":"قسم","Section title":"عنوان القسم","Heading level":"مستوى العنوان","Add below":"إضافة بالأسفل","Cover":"الغلاف","Done":"تم","Start this subtitle on a new page":"ابدأ هذا العنوان الفرعي في صفحة جديدة","Start on a new page":"النقل إلى صفحة جديدة","Remove page break":"إزالة فاصل الصفحة"});
+Object.assign(DICT.ckb,{"Report Mode":"مۆدی ڕاپۆرت","Graduation Research":"بەحسی دەرچوون","Research Title:":"ناونیشانی بەحس:"});
+Object.assign(DICT.ar,{"Report Mode":"وضع التقرير","Graduation Research":"بحث التخرج","Research Title:":"عنوان البحث:"});
 statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));trTree(document.getElementById("nav"));trTree(document.getElementById("ed"));
 
 /* ---------- one-time download codes (Supabase) ---------- */
