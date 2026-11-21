@@ -1215,7 +1215,7 @@ function referenceHTML(r,i){
  return `${a?e(a)+" ":""}(${e(y)}). ${t?`<em>${e(t)}</em>. `:""}${detail}${detail&&!detail.endsWith(".")?".":""}${link}`;
 }
 /* V24: Latin text in parentheses inside Kurdish/Arabic text, e.g. (Amdahl, 1967), is kept as one left-to-right unit so the brackets never flip */
-function ltrParen(h){return S.dir==="rtl"?String(h).replace(/(<[^>]*>)|\(([^()<>\u0600-\u06FF]*[A-Za-z][^()<>\u0600-\u06FF]*)\)/g,(m,tag,inner)=>tag?tag:'<span dir="ltr" class="lt">('+inner+')</span>'):h}
+function ltrParen(h){return S.dir==="rtl"?String(h).replace(/(<[^>]*>)|([A-Za-z_$][\w$]*(?:(?:->|::|\.)[A-Za-z_$][\w$]*)*\([^()<>؀-ۿ]*\))|\(([^()<>؀-ۿ]*[A-Za-z][^()<>؀-ۿ]*)\)/g,(m,tag,call,inner)=>tag?tag:call?'<span dir="ltr" class="lt">'+call+'</span>':'<span dir="ltr" class="lt">('+inner+')</span>'):h}
 
 /* ---------- code syntax highlighting (academic light theme) ---------- */
 const HLC={hk:"D73A49",hs:"032F62",hc:"6A737D",hn:"005CC5",hv:"E36209",hf:"6F42C1",ht:"22863A",ha:"6F42C1",hy:"005CC5"};
