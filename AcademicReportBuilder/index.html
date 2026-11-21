@@ -497,7 +497,7 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.info&&
 let st;function save(){clearTimeout(st);st=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){alert("Storage is full. Remove or shrink some images.")}},300)}
 /* ---------- editor ---------- */
 function homeUI(){
- const C=[["help","help","How to use","4 quick steps","help"],["pages","doc","Edit Report","Info, pages, images","go"],["upl","upload","Upload Report","Paste and import","upl"]];
+ const C=[["help","help","How to use","4 quick steps","help"],["upl","upload","Create Report","Paste and import","upl"],["pages","doc","Edit Report","Info, pages, images","go"]];
  return `<div class="hv"><section class="hv-hero"><h2>Academic Report Builder</h2><span class="hv-rule"></span></section>
 <div class="langsw" role="group" aria-label="Interface language">${[["en","English"],["ckb","کوردی"],["ar","العربية"]].map(([v,n])=>`<button data-a="ui" data-v="${v}" class="${UIL==v?"on":""}">${n}</button>`).join("")}</div>
 <div class="hv-grid">${C.map(([v,i,t,d,act])=>`<button class="hv-card" data-a="${act}" data-v="${v}"><span class="hv-ic">${ic(i)}</span><span class="hv-tx"><b>${t}</b><small>${d}</small></span><span class="hv-arrow">${ic("next")}</span></button>`).join("")}</div>
@@ -1809,7 +1809,7 @@ const DICT={
 ckb:{
 "Report Builder":"دروستکەری ڕاپۆرت","Download Word file":"داگرتنی فایلی Word","Print":"چاپکردن","Edit":"دەستکاری","Preview":"ڕاستەوخۆ","Live":"ڕاستەوخۆ",
 "Academic Report Builder":"دروستکەری ڕاپۆرتی ئەکادیمی","Template":"قاڵب","Design and colors":"دیزاین و ڕەنگەکان","Report":"ڕاپۆرت","Edit Report":"دەستکاریکردنی ڕاپۆرت","Info, pages, images":"زانیاری، لاپەڕە، وێنە",
-"Upload Report":"بارکردنی ڕاپۆرت","Paste and import":"لکاندن و هاوردەکردن","Developed by":"پەرەپێدراوە لەلایەن","Back":"گەڕانەوە","Interface language":"زمانی ڕووکار",
+"Upload Report":"بارکردنی ڕاپۆرت","Create Report":"دروستکردنی ڕاپۆرت","Paste and import":"لکاندن و هاوردەکردن","Developed by":"پەرەپێدراوە لەلایەن","Back":"گەڕانەوە","Interface language":"زمانی ڕووکار",
 "Academic Report":"ڕاپۆرتی ئەکادیمی","Double border":"چوارچێوەی دووانە","Selected":"هەڵبژێردراوە","Modern Report":"ڕاپۆرتی مۆدێرن","Side bar":"هێڵی لا","Coming soon":"بەم زووانە",
 "Field Visit Report":"ڕاپۆرتی سەردانی مەیدانی","Ready outline":"پێکهاتەی ئامادە","CV / Resume":"سیڤی","INFO":"زانیاری","PAGE":"لاپەڕە","DESIGN":"دیزاین",
 "Students":"خوێندکاران","Student name":"ناوی خوێندکار","Remove":"لابردن","Add student":"زیادکردنی خوێندکار","Supervisor / Doctor":"سەرپەرشتیار / دکتۆر","University":"زانکۆ","College":"کۆلێژ","Department":"بەش",
@@ -1857,7 +1857,7 @@ ckb:{
 ar:{
 "Report Builder":"منشئ التقارير","Download Word file":"تنزيل ملف Word","Print":"طباعة","Edit":"تحرير","Preview":"مباشر","Live":"مباشر",
 "Academic Report Builder":"منشئ التقارير الأكاديمية","Template":"القالب","Design and colors":"التصميم والألوان","Report":"التقرير","Edit Report":"تحرير التقرير","Info, pages, images":"المعلومات والصفحات والصور",
-"Upload Report":"رفع تقرير","Paste and import":"لصق واستيراد","Developed by":"تطوير","Back":"رجوع","Interface language":"لغة الواجهة",
+"Upload Report":"رفع تقرير","Create Report":"إنشاء تقرير","Paste and import":"لصق واستيراد","Developed by":"تطوير","Back":"رجوع","Interface language":"لغة الواجهة",
 "Academic Report":"تقرير أكاديمي","Double border":"إطار مزدوج","Selected":"محدد","Modern Report":"تقرير حديث","Side bar":"شريط جانبي","Coming soon":"قريباً",
 "Field Visit Report":"تقرير زيارة ميدانية","Ready outline":"هيكل جاهز","CV / Resume":"السيرة الذاتية","INFO":"معلومات","PAGE":"الصفحات","DESIGN":"التصميم",
 "Students":"الطلبة","Student name":"اسم الطالب","Remove":"حذف","Add student":"إضافة طالب","Supervisor / Doctor":"المشرف / الدكتور","University":"الجامعة","College":"الكلية","Department":"القسم",
