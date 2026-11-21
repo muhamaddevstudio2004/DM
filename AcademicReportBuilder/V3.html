@@ -466,6 +466,12 @@ html[dir="rtl"] .hv-tx{text-align:right}
 <nav id="nav"><button class="tab on" data-t="edit"></button><button class="tab" data-t="pv"></button></nav>
 <div id="app"><div id="ed"></div><div id="pv"><div id="doc"></div></div></div>
 <script>
+/* error capture (V26) */
+window.__errq=[];window.__onerr=null;
+window.__cap=function(m,w,st){try{m=String(m==null?"":m);if(!m||/^Script error\.?$/i.test(m)||/ResizeObserver loop/i.test(m)||/Non-Error promise rejection/i.test(m)||/Failed to fetch|Load failed|NetworkError|\[object Object\]/i.test(m))return;var o={m:m.slice(0,400),w:String(w||"js").slice(0,40),st:String(st||"").slice(0,1500)};window.__lastErr=o;window.__errq.push(o);if(window.__onerr)window.__onerr()}catch(x){}};
+window.logAppError=function(x,w){window.__cap(x&&x.message?x.message:x,w,x&&x.stack)};
+window.addEventListener("error",function(e){if(e.target&&e.target!==window)return;window.__cap((e.message||"")+(e.filename?" @"+String(e.filename).split("/").pop()+":"+e.lineno:""),"js",e.error&&e.error.stack)});
+window.addEventListener("unhandledrejection",function(e){var r=e.reason;if(r&&r.code=="declined")return;window.__cap(r&&r.message?r.message:r,"promise",r&&r.stack)});
 /* pinch zoom enabled */
 document.addEventListener("dblclick",ev=>{if(!ev.target.closest("input,textarea"))ev.preventDefault()});
 if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1))document.documentElement.classList.add("ios");
@@ -1753,7 +1759,7 @@ $("bdocx").onclick=async()=>{const b=$("bdocx"),old=b.innerHTML;b.disabled=true;
   if(window.__dlc)window.__dlc.push({blob,name});else if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
   L.done("Your Word file is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("Word export failed. Please try again.\n"+(x&&x.message||""))}
+ }catch(x){if(!(x&&x.code=="declined")){window.logAppError(x,"word");alert("Word export failed. Please try again.\n"+(x&&x.message||""))}}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
 if(typeof globalThis.refDir!=="function")globalThis.refDir=t=>/^[^A-Za-z\u0600-\u06FF]*[A-Za-z]/.test(String(t||"").replace(/<[^>]*>/g,""))?"ltr":"rtl";
 /* html2canvas draws native list markers on the wrong side in RTL pages; replace them with explicit markers for PDF export */
@@ -1789,7 +1795,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   if(window.__dlc)window.__dlc.push({blob,name});else if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
   L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Please try again.")}
+ }catch(x){if(!(x&&x.code=="declined")){window.logAppError(x,"pdf");alert("PDF export failed. Please try again.")}}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
 function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Report Builder</span>`;{const dl=({ckb:"داگرتن",ar:"تحميل"})[UIL]||"Download";$("bpdf").innerHTML=ic("dl")+"<span>"+dl+"</span>";$("bpdf").setAttribute("aria-label",dl+" PDF + Word")}
 document.querySelector('[data-t="edit"]').innerHTML=`<span class="tab-ic">${ic("edit")}</span><span class="tab-t">Edit</span>`;document.querySelector('[data-t="pv"]').innerHTML=`<span class="tab-ic">${ic("eye")}</span><span class="tab-t">Live</span>`;
@@ -1995,6 +2001,9 @@ function timeLeft(iso){const ms=new Date(iso)-Date.now();if(!(ms>0))return"بە�
  return d>0?d+" ڕۆژ و "+h+" کاتژمێر":h>0?h+" کاتژمێر و "+(m%60)+" خولەک":m+" خولەک"}
 const devOf=()=>{const u=navigator.userAgent||"",ip=/iPhone|iPad|iPod/.test(u)||(navigator.maxTouchPoints>1&&/Macintosh/.test(u)),tb=/iPad|Tablet/i.test(u)||(/Android/i.test(u)&&!/Mobile/i.test(u))||(ip&&!/iPhone|iPod/.test(u)),k=tb?"tablet":/Mobi|iPhone|Android/i.test(u)?"mobile":"desktop",os=ip?"iOS":/Android/i.test(u)?"Android":/Windows/i.test(u)?"Windows":/Mac/i.test(u)?"macOS":/Linux/i.test(u)?"Linux":"?",br=/Edg\//.test(u)?"Edge":/OPR\//.test(u)?"Opera":/Firefox|FxiOS/.test(u)?"Firefox":/Chrome|CriOS/.test(u)?"Chrome":/Safari/.test(u)?"Safari":"?";return k+"|"+os+"|"+br};
 const logUse=code=>{try{rpc("log_code_use",{p_code:code,p_device:devOf()})}catch(x){}};
+const APPV="V26",ERRSEEN=new Set();let ERRN=0;
+const flushErr=()=>{while(window.__errq.length){const o=window.__errq.shift(),k=o.w+"|"+o.m;if(ERRSEEN.has(k)||ERRN>=12)continue;ERRSEEN.add(k);ERRN++;try{rpc("log_app_error",{p_msg:o.m,p_where:o.w,p_stack:o.st,p_device:devOf(),p_ver:APPV,p_url:String(location.pathname||"").slice(0,120)})}catch(x){}}};
+window.__onerr=flushErr;flushErr();
 const openAdmin=function(){
 if(document.getElementById("adm"))return;
 const HAS_OLD=true;
@@ -2022,8 +2031,8 @@ h3{margin:0;font-size:18px;color:var(--ac)}h4{margin:0;font-size:15.5px;color:va
 .ib{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 12px;border:1.5px solid var(--bd);border-radius:12px;background:var(--card,#fff);font-size:13px;font-weight:700;color:var(--ac)}
 .b.dg{color:var(--ex);border-color:var(--exd)}.b.wn{color:var(--pa);border-color:var(--pad)}.row input{flex:1;width:auto;min-width:0}.ib.sq{width:42px;padding:0}.ib.dg{color:var(--ex);border-color:var(--exd)}.ib.wn{color:var(--pa);border-color:var(--pad)}.ib.on{background:var(--ac);border-color:var(--ac);color:var(--oc)}.ib:disabled{opacity:.45}
 .spin svg{animation:admr .8s linear infinite}@keyframes admr{to{transform:rotate(360deg)}}
-.seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--s2)}
-.seg button{flex:1;min-width:0;padding:0 2px;min-height:42px;border:0;border-radius:11px;background:transparent;font-weight:800;font-size:13px;color:var(--mut);display:flex;align-items:center;justify-content:center;gap:6px}
+.seg{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:14px;background:var(--s2)}
+.seg button{flex:1 1 28%;min-width:0;padding:0 2px;min-height:42px;border:0;border-radius:11px;background:transparent;font-weight:800;font-size:13px;color:var(--mut);display:flex;align-items:center;justify-content:center;gap:6px}
 .seg button.on{background:var(--ac);color:var(--oc)}.seg em{font-style:normal;font-size:12px;opacity:.85}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .sc{border:1.5px solid var(--cd,var(--bd));background:var(--cb,var(--s2));border-radius:16px;padding:14px 8px;text-align:center}
@@ -2102,7 +2111,7 @@ const dark=isDark();
 root.innerHTML=`<style>${CSS}</style><div id="ov" class="${dark?"dk":""}"><div class="app" dir="rtl" id="admc"></div><div class="ts" id="ts" role="status"></div></div>`;
 document.body.appendChild(host);
 const o=root.querySelector("#ov"),box=root.querySelector("#admc"),ts=root.querySelector("#ts");
-let pw="",R=null,GR=null,tab="t",view="stats",det=null,q="",flt="all",NEW=null,tm=0,tk=0,idle=0,upd=new Date(),GC={},LOG=null,selMode=false,SH=[],SC=0;
+let pw="",R=null,GR=null,ERR=null,CHK=null,CHKB=false,ERRG=[],tab="t",view="stats",det=null,q="",flt="all",NEW=null,tm=0,tk=0,idle=0,upd=new Date(),GC={},LOG=null,selMode=false,SH=[],SC=0;
 const SEL=new Set(),CF={d:30,n:5,t:""},OPENG=new Set();
 const LSG=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(x){return d}},LSS=(k,v)=>{try{localStorage.setItem(k,v)}catch(x){}};
 let LOCKMIN=+LSG("adm-lock","5");
@@ -2127,12 +2136,40 @@ const syncMeta=async()=>{await PEND;const x=await rpc("admin_meta_get",{p_pw:pw}
 const norm=l=>String(l).toUpperCase().replace(/[^A-Z0-9]/g,"");
 const loadLog=async()=>{const x=await rpc("admin_code_log",{p_pw:pw});if(x&&x.ok&&Array.isArray(x.items)){const m={};x.items.forEach(i=>{(m[i.code]=m[i.code]||[]).push(i)});LOG=m}else LOG=null};
 const loadGrads=async()=>{const x=await rpc("admin_grad_list",{p_pw:pw});GR=x&&x.ok&&Array.isArray(x.items)?x.items:null};
-const listOf=k=>k==="t"?(R.codes||[]):k==="o"?(R.olds||[]):k==="g"?(GR||[]):(R.singles||[]);
+const loadErrs=async()=>{const x=await rpc("admin_error_list",{p_pw:pw});ERR=x&&x.ok&&Array.isArray(x.items)?x.items:null};
+const errGroups=()=>{const m={};(ERR||[]).forEach(e=>{const k=e.src+"|"+e.msg;if(!m[k])m[k]={msg:e.msg||"",src:e.src||"",n:0,last:e.at,stack:e.stack||"",device:e.device||"",ver:e.ver||""};m[k].n++});return Object.values(m).sort((a,b)=>new Date(b.last)-new Date(a.last))};
+const errTxt=g=>"Error: "+g.msg+"\nWhere: "+g.src+"\nCount: "+g.n+"\nLast: "+ft(g.last)+"\nDevice: "+g.device+"\nVersion: "+g.ver+(g.stack?"\nStack:\n"+g.stack:"");
+const errBanner=()=>{const n=(ERR||[]).filter(e=>Date.now()-new Date(e.at)<864e5).length;return n?`<button class="mini k-ex" data-a="go" data-v="set"><div><b>⚠ ${n} هەڵە لە ٢٤ کاتژمێری ڕابردوو</b><small>بۆ بینین دابگرە</small></div>${I.left}</button>`:""};
+const errH=()=>{if(ERR===null)return `<div class="pn"><div class="ph"><h4>هەڵەکان</h4></div><p class="sub">فایلی SQL ـی هەڵەکان لە Supabase جێبەجێ بکە (admin_error_list).</p></div>`;
+ const G=errGroups();ERRG=G;
+ return `<div class="pn"><div class="ph"><h4>هەڵەکان</h4><small>${ERR.length} تۆمار</small></div>`+(G.length?`<div class="hl">${G.slice(0,15).map((g,i)=>`<button class="hi ar" data-a="errcp" data-i="${i}"><span class="hc">${I.copy}</span><div><b dir="auto">${X(g.msg.slice(0,140))}</b><small>${X(g.src)} • ${g.n} جار • <bdi>${ft(g.last)}</bdi></small></div></button>`).join("")}</div><p class="sub" style="margin:0">لەسەر هەر هەڵەیەک دابگرە بۆ کۆپیکردنی وردەکاری، و بیدە بە ئەی ئای.</p><button class="b dg" data-a="errclr">${I.trash}<span>سڕینەوەی هەموو هەڵەکان</span></button>`:`<div class="ok-n">${I.check} هیچ هەڵەیەک تۆمار نەکراوە</div>`)+`</div>`};
+const chkH=()=>{const rows=(CHK||[]).map(r=>`<div class="kv"><span>${r.ok?"✅":"❌"} ${X(r.n)}</span><b dir="auto">${r.ok?(r.ms!=null?(r.ms/1000).toFixed(1)+"s":"باشە"):X(r.m||"هەڵە")}</b></div>`).join(""),done=CHK&&!CHKB,bad=(CHK||[]).filter(r=>!r.ok).length;
+ return `<div class="pn"><div class="ph"><h4>پشکنینی سیستەم</h4></div><p class="sub" style="margin:0">ڕاپۆرتێکی نموونە دروست دەکات و PDF و Word و کۆدەکان تاقی دەکاتەوە. ڕاپۆرتەکەی ئێستات ناگۆڕێت.</p>${rows?`<div>${rows}</div>`:""}${done?`<div class="sm" style="color:var(--${bad?"ex":"ok"})">${bad?bad+" کێشە دۆزرایەوە":"هەموو شتێک دروستە ✓"}</div>`:""}<button class="b p" data-a="chk"${CHKB?" disabled":""}>${I.play}<span>${CHKB?"پشکنین…":"دەستپێکردنی پشکنین"}</span></button>${done&&bad?`<button class="b" data-a="chkcp">${I.copy}<span>کۆپی ئەنجام</span></button>`:""}</div>`};
+const runCheck=async()=>{if(CHKB)return;CHKB=true;CHK=[];render();
+ const H=window.__chk,add=(n,ok,m,ms)=>{CHK.push({n,ok,m,ms});const el=box.querySelector("#chk");if(el)el.innerHTML=chkH()};
+ const T=async(n,fn)=>{const t0=Date.now();try{const r=await fn();if(r===true)add(n,true,"",Date.now()-t0);else add(n,false,String(r))}catch(x){add(n,false,(x&&x.message)||String(x))}};
+ await T("پەیوەندی بە Supabase",async()=>{const x=await rpc("admin_stats",{p_pw:pw});return x.ok?true:"admin_stats: "+(x.error||"?")});
+ await T("SQL ـی بەحسی دەرچوون",async()=>{await loadGrads();return GR!==null?true:"admin_grad_list نییە"});
+ await T("کۆدی ڕاپۆرت (redeem_any)",async()=>{const r=await redeem("ZZZZ0000",false);return r==="invalid"?true:"redeem_any: "+r});
+ await T("کۆدی بەحسی دەرچوون (redeem_grad)",async()=>{const r=await redeem("ZZZZ0000",true);return r==="invalid"?true:"redeem_grad: "+r});
+ await T("تۆمارکردنی هەڵەکان",async()=>{const x=await rpc("log_app_error",{p_msg:"ping",p_where:"check",p_stack:"",p_device:"",p_ver:APPV,p_url:""});return x.ok?true:"log_app_error: "+(x.error||"?")});
+ if(!H||typeof S==="undefined")add("PDF / Word",false,"فەنکشنەکان نەدۆزرانەوە");
+ else{const snap=JSON.stringify(S);try{localStorage.setItem("adm-chk-backup",snap)}catch(x){}
+  const setup=(lang,grad)=>{const rtl=lang!=="en";S.dir=rtl?"rtl":"ltr";if(rtl)S.rlang=lang;const rep=parseReport(cleanAI(EXAMPLE[lang]));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rtl?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub=""};
+  const exp=async kind=>{window.__dlc=[];let al=null;const oa=window.alert;window.alert=m=>{al=String(m)};window.__lastErr=null;try{await(kind==="pdf"?H.pdf():H.docx())}catch(x){al=al||String(x&&x.message||x)}finally{window.alert=oa}
+   const it=window.__dlc||[];window.__dlc=null;if(al)return al.replace(/\s+/g," ")+(window.__lastErr?" — "+window.__lastErr.m:"");
+   const f=it.find(i=>kind==="pdf"?/\.pdf$/i.test(i.name):/\.docx$/i.test(i.name));return f&&f.blob&&f.blob.size>1500?true:"فایلەکە بەتاڵە یان دروست نەبوو"};
+  try{for(const z of [["PDF — ئینگلیزی","en","pdf",0],["Word — ئینگلیزی","en","docx",0],["PDF — کوردی (ڕاست-بۆ-چەپ)","ckb","pdf",0],["Word — کوردی (ڕاست-بۆ-چەپ)","ckb","docx",0],["PDF — بەحسی دەرچوون","ckb","pdf",1]])
+    await T(z[0],async()=>{setup(z[1],z[3]);await tickP(50);return await exp(z[2])})}
+  finally{for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(snap));try{localStorage.removeItem("adm-chk-backup")}catch(x){}try{save()}catch(x){}}}
+ CHKB=false;render()};
+const isM=()=>tab==="t"||tab==="gt";
+const listOf=k=>k==="t"?(R.codes||[]):k==="o"?(R.olds||[]):k==="gt"?(GR||[]).filter(c=>c.kind==="month"):k==="g"?(GR||[]).filter(c=>c.kind!=="month"):(R.singles||[]);
 const list=()=>listOf(tab);
-const TP=()=>tab==="t"?"month":tab==="o"?"old":tab==="g"?"grad":"single";
-const delRpc=l=>tab==="g"?rpc("admin_delete_grad",{p_pw:pw,p_label:l}):rpc("admin_delete_code",{p_pw:pw,p_type:TP(),p_label:l});
+const TP=()=>tab==="t"?"month":tab==="o"?"old":(tab==="g"||tab==="gt")?"grad":"single";
+const delRpc=l=>(tab==="g"||tab==="gt")?rpc("admin_delete_grad",{p_pw:pw,p_label:l}):rpc("admin_delete_code",{p_pw:pw,p_type:TP(),p_label:l});
 const st=c=>{const now=Date.now(),e=c.expires_at?new Date(c.expires_at).getTime():null,ex=e!==null&&e<=now,soon=e!==null&&!ex&&e-now<3*864e5;
- if(tab==="t"){if(c.revoked)return{k:"pa",t:"ڕاگیراو"};if(ex)return{k:"ex",t:"بەسەرچوو"};return{k:"ok",t:"چالاک",soon}}
+ if(isM()){if(c.revoked)return{k:"pa",t:"ڕاگیراو"};if(ex)return{k:"ex",t:"بەسەرچوو"};return{k:"ok",t:"چالاک",soon}}
  if(c.used_at)return{k:"us",t:"بەکارهێنراو"};if(ex)return{k:"ex",t:"بەسەرچوو"};return{k:"ok",t:"بەکارنەهاتوو",soon}};
 const dv=d=>{const p=String(d||"").split("|"),k=p[0]==="mobile"?"مۆبایل":p[0]==="tablet"?"تابلێت":"کۆمپیوتەر";return{k,ic:p[0]==="desktop"?I.monitor:I.phone,t:k+" • "+(p[1]||"?")+" • "+(p[2]||"?")}};
 const evs=l=>(LOG&&LOG[norm(l)])||[];
@@ -2154,25 +2191,25 @@ const waOpen=labels=>{if(!labels||!labels.length)return;const MM=metaLoad(),f=MM
   p.oninput=()=>{const n=waNum(p.value),g=n.length>=10&&n.length<=15;v.style.color=!p.value?"":(g?"var(--ok)":"var(--ex)");v.textContent=!p.value?hint:(g?"دەنێردرێت بۆ +"+n:"ژمارەکە تەواو نییە")};
   m.querySelector("#wg").onclick=()=>{const n=waNum(p.value);if(p.value&&(n.length<10||n.length>15)){p.focus();return}window.open("https://wa.me/"+n+"?text="+encodeURIComponent(t.value),"_blank");cl()};
   m.querySelector("#wc").onclick=()=>doCopy(t.value,"نامەکە کۆپی کرا ✓");m.querySelector("#wx").onclick=cl;setTimeout(()=>p.focus(),40)})};
-const reload=async top=>{const x=await rpc("admin_stats",{p_pw:pw});if(!x.ok){toast(AE[x.error]||AE.net,true);render();return false}await Promise.all([syncMeta(),loadLog(),loadGrads()]);R=x;upd=new Date();render(top);return true};
-const setRev=async(labels,val)=>{let bad=null;for(const l of labels){const x=await rpc("admin_set_revoked",{p_pw:pw,p_label:l,p_revoked:val});if(!x.ok){bad=x;break}}
+const reload=async top=>{const x=await rpc("admin_stats",{p_pw:pw});if(!x.ok){toast(AE[x.error]||AE.net,true);render();return false}await Promise.all([syncMeta(),loadLog(),loadGrads(),loadErrs()]);R=x;upd=new Date();render(top);return true};
+const setRev=async(labels,val)=>{let bad=null;for(const l of labels){const x=await rpc(tab==="gt"?"admin_set_grad_revoked":"admin_set_revoked",{p_pw:pw,p_label:l,p_revoked:val});if(!x.ok){bad=x;break}}
  if(bad)toast(bad.error==="bad"||bad.error==="limit"?AE[bad.error]:"ڕاگرتن ئامادە نییە — فایلی SQL ـی admin-upgrade جێبەجێ بکە",true);
  await reload();if(!bad)toast(val?"ڕاگیرا ✓":"چالاک کرایەوە ✓")};
 const delMany=async(ls,bt)=>{let n=0,bad=false;for(const l of ls){if(bt)bt.textContent=(++n)+" / "+ls.length;const x=await delRpc(l);if(!x.ok){toast(AE[x.error]||AE.net,true);bad=true;break}SEL.delete(l)}await reload();if(!bad)toast("سڕانەوە ✓")};
-const sumTxt=()=>tab==="t"?"١ کۆد • ماوە: "+CF.d+" ڕۆژ":CF.n+" کۆد • هەریەکەیان "+CF.d+" ڕۆژ";
-const syncCF=()=>{const d=box.querySelector("#dd"),n=box.querySelector("#dn"),s=box.querySelector("#sum"),m=box.querySelector("#mk");if(d)d.value=CF.d;if(n)n.value=CF.n;if(s)s.textContent=sumTxt();if(m&&!m.disabled)m.textContent=tab==="t"?"دروستکردنی کۆد":"دروستکردنی "+CF.n+" کۆد";
+const sumTxt=()=>isM()?"١ کۆد • ماوە: "+CF.d+" ڕۆژ":CF.n+" کۆد • هەریەکەیان "+CF.d+" ڕۆژ";
+const syncCF=()=>{const d=box.querySelector("#dd"),n=box.querySelector("#dn"),s=box.querySelector("#sum"),m=box.querySelector("#mk");if(d)d.value=CF.d;if(n)n.value=CF.n;if(s)s.textContent=sumTxt();if(m&&!m.disabled)m.textContent=isM()?"دروستکردنی کۆد":"دروستکردنی "+CF.n+" کۆد";
  box.querySelectorAll('[data-a="cd"]').forEach(b=>b.classList.toggle("on",+b.dataset.v===CF.d));box.querySelectorAll('[data-a="cn"]').forEach(b=>b.classList.toggle("on",+b.dataset.v===CF.n))};
-const make=async()=>{const b=box.querySelector("#mk"),er=box.querySelector("#er"),isT=tab==="t";b.disabled=true;b.textContent="دروستکردن…";er.textContent="";
+const make=async()=>{const b=box.querySelector("#mk"),er=box.querySelector("#er"),isT=isM();b.disabled=true;b.textContent="دروستکردن…";er.textContent="";
  const d=Math.max(1,Math.min(365,CF.d||30));let codes;
  const fail=x=>{b.disabled=false;syncCF();er.textContent=AE[x.error]||AE.net};
- if(isT){const m=await rpc("admin_make_code",{p_pw:pw,p_days:d});if(m.code)codes=[m.code];else return fail(m)}
+ if(isT){const m=await rpc(tab==="gt"?"admin_make_grad_month":"admin_make_code",{p_pw:pw,p_days:d});if(m.code)codes=[m.code];else return fail(m)}
  else{const n=Math.max(1,Math.min(25,CF.n||1)),m=await rpc(tab==="g"?"admin_make_grad":"admin_make_single",{p_pw:pw,p_count:n,p_days:d});if(Array.isArray(m.codes))codes=m.codes;else return fail(m)}
  const ttl=CF.t.trim(),M2=metaLoad();
  if(!isT&&codes.length>1){const g="g"+Date.now().toString(36);M2.groups[g]=ttl||("گرووپ "+new Date().toLocaleDateString());codes.forEach(x=>{M2.meta[x]={g}})}
  else if(ttl)codes.forEach(x=>{M2.meta[x]={title:ttl}});
  await metaSave(M2);CF.t="";NEW=codes;await reload(true);toast("کۆدەکە دروست کرا ✓")};
 const short=c=>{const s=st(c),m=[];
- if(tab==="t"){if(s.k==="ok")m.push("ماوە: "+timeLeft(c.expires_at));else if(s.k==="pa")m.push("ڕاگیراوە");else if(c.expires_at)m.push("بەسەرچووە لە "+fd(c.expires_at));m.push((c.uses||0)+" جار بەکارهاتووە")}
+ if(isM()){if(s.k==="ok")m.push("ماوە: "+timeLeft(c.expires_at));else if(s.k==="pa")m.push("ڕاگیراوە");else if(c.expires_at)m.push("بەسەرچووە لە "+fd(c.expires_at));m.push((c.uses||0)+" جار بەکارهاتووە")}
  else{if(c.used_at)m.push("بەکارهێنراوە لە "+fd(c.used_at));else if(!c.expires_at)m.push("بێ سنووری کات");else if(s.k==="ok")m.push("ماوە: "+timeLeft(c.expires_at));else m.push("بەسەرچووە لە "+fd(c.expires_at))}
  return m.join(" • ")+(s.soon?" ⚠ بەزوویی بەسەردەچێت":"")};
 const rowH=c=>{const M=metaLoad().meta[c.label]||{},s=st(c),L=X(c.label),sl=SEL.has(c.label);
@@ -2181,53 +2218,53 @@ const rowH=c=>{const M=metaLoad().meta[c.label]||{},s=st(c),L=X(c.label),sl=SEL.
 const matchQ=c=>{if(!q)return true;const MM=metaLoad(),M=MM.meta[c.label]||{};return(c.label+" "+(M.title||"")+" "+(M.g?MM.groups[M.g]||"":"")).toLowerCase().includes(q)};
 const renderSb=()=>{const sb=box.querySelector("#sb");if(!sb)return;const ex=new Set(list().map(c=>c.label));[...SEL].forEach(l=>{if(!ex.has(l))SEL.delete(l)});
  if(!selMode||view!=="codes"){sb.hidden=true;sb.innerHTML="";return}
- const n=SEL.size,cs=list().filter(c=>SEL.has(c.label)),live=cs.some(c=>st(c).k==="ok"),d=n?"":" disabled",rv=tab==="t"?cs.filter(c=>st(c).k!=="ex"):[];
- sb.hidden=false;sb.innerHTML=`<div class="sr"><b>${n?n+" هەڵبژێردراو":"کۆدەکان هەڵبژێرە"}</b><button class="chp" data-a="selall">هەموو</button><button class="chp" data-a="selnone">هیچ</button><button class="ib sq" data-a="selmode" aria-label="تەواو">${I.close}</button></div><div class="sa"><button class="ib" data-a="scp"${d}>${I.copy}<span>کۆپی</span></button><button class="ib" data-a="swa"${d}>${I.wa}<span>واتساپ</span></button>${tab==="t"?`<button class="ib wn" data-a="srev"${rv.length?"":" disabled"}>${live?I.pause+"<span>ڕاگرتن</span>":I.play+"<span>چالاککردن</span>"}</button>`:""}<button class="ib dg" data-a="sdel"${d}>${I.trash}<span>سڕینەوە</span></button></div>`};
-const renderList=()=>{const lstEl=box.querySelector("#lst");if(!lstEl)return;const MM=metaLoad(),all=list(),fl=[["all","هەموو"]].concat(tab==="t"?[["ok","چالاک"],["pa","ڕاگیراو"],["ex","بەسەرچوو"]]:[["ok","بەکارنەهاتوو"],["us","بەکارهێنراو"],["ex","بەسەرچوو"]]);
+ const n=SEL.size,cs=list().filter(c=>SEL.has(c.label)),live=cs.some(c=>st(c).k==="ok"),d=n?"":" disabled",rv=isM()?cs.filter(c=>st(c).k!=="ex"):[];
+ sb.hidden=false;sb.innerHTML=`<div class="sr"><b>${n?n+" هەڵبژێردراو":"کۆدەکان هەڵبژێرە"}</b><button class="chp" data-a="selall">هەموو</button><button class="chp" data-a="selnone">هیچ</button><button class="ib sq" data-a="selmode" aria-label="تەواو">${I.close}</button></div><div class="sa"><button class="ib" data-a="scp"${d}>${I.copy}<span>کۆپی</span></button><button class="ib" data-a="swa"${d}>${I.wa}<span>واتساپ</span></button>${isM()?`<button class="ib wn" data-a="srev"${rv.length?"":" disabled"}>${live?I.pause+"<span>ڕاگرتن</span>":I.play+"<span>چالاککردن</span>"}</button>`:""}<button class="ib dg" data-a="sdel"${d}>${I.trash}<span>سڕینەوە</span></button></div>`};
+const renderList=()=>{const lstEl=box.querySelector("#lst");if(!lstEl)return;const MM=metaLoad(),all=list(),fl=[["all","هەموو"]].concat(isM()?[["ok","چالاک"],["pa","ڕاگیراو"],["ex","بەسەرچوو"]]:[["ok","بەکارنەهاتوو"],["us","بەکارهێنراو"],["ex","بەسەرچوو"]]);
  const cnt=k=>k==="all"?all.length:all.filter(c=>st(c).k===k).length;
  const shown=all.filter(c=>(flt==="all"||st(c).k===flt)&&matchQ(c));SH=shown.map(c=>c.label);
  const gs=[],gm={},free=[];GC={};shown.forEach(c=>{const g=(MM.meta[c.label]||{}).g;if(g&&MM.groups[g]!==undefined){if(!gm[g]){gm[g]=[];gs.push(g)}gm[g].push(c);(GC[g]=GC[g]||[]).push(c.label)}else free.push(c)});
  const av=shown.filter(c=>st(c).k==="ok").map(c=>c.label),nex=cnt("ex");
- box.querySelector("#tb").innerHTML=`<div class="tb">${fl.map(f=>`<button class="chp${f[0]==="all"?"":" k-"+f[0]}${flt===f[0]?" on":""}" data-a="flt" data-v="${f[0]}">${f[1]}<em>${cnt(f[0])}</em></button>`).join("")}</div>`+(all.length?`<div class="bk" style="margin-top:10px"><button class="ib${selMode?" on":""}" data-a="selmode">${I.check}<span>${selMode?"تەواوبوون":"هەڵبژاردنی چەند کۆدێک"}</span></button>${!selMode&&av.length?`<button class="ib" data-a="bcp">${I.copy}<span>کۆپی ${tab==="t"?"چالاکەکان":"بەکارنەهاتووەکان"} (${av.length})</span></button>`:""}${!selMode&&nex?`<button class="ib dg" data-a="bdel">${I.trash}<span>سڕینەوەی بەسەرچووەکان (${nex})</span></button>`:""}</div>`:"");
+ box.querySelector("#tb").innerHTML=`<div class="tb">${fl.map(f=>`<button class="chp${f[0]==="all"?"":" k-"+f[0]}${flt===f[0]?" on":""}" data-a="flt" data-v="${f[0]}">${f[1]}<em>${cnt(f[0])}</em></button>`).join("")}</div>`+(all.length?`<div class="bk" style="margin-top:10px"><button class="ib${selMode?" on":""}" data-a="selmode">${I.check}<span>${selMode?"تەواوبوون":"هەڵبژاردنی چەند کۆدێک"}</span></button>${!selMode&&av.length?`<button class="ib" data-a="bcp">${I.copy}<span>کۆپی ${isM()?"چالاکەکان":"بەکارنەهاتووەکان"} (${av.length})</span></button>`:""}${!selMode&&nex?`<button class="ib dg" data-a="bdel">${I.trash}<span>سڕینەوەی بەسەرچووەکان (${nex})</span></button>`:""}</div>`:"");
  box.querySelector("#cnt").textContent=shown.length===all.length?all.length+" کۆد":shown.length+" لە "+all.length;
  const open=g=>OPENG.has(g)||!!q||flt!=="all"||selMode;
  lstEl.innerHTML=shown.length?gs.map(g=>{const cs=gm[g],a=cs.filter(c=>st(c).k==="ok").length,u=cs.filter(c=>st(c).k==="us").length,op=open(g),allSel=cs.every(c=>SEL.has(c.label));
   return `<div class="gp"><button class="gh" data-a="gv" data-g="${X(g)}" aria-expanded="${op}"><span class="ch${op?" o":""}">${I.chev}</span><b>${X(MM.groups[g]||"بێ ناونیشان")}</b><span class="n">${cs.length} کۆد</span></button><div class="gs">${a} بەردەست • ${u} بەکارهاتوو</div>`+(op?(selMode?`<div class="ga"><button class="ib${allSel?" on":""}" data-a="selg" data-g="${X(g)}">${I.check}<span>${allSel?"لابردنی هەڵبژاردنی گرووپ":"هەڵبژاردنی هەموو گرووپەکە"}</span></button></div>`:`<div class="ga"><button class="ib" data-a="cpg" data-g="${X(g)}">${I.copy}<span>کۆپی هەموو</span></button><button class="ib" data-a="wag" data-g="${X(g)}">${I.wa}<span>واتساپ</span></button><button class="ib" data-a="reng" data-g="${X(g)}">${I.edit}<span>ناو</span></button></div>`)+cs.map(rowH).join(""):"")+`</div>`}).join("")+(free.length&&gs.length?`<div class="sec"><h4>کۆدی تاک</h4><span>${free.length}</span></div>`:"")+free.map(rowH).join("")
   :`<div class="em">${all.length?"هیچ کۆدێک لەگەڵ گەڕانەکەت نەگونجا.":"هێشتا هیچ کۆدێک نییە."}${!all.length&&tab!=="o"?`<button class="b p" style="width:auto;padding:0 26px" data-a="go" data-v="new">${I.plus}<span>دروستکردنی یەکەم کۆد</span></button>`:""}</div>`;
  renderSb()};
-const types=cr=>{const T=[["t","کاتی",R.total],["s","یەکجاری",(R.single||{}).total]];if(HAS_OLD&&!cr)T.push(["o","کۆن",(R.old||{}).total]);T.push(["g","دەرچوون",GR?GR.length:0]);return T};
-const seg=cr=>`<div class="seg">${types(cr).map(z=>`<button data-a="tab" data-k="${z[0]}" class="${tab===z[0]?"on":""}">${z[1]}<em>${z[2]==null?0:z[2]}</em></button>`).join("")}</div>`+(tab==="g"&&GR===null?`<div class="pn"><h4>کۆدی بەحسی دەرچوون</h4><p class="sub">فایلی SQL ـی بەحسی دەرچوون لە Supabase جێبەجێ بکە (admin_grad_list).</p></div>`:"");
+const types=cr=>{const T=[["t","کاتی",R.total],["s","یەکجاری",(R.single||{}).total]];if(HAS_OLD&&!cr)T.push(["o","کۆن",(R.old||{}).total]);T.push(["gt","دەرچوونی کاتی",GR?GR.filter(c=>c.kind==="month").length:0]);T.push(["g","دەرچوونی یەکجاری",GR?GR.filter(c=>c.kind!=="month").length:0]);return T};
+const seg=cr=>`<div class="seg">${types(cr).map(z=>`<button data-a="tab" data-k="${z[0]}" class="${tab===z[0]?"on":""}">${z[1]}<em>${z[2]==null?0:z[2]}</em></button>`).join("")}</div>`+((tab==="g"||tab==="gt")&&GR===null?`<div class="pn"><h4>کۆدی بەحسی دەرچوون</h4><p class="sub">فایلی SQL ـی بەحسی دەرچوون لە Supabase جێبەجێ بکە (admin_grad_list).</p></div>`:"");
 const mini=(c,k,sub)=>`<button class="mini k-${k}" data-a="opentab" data-k="${tab}" data-l="${X(c.label)}"><div><b>${X(nameOf(c.label)||c.label)}</b><small>${sub}</small></div>${I.left}</button>`;
-const vStats=()=>{const od=R.old||{},sg=R.single||{},t=tab==="t",gA=GR||[],gN=Date.now(),gEx=c=>!c.used_at&&c.expires_at&&new Date(c.expires_at).getTime()<=gN,gS={total:gA.length,used:gA.filter(c=>c.used_at).length,expired:gA.filter(gEx).length,unused:gA.filter(c=>!c.used_at&&!gEx(c)).length},s0=tab==="o"?od:tab==="g"?gS:sg,L=list(),paused=L.filter(c=>c.revoked).length;
- const cards=t?[[R.total,"کۆی کۆدەکان",""],[R.active,"چالاک","ok"],[paused,"ڕاگیراو","pa"],[R.expired,"بەسەرچوو","ex"]]:[[s0.total,"کۆی کۆدەکان",""],[s0.unused,"بەکارنەهاتوو","ok"],[s0.used,"بەکارهێنراو","us"],[s0.expired,"بەسەرچوو","ex"]];
- const segs=t?[[R.active,"ok"],[paused,"pa"],[R.expired,"ex"]]:[[s0.unused,"ok"],[s0.used,"us"],[s0.expired,"ex"]],tot=t?R.total:s0.total;
+const vStats=()=>{const od=R.old||{},sg=R.single||{},t=isM(),gA0=GR||[],gA=gA0.filter(c=>c.kind!=="month"),gMA=gA0.filter(c=>c.kind==="month"),gN=Date.now(),gM={total:gMA.length,active:gMA.filter(c=>!c.revoked&&!(c.expires_at&&new Date(c.expires_at).getTime()<=gN)).length,expired:gMA.filter(c=>c.expires_at&&new Date(c.expires_at).getTime()<=gN).length,unused:gMA.filter(c=>!(c.uses>0)).length},gEx=c=>!c.used_at&&c.expires_at&&new Date(c.expires_at).getTime()<=gN,gS={total:gA.length,used:gA.filter(c=>c.used_at).length,expired:gA.filter(gEx).length,unused:gA.filter(c=>!c.used_at&&!gEx(c)).length},RT=tab==="gt"?gM:R,s0=tab==="o"?od:tab==="g"?gS:sg,L=list(),paused=L.filter(c=>c.revoked).length;
+ const cards=t?[[RT.total,"کۆی کۆدەکان",""],[RT.active,"چالاک","ok"],[paused,"ڕاگیراو","pa"],[RT.expired,"بەسەرچوو","ex"]]:[[s0.total,"کۆی کۆدەکان",""],[s0.unused,"بەکارنەهاتوو","ok"],[s0.used,"بەکارهێنراو","us"],[s0.expired,"بەسەرچوو","ex"]];
+ const segs=t?[[RT.active,"ok"],[paused,"pa"],[RT.expired,"ex"]]:[[s0.unused,"ok"],[s0.used,"us"],[s0.expired,"ex"]],tot=t?RT.total:s0.total;
  const soon=L.filter(c=>st(c).soon).sort((a,b)=>new Date(a.expires_at)-new Date(b.expires_at));
- const info=t?"کۆی بەکارهێنان: "+L.reduce((a,c)=>a+(c.uses||0),0)+" جار"+" • بەکارنەهاتوو: "+(R.unused||0):(tot?Math.round(100*(s0.used||0)/tot):0)+"% بەکارهێنراون";
- const idx={};[["t",R.codes],["s",R.singles],["o",R.olds],["g",GR]].forEach(a=>(a[1]||[]).forEach(c=>{idx[norm(c.label)]={l:c.label,k:a[0]}}));
+ const info=t?"کۆی بەکارهێنان: "+L.reduce((a,c)=>a+(c.uses||0),0)+" جار"+" • بەکارنەهاتوو: "+(RT.unused||0):(tot?Math.round(100*(s0.used||0)/tot):0)+"% بەکارهێنراون";
+ const idx={};[["t",R.codes],["s",R.singles],["o",R.olds],["g",(GR||[]).filter(c=>c.kind!=="month")],["gt",(GR||[]).filter(c=>c.kind==="month")]].forEach(a=>(a[1]||[]).forEach(c=>{idx[norm(c.label)]={l:c.label,k:a[0]}}));
  let acts="";if(LOG===null)acts=`<div class="pn"><h4>دوایین بەکارهێنانەکان</h4><p class="sub">تۆماری مێژوو هێشتا چالاک نەکراوە. فایلی SQL ـی admin-upgrade لە Supabase جێبەجێ بکە.</p></div>`;
  else{const all=[];Object.keys(LOG).forEach(k=>LOG[k].forEach(e=>all.push(e)));all.sort((a,b)=>new Date(b.used_at)-new Date(a.used_at));
   acts=`<div class="pn"><h4>دوایین بەکارهێنانەکان</h4>${all.length?`<div class="hl">${all.slice(0,8).map(e=>{const d=dv(e.device),h=idx[e.code];return `<button class="hi${h?" ar":""}"${h?` data-a="opentab" data-k="${h.k}" data-l="${X(h.l)}"`:""}><span class="hc">${d.ic}</span><div><b>${X(h?nameOf(h.l)||h.l:e.code)}</b><small><bdi>${ft(e.used_at)}</bdi> • ${X(d.t)}</small></div></button>`}).join("")}</div>`:`<p class="sub">هێشتا هیچ بەکارهێنانێک تۆمار نەکراوە.</p>`}</div>`}
- return seg()+`<div class="g2">${cards.map(x=>`<div class="sc${x[2]?" k-"+x[2]:""}"><b>${x[0]==null?0:x[0]}</b><span>${x[1]}</span></div>`).join("")}</div><div class="bar">${segs.map(z=>z[0]?`<i class="k-${z[1]}" style="flex:${z[0]}"></i>`:"").join("")}</div><div class="nt"><span>${info}</span></div>`
+ return seg()+errBanner()+`<div class="g2">${cards.map(x=>`<div class="sc${x[2]?" k-"+x[2]:""}"><b>${x[0]==null?0:x[0]}</b><span>${x[1]}</span></div>`).join("")}</div><div class="bar">${segs.map(z=>z[0]?`<i class="k-${z[1]}" style="flex:${z[0]}"></i>`:"").join("")}</div><div class="nt"><span>${info}</span></div>`
  +(soon.length?`<div class="pn"><div class="ph"><h4>بەزوویی بەسەردەچن</h4><small>${soon.length} کۆد • ٣ ڕۆژ</small></div>${soon.slice(0,5).map(c=>mini(c,"pa","ماوە: "+timeLeft(c.expires_at))).join("")}</div>`:(L.length?`<div class="ok-n">${I.check} هیچ کۆدێک لە ٣ ڕۆژی داهاتوودا بەسەرناچێت</div>`:""))+acts};
 const vCodes=()=>seg()+`<div class="srch"><span class="si">${I.search}</span><input id="q" type="search" dir="auto" autocomplete="off" placeholder="گەڕان بە کۆد یان ناونیشان" value="${X(q)}">${q?`<button class="qx" data-a="qx" aria-label="سڕینەوەی گەڕان">${I.close}</button>`:""}</div><div id="tb"></div><div class="sec"><h4>کۆدەکان</h4><span id="cnt"></span></div><div class="lst" id="lst"></div>`;
 const newH=()=>NEW&&NEW.length?`<div class="nw"><div class="nh"><b>${NEW.length>1?NEW.length+" کۆدی نوێ دروست کران ✓":"کۆدی نوێ دروست کرا ✓"}</b><button class="x" data-a="nx" aria-label="داخستن">${I.close}</button></div>${NEW.map(c=>`<button class="cd big" data-a="cp" data-l="${X(c)}">${X(c)}${I.copy}</button>`).join("")}<div class="two"><button class="b p" data-a="cpn">${I.copy}<span>${NEW.length>1?"کۆپی هەموو":"کۆپی"}</span></button><button class="b" data-a="wan">${I.wa}<span>واتساپ</span></button></div><button class="b t" data-a="seeall">بینین لە لیستی کۆدەکان</button></div>`:"";
-const vNew=()=>{const isT=tab==="t",ch=(a,v,t,cur)=>`<button class="chp${cur===v?" on":""}" data-a="${a}" data-v="${v}">${t}</button>`,stp=(f,id,mx)=>`<div class="stp"><button data-a="st" data-f="${f}" data-s="-1" aria-label="کەمکردن">−</button><input id="${id}" type="number" min="1" max="${mx}" inputmode="numeric" value="${CF[f]}"><button data-a="st" data-f="${f}" data-s="1" aria-label="زیادکردن">+</button></div>`;
+const vNew=()=>{const isT=isM(),ch=(a,v,t,cur)=>`<button class="chp${cur===v?" on":""}" data-a="${a}" data-v="${v}">${t}</button>`,stp=(f,id,mx)=>`<div class="stp"><button data-a="st" data-f="${f}" data-s="-1" aria-label="کەمکردن">−</button><input id="${id}" type="number" min="1" max="${mx}" inputmode="numeric" value="${CF[f]}"><button data-a="st" data-f="${f}" data-s="1" aria-label="زیادکردن">+</button></div>`;
  return seg(true)+newH()+`<div class="pn"><div class="ph"><span class="sn">١</span><h4>ناونیشان</h4><small>ئارەزوومەندانە</small></div><input id="tt" type="text" dir="auto" maxlength="60" value="${X(CF.t)}" placeholder="بۆ نموونە: ناوی کەس یان گرووپ"></div>`
  +(isT?"":`<div class="pn"><div class="ph"><span class="sn">٢</span><h4>ژمارەی کۆدەکان</h4><small>١ تا ٢٥</small></div><div class="row">${stp("n","dn",25)}${[1,5,10,25].map(v=>ch("cn",v,v,CF.n)).join("")}</div></div>`)
  +`<div class="pn"><div class="ph"><span class="sn">${isT?"٢":"٣"}</span><h4>ماوەی کۆد</h4><small>ڕۆژ</small></div><div class="row">${stp("d","dd",365)}${[[7,"هەفتەیەک"],[30,"مانگێک"],[90,"٣ مانگ"],[365,"ساڵێک"]].map(z=>ch("cd",z[0],z[1],CF.d)).join("")}</div></div><div class="sm" id="sum"></div><button class="b p" id="mk" data-a="mk"></button><p class="er" id="er"></p>`};
 const kv=(k,v)=>`<div class="kv"><span>${k}</span><b>${v}</b></div>`;
 const vDet=()=>{const c=list().find(x=>x.label===det),s=st(c),L=X(c.label),M=metaLoad(),mt=M.meta[c.label]||{},ev=evs(c.label),rows=[];
- if(tab==="t")rows.push(kv("ماوە",s.k==="ok"?timeLeft(c.expires_at):s.k==="pa"?"ڕاگیراوە":"بەسەرچووە"),kv("کۆتایی",c.expires_at?`<bdi>${ft(c.expires_at)}</bdi>`:"—"),kv("جاری بەکارهێنان",(c.uses||0)+" جار"));
+ if(isM())rows.push(kv("ماوە",s.k==="ok"?timeLeft(c.expires_at):s.k==="pa"?"ڕاگیراوە":"بەسەرچووە"),kv("کۆتایی",c.expires_at?`<bdi>${ft(c.expires_at)}</bdi>`:"—"),kv("جاری بەکارهێنان",(c.uses||0)+" جار"));
  else rows.push(kv("بەکارهێنان",c.used_at?`<bdi>${ft(c.used_at)}</bdi>`:"هێشتا نەبەکارهاتووە"),kv("ماوە",c.used_at?"—":(c.expires_at?(s.k==="ok"?timeLeft(c.expires_at):"بەسەرچووە"):"بێ سنوورە")),kv("کۆتایی",c.expires_at?`<bdi>${ft(c.expires_at)}</bdi>`:"—"));
  if(c.created_at)rows.push(kv("دروستکراوە",`<bdi>${ft(c.created_at)}</bdi>`));if(ev.length)rows.push(kv("دوایین بەکارهێنان",`<bdi>${ft(ev[0].used_at)}</bdi>`));
  const hist=LOG===null?`<p class="sub">تۆماری مێژوو هێشتا چالاک نەکراوە. فایلی SQL ـی admin-upgrade لە Supabase جێبەجێ بکە.</p>`:ev.length?`<div class="hl">${ev.slice(0,50).map(e=>{const d=dv(e.device);return `<div class="hi"><span class="hc">${d.ic}</span><div><b><bdi>${ft(e.used_at)}</bdi></b><small>${X(d.t)}${e.ip?" • <bdi>"+X(e.ip)+"</bdi>":""}${e.country?" • "+X(e.country):""}</small></div></div>`}).join("")}</div>`:`<p class="sub">هێشتا هیچ بەکارهێنانێک تۆمار نەکراوە.</p>`;
  return `<div class="hero k-${s.k}"><span class="pl">${s.t}</span>${nameOf(c.label)?`<div class="hname">${X(nameOf(c.label))}</div>`:""}<button class="hcode" data-a="cp" data-l="${L}" aria-label="کۆپی">${L}${I.copy}</button>${s.soon?'<div class="rm" style="color:var(--pa)">⚠ بەزوویی بەسەردەچێت</div>':""}</div>
  <div class="pn">${rows.join("")}</div>
- <div class="act"><button class="b" data-a="wa" data-l="${L}">${I.wa}<span>واتساپ</span></button><button class="b" data-a="cp" data-l="${L}">${I.copy}<span>کۆپی</span></button>${tab==="t"&&s.k!=="ex"?`<button class="b wn" data-a="rev" data-l="${L}">${s.k==="pa"?I.play+"<span>چالاککردنەوە</span>":I.pause+"<span>ڕاگرتن</span>"}</button>`:""}<button class="b dg" data-a="del" data-l="${L}">${I.trash}<span>سڕینەوە</span></button></div>
+ <div class="act"><button class="b" data-a="wa" data-l="${L}">${I.wa}<span>واتساپ</span></button><button class="b" data-a="cp" data-l="${L}">${I.copy}<span>کۆپی</span></button>${isM()&&s.k!=="ex"?`<button class="b wn" data-a="rev" data-l="${L}">${s.k==="pa"?I.play+"<span>چالاککردنەوە</span>":I.pause+"<span>ڕاگرتن</span>"}</button>`:""}<button class="b dg" data-a="del" data-l="${L}">${I.trash}<span>سڕینەوە</span></button></div>
  <div class="pn"><div class="ph"><h4>ناونیشان</h4></div>${mt.g?`<p class="sub">ئەم کۆدە لە گرووپی «${X(M.groups[mt.g]||"")}» دایە.</p><button class="ib" data-a="reng" data-g="${X(mt.g)}">${I.edit}<span>گۆڕینی ناوی گرووپ</span></button>`:`<div class="row"><input id="dtt" style="flex:1;width:auto;min-width:0" maxlength="60" dir="auto" value="${X(mt.title||"")}" placeholder="ناوی کەس یان تێبینی"><button class="ib" data-a="savt" data-l="${L}">${I.check}<span>هەڵگرتن</span></button></div>`}</div>
  <div class="pn"><div class="ph"><h4>مێژووی بەکارهێنان</h4>${ev.length?`<small>${ev.length} جار</small>`:""}</div>${hist}</div>`};
 const vSet=()=>{const lm=[[2,"٢ خولەک"],[5,"٥ خولەک"],[15,"١٥ خولەک"],[0,"هەرگیز"]],yn=(g,a,b)=>`<b style="color:var(--${g?"ok":"ex"})">${g?a:b}</b>`;
- return `<div class="pn"><div class="ph"><h4>داخستنی خۆکار</h4></div><p class="sub" style="margin:0">دوای ئەم ماوە بێچالاکییە، پەنێلەکە خۆی دادەخات و دووبارە پاسۆرد دەپرسێتەوە.</p><div class="row">${lm.map(z=>`<button class="chp${LOCKMIN===z[0]?" on":""}" data-a="lockm" data-v="${z[0]}">${z[1]}</button>`).join("")}</div></div>
+ return `<div id="chk">${chkH()}</div>${errH()}<div class="pn"><div class="ph"><h4>داخستنی خۆکار</h4></div><p class="sub" style="margin:0">دوای ئەم ماوە بێچالاکییە، پەنێلەکە خۆی دادەخات و دووبارە پاسۆرد دەپرسێتەوە.</p><div class="row">${lm.map(z=>`<button class="chp${LOCKMIN===z[0]?" on":""}" data-a="lockm" data-v="${z[0]}">${z[1]}</button>`).join("")}</div></div>
  <div class="pn"><div class="ph"><h4>نامەی واتساپ</h4></div><p class="sub" style="margin:0">{name} ناوی کڕیار • {codes} کۆدەکان • {link} بەستەری ماڵپەڕ</p><textarea id="tpl" rows="10" dir="auto">${X(LSG("adm-tpl",DEFTPL))}</textarea><div class="two"><button class="b p" data-a="tpls">${I.check}<span>هەڵگرتن</span></button><button class="b" data-a="tplr">گەڕاندنەوە</button></div></div>
  <div class="pn"><div class="ph"><h4>دۆخی سیستەم</h4></div>${kv("پەیوەندی بە سێرڤەر",yn(true,"باشە",""))}${kv("ناونیشانەکان",yn(SYNC,"هاودەمکراو","تەنها لەسەر ئەم ئامێرە"))}${kv("مێژووی بەکارهێنان",yn(LOG!==null,"چالاکە","SQL پێویستە"))}</div>
  <button class="b dg" data-a="lk">${I.lock}<span>دەرچوون و داخستنی پەنێل</span></button>`};
@@ -2281,6 +2318,10 @@ o.addEventListener("click",async e=>{const b=e.target.closest("[data-a]");if(!b|
  case"lockm":LOCKMIN=+b.dataset.v;LSS("adm-lock",LOCKMIN);bump();render();toast("هەڵگیرا ✓");break;
  case"tpls":LSS("adm-tpl",box.querySelector("#tpl").value);toast("نامەکە هەڵگیرا ✓");break;
  case"tplr":LSS("adm-tpl",DEFTPL);render();toast("گەڕایەوە ✓");break;
+ case"chk":runCheck();break;
+ case"chkcp":doCopy((CHK||[]).map(r=>(r.ok?"OK   ":"FAIL ")+r.n+(r.ok?"":" — "+r.m)).join("\n"),"ئەنجامەکە کۆپی کرا ✓");break;
+ case"errcp":{const g=ERRG[+b.dataset.i];if(g)doCopy(errTxt(g),"هەڵەکە کۆپی کرا ✓");break}
+ case"errclr":sure("هەموو هەڵەکان بسڕدرێنەوە؟","ئەم کردارە ناگەڕێتەوە.","سڕینەوە",async()=>{const x=await rpc("admin_error_clear",{p_pw:pw});if(x.ok){await loadErrs();render();toast("سڕانەوە ✓")}else toast(AE[x.error]||AE.net,true)});break;
  case"lk":pw="";close();break;
  }});
 const login=()=>{
@@ -2290,7 +2331,7 @@ const login=()=>{
  const inp=box.querySelector("#pw"),er=box.querySelector("#er"),ok=box.querySelector("#go");let busy=false;
  const go2=async()=>{if(busy||!inp.value)return;busy=true;ok.disabled=true;er.style.color="var(--mut)";er.textContent="پشکنین…";
   const r=await rpc("admin_stats",{p_pw:inp.value});busy=false;ok.disabled=false;er.style.color="";
-  if(r.ok){pw=inp.value;await Promise.all([syncMeta(),loadLog(),loadGrads()]);R=r;upd=new Date();view="stats";bump();tk=setInterval(()=>{if(R&&!o.querySelector(".md")&&root.activeElement&&root.activeElement.tagName!=="INPUT"&&root.activeElement.tagName!=="TEXTAREA"&&(view==="stats"||view==="codes"))render()},6e4);render(true)}else er.textContent=AE[r.error]||AE.net};
+  if(r.ok){pw=inp.value;await Promise.all([syncMeta(),loadLog(),loadGrads(),loadErrs()]);R=r;upd=new Date();view="stats";bump();tk=setInterval(()=>{if(R&&!o.querySelector(".md")&&root.activeElement&&root.activeElement.tagName!=="INPUT"&&root.activeElement.tagName!=="TEXTAREA"&&(view==="stats"||view==="codes"))render()},6e4);render(true)}else er.textContent=AE[r.error]||AE.net};
  ok.onclick=go2;inp.onkeydown=e=>{if(e.key==="Enter")go2()};setTimeout(()=>inp.focus(),50)};
 login()};
 {let taps=0,tm=0;
@@ -2313,6 +2354,7 @@ document.addEventListener("click",e=>{const t=e.target;if(!t.closest||!t.closest
   {const xb=o.querySelector("#dlx"),SU={ckb:"دڵنیایت؟ دووبارە دابگرە",ar:"هل أنت متأكد؟ اضغط مرة أخرى",en:"Sure? Tap again"}[UIL]||"Sure? Tap again";let xt=0;
   /* only the Close button closes this dialog, and only after a second tap; taps outside do nothing */
   xb.onclick=()=>{if(!xb.dataset.arm){xb.dataset.arm=1;const h=xb.textContent;xb.textContent=SU;xb.style.color="#b00020";xb.style.fontWeight="700";xt=setTimeout(()=>{if(xb.isConnected){delete xb.dataset.arm;xb.textContent=h;xb.style.color="";xb.style.fontWeight=""}},3000);return}clearTimeout(xt);o.remove()}}};
+ window.__chk={pdf:()=>pdfFn.call(bp),docx:()=>docxFn.call(bw)};
  bp.onclick=()=>gate(async()=>{window.__dlc=[];try{await pdfFn.call(bp)}catch(x){console.error(x)}try{await docxFn.call(bw)}catch(x){console.error(x)}const items=window.__dlc||[];window.__dlc=null;if(items.length)showDL(items)})}
 })();
 </script></body></html>
