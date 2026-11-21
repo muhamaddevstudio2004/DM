@@ -84,7 +84,7 @@ textarea{resize:vertical;min-height:80px}
 .page.rtl .cv ul{padding-left:0;padding-right:20px}
 .cv ul,.page.rtl .cv ul{list-style:none;padding:0!important;margin:6px 0}.cv li{list-style:none;white-space:nowrap}.cv li::before{content:"•\00a0\00a0";font-weight:bold}
 .lt{unicode-bidi:isolate;direction:ltr}.page.rtl .cv{line-height:1.6}
-.citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.page.rtl .ref-entry[dir="ltr"]{padding-left:48px;padding-right:0;text-align:left!important;text-align-last:left!important}
+.citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere;word-break:break-all}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.page.rtl .ref-entry[dir="ltr"]{padding-left:48px;padding-right:0;text-align:left!important;text-align-last:left!important}
 .page .ref-blk{padding-inline-start:0!important;margin-inline-start:0}.page .ref-blk li[dir]{list-style:none;position:relative;padding-inline-start:1.3em;text-align:start!important;text-align-last:start!important;unicode-bidi:isolate}.page .ref-blk li[dir]::before{content:"•";position:absolute;inset-inline-start:.2em}.page .ref-blk p[dir]{text-align:start!important;text-align-last:start!important}.bd table{break-inside:auto}.bd tr{break-inside:avoid;page-break-inside:avoid}.bd thead{display:table-header-group}.bd figure{break-inside:avoid;page-break-inside:avoid}.bd h1,.bd h2,.bd h3{break-after:avoid;page-break-after:avoid}.bd img{height:auto;object-fit:contain;max-width:100%}.x .page{margin:0;box-shadow:none;page-break-after:always}.x .page:last-child{page-break-after:auto}
 .bd>h1{border-bottom:2px solid var(--gd);padding-bottom:4px}.bd>h1.sh{margin-top:14px;text-transform:uppercase}.bd>h1.sh:first-child{margin-top:0}.cv h1::after{content:"";display:block;width:90px;height:3px;background:var(--gd);margin:12px auto 0}.no-report-line .bd>h1{border-bottom:0;padding-bottom:0}.no-report-line .cv h1::after{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1159,7 +1159,7 @@ const autoCap=(b,t)=>{let h=String(b.hint||"").replace(/[_\-]+/g," ").replace(/\
 const capT=c=>String(c||"").replace(/^\s*(?:figure|fig\.?|table|وێنەی?|خشتەی?|الشكل|شكل|الجدول|جدول)\s*\d+\s*[:.\-–]?\s*/i,"").trim();
 function noImg(pg){if(kindOf(pg)=="ref")return true;const t=dispT(pg.title)||"";return /^\s*(?:[\d٠-٩]+[.)]?\s*)?(?:conclusions?\b|concluding\b|دەرئەنجام|ئەنجامگیری|الخاتمة|خاتمة|الاستنتاج)/i.test(t)}
 function kindOf(pg){const k=pg.kind;if(k&&k!="auto")return k;const t=dispT(pg.title);
- if(/^(abstract|executive summary|کورتە|پوختە|ملخص|المستخلص|مستخلص)$/i.test(t))return "abs";
+ if(/^(abstract|executive summary|کورتە|پوختە|ملخص|الملخص|المستخلص|مستخلص)$/i.test(t))return "abs";
  if(/^(acknowledg(e)?ments?|dedication|سوپاسگوزاری|سوپاس|شکر و تقدیر|پێشکەشکردن|پیشکەشکردن|پێشکەشی|شكر وتقدير|شكر و تقدير|الإهداء|إهداء|اهداء)$/i.test(t))return "ack";
  if(/^(references|bibliography|works cited|سەرچاوەکان|سەرچاوە|المراجع|المصادر)$/i.test(t))return "ref";
  if(/^(appendix|appendices|پاشکۆ|ملحق)/i.test(t))return "app";
@@ -1955,6 +1955,7 @@ async function redeem(code,grad){
 function gate(action){
  if(document.getElementById("dlg"))return;
  const L=T[UIL]||T.en,o=document.createElement("div");o.id="dlg";
+ const GV=4;let gi=Math.floor(Math.random()*GV);try{const last=parseInt(localStorage.getItem("arb_gate_style"),10);if(last>=0&&last<GV)gi=(last+1+Math.floor(Math.random()*(GV-1)))%GV;localStorage.setItem("arb_gate_style",String(gi))}catch(x){}
  o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,42,82,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))";
  o.innerHTML=`<style>
  #dlg .dc{background:var(--card,#fff);color:var(--fg,#0f2a52);border:1px solid var(--bd,#c9d6ea);border-top:4px solid var(--yl,#d8bb74);border-radius:14px;max-width:380px;width:100%;padding:22px 20px 16px;box-shadow:0 16px 44px rgba(15,42,82,.28)}
@@ -1970,25 +1971,81 @@ function gate(action){
  #dlg #dlgwa{background:transparent;color:var(--ac,#143a7b);border:1px solid var(--bd,#c9d6ea);margin-top:8px}
  #dlg #dlgwa svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
  #dlg #dlgx{background:transparent;border:0;color:var(--mut,#51627f);font-weight:500;font-size:14px;min-height:40px;margin-top:4px}
+ #dlg .dc{position:relative}
+ #dlg .sw{display:flex;gap:7px;justify-content:center;margin:10px 0 2px;direction:ltr}
+ #dlg .sv{width:26px;height:26px;border-radius:50%;border:1px solid var(--bd,#c9d6ea);background:transparent;color:var(--mut,#51627f);font-size:12px;font-weight:600;cursor:pointer;padding:0;line-height:1}
+ #dlg .sv.on{background:var(--ac,#143a7b);border-color:var(--ac,#143a7b);color:#fff}
+ /* card 2: modern, rounded */
+ #dlg .dc[data-v="1"]{border:0;border-radius:28px;padding:28px 22px 16px;background:linear-gradient(160deg,#fff 0%,#eaf0fb 100%);box-shadow:0 26px 60px rgba(20,58,123,.30)}
+ #dlg .dc[data-v="1"] h3{text-align:center;font-size:21px}
+ #dlg .dc[data-v="1"] .rule{display:none}
+ #dlg .dc[data-v="1"] p.d{text-align:center;margin-top:8px}
+ #dlg .dc[data-v="1"] #dlgc{height:54px;border-radius:999px;border:2px solid transparent;box-shadow:0 3px 14px rgba(20,58,123,.14)}
+ #dlg .dc[data-v="1"] #dlgc:focus{border-color:var(--ac,#143a7b);box-shadow:0 3px 14px rgba(20,58,123,.2),0 0 0 4px rgba(20,58,123,.1)}
+ #dlg .dc[data-v="1"] .btn{border-radius:999px;min-height:50px}
+ #dlg .dc[data-v="1"] #dlgok{background:linear-gradient(135deg,#143a7b,#2f63bd);color:#fff;border:0;box-shadow:0 8px 20px rgba(20,58,123,.3)}
+ #dlg .dc[data-v="1"] #dlgwa{background:#fff;border:0;box-shadow:0 3px 14px rgba(20,58,123,.12)}
+ #dlg .dc[data-v="1"] .sv{border:0;background:#fff;box-shadow:0 2px 8px rgba(20,58,123,.15)}
+ #dlg .dc[data-v="1"] .sv.on{background:#143a7b;color:#fff}
+ /* card 3: terminal coding */
+ #dlg .dc[data-v="2"]{background:#0b0f14;color:#c9d1d9;border:1px solid #30363d;border-radius:10px;padding:16px 18px 12px;box-shadow:0 18px 50px rgba(0,0,0,.55);font-family:ui-monospace,Menlo,Consolas,monospace}
+ #dlg .dc[data-v="2"]::before{content:"";display:block;height:12px;width:50px;margin:0 0 14px;background:radial-gradient(circle,#ff5f56 4.5px,transparent 5.5px) 0 50%/17px 12px no-repeat,radial-gradient(circle,#ffbd2e 4.5px,transparent 5.5px) 17px 50%/17px 12px no-repeat,radial-gradient(circle,#27c93f 4.5px,transparent 5.5px) 34px 50%/17px 12px no-repeat}
+ #dlg .dc[data-v="2"]:not([data-l="en"]){font-family:inherit}
+ #dlg .dc[data-v="2"] h3{color:#7ee787;font-size:17px;font-family:inherit;direction:ltr;text-align:left}
+ #dlg .dc[data-v="2"] h3::before{content:"$ ";color:#8b949e}
+ #dlg .dc[data-v="2"] .rule{display:none}
+ #dlg .dc[data-v="2"] p.d{color:#8b949e;font-size:13px;margin-top:10px}
+ #dlg .dc[data-v="2"] p.d::before{content:"// ";color:#6e7681}
+ #dlg .dc[data-v="2"] #dlgc{background:#010409;color:#e6edf3;border:1px solid #30363d;border-radius:6px;height:46px;font-family:ui-monospace,Menlo,Consolas,monospace;caret-color:#7ee787}
+ #dlg .dc[data-v="2"] #dlgc:focus{border-color:#7ee787;box-shadow:0 0 0 3px rgba(126,231,135,.15)}
+ #dlg .dc[data-v="2"] #dlgc::placeholder{color:#6e7681}
+ #dlg .dc[data-v="2"] .btn{border-radius:6px;font-family:inherit;min-height:42px}
+ #dlg .dc[data-v="2"] #dlgok{background:#238636;border-color:#2ea043;color:#fff}
+ #dlg .dc[data-v="2"] #dlgok::before{content:"> "}
+ #dlg .dc[data-v="2"] #dlgwa{background:transparent;color:#c9d1d9;border-color:#30363d}
+ #dlg .dc[data-v="2"] #dlgx{color:#8b949e}
+ #dlg .dc[data-v="2"] .sv{border-color:#30363d;color:#8b949e;font-family:inherit}
+ #dlg .dc[data-v="2"] .sv.on{background:#238636;border-color:#2ea043;color:#fff}
+ #dlg .dc[data-v="2"] #dlge{color:#ff7b72!important}
+ #dlg .dc[data-v="2"] #dlge[data-s="chk"]{color:#d29922!important}
+ /* card 4: modern coding (glass IDE) */
+ #dlg .dc[data-v="3"]{background:linear-gradient(150deg,#1d2144 0%,#11142b 100%);color:#e8ebff;border:1px solid rgba(124,92,255,.55);border-radius:22px;padding:22px 20px 14px;box-shadow:0 0 0 1px rgba(6,182,212,.18),0 24px 64px rgba(70,50,190,.5)}
+ #dlg .dc[data-v="3"]::before{content:"</>";display:inline-block;direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:14px;color:#22d3ee;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.35);border-radius:10px;padding:4px 11px;margin-bottom:12px}
+ #dlg .dc[data-v="3"] h3{color:#fff;font-size:20px}
+ #dlg .dc[data-v="3"] .rule{width:56px;height:3px;background:linear-gradient(90deg,#7c5cff,#22d3ee);border-radius:3px}
+ #dlg .dc[data-v="3"] p.d{color:#aab3d6}
+ #dlg .dc[data-v="3"] #dlgc{background:rgba(255,255,255,.06);color:#fff;border:1.5px solid rgba(124,92,255,.5);border-radius:14px;font-family:ui-monospace,Menlo,Consolas,monospace;caret-color:#22d3ee}
+ #dlg .dc[data-v="3"] #dlgc:focus{border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.18)}
+ #dlg .dc[data-v="3"] #dlgc::placeholder{color:#8f98c4}
+ #dlg .dc[data-v="3"] .btn{border-radius:14px}
+ #dlg .dc[data-v="3"] #dlgok{background:linear-gradient(135deg,#7c5cff,#22d3ee);color:#fff;border:0;box-shadow:0 8px 24px rgba(124,92,255,.45)}
+ #dlg .dc[data-v="3"] #dlgwa{background:transparent;color:#dfe4ff;border-color:rgba(255,255,255,.22)}
+ #dlg .dc[data-v="3"] #dlgx{color:#8f98c4}
+ #dlg .dc[data-v="3"] .sv{border-color:rgba(255,255,255,.22);color:#aab3d6}
+ #dlg .dc[data-v="3"] .sv.on{background:linear-gradient(135deg,#7c5cff,#22d3ee);border-color:transparent;color:#fff}
+ #dlg .dc[data-v="3"] #dlge{color:#ff8fa3!important}
+ #dlg .dc[data-v="3"] #dlge[data-s="chk"]{color:#ffd166!important}
  </style>
- <div class="dc">
+ <div class="dc" data-v="${gi}" data-l="${UIL}">
  <h3>${L.t}</h3><div class="rule"></div><p class="d">${(typeof S!=="undefined"&&S&&S.gr)?(GD[UIL]||GD.en):L.d}</p>
  <input id="dlgc" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${L.ph}">
  <p id="dlge" style="min-height:20px;margin:8px 0 6px;color:#b00020;font-size:13px;text-align:center"></p>
  <button id="dlgok" class="btn">${L.ok}</button>
  <button id="dlgwa" class="btn"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>${L.wa}</button>
- <button id="dlgx" class="btn">${L.x}</button></div>`;
+ <button id="dlgx" class="btn">${L.x}</button>
+ <div class="sw" dir="ltr">${[0,1,2,3].map(i=>`<button type="button" class="sv${i===gi?" on":""}" data-v="${i}" aria-label="Card style ${i+1}">${i+1}</button>`).join("")}</div></div>`;
  document.body.appendChild(o);
  const inp=o.querySelector("#dlgc"),err=o.querySelector("#dlge"),ok=o.querySelector("#dlgok"),close=()=>o.remove();let busy=false;
  const submit=async()=>{if(busy)return;const c=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
   if(c.length<4){err.textContent=L.bad;return}
-  busy=true;ok.disabled=true;err.style.color="var(--mut,#51627f)";err.textContent=L.chk;
-  const s=await redeem(c,!!(typeof S!=="undefined"&&S&&S.gr));busy=false;ok.disabled=false;err.style.color="#b00020";
+  busy=true;ok.disabled=true;err.style.color="var(--mut,#51627f)";err.dataset.s="chk";err.textContent=L.chk;
+  const s=await redeem(c,!!(typeof S!=="undefined"&&S&&S.gr));busy=false;ok.disabled=false;err.style.color="#b00020";err.dataset.s="err";
   if(s==="ok"){close();action();return}
   err.textContent=s==="invalid"?L.bad:(L[s]||L.net)};
  ok.onclick=submit;inp.onkeydown=ev=>{if(ev.key==="Enter")submit()};
  o.querySelector("#dlgwa").onclick=()=>{window.open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(L.msg),"_blank")};
  o.querySelector("#dlgx").onclick=close;
+ o.querySelector(".sw").onclick=ev=>{const b=ev.target.closest(".sv");if(!b)return;const i=parseInt(b.dataset.v,10);o.querySelector(".dc").dataset.v=i;o.querySelectorAll(".sv").forEach(x=>x.classList.toggle("on",x===b));try{localStorage.setItem("arb_gate_style",String(i))}catch(x){}};
  setTimeout(()=>inp.focus(),50)}
 /* ---------- admin panel ---------- */
 const esc=t=>String(t).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -2163,6 +2220,15 @@ const RICHSET=l=>{const rt=l!=="en",A=ckImg("image/png",640,400,"#143a7b","#d8bb
  const ch=S.pages.find(g=>kindOf(g)==="ch");
  if(ch){const p=ch.blocks.find(b=>b.t==="p");if(p)p.text+=" [[CITE:ck1]] [[CITE:ck2]]";
   ch.blocks.push({t:"img",text:"",src:A,cap:rt?"وێنەی تاقیکردنەوە یەکەم":"Test figure one",layout:"top",sz:"m"},{t:"img",text:"",src:B,cap:rt?"وێنەی تاقیکردنەوە دووەم":"Test figure two",layout:"left",sz:"s",note:rt?"تێبینی لەتەنیشت وێنەکە.":"A note beside the image."},{t:"img",text:"",src:A,cap:"",layout:"right",sz:"l",note:rt?"تێبینییەکی تر.":"Another note."})}};
+const GRADTXT=l=>{const G=AIG[l]||AIG.en,D=CKD[l]||CKD.en,K=[0],P=n=>Array.from({length:n},()=>D[15]+" ("+(++K[0])+")").join(" "),tb=["| "+D[7]+" | "+D[8]+" | # |","|---|---|---|"];for(let i=1;i<=5;i++)tb.push("| "+D[9+i%3]+" "+i+" | "+D[12+i%3]+" | "+i+" |");
+ const sub=(n,arr)=>arr.map((x,i)=>["### "+n+"."+(i+1)+" "+x,P(2),""]).flat();
+ return ["# "+D[0],"","## "+G.ded,P(1),"","## "+G.ack,P(1),"","## "+G.abs,P(2),G.kw+": "+D[9]+", "+D[10]+", "+D[11]+", "+D[12],"",
+  "## 1. "+G.c[0],P(1),"",...sub(1,G.s1),
+  "## 2. "+G.c[1],P(1),"","### 2.1 "+D[9],P(2),"","### 2.2 "+D[10],P(2),"","### 2.3 "+G.s2p,P(2),"","### 2.4 "+G.s2g,P(1),"",
+  "## 3. "+G.c[2],P(1),"","### 3.1 "+D[11],P(2),"","### 3.2 "+D[12],P(2),"","### 3.3 "+D[13],P(2),"",
+  "## 4. "+G.c[3],P(1),"","### 4.1 "+G.s4[0],...tb,"",P(1),"","### 4.2 "+G.s4[1],P(2),"","### 4.3 "+G.s4[2],P(2),"",
+  "## 5. "+G.c[4],P(1),"",...sub(5,G.s5),
+  "## "+G.ref,"- Tanenbaum, A. S., & Wetherall, D. J. (2011). Computer Networks (5th ed.). Pearson.","- Kurose, J. F., & Ross, K. W. (2021). Computer Networking. Pearson."].join("\n")};
 const richSetup=(lang,grad)=>{const rt=lang!=="en";S.dir=rt?"rtl":"ltr";if(rt)S.rlang=lang;const rep=parseReport(cleanAI(RICHTXT(lang)));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;RICHSET(lang);if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rt?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub=""};
 const ckZip=u=>{const dv=new DataView(u.buffer,u.byteOffset,u.byteLength);let p=u.length-22;while(p>=0&&dv.getUint32(p,true)!==0x06054b50)p--;if(p<0)return null;const n=dv.getUint16(p+10,true),dec=new TextDecoder(),out={};let o=dv.getUint32(p+16,true);
  for(let i=0;i<n;i++){if(dv.getUint32(o,true)!==0x02014b50)return null;const crc=dv.getUint32(o+16,true),sz=dv.getUint32(o+24,true),nl=dv.getUint16(o+28,true),xl=dv.getUint16(o+30,true),cl=dv.getUint16(o+32,true),lo=dv.getUint32(o+42,true),nm=dec.decode(u.subarray(o+46,o+46+nl)),st=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),d=u.subarray(st,st+sz);out[nm]={d,ok:crc32(d)===crc};o+=46+nl+xl+cl}return out};
@@ -2188,7 +2254,7 @@ const extraCheck=async(T,add)=>{
  const back=()=>{for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(snap));curP=oldCur;contentTab=oldTab;try{applyCol()}catch(x){}};
  const ZW=/[\s\u200b-\u200f\u202a-\u202e\u2063\u2066-\u2069]/g,WS=s=>String(s==null?"":s).replace(ZW,"");
  const roman=n=>{let s="";[[10,"x"],[9,"ix"],[5,"v"],[4,"iv"],[1,"i"]].forEach(([v,r])=>{while(n>=v){s+=r;n-=v}});return s};
- const lay=async(lang,grad,opts)=>{back();richSetup(lang,grad);Object.assign(S,opts||{});
+ const lay=async(lang,grad,opts,mut)=>{back();richSetup(lang,grad);Object.assign(S,opts||{});if(mut)mut();
   const P=[],bad=m=>{if(!P.includes(m))P.push(m)},warns=[];console.warn=(...a)=>{warns.push(a.map(String).join(" "))};
   const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
   try{await fontLoad();await imgPend();build(w);await Promise.all([...w.querySelectorAll("img")].map(m=>m.decode().catch(()=>{})));
@@ -2254,6 +2320,305 @@ const extraCheck=async(T,add)=>{
   await T("دیزاین و لاپەڕەکان — کوردی",()=>lays("ckb",0,V.concat(KF.map(([f])=>({font:f})))));
   await T("دیزاین و لاپەڕەکان — عەرەبی",()=>lays("ar",0,V.concat(KF.map(([f])=>({font:f})))));
   await T("دیزاین — بەحسی دەرچوون",()=>lays("ckb",1,[{},{ls:2}]));
+  /* ======== V27: full-system coverage (design, settings, prompts, report, graduation, translation, services) ======== */
+  const LG=["en","ckb","ar"],LGN={en:"ئینگلیزی",ckb:"کوردی",ar:"عەرەبی"};
+  const fin=o=>o.length?[...new Set(o)].slice(0,4).join(" • "):true;
+  const dom=h=>{const d=document.createElement("div");d.innerHTML=h;return d};
+  const cssv=n=>document.documentElement.style.getPropertyValue(n).trim();
+  const LB=l=>l==="en"?{lof:"List of Figures",lot:"List of Tables"}:RLAB[l];
+  const IA=ckImg("image/png",640,400,"#143a7b","#d8bb74"),IB=ckImg("image/jpeg",800,300,"#2d6a4f","#f4a261");
+  const peek=async()=>{const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);try{await fontLoad();await imgPend();build(w);await Promise.all([...w.querySelectorAll("img")].map(m=>m.decode().catch(()=>{})))}catch(x){w.remove();throw x}return w};
+  const applyBtn=b=>{if(b.a==="opt")S[b.k]=/^[\d.]+$/.test(b.v)?+b.v:b.v;else if(b.a==="font")S.font=b.v;else if(b.a==="cz")S.cvs=b.v;else if(b.a==="toc")S.tocfs=+b.v;else if(b.a==="col")S.color=b.v;else if(b.a==="dir"){S.dir=b.v==="ltr"?"ltr":"rtl";if(b.v!=="ltr")S.rlang=b.v}};
+  const btnsOf=(fn,as,keep)=>[...dom(fn()).querySelectorAll("button[data-a]")].filter(x=>as.includes(x.dataset.a)&&(!keep||x.dataset.a!=="opt"||keep(x.dataset.k))).map(x=>({a:x.dataset.a,k:x.dataset.k||"",v:x.dataset.v||"",fn}));
+  const bl=b=>b.a+(b.k?":"+b.k:"")+"="+b.v;
+  const isOn=b=>{const el=dom(b.fn()).querySelector(b.a==="opt"?'[data-a="opt"][data-k="'+b.k+'"][data-v="'+b.v+'"]':'[data-a="'+b.a+'"][data-v="'+b.v+'"]');return !!(el&&el.classList.contains("on"))};
+  const addH3=()=>{for(const g of S.pages){const i=g.blocks.findIndex(b=>b.t==="h");if(i>=0){g.blocks.splice(i+1,0,{t:"h",text:"Level three heading",lv:3},{t:"p",text:"Text under the level three heading."});return}}};
+  const vfy=async(b,lang)=>{const E=[],rt=S.dir==="rtl",bad=m=>E.push(m);
+   if(b.a==="col"){if(cssv("--dc").toLowerCase()!==b.v.toLowerCase())bad("ڕەنگ جێبەجێ نەبوو ("+cssv("--dc")+")");if(!/^#[0-9a-f]{6}$/i.test(cssv("--dk")))bad("ڕەنگی تاریک هەڵەیە")}
+   else if(b.a==="cz"){if(+cssv("--cz")!=={s:.85,m:1,l:1.2}[b.v])bad("قەبارەی نووسینی بەرگ جێبەجێ نەبوو")}
+   else if(b.a==="font"){const ex=b.v||(rt?"Noto Naskh Arabic":"Times New Roman");if(cssv("--ff").replace(/["']/g,"")!==ex)bad("فۆنت جێبەجێ نەبوو ("+cssv("--ff")+")")}
+   else if(b.a==="opt"&&b.k==="ls"){if(+cssv("--ls")!==(S.ls||(rt?1.7:1.5)))bad("مەودای نێوان دێڕەکان جێبەجێ نەبوو")}
+   else if(b.a==="opt"&&b.k==="al"){if(cssv("--ta")!==(S.al||"justify"))bad("ڕیزکردنی پەرەگراف جێبەجێ نەبوو")}
+   else if((b.a==="opt"&&(/^h[123]$/.test(b.k)||["notoc","lof","lot","hlc"].includes(b.k)))||b.a==="toc"||b.a==="dir"){
+    const w=await peek();try{
+     if(b.a==="opt"&&/^h[123]$/.test(b.k)){const tag=b.k.toUpperCase(),els=[...w.querySelectorAll(".bd "+tag)].filter(x=>x.style.fontSize);if(!els.length)bad("ناونیشانی "+tag+" نەدۆزرایەوە");else if(els.some(x=>x.style.fontSize!==b.v+"pt"))bad("قەبارەی "+tag+" جێبەجێ نەبوو")}
+     if(b.k==="notoc"){const n=[...w.querySelectorAll(".tr")].filter(x=>/\bl[123]\b/.test(x.className)).length;if(S.notoc?n>0:n===0)bad(S.notoc?"ناوەڕۆک نەشاردرایەوە":"ناوەڕۆک نیشان نەدرا")}
+     if(b.k==="lof"||b.k==="lot"){const has=[...w.querySelectorAll("h1.sh,.tcn")].some(h=>h.textContent.trim().startsWith(LB(lang)[b.k]));if(!!S[b.k]!==has)bad("لیستی "+(b.k==="lof"?"وێنەکان":"خشتەکان")+(S[b.k]?" نییە":" نەشاردرایەوە"))}
+     if(b.k==="hlc"){const n=w.querySelectorAll("pre span[class^='x']").length;if(S.hlc===0?n>0:n===0)bad(S.hlc===0?"ڕەنگی کۆد نەکوژایەوە":"ڕەنگی کۆد نییە")}
+     if(b.a==="toc"&&S.tocfs>0&&!S.notoc){const r=w.querySelector(".tr");if(r&&Math.abs(parseFloat(getComputedStyle(r).fontSize)-S.tocfs*96/72)>.4)bad("قەبارەی نووسینی ناوەڕۆک جێبەجێ نەبوو")}
+     if(b.a==="dir"){const cv=w.querySelector(".cv"),lbl=b.v==="ltr"?"Prepared by:":RLAB[b.v].by;if(cv&&!cv.textContent.includes(lbl))bad("بەرگ: نووسینی «"+lbl+"» نییە");if(w.querySelector(".page").classList.contains("rtl")!==(b.v!=="ltr"))bad("پۆلی rtl هەڵەیە")}
+    }finally{w.remove()}}
+   return E};
+  const sweep=async(items,langs)=>{const out=[];
+   for(const b of items){
+    back();richSetup("en",0);applyBtn(b);if(b.a!=="dir"&&!isOn(b))out.push("["+bl(b)+"] دوای هەڵبژاردن دوگمەکە چالاک نەبوو");
+    for(const lang of langs){const tg="["+bl(b)+" · "+LGN[lang]+"] ";
+     const P=await lay(lang,0,{},()=>{applyBtn(b);if(b.k==="h3")addH3()});
+     P.slice(0,2).forEach(m=>out.push(tg+m));
+     (await vfy(b,lang)).forEach(m=>out.push(tg+m))}}
+   return out};
+  const GA=k=>["ls","al","h1","h2","h3"].includes(k);
+  /* ---- design ---- */
+  await T("دیزاین — ڕەنگ، هێڵ و قەبارەی بەرگ (هەموو دوگمەکان)",async()=>{
+   const out=await sweep([...btnsOf(reportAppearanceUI,["col"]),...btnsOf(typeUI,["cz"])],LG);
+   for(const lang of LG){
+    await lay(lang,0,{},()=>{S.lineOn=false;S.color="#123456"});
+    if(!document.documentElement.classList.contains("no-report-line"))out.push("هێڵی ناونیشان نەکوژایەوە ("+LGN[lang]+")");
+    if(cssv("--dc").toLowerCase()!=="#123456")out.push("ڕەنگی دەستی هەڵبژێردراو جێبەجێ نەبوو ("+LGN[lang]+")");
+    await lay(lang,0,{},()=>{S.lineOn=true;S.lineColor="#ff0000"});
+    if(document.documentElement.classList.contains("no-report-line"))out.push("هێڵی ناونیشان نەگەڕایەوە ("+LGN[lang]+")");
+    if(cssv("--gd").toLowerCase()!=="#ff0000")out.push("ڕەنگی هێڵ جێبەجێ نەبوو ("+LGN[lang]+")");
+    for(const st of [{lineOn:false},{lineOn:true,lineColor:"#00aa00"},{color:"#000000"},{color:"#ffffff"}]){back();richSetup(lang,0);Object.assign(S,st);const h=reportAppearanceUI();if(/undefined|NaN|\[object/.test(h))out.push("دیزاین UI: undefined/NaN");
+     const P=await lay(lang,0,st);P.slice(0,1).forEach(m=>out.push("[ڕەنگی تایبەت · "+LGN[lang]+"] "+m))}}
+   return fin(out)});
+  await T("دیزاین — قاڵب، لۆگۆ و زانیاری بەرگ",async()=>{const out=[];
+   for(const lang of LG){back();richSetup(lang,0);
+    const t=tplUI();if(!/tp-card on/.test(t)||/undefined|NaN/.test(t))out.push("قاڵب: کارتی هەڵبژێردراو نییە");
+    if(!TPL.some(x=>x[0]==="report"))out.push("قاڵبی report نییە");
+    S.logo="";let h=logoUI();if(!/Upload logo/.test(h)||/thumb/.test(h))out.push("لۆگۆ: دوگمەی بارکردن نییە");
+    S.logo=IA;h=logoUI();if(!/thumb/.test(h)||!/data-a="nologo"/.test(h))out.push("لۆگۆ: پیشاندان/سڕینەوە نییە");
+    const P=await lay(lang,0,{},()=>{S.logo=""});if(!P.length||!P.some(m=>/لۆگۆ/.test(m)))out.push("بەرگ بێ لۆگۆ: پشکنین کار ناکات");
+    const L2=await lay(lang,0,{},()=>{S.info.students=["A","B","C","D","E","F"];S.info.title="A very long report title that goes on and on to test the cover page wrapping behaviour in all layouts "+(lang==="en"?"":"ئەمە ناونیشانێکی زۆر درێژە بۆ تاقیکردنەوەی بەرگ")});
+    L2.slice(0,2).forEach(m=>out.push("[بەرگی ناونیشانی درێژ · "+LGN[lang]+"] "+m))}
+   return fin(out)});
+  /* ---- settings ---- */
+  await T("ڕێکخستن — پەرەگراف، مەودا و قەبارەی ناونیشانەکان",async()=>fin(await sweep(btnsOf(acadUI,["opt"],GA),LG)));
+  await T("ڕێکخستن — پێکهاتەی ئەکادیمی (ژمارەی لاپەڕە، ناوەڕۆک، لیستەکان...)",async()=>fin(await sweep([...btnsOf(acadUI,["opt"],k=>!GA(k)),...btnsOf(typeUI,["toc"])],LG)));
+  await T("ڕێکخستن — فۆنتەکان (هەموو فۆنتێک لە هەموو زمانێک)",async()=>fin(await sweep(btnsOf(typeUI,["font"]),LG)));
+  await T("ڕێکخستن — زمان و ئاڕاستە (هەموو تێکەڵەیەک)",async()=>{const out=[];
+   for(const b of btnsOf(typeUI,["dir"]))for(const base of LG){back();richSetup(base,0);applyBtn(b);
+    const tg="["+bl(b)+" · دەقی "+LGN[base]+"] ";
+    if(!isOn(b))out.push(tg+"دوگمەی زمان دوای هەڵبژاردن چالاک نەبوو");
+    const P=await lay(base,0,{},()=>applyBtn(b));P.slice(0,2).forEach(m=>out.push(tg+m));(await vfy(b,base)).forEach(m=>out.push(tg+m))}
+   return fin(out)});
+  await T("ڕێکخستن — هەموو تێکەڵەی ڕێکخستنەکان پێکەوە",async()=>{const out=[];
+   const A={pn:"arabic",notoc:1,hf:0,keepSec:0,hlc:0,lof:0,lot:0,ls:2,al:"left",h1:20,h2:16,h3:14,cvs:"l",tocfs:16,color:"#7a1f2b",lineOn:false,font:"Georgia",citeStyle:"ieee"};
+   const B={pn:"roman",notoc:0,hf:1,keepSec:1,hlc:1,lof:1,lot:1,ls:1.15,al:"justify",h1:14,h2:12,h3:11,cvs:"s",tocfs:10,color:"#0f6b78",lineOn:true,lineColor:"#ff8800",font:"Courier New",citeStyle:"harvard"};
+   for(const lang of LG)for(const [n,o] of [["A",A],["B",B],["A+Amiri",{...A,font:"Amiri"}],["B+Cairo",{...B,font:"Cairo"}]]){const P=await lay(lang,0,o,addH3);P.slice(0,2).forEach(m=>out.push("[تێکەڵە "+n+" · "+LGN[lang]+"] "+m))}
+   return fin(out)});
+  await T("ڕێکخستن — وەرگێڕانی ڕووکار (کوردی و عەرەبی)",async()=>{const out=[],oldU=UIL;
+   const miss=(a,b)=>Object.keys(DICT[a]||{}).filter(k=>!(k in (DICT[b]||{})));
+   const m1=miss("ckb","ar"),m2=miss("ar","ckb");
+   if(m1.length)out.push("وەرگێڕان: "+m1.length+" ڕستە لە عەرەبی نییە (وەک «"+m1[0].slice(0,30)+"»)");
+   if(m2.length)out.push("وەرگێڕان: "+m2.length+" ڕستە لە کوردی نییە (وەک «"+m2[0].slice(0,30)+"»)");
+   const ALLOW=/^(?:Times New Roman|Georgia|Arial|Verdana|Courier New|Noto Naskh ★?|Amiri|Scheherazade|Vazirmatn|Noto Sans Arabic|Cairo|English|کوردی|العربية|(?:English|کوردی|العربية)? ?· ?(?:LTR|RTL)|PDF|Word|DOCX|APA|IEEE|Harvard|AI|A4|ChatGPT|Gemini|DevMuhamad\.com|Developed by|Auto|Untitled|Student|Dr\.Muhamad)$/i;
+   try{for(const l of ["ckb","ar"]){UIL=l;back();richSetup("en",0);
+    const UIS=[["سەرەتا",()=>homeUI()],["قاڵب",()=>tplUI()],["لۆگۆ",()=>logoUI()],["جۆری نووسین",()=>typeUI()],["ڕێکخستن",()=>acadUI()],["زانیاری",()=>reportInfoUI()],["دیزاین",()=>reportAppearanceUI()],
+     ...["info","sections","appearance"].map(t=>["تابی "+t,()=>{curP=-1;contentTab=t;return pagesUI()}]),["لاپەڕە",()=>{curP=0;contentTab="sections";return pagesUI()}]];
+    const seen=new Set();
+    for(const [n,fn] of UIS){let d;try{d=dom(fn());trTree(d)}catch(x){out.push(LGN[l]+"/"+n+": "+x.message);continue}
+     const tx=[];const wk=document.createTreeWalker(d,NodeFilter.SHOW_TEXT);let nd;while(nd=wk.nextNode()){const p=nd.parentElement;if(p&&p.closest("textarea,pre,input,script,style,.pn"))continue;tx.push(nd.nodeValue.trim())}
+     d.querySelectorAll("[placeholder],[title],[aria-label]").forEach(el=>["placeholder","title","aria-label"].forEach(a=>{const v=el.getAttribute(a);if(v)tx.push(v.trim())}));
+     tx.forEach(t=>{if(/[A-Za-z]{3,}/.test(t)&&!/[\u0600-\u06FF]/.test(t)&&!ALLOW.test(t)&&!seen.has(t)){seen.add(t);out.push(LGN[l]+" / "+n+": وەرنەگێڕدراوە «"+t.slice(0,40)+"»")}})}}}
+   finally{UIL=oldU;back()}
+   return fin(out)});
+  /* ---- prompts ---- */
+  await T("پرۆمپت — هەموو حاڵەتەکان (ڕاپۆرت و بەحسی دەرچوون، ٣ زمان، هەموو ژمارەی لاپەڕەکان)",async()=>{const out=[],add=m=>{if(out.length<8)out.push(m)};
+   const cR=p=>+p>0?Math.min(40,Math.max(1,Math.round(+p))):0,cG=p=>+p>0?Math.min(60,Math.max(10,Math.round(+p))):0;
+   const keysR=P=>P===0?["abs","intro","obj","lit","met","main","res","dis","con","rec","ref"]:P<=2?["intro","main","con","ref"]:P<=4?["intro","obj","main","con","ref"]:P<=7?["abs","intro","obj","main","res","con","ref"]:P<=12?["abs","intro","obj","lit","met","main","res","dis","con","ref"]:["abs","intro","obj","lit","met","main","res","dis","con","rec","ref"];
+   const TS=["Computer Networks","تۆڕە کۆمپیوتەرییەکان","شبكات الحاسوب",'AI "smart" $100 `code` <b>'],DS=["","IT","Department of Computer Science","بەشی کۆمپیوتەر","قسم الحاسوب"];
+   const PR=[0,"auto",1,2,3,4,5,7,8,12,13,20,30,40,41,100,-3,"abc",NaN],PG=[0,"auto",10,11,15,20,21,25,30,45,60,61,5,-1,"abc"];
+   let cnt=0;const lang_=l=>l==="ckb"?"Sorani Kurdish":l==="ar"?"Modern Standard Arabic":"formal academic English";
+   for(const lang of LG)for(const t of TS)for(const d of DS)for(const mode of ["rep","grad"])for(const p of (mode==="rep"?PR:PG)){
+    cnt++;const tg="["+mode+" · "+LGN[lang]+" · صفحات="+String(p)+"] ";let pr;
+    try{pr=aiPrompt(t,p,lang,.123,d,mode)}catch(x){add(tg+"هەڵە: "+x.message);continue}
+    if(typeof pr!=="string"||pr.length<2500){add(tg+"پرۆمپت کورتە یان بەتاڵە");continue}
+    if(/undefined|NaN|\[object|\$\{/.test(pr)){add(tg+"undefined/NaN لە پرۆمپتدا");continue}
+    if(!pr.includes(t.trim()))add(tg+"ناونیشان لە پرۆمپتدا نییە");
+    const dn=deptName(d);if(dn&&!pr.includes(dn))add(tg+"ناوی بەش لە پرۆمپتدا نییە");if(!dn&&/DEPARTMENT PERSPECTIVE/.test(pr))add(tg+"بەش دەرکەوتووە بێ ناوی بەش");
+    if(!pr.includes(lang_(lang)))add(tg+"فەرمانی زمان نییە");
+    for(const k of ["LANGUAGE:","COPY REQUIREMENTS:","FINAL OUTPUT RULES:","IMAGE REQUIREMENTS:","Follow the exact Markdown structure."])if(!pr.includes(k))add(tg+"بەشی «"+k+"» نییە");
+    if(mode==="rep"){const P=cR(p),N=AISEC[lang];
+     if(P>0){if(!pr.includes("Length: "+P+" A4 page"))add(tg+"دێڕی درێژی لاپەڕە هەڵەیە");if(!pr.includes("about "+P*230+" words in total"))add(tg+"ژمارەی وشە هەڵەیە");if(!pr.includes("Add exactly "+Math.max(1,Math.min(12,Math.round(P/2)))+" Image"))add(tg+"ژمارەی وێنە هەڵەیە")}
+     else{if(!pr.includes("Choose the best length yourself"))add(tg+"درێژی خۆکار نییە");if(!pr.includes("Add 3 to 5 Image"))add(tg+"ژمارەی وێنەی خۆکار هەڵەیە")}
+     keysR(P).forEach(k=>{if(k!=="main"&&!pr.includes("## "+N[k])&&!pr.includes(N[k]))add(tg+"بەشی «"+N[k]+"» نییە")});
+     if(!pr.includes("- Line 1 only: # Report title"))add(tg+"پێکهاتەی Markdown نییە")}
+    else{const P=cG(p),G=AIG[lang],W=P>0?Math.round((P-3)*230/10)*10:3350;
+     if(P>0){if(!pr.includes("about "+P+" A4 pages in total"))add(tg+"دێڕی درێژی لاپەڕە هەڵەیە");if(!pr.includes("about "+W+" words"))add(tg+"ژمارەی وشە هەڵەیە");if(!pr.includes("Add exactly "+Math.max(3,Math.min(10,Math.round(P/4)))+" Image"))add(tg+"ژمارەی وێنە هەڵەیە")}
+     else{if(!pr.includes("about 3,350 words in total"))add(tg+"درێژی خۆکار نییە");if(!pr.includes("Add 3 to 5 Image"))add(tg+"ژمارەی وێنەی خۆکار هەڵەیە")}
+     if(/LONG ANSWER RULE/.test(pr)!==(W>4200))add(tg+"یاسای وەڵامی درێژ هەڵەیە");
+     [G.ded,G.ack,G.abs,G.kw,G.ref,G.s2p,G.s2g,...G.c,...G.s1,...G.s4,...G.s5].forEach(x=>{if(!pr.includes(x))add(tg+"بەشی «"+x+"» نییە")});
+     for(let i=0;i<5;i++)if(!pr.includes("## "+(i+1)+". "+G.c[i]))add(tg+"بەشی «## "+(i+1)+". "+G.c[i]+"» نییە")}}
+   if(cnt<1500)add("پرۆمپت: تەنها "+cnt+" حاڵەت تاقی کرایەوە");
+   for(const mode of ["rep","grad"])for(const lang of LG){const a=aiPrompt("Topic",0,lang,.5,"IT",mode),b=aiPrompt("Topic",0,lang,.5,"IT",mode),c=aiPrompt("Topic",0,lang,.9,"IT",mode);
+    if(a!==b)add("["+mode+" · "+LGN[lang]+"] هەمان seed دوو پرۆمپتی جیاواز دەدات");if(a===c)add("["+mode+" · "+LGN[lang]+"] seed جیاواز هەمان پرۆمپت دەدات");
+    const set=new Set();for(let i=0;i<120;i++)set.add(aiPrompt("Topic",0,lang,i/120+.001,"",mode));if(set.size<110)add("["+mode+" · "+LGN[lang]+"] ڤێرژنی جیاواز کەمە ("+set.size+"/120)")}
+   if(aiPrompt("Topic",5,"en",.1,"","rep")===aiPrompt("Topic",5,"en",.1,"","grad"))add("مۆدی ڕاپۆرت و بەحس هەمان پرۆمپتن");
+   const dc=[["Department of IT","IT"],["IT Department","IT"],["Dept. of Computer Science","Computer Science"],["بەشی کۆمپیوتەر","کۆمپیوتەر"],["قسم الحاسوب","الحاسوب"],["  IT   ","IT"],["","" ]];
+   dc.forEach(([a,b])=>{if(deptName(a)!==b)add("deptName(«"+a+"») = «"+deptName(a)+"» نەک «"+b+"»")});
+   if(deptName("x".repeat(100)).length>60)add("deptName درێژییەکەی سنووردار نەکراوە");
+   if(deptLabel("IT","College | Morning")!=="IT Department | Morning")add("deptLabel ی ئینگلیزی هەڵەیە: "+deptLabel("IT","College | Morning"));
+   if(deptLabel("بەشی کۆمپیوتەر","x | y")!=="بەشی کۆمپیوتەر | y")add("deptLabel ی کوردی هەڵەیە: "+deptLabel("بەشی کۆمپیوتەر","x | y"));
+   if(deptLabel("","x")!=="")add("deptLabel ی بەتاڵ هەڵەیە");
+   return fin(out)});
+  await T("پرۆمپت — ڕووکاری یارمەتیدەر (مۆد، زمان، ژمارە، بەش، دوگمەکان)",async()=>{
+   if($("ur"))return true;
+   const out=[],sv={...AIS},sU=URD,lsv={};try{lsv.d=localStorage.getItem("arb_dept");lsv.m=localStorage.getItem("arb_mode")}catch(x){}
+   const cR=p=>Math.min(40,Math.max(1,Math.round(+p))),cG=p=>Math.min(60,Math.max(10,Math.round(+p)));
+   const ev=(el,v)=>{el.value=v;el.dispatchEvent(new Event("input"))};
+   try{openUR();
+    for(const id of ["aiT","aiD","aiN","aiM","aiL","aiC","aiV","aiS","urt","urr","urc","urp","urk"])if(!$(id))out.push("توخمی «"+id+"» لە پەنجەرەی هاوردەکردن نییە");
+    if(out.length)return fin(out);
+    for(const m of ["rep","grad"]){$("aiM").querySelector('[data-m="'+m+'"]').click();
+     if(!$("aiM").querySelector('[data-m="'+m+'"]').classList.contains("on"))out.push("دوگمەی مۆدی "+m+" چالاک نەبوو");
+     if($("aiN").min!==(m==="grad"?"10":"1")||$("aiN").max!==(m==="grad"?"60":"40"))out.push("سنووری ژمارەی لاپەڕە لە مۆدی "+m+" هەڵەیە");
+     for(const l of LG){$("aiL").querySelector('[data-v="'+l+'"]').click();
+      if(!$("aiL").querySelector('[data-v="'+l+'"]').classList.contains("on"))out.push("دوگمەی زمانی "+l+" چالاک نەبوو");
+      for(const n of ["","1","7","25","60"]){const tg="["+m+" · "+LGN[l]+" · "+(n||"auto")+"] ";
+       ev($("aiN"),n);ev($("aiT"),"Test Topic UI");ev($("aiD"),"IT");
+       const v=$("aiV").value;
+       if(!v.includes("Test Topic UI"))out.push(tg+"ناونیشان لە پرۆمپتدا نییە");
+       if(!v.includes(m==="grad"?"GRADUATION RESEARCH":"university lecturer"))out.push(tg+"مۆدی پرۆمپت هەڵەیە");
+       if(!v.includes(l==="ckb"?"Sorani Kurdish":l==="ar"?"Modern Standard Arabic":"formal academic English"))out.push(tg+"زمانی پرۆمپت هەڵەیە");
+       if(!/IT field|"IT" department|the IT department/.test(v))out.push(tg+"بەش لە پرۆمپتدا نییە");
+       if(n){const P=m==="grad"?cG(n):cR(n);if(!v.includes(m==="grad"?"about "+P+" A4 pages in total":"Length: "+P+" A4 page"))out.push(tg+"ژمارەی لاپەڕە لە پرۆمپتدا هەڵەیە")}
+       else if(!v.includes(m==="grad"?"about 3,350 words":"Choose the best length yourself"))out.push(tg+"درێژی خۆکار نییە")}}}
+    ev($("aiT"),"");$("aiC").click();if(!$("aiS").textContent.trim())out.push("بێ ناونیشان: پەیامی «ناونیشان بنووسە» نەهات");
+    ev($("urt"),"");$("urr").click();if(!$("urs").textContent.trim())out.push("دەقی بەتاڵ: پەیامی هەڵە نەهات");
+   }catch(x){out.push("هەڵە: "+(x&&x.message||x))}
+   finally{try{const c=$("urc");if(c&&!URB)c.click();const u=$("ur");if(u)u.remove()}catch(x){}
+    Object.assign(AIS,sv);URD=sU;try{lsv.d==null?localStorage.removeItem("arb_dept"):localStorage.setItem("arb_dept",lsv.d);lsv.m==null?localStorage.removeItem("arb_mode"):localStorage.setItem("arb_mode",lsv.m)}catch(x){}}
+   return fin(out)});
+  /* ---- report: AI text, import, structure ---- */
+  await T("ڕاپۆرت — پاککردنەوە و پارسکردنی دەقی AI، ناسینەوەی زمان",async()=>{const out=[],ck=(n,c,m)=>{if(!c)out.push(n+": "+m)};
+   try{back();S.dir="ltr";
+    const A=cleanAI("```markdown\n# Title\n\n## Intro\nText **bold** here 😀 ✅.\n\n- a\n- b\n```");
+    ck("کۆدبلۆک",!/`{3}/.test(A),"``` ماوەتەوە");ck("بۆڵد",!/\*\*/.test(A),"** ماوەتەوە");ck("ئیمۆجی",!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(A),"ئیمۆجی ماوەتەوە");
+    const M=cleanAI("Energy is $E = mc^2$ and $\\frac{a}{b}$ and \\text{kg} and $$x \\times y$$.");ck("LaTeX",!/\$|\\frac|\\text|\\times/.test(M),"نیشانەی LaTeX ماوەتەوە: "+M.slice(0,50));
+    const I=cleanAI("## A\ntext\n![x](https://example.com/a.jpg)\nhttps://upload.wikimedia.org/x/y.png\n");ck("وێنەی Markdown",(I.match(/^Image: /gm)||[]).length===2,"ببێتە دوو دێڕی Image: "+I.replace(/\n/g," ⏎ "));
+    const C=cleanAI("Sure! Here is your report:\n\n# T\n\n## A\ntext\n\nLet me know if you want changes.");ck("پێشەکی و کۆتایی AI",C.startsWith("# T")&&!/Let me know/.test(C),"نەسڕایەوە");
+    ck("CRLF",!/\r/.test(cleanAI("# T\r\n\r\n## A\r\ntext")),"\\r ماوەتەوە");
+    const R=parseReport("# My Title\n\n## 1. Introduction\nPara one.\n\n### 1.1 Sub\n- a\n- b\n\n1. x\n2. y\n\n| H1 | H2 |\n|---|---|\n| a | b |\n\nImage: wind turbine blade | https://example.com/a.jpg\n\n## References\n- Ref one (2020).");
+    ck("ناونیشانی ڕاپۆرت",R.title==="My Title","«"+R.title+"»");ck("ژمارەی لاپەڕەکان",R.pages.length===2,String(R.pages.length));
+    const t0=R.pages[0]?R.pages[0].blocks.map(b=>b.t):[];["p","h","ul","ol","tbl","img"].forEach(t=>ck("بلۆکی "+t,t0.includes(t),"نەناسرایەوە"));
+    const im=R.pages[0]&&R.pages[0].blocks.find(b=>b.t==="img");ck("Image: وشە | بەستەر",!!im&&im.hint==="wind turbine blade"&&im.url==="https://example.com/a.jpg","hint/url هەڵەیە "+(im?im.hint+"|"+im.url:"نییە"));
+    ck("ژمارەی ناونیشان",R.pages[0]&&R.pages[0].title==="Introduction","«"+(R.pages[0]&&R.pages[0].title)+"»");ck("لاپەڕەی سەرچاوە",!!R.pages[1]&&kindOf(R.pages[1])==="ref","نەناسرایەوە");
+    ck("دەقی بەتاڵ",parseReport("").pages.length===0&&parseReport("  \n\n").pages.length===0,"لاپەڕە دروست دەکات");
+    ck("دەقی بێ Markdown",parseReport("Introduction\nThis is plain text without any markdown headings at all.\nSecond line.").pages.length>=1,"وەرنەگیرا");
+    ck("زمانی کوردی",detectScript("ئەمە ڕاپۆرتێکی تاقیکردنەوەیە بۆ سیستەمی ئەکادیمی")==="ckb","ckb نەناسرایەوە");ck("زمانی عەرەبی",detectScript("هذا تقرير تجريبي للنظام الأكاديمي الحديث جدا")==="ar","ar نەناسرایەوە");ck("زمانی ئینگلیزی",detectScript("This is an English report")===null,"en هەڵە");
+   }finally{back()}
+   return fin(out)});
+  await T("ڕاپۆرت — پەیمانی پرۆمپت و هاوردەکردن (ڕاپۆرت، هەموو ژمارەی لاپەڕەکان)",async()=>{const out=[];
+   const keysR=P=>P===0?["abs","intro","obj","lit","met","main","res","dis","con","rec","ref"]:P<=2?["intro","main","con","ref"]:P<=4?["intro","obj","main","con","ref"]:P<=7?["abs","intro","obj","main","res","con","ref"]:P<=12?["abs","intro","obj","lit","met","main","res","dis","con","ref"]:["abs","intro","obj","lit","met","main","res","dis","con","rec","ref"];
+   for(const lang of LG)for(const P of [0,1,3,6,10,20]){const tg="[ڕاپۆرت · "+LGN[lang]+" · "+(P||"auto")+" لاپەڕە] ";
+    let exp=[],rep=null;
+    const P2=await lay(lang,0,{},()=>{const D=CKD[lang]||CKD.en,N=AISEC[lang],Q=n=>Array.from({length:n},(_,i)=>D[15]+" ("+(i+1)+")").join(" "),m=P===0?3:P<=4?1:P<=7?2:P<=12?3:4,L=["# "+D[0],""];let n=0;
+     keysR(P).forEach(k=>{if(k==="main"){for(let i=1;i<=m;i++){n++;L.push("## "+n+". "+D[1]+" "+i,"",Q(2),"","Image: test subject view "+i,"");exp.push(["ch",null])}}
+      else if(k==="abs"||k==="ref"){L.push("## "+N[k],"",k==="ref"?"- Reference one (2020). Title A.\n- Reference two (2021). Title B.":Q(1),"");exp.push([k,N[k]])}
+      else{n++;L.push("## "+n+". "+N[k],"",Q(2),"");exp.push(["ch",N[k]])}});
+     rep=parseReport(cleanAI("```markdown\n"+L.join("\n")+"\n```"));
+     rep.pages.forEach(g=>{g.blocks=g.blocks.filter(b=>b.t==="img"?!noImg(g):!!(b.text||"").trim())});
+     exp.imgs=rep.pages.flatMap(g=>g.blocks).filter(b=>b.t==="img").length;
+     S.pages=rep.pages;S.info.title=rep.title||S.info.title;RICHSET(lang);S.lot=0});
+    P2.slice(0,2).forEach(m=>out.push(tg+m));
+    if(!rep||rep.pages.length!==exp.length){out.push(tg+"ژمارەی لاپەڕە "+(rep?rep.pages.length:0)+" نەک "+exp.length);continue}
+    rep.pages.forEach((g,i)=>{const k=kindOf(g),[ek,et]=exp[i];if(k!==ek)out.push(tg+"«"+g.title+"» وەک «"+k+"» ناسراوەتەوە نەک «"+ek+"»");else if(et&&dispT(g.title)!==et)out.push(tg+"ناونیشان «"+g.title+"» نەک «"+et+"»")});
+    if(exp.imgs!==(P===0?3:P<=4?1:P<=7?2:P<=12?3:4))out.push(tg+"ژمارەی دێڕی Image هەڵەیە: "+exp.imgs)}
+   return fin(out)});
+  await T("ڕاپۆرت — سەرچاوە و ئاماژەکان (APA / IEEE / Harvard)",async()=>{const out=[];
+   for(const st of ["apa","ieee","harvard"])for(const lang of LG){const tg="["+st+" · "+LGN[lang]+"] ";
+    const P=await lay(lang,0,{citeStyle:st});P.slice(0,2).forEach(m=>out.push(tg+m));
+    const w=await peek();try{const ci=[...w.querySelectorAll(".citation")],rf=w.querySelectorAll(".ref-entry");
+     if(ci.length<2)out.push(tg+"ئاماژەی ناو دەق دروست نەبوو ("+ci.length+")");
+     if(rf.length!==S.refs.length)out.push(tg+"ژمارەی سەرچاوەکان "+rf.length+" نەک "+S.refs.length);
+     if(/\[\[CITE/.test(w.textContent))out.push(tg+"نیشانەی [[CITE]] ماوەتەوە");
+     if(st==="ieee"&&ci.some(c=>!/^\[\d+\]$/.test(c.textContent.trim())))out.push(tg+"ئاماژەی IEEE وەک [١] نییە");
+     if(st!=="ieee"&&ci.some(c=>!/^\(.+\)$/.test(c.textContent.trim())))out.push(tg+"ئاماژەی "+st+" وەک (نووسەر، ساڵ) نییە");
+     ci.forEach(c=>{const id=(c.getAttribute("href")||"").slice(1);if(!id||!w.querySelector('[id="'+id+'"]'))out.push(tg+"ئاماژەیەک بۆ سەرچاوەیەک دەچێت کە نییە")});
+     S.refs.forEach(r=>{if(r.title&&!w.textContent.includes(r.title))out.push(tg+"سەرچاوەی «"+r.title+"» لە لیستدا نییە")})}finally{w.remove()}}
+   return fin(out)});
+  await T("ڕاپۆرت — وێنەکان (هەموو شوێن و قەبارەکان)",async()=>{const out=[];
+   for(const lang of LG){const rt=lang!=="en";
+    const P=await lay(lang,0,{},()=>{const ch=S.pages.find(g=>kindOf(g)==="ch");let k=0;
+     for(const ly of ["top","bottom","left","right"])for(const sz of ["a","s","m","l"]){k++;ch.blocks.push({t:"p",text:"Text before image "+k+". "+(CKD[lang]||CKD.en)[15]},{t:"img",text:"",src:k%2?IA:IB,cap:k%2?(rt?"وێنەی تاقیکردنەوە ":"Test figure ")+k:"",layout:ly,sz,note:k%3?(rt?"تێبینی ":"A note about the image ")+k:""})}});
+    P.slice(0,3).forEach(m=>out.push("[وێنەکان · "+LGN[lang]+"] "+m));
+    const w=await peek();try{const want=allImg().filter(b=>b.src).length,got=w.querySelectorAll(".bd figure").length;if(got!==want)out.push("["+LGN[lang]+"] "+got+" وێنە نیشان دراوە لە "+want)}finally{w.remove()}}
+   return fin(out)});
+  const CS=[["php","<?php\n$a = 1;\necho $a;\n?>"],["html","<!DOCTYPE html>\n<html>\n<body>\n<p class=\"x\">Hi</p>\n</body>\n</html>"],["css","body {\n  color: red;\n}\n.a > p { margin: 0; }"],["js","const a = (x) => x * 2;\nconsole.log(a(3));"],["py","def f(x):\n    return x * 2\nprint(f(3))"],["sql","SELECT id, name\nFROM users\nWHERE id = 1;"],["c","#include <stdio.h>\nint main() {\n  printf(\"hi\");\n  return 0;\n}"],["java","public class A {\n  public static void main(String[] args) {\n    System.out.println(1);\n  }\n}"],["sh","$ sudo apt update\n$ ls -la"],["arduino","void setup() {\n  pinMode(13, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(500);\n}"],["json","{\n  \"a\": 1,\n  \"b\": [1, 2]\n}"]];
+  await T("ڕاپۆرت — کۆد، خشتە، لیست و ناونیشانەکان",async()=>{const out=[];
+   try{for(const [lg,code] of CS)for(const hl of [1,0]){back();S.hlc=hl;const L=hlLines(code,"");
+    if(hlDetect(code,"")!==lg)out.push("کۆدی "+lg+": بە هەڵە وەک «"+hlDetect(code,"")+"» ناسرایەوە");
+    if(!Array.isArray(L)||L.length!==code.split("\n").length)out.push("کۆدی "+lg+": ژمارەی دێڕ گۆڕاوە");
+    else if(dom(L.join("\n")).textContent!==code)out.push("کۆدی "+lg+" (ڕەنگ="+hl+"): دەقەکە گۆڕاوە")}}finally{back()}
+   for(const lang of LG){const tg="["+LGN[lang]+"] ";
+    const P=await lay(lang,0,{},()=>{const ch=S.pages.find(g=>kindOf(g)==="ch");
+     CS.forEach(([lg,code])=>ch.blocks.push({t:"p",text:"Example "+lg+":"},{t:"code",text:code}));
+     ch.blocks.push({t:"tbl",text:"A | B | C | D | E | F | G | H\n"+Array.from({length:5},(_,i)=>Array.from({length:8},(_,j)=>"cell "+i+j+" text").join(" | ")).join("\n"),cap:"Wide table"},
+      {t:"p",text:"Supercalifragilisticexpialidocious".repeat(6)+" https://example.com/"+"a".repeat(110)},{t:"ol",text:Array.from({length:12},(_,i)=>"Item number "+(i+1)).join("\n")},{t:"ul",text:"One\nTwo\nThree"},
+      {t:"h",text:"Forced new page heading",lv:2,newPage:true},{t:"p",text:"After the new page."},{t:"h",text:"Level three deep",lv:3},{t:"p",text:"Level three text."})});
+    P.slice(0,3).forEach(m=>out.push(tg+m));
+    const w=await peek();try{const h=[...w.querySelectorAll(".bd h2")].find(x=>x.textContent.includes("Forced new page heading"));if(!h)out.push(tg+"ناونیشانی لاپەڕەی نوێ نەدۆزرایەوە");else if(h.closest(".bd").firstElementChild!==h)out.push(tg+"ناونیشان لە سەرەتای لاپەڕەی نوێ نییە");
+     if(w.querySelectorAll("pre").length<CS.length)out.push(tg+"بلۆکی کۆد کەمە")}finally{w.remove()}}
+   return fin(out)});
+  await T("ڕاپۆرت — نموونە و یارمەتی (هەموو زمانەکان)",async()=>{const out=[];
+   for(const l of LG){const H=HELP[l];if(!H||!H.h||!Array.isArray(H.s)||H.s.length<3||H.s.some(x=>!x[0]||!x[1])||!H.tip)out.push("یارمەتی "+LGN[l]+" تەواو نییە");
+    const ex=EXAMPLE[l];if(!ex||ex.length<200){out.push("نموونەی "+LGN[l]+" نییە یان بەتاڵە");continue}
+    const P=await lay(l,0,{},()=>{const r=parseReport(cleanAI(ex));S.pages=r.pages;S.info.title=r.title||S.info.title;RICHSET(l)});P.slice(0,2).forEach(m=>out.push("[نموونە · "+LGN[l]+"] "+m));
+    back();richSetup(l,0);const r=parseReport(cleanAI(ex));if(!r.title)out.push("نموونەی "+LGN[l]+": ناونیشان نییە");if(r.pages.length<3)out.push("نموونەی "+LGN[l]+": تەنها "+r.pages.length+" لاپەڕە");if(!r.pages.some(g=>kindOf(g)==="ref"))out.push("نموونەی "+LGN[l]+": سەرچاوەکان نەناسرانەوە")}
+   back();return fin(out)});
+  await T("ڕاپۆرت — هەڵگرتن و گەڕانەوە (localStorage)",async()=>{const out=[];let raw=null;try{raw=localStorage.getItem(KEY)}catch(x){return "localStorage کار ناکات"}
+   try{back();richSetup("ckb",0);localStorage.setItem(KEY,JSON.stringify(S));const L=load();
+    if(L.pages.length!==S.pages.length)out.push("ژمارەی لاپەڕە دوای گەڕانەوە "+L.pages.length+" نەک "+S.pages.length);if(L.info.title!==S.info.title)out.push("ناونیشان دوای گەڕانەوە گۆڕاوە");if((L.refs||[]).length!==S.refs.length)out.push("سەرچاوەکان دوای گەڕانەوە گۆڕاون");if(L.logo!==S.logo)out.push("لۆگۆ دوای گەڕانەوە گۆڕاوە");if(L.dir!==S.dir)out.push("ئاڕاستە دوای گەڕانەوە گۆڕاوە");
+    const nI=S.pages.flatMap(g=>g.blocks).filter(b=>b.t==="img"&&b.src).length,nL=L.pages.flatMap(g=>g.blocks).filter(b=>b.t==="img"&&b.src).length;if(nI!==nL)out.push("وێنەکان دوای گەڕانەوە "+nL+" نەک "+nI);
+    localStorage.setItem(KEY,"{bad json");const L2=load();if(!L2||!L2.pages||!L2.pages.length||!L2.info)out.push("داتای تێکچوو: seed نەگەڕایەوە");
+    localStorage.setItem(KEY,JSON.stringify({info:{s1:"A",s2:"B",s3:"",title:"T"},pages:[{title:"x",blocks:[{t:"p",text:"y"}]}]}));const L3=load();if(!L3.info||JSON.stringify(L3.info.students)!==JSON.stringify(["A","B"]))out.push("داتای کۆن: خوێندکارەکان وەرنەگیران");
+   }catch(x){out.push("هەڵە: "+(x&&x.message||x))}
+   finally{try{raw==null?localStorage.removeItem(KEY):localStorage.setItem(KEY,raw)}catch(x){}back()}
+   return fin(out)});
+  /* ---- graduation research ---- */
+  const GRADIN=lang=>parseReport(cleanAI("```markdown\n"+GRADTXT(lang)+"\n```"));
+  await T("بەحسی دەرچوون — ناسینەوەی پێکهاتە (٣ زمان)",async()=>{const out=[];
+   for(const lang of LG){const G=AIG[lang],tg="["+LGN[lang]+"] ";back();richSetup(lang,0);const rep=GRADIN(lang),pg=rep.pages,ks=pg.map(g=>kindOf(g));
+    if(pg.length!==9)out.push(tg+"ژمارەی بەشەکان "+pg.length+" نەک ٩");
+    const want=["ack","ack","abs","ch","ch","ch","ch","ch","ref"];if(ks.join(",")!==want.join(","))out.push(tg+"جۆری بەشەکان: "+ks.join(",")+" نەک "+want.join(","));
+    [G.c.map(dispT)].flat().forEach((t,i)=>{const g=pg[3+i];if(g&&dispT(g.title)!==t)out.push(tg+"ناونیشانی بابەتی "+(i+1)+" «"+g.title+"» نەک «"+t+"»")});
+    const hc=pg.map(g=>g.blocks.filter(b=>b.t==="h").length),wh=[0,0,0,G.s1.length,4,3,3,3,0];if(hc.join(",")!==wh.join(","))out.push(tg+"ژمارەی ناونیشانە لاوەکییەکان: "+hc.join(",")+" نەک "+wh.join(","));
+    const ab=pg[2]&&pg[2].blocks.map(b=>b.text||"").join(" ");if(!ab||!ab.includes(G.kw))out.push(tg+"وشە سەرەکییەکان لە کورتەدا نییە");
+    const tb=pg[6]&&pg[6].blocks.find(b=>b.t==="tbl");if(!tb)out.push(tg+"خشتەی بابەتی ٤ نەناسرایەوە")}
+   back();return fin(out)});
+  await T("بەحسی دەرچوون — دیزاین و لاپەڕەکان (٣ زمان، هەموو ڕێکخستنەکان)",async()=>{const out=[];
+   const VG=[{},{pn:"arabic",notoc:1,hf:0,keepSec:0},{ls:2,al:"left",h1:20,h2:16,h3:14,cvs:"l"},{lof:0,lot:0,lineOn:false,hlc:0,cvs:"s",citeStyle:"ieee",tocfs:14},{font:"Georgia",color:"#7a1f2b"},{font:"Amiri",color:"#1f5c4a",tocfs:11}];
+   for(const lang of LG)for(let vi=0;vi<VG.length;vi++){const G=AIG[lang],tg="["+LGN[lang]+" · جۆر "+(vi+1)+"] ";
+    const P=await lay(lang,1,VG[vi],()=>{const rep=GRADIN(lang);rep.pages.forEach(g=>{const k=kindOf(g);if(k==="ch"||k==="ref")g.startNewPage=true});S.pages=rep.pages;S.info.title=rep.title||S.info.title;RICHSET(lang);S.gr=1;S.info.sub=lang==="ckb"?"توێژینەوەی دەرچوون":lang==="ar"?"بحث التخرج":"Graduation Research"});
+    P.slice(0,2).forEach(m=>out.push(tg+m));
+    const w=await peek();try{
+     G.c.forEach(c=>{const h=[...w.querySelectorAll(".bd h1.sh")].find(x=>x.textContent.includes(c));if(!h)out.push(tg+"بابەتی «"+c+"» لە لاپەڕەکاندا نییە");else if(h.closest(".bd").firstElementChild!==h)out.push(tg+"بابەتی «"+c+"» لە لاپەڕەی نوێ دەست پێناکات")});
+     if(!S.notoc){const tl=[...w.querySelectorAll(".tr .tl")].map(x=>x.textContent);[...G.c,...G.s1,...G.s4,...G.s5,G.s2p,G.s2g,G.ref].forEach(t=>{if(!tl.some(x=>x.includes(t)))out.push(tg+"«"+t+"» لە ناوەڕۆکدا نییە")})}
+     const nums=[...w.querySelectorAll(".tr.l1 .tl")].map(x=>x.textContent.trim().match(/^[\d٠-٩]+/));if(!S.notoc&&nums.filter(Boolean).length<5)out.push(tg+"ژمارەی بابەتەکان لە ناوەڕۆکدا کەمە")}finally{w.remove()}}
+   back();return fin(out)});
+  await T("بەحسی دەرچوون — پەنجەرەی کۆد و پشکنینی کۆدەکان",async()=>{const out=[],oU=UIL,sg=S.gr,old=document.getElementById("dlg");if(old)old.remove();
+   try{for(const l of LG){UIL=l;const txt={};for(const g of [0,1]){S.gr=g;gate(()=>{});const d=document.getElementById("dlg");if(!d){out.push(LGN[l]+": پەنجەرەی کۆد نەکرایەوە");continue}
+      txt[g]=d.querySelector("p.d").textContent;const bt=[...d.querySelectorAll("h3,button,input")].map(x=>(x.textContent||x.placeholder||"").trim());if(bt.some(x=>!x||/undefined/.test(x)))out.push(LGN[l]+": نووسینی پەنجەرەی کۆد بەتاڵە");d.remove()}
+     if(txt[0]&&txt[1]&&txt[0]===txt[1])out.push(LGN[l]+": پەیامی کۆدی بەحس لەگەڵ ڕاپۆرت یەکە");if(txt[1]&&txt[1]!==(GD[l]||GD.en))out.push(LGN[l]+": پەیامی کۆدی بەحس هەڵەیە")}
+    let ks=null;try{ks=localStorage.getItem("arb_gate_style")}catch(x){}
+    try{UIL="en";S.gr=0;const vs=[];for(let i=0;i<24;i++){gate(()=>{});const d=document.getElementById("dlg");if(!d){out.push("کارتی کۆد: پەنجەرە نەکرایەوە");break}
+     if(d.querySelectorAll(".sv").length!==4)out.push("کارتی کۆد: ٤ دوگمەی گۆڕین نییە");vs.push(+d.querySelector(".dc").dataset.v);
+     if(i===0)for(let k=0;k<4;k++){d.querySelector('.sv[data-v="'+k+'"]').click();if(d.querySelector(".dc").dataset.v!==String(k))out.push("کارتی کۆد: گۆڕینی دەستی بۆ "+(k+1)+" کار ناکات")}
+     d.remove()}
+     if(new Set(vs).size<3)out.push("کارتی کۆد ڕاندۆم نییە ("+[...new Set(vs)].length+" جۆر)");if(vs.some((x,i)=>i&&x===vs[i-1]))out.push("کارتی کۆد دووبارە بووەوە")}
+    finally{try{ks==null?localStorage.removeItem("arb_gate_style"):localStorage.setItem("arb_gate_style",ks)}catch(x){}}}
+   finally{UIL=oU;S.gr=sg;const d=document.getElementById("dlg");if(d)d.remove()}
+   return fin(out)});
+  /* ---- server ---- */
+  await T("سێرڤەر — هەموو فەنکشنەکانی Supabase (دروستکردن، ڕاگرتن، سڕینەوە)",async()=>{const out=[];
+   const x1=await rpc("admin_code_log",{p_pw:pw});if(!(x1.ok&&Array.isArray(x1.items)))out.push("admin_code_log: "+(x1.error||"کار ناکات"));
+   const x2=await rpc("admin_meta_get",{p_pw:pw});if(!x2.ok)out.push("admin_meta_get: "+(x2.error||"کار ناکات"));
+   const x3=await rpc("admin_error_list",{p_pw:pw});if(!(x3.ok&&Array.isArray(x3.items)))out.push("admin_error_list: SQL ـی هەڵەکان جێبەجێ نەکراوە");
+   const inList=async(kind,label)=>{if(kind==="g"||kind==="gm"){const g=await rpc("admin_grad_list",{p_pw:pw});return !!(g.ok&&(g.items||[]).some(c=>c.label===label))}const s=await rpc("admin_stats",{p_pw:pw});return !!(s.ok&&((kind==="m"?s.codes:s.singles)||[]).some(c=>c.label===label))};
+   const cyc=async(name,make,del,kind,rev)=>{let code=null;
+    try{const m=await make();code=m.code||(Array.isArray(m.codes)&&m.codes[0])||null;if(!code){out.push(name+": دروست نەکرا ("+(m.error||"?")+")");return}
+     if(!await inList(kind,code))out.push(name+": دوای دروستکردن لە لیستەکەدا نەبینرا");
+     if(rev){const a=await rpc(rev,{p_pw:pw,p_label:code,p_revoked:true});if(!a.ok)out.push(name+": ڕاگرتن کار ناکات ("+rev+")");const b=await rpc(rev,{p_pw:pw,p_label:code,p_revoked:false});if(!b.ok)out.push(name+": چالاککردنەوە کار ناکات ("+rev+")")}}
+    catch(x){out.push(name+": "+(x&&x.message||x))}
+    finally{if(code){const d=await del(code);if(!d||!d.ok)out.push(name+": کۆدی تاقیکردنەوە نەسڕایەوە، دەستی بیسڕەوە: "+code);else if(await inList(kind,code))out.push(name+": سڕینەوە کار ناکات")}}};
+   await cyc("کۆدی مانگانە",()=>rpc("admin_make_code",{p_pw:pw,p_days:1}),c=>rpc("admin_delete_code",{p_pw:pw,p_type:"month",p_label:c}),"m","admin_set_revoked");
+   await cyc("کۆدی ڕاپۆرتی یەکجار",()=>rpc("admin_make_single",{p_pw:pw,p_count:1,p_days:1}),c=>rpc("admin_delete_code",{p_pw:pw,p_type:"single",p_label:c}),"s",null);
+   await cyc("کۆدی بەحسی دەرچوون (یەکجار)",()=>rpc("admin_make_grad",{p_pw:pw,p_count:1,p_days:1}),c=>rpc("admin_delete_grad",{p_pw:pw,p_label:c}),"g",null);
+   await cyc("کۆدی بەحسی دەرچوون (مانگانە)",()=>rpc("admin_make_grad_month",{p_pw:pw,p_days:1}),c=>rpc("admin_delete_grad",{p_pw:pw,p_label:c}),"gm","admin_set_grad_revoked");
+   return fin(out)});
+  await T("وێنە — خزمەتگوزارییەکانی گەڕانی وێنە (Commons / Wikipedia / Openverse)",async()=>{const out=[],to=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error("کاتی تەواو بوو")),ms))]);
+   for(const [n,f] of [["Wikimedia Commons",candCommons],["Wikipedia",candWikipedia],["Openverse",candOpenverse]]){try{const r=await to(f("computer"),9000);if(!Array.isArray(r)||!r.length)out.push(n+": هیچ ئەنجامێک نەگەڕایەوە")}catch(x){out.push(n+": "+(x&&x.message||"کار ناکات"))}}
+   return fin(out)});
  }finally{console.warn=cw;back()}};
 const runCheck=async()=>{if(CHKB)return;CHKB=true;CHK=[];render();
  const H=window.__chk,add=(n,ok,m,ms)=>{CHK.push({n,ok,m,ms});const el=box.querySelector("#chk");if(el)el.innerHTML=chkH()};
@@ -2265,12 +2630,13 @@ const runCheck=async()=>{if(CHKB)return;CHKB=true;CHK=[];render();
  await T("تۆمارکردنی هەڵەکان",async()=>{const x=await rpc("log_app_error",{p_msg:"ping",p_where:"check",p_stack:"",p_device:"",p_ver:APPV,p_url:""});return x.ok?true:"log_app_error: "+(x.error||"?")});
  if(!H||typeof S==="undefined")add("PDF / Word",false,"فەنکشنەکان نەدۆزرانەوە");
  else{const snap=JSON.stringify(S);try{localStorage.setItem("adm-chk-backup",snap)}catch(x){}
-  const setup=(lang,grad)=>{const rtl=lang!=="en";S.dir=rtl?"rtl":"ltr";if(rtl)S.rlang=lang;const rep=parseReport(cleanAI(RICHTXT(lang)));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;RICHSET(lang);if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rtl?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub=""};
+  const setup=(lang,grad,opts)=>{const rtl=lang!=="en";S.dir=rtl?"rtl":"ltr";if(rtl)S.rlang=lang;const rep=parseReport(cleanAI(grad===2?GRADTXT(lang):RICHTXT(lang)));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;RICHSET(lang);if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rtl?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub="";if(grad===2)S.gr=1;if(opts)Object.assign(S,opts)};
+  const XO={A:{pn:"arabic",notoc:1,hf:0,keepSec:0,hlc:0,lof:0,lot:0,ls:2,al:"left",h1:20,h2:16,h3:14,cvs:"l",color:"#7a1f2b",lineOn:false,font:"Georgia",citeStyle:"ieee"},B:{pn:"roman",ls:1.15,al:"left",h1:14,h2:12,h3:11,cvs:"s",tocfs:11,color:"#1f5c4a",lineOn:true,lineColor:"#ff8800",font:"Amiri",citeStyle:"harvard"},C:{pn:"arabic",keepSec:0,ls:1.5,h1:18,cvs:"l",tocfs:13,color:"#5b2a86",font:"Cairo",hlc:0}};
   const exp=async kind=>{window.__dlc=[];let al=null;const oa=window.alert;window.alert=m=>{al=String(m)};window.__lastErr=null;try{await(kind==="pdf"?H.pdf():H.docx())}catch(x){al=al||String(x&&x.message||x)}finally{window.alert=oa}
    const it=window.__dlc||[];window.__dlc=null;if(al)return al.replace(/\s+/g," ")+(window.__lastErr?" — "+window.__lastErr.m:"");
    const f=it.find(i=>kind==="pdf"?/\.pdf$/i.test(i.name):/\.docx$/i.test(i.name));if(!(f&&f.blob&&f.blob.size>1500))return "فایلەکە بەتاڵە یان دروست نەبوو";const vb=await verifyOut(kind,f.blob);return vb===true?(window.__lastErr?"هەڵەی ناوەکی: "+window.__lastErr.m:true):vb};
-  try{await extraCheck(T,add);for(const z of [["PDF — ئینگلیزی","en","pdf",0],["Word — ئینگلیزی","en","docx",0],["PDF — کوردی (ڕاست-بۆ-چەپ)","ckb","pdf",0],["Word — کوردی (ڕاست-بۆ-چەپ)","ckb","docx",0],["PDF — بەحسی دەرچوون","ckb","pdf",1],["Word — بەحسی دەرچوون","ckb","docx",1],["PDF — عەرەبی (ڕاست-بۆ-چەپ)","ar","pdf",0],["Word — عەرەبی (ڕاست-بۆ-چەپ)","ar","docx",0]])
-    await T(z[0],async()=>{setup(z[1],z[3]);await tickP(50);return await exp(z[2])})}
+  try{await extraCheck(T,add);for(const z of [["PDF — ئینگلیزی","en","pdf",0],["Word — ئینگلیزی","en","docx",0],["PDF — کوردی (ڕاست-بۆ-چەپ)","ckb","pdf",0],["Word — کوردی (ڕاست-بۆ-چەپ)","ckb","docx",0],["PDF — بەحسی دەرچوون","ckb","pdf",1],["Word — بەحسی دەرچوون","ckb","docx",1],["PDF — عەرەبی (ڕاست-بۆ-چەپ)","ar","pdf",0],["Word — عەرەبی (ڕاست-بۆ-چەپ)","ar","docx",0],["PDF — بەحسی دەرچوون (پێکهاتەی ڕاستەقینە · کوردی)","ckb","pdf",2],["Word — بەحسی دەرچوون (پێکهاتەی ڕاستەقینە · کوردی)","ckb","docx",2],["PDF — بەحسی دەرچوون (ئینگلیزی)","en","pdf",2],["Word — بەحسی دەرچوون (ئینگلیزی)","en","docx",2],["PDF — بەحسی دەرچوون (عەرەبی)","ar","pdf",2],["Word — بەحسی دەرچوون (عەرەبی)","ar","docx",2],["PDF — ڕێکخستنی جیاواز (ئینگلیزی)","en","pdf",0,XO.A],["Word — ڕێکخستنی جیاواز (ئینگلیزی)","en","docx",0,XO.A],["PDF — ڕێکخستنی جیاواز (کوردی)","ckb","pdf",0,XO.B],["Word — ڕێکخستنی جیاواز (کوردی)","ckb","docx",0,XO.B],["PDF — ڕێکخستنی جیاواز (عەرەبی)","ar","pdf",0,XO.C],["Word — ڕێکخستنی جیاواز (عەرەبی)","ar","docx",0,XO.C]])
+    await T(z[0],async()=>{setup(z[1],z[3],z[4]);await tickP(50);return await exp(z[2])})}
   finally{for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(snap));try{localStorage.removeItem("adm-chk-backup")}catch(x){}try{save()}catch(x){}}}
  CHKB=false;render()};
 const isM=()=>tab==="t"||tab==="gt";
