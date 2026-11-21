@@ -2145,6 +2145,116 @@ const errH=()=>{if(ERR===null)return `<div class="pn"><div class="ph"><h4>هەڵ
  return `<div class="pn"><div class="ph"><h4>هەڵەکان</h4><small>${ERR.length} تۆمار</small></div>`+(G.length?`<div class="hl">${G.slice(0,15).map((g,i)=>`<button class="hi ar" data-a="errcp" data-i="${i}"><span class="hc">${I.copy}</span><div><b dir="auto">${X(g.msg.slice(0,140))}</b><small>${X(g.src)} • ${g.n} جار • <bdi>${ft(g.last)}</bdi></small></div></button>`).join("")}</div><p class="sub" style="margin:0">لەسەر هەر هەڵەیەک دابگرە بۆ کۆپیکردنی وردەکاری، و بیدە بە ئەی ئای.</p><button class="b dg" data-a="errclr">${I.trash}<span>سڕینەوەی هەموو هەڵەکان</span></button>`:`<div class="ok-n">${I.check} هیچ هەڵەیەک تۆمار نەکراوە</div>`)+`</div>`};
 const chkH=()=>{const rows=(CHK||[]).map(r=>`<div class="kv"><span>${r.ok?"✅":"❌"} ${X(r.n)}</span><b dir="auto">${r.ok?(r.ms!=null?(r.ms/1000).toFixed(1)+"s":"باشە"):X(r.m||"هەڵە")}</b></div>`).join(""),done=CHK&&!CHKB,bad=(CHK||[]).filter(r=>!r.ok).length;
  return `<div class="pn"><div class="ph"><h4>پشکنینی سیستەم</h4></div><p class="sub" style="margin:0">ڕاپۆرتێکی نموونە دروست دەکات و PDF و Word و کۆدەکان تاقی دەکاتەوە. ڕاپۆرتەکەی ئێستات ناگۆڕێت.</p>${rows?`<div>${rows}</div>`:""}${done?`<div class="sm" style="color:var(--${bad?"ex":"ok"})">${bad?bad+" کێشە دۆزرایەوە":"هەموو شتێک دروستە ✓"}</div>`:""}<button class="b p" data-a="chk"${CHKB?" disabled":""}>${I.play}<span>${CHKB?"پشکنین…":"دەستپێکردنی پشکنین"}</span></button>${done&&bad?`<button class="b" data-a="chkcp">${I.copy}<span>کۆپی ئەنجام</span></button>`:""}</div>`};
+/* ===== پشکنینی تەواوی سیستەم: پارسەر، ڕووکار، دیزاین، لۆجیک، Word/PDF ===== */
+const CKD={
+en:["Computer Networks","Abstract","Introduction","Types of Networks","Code Samples","Conclusion","References","Device","Function","Router","Switch","Access point","Connects networks","Connects devices","Wireless access","A network connects several devices so that they can share data and resources across rooms, buildings and cities, and it needs careful planning, testing and documentation to stay reliable for every user."],
+ckb:["تۆڕی کۆمپیوتەر","کورتە","پێشەکی","جۆرەکانی تۆڕ","نموونەی کۆد","دەرئەنجام","سەرچاوەکان","ئامێر","ئەرک","ڕاوتەر","سویچ","ئەکسێس پۆینت","تۆڕەکان دەبەستێتەوە","ئامێرەکان دەبەستێتەوە","پەیوەندی بێتەل","تۆڕ چەند ئامێرێک بەیەکەوە دەبەستێتەوە بۆ ئەوەی داتا و سەرچاوەکان لە ژوور و باڵەخانە و شارەکاندا هاوبەش بکەن، و پێویستی بە پلاندانان و تاقیکردنەوەی وردە هەیە بۆ ئەوەی بۆ هەموو بەکارهێنەرێک متمانەپێکراو بێت."],
+ar:["شبكات الحاسوب","الملخص","المقدمة","أنواع الشبكات","نماذج برمجية","الخاتمة","المراجع","الجهاز","الوظيفة","الموجّه","المحوّل","نقطة الوصول","يربط الشبكات","يربط الأجهزة","اتصال لاسلكي","تربط الشبكة عدة أجهزة لتشارك البيانات والموارد عبر الغرف والمباني والمدن، وتحتاج إلى تخطيط واختبار وتوثيق دقيق لتبقى موثوقة لكل مستخدم."]};
+const RICHTXT=l=>{const D=CKD[l]||CKD.en,F="\x60\x60\x60",K=[0],P=n=>Array.from({length:n},()=>D[15]+" ("+(++K[0])+")").join(" "),U="https://example.com/networks/test-page-number-one";
+ const tb=["| "+D[7]+" | "+D[8]+" | # |","|---|---|---|"];for(let i=1;i<=14;i++)tb.push("| "+D[9+i%3]+" "+i+" | "+D[12+i%3]+" | "+i+" |");
+ const php=["<?php","$total = 0;"];for(let i=1;i<=34;i++)php.push("$total += $i * "+i+"; // step "+i);php.push("echo $total;","?>");
+ const sql=["SELECT id, name","FROM devices","WHERE status = 'active'","ORDER BY name;"];
+ return ["# "+D[0],"","## "+D[1],P(2),"","## 1. "+D[2],P(4)+" ("+U+")","",P(4),"","## 2. "+D[3],P(2),"","### 2.1 "+D[9],"- "+D[9]+": "+D[12],"- "+D[10]+": "+D[13],"- "+D[11]+": "+D[14],"","1. "+D[12],"2. "+D[13],"3. "+D[14],"",...tb,"","### 2.2 "+D[4],F+"php",...php,F,"",F+"sql",...sql,F,"",P(3),"","## 3. "+D[5],P(2),"","## "+D[6],"- Tanenbaum, A. S., & Wetherall, D. J. (2011). Computer Networks (5th ed.). Pearson.","- Kurose, J. F., & Ross, K. W. (2021). Computer Networking. Pearson."].join("\n")};
+const ckImg=(t,w,h,a,b)=>{const c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");g.fillStyle=a;g.fillRect(0,0,w,h);g.fillStyle=b;g.fillRect(w/4,h/4,w/2,h/2);return c.toDataURL(t,.85)};
+const RICHSET=l=>{const rt=l!=="en",A=ckImg("image/png",640,400,"#143a7b","#d8bb74"),B=ckImg("image/jpeg",800,300,"#2d6a4f","#f4a261");
+ S.lof=1;S.lot=1;S.logo=ckImg("image/png",160,160,"#7a1f1f","#ffffff");S.citeStyle="apa";
+ S.refs=[{id:"ck1",author:"Tanenbaum, A. S.",year:"2011",title:"Computer Networks",source:"",volume:"",issue:"",pages:"",publisher:"Pearson",url:"https://doi.org/10.1000/test"},{id:"ck2",author:rt?"محمد، ع.":"Kurose, J. F.",year:"2021",title:"Computer Networking",source:"Journal of Testing",volume:"8",issue:"2",pages:"10-20",publisher:"Pearson",url:""}];
+ S.info.students=rt?["ئارام محمد","سارا ئەحمەد","دلێر کەریم"]:["Student One","Student Two","Student Three"];S.info.course="Networks";S.info.year="2026-2027";
+ const ch=S.pages.find(g=>kindOf(g)==="ch");
+ if(ch){const p=ch.blocks.find(b=>b.t==="p");if(p)p.text+=" [[CITE:ck1]] [[CITE:ck2]]";
+  ch.blocks.push({t:"img",text:"",src:A,cap:rt?"وێنەی تاقیکردنەوە یەکەم":"Test figure one",layout:"top",sz:"m"},{t:"img",text:"",src:B,cap:rt?"وێنەی تاقیکردنەوە دووەم":"Test figure two",layout:"left",sz:"s",note:rt?"تێبینی لەتەنیشت وێنەکە.":"A note beside the image."},{t:"img",text:"",src:A,cap:"",layout:"right",sz:"l",note:rt?"تێبینییەکی تر.":"Another note."})}};
+const richSetup=(lang,grad)=>{const rt=lang!=="en";S.dir=rt?"rtl":"ltr";if(rt)S.rlang=lang;const rep=parseReport(cleanAI(RICHTXT(lang)));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;RICHSET(lang);if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rt?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub=""};
+const ckZip=u=>{const dv=new DataView(u.buffer,u.byteOffset,u.byteLength);let p=u.length-22;while(p>=0&&dv.getUint32(p,true)!==0x06054b50)p--;if(p<0)return null;const n=dv.getUint16(p+10,true),dec=new TextDecoder(),out={};let o=dv.getUint32(p+16,true);
+ for(let i=0;i<n;i++){if(dv.getUint32(o,true)!==0x02014b50)return null;const crc=dv.getUint32(o+16,true),sz=dv.getUint32(o+24,true),nl=dv.getUint16(o+28,true),xl=dv.getUint16(o+30,true),cl=dv.getUint16(o+32,true),lo=dv.getUint32(o+42,true),nm=dec.decode(u.subarray(o+46,o+46+nl)),st=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),d=u.subarray(st,st+sz);out[nm]={d,ok:crc32(d)===crc};o+=46+nl+xl+cl}return out};
+const verifyOut=async(kind,blob)=>{try{const u=new Uint8Array(await blob.arrayBuffer());
+ if(kind==="pdf"){const s=new TextDecoder("latin1").decode(u);if(s.slice(0,5)!=="%PDF-")return "فایلی PDF دروست نییە";
+  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);let want=0;try{await fontLoad();await imgPend();build(w);want=w.querySelectorAll(".page").length}finally{w.remove()}
+  const got=(s.match(/\/Type\s*\/Page[^s]/g)||[]).length;return got===want?true:"ژمارەی لاپەڕەی PDF ("+got+") وەک ڕاپۆرتەکە نییە ("+want+")"}
+ const z=ckZip(u);if(!z)return "فایلی Word زیپەکەی تێکچووە";
+ const bad=[],need=["[Content_Types].xml","_rels/.rels","word/document.xml","word/_rels/document.xml.rels","word/styles.xml"];need.forEach(n=>{if(!z[n])bad.push("نییە: "+n)});
+ Object.keys(z).forEach(n=>{if(!z[n].ok)bad.push("CRC: "+n);if(/\.(xml|rels)$/.test(n)){const x=new DOMParser().parseFromString(new TextDecoder().decode(z[n].d),"application/xml");if(x.querySelector("parsererror"))bad.push("XML هەڵەیە: "+n)}});
+ if(bad.length)return bad.slice(0,3).join(" • ");
+ const dx=new TextDecoder().decode(z["word/document.xml"].d),rl=new TextDecoder().decode(z["word/_rels/document.xml.rels"].d),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ const ids=[...dx.matchAll(/r:(?:embed|id)="(rId\d+)"/g)].map(m=>m[1]);for(const id of new Set(ids)){const m=rl.match(new RegExp('Id="'+id+'"[^>]*?Target="([^"]+)"'))||rl.match(new RegExp('Target="([^"]+)"[^>]*?Id="'+id+'"'));if(!m)return "Word: بەستەری "+id+" نییە";if(/^media\//.test(m[1])&&!z["word/"+m[1]])return "Word: وێنەی "+m[1]+" نییە"}
+ const imgs=S.pages.reduce((a,g)=>a+g.blocks.filter(b=>b.t==="img"&&b.src).length,0)+(S.logo?1:0),dr=(dx.match(/<w:drawing>/g)||[]).length;if(dr<imgs)return "Word: "+dr+" وێنە لە "+imgs;
+ const tbl=S.pages.reduce((a,g)=>a+g.blocks.filter(b=>b.t==="tbl"&&String(b.text||"").trim()).length,0);if((dx.match(/<w:tbl>/g)||[]).length<tbl)return "Word: خشتە کەمە";
+ if(S.dir==="rtl"&&!/<w:bidi/.test(dx))return "Word: ڕاست-بۆ-چەپ دانەنراوە";
+ const tx=dx.replace(/<[^>]+>/g,"");if(!tx.includes(esc(S.info.title)))return "Word: ناونیشانی ڕاپۆرت نییە";
+ const lost=S.pages.map(g=>dispT(g.title)).filter(t=>t&&!tx.includes(esc(t)));if(lost.length)return "Word: ناونیشان ونبووە: "+lost.slice(0,2).join(" / ");
+ const cd=S.pages.flatMap(g=>g.blocks).find(b=>b.t==="code");if(cd){const ln=String(cd.text).split("\n").find(x=>x.trim().length>4);if(ln&&!tx.includes(esc(ln.trim().slice(0,12))))return "Word: کۆد ونبووە"}
+ return true}catch(x){return "پشکنینی فایل: "+(x&&x.message||x)}};
+const extraCheck=async(T,add)=>{
+ const snap=JSON.stringify(S),oldCur=curP,oldTab=contentTab,cw=console.warn;
+ const back=()=>{for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(snap));curP=oldCur;contentTab=oldTab;try{applyCol()}catch(x){}};
+ const ZW=/[\s\u200b-\u200f\u202a-\u202e\u2063\u2066-\u2069]/g,WS=s=>String(s==null?"":s).replace(ZW,"");
+ const roman=n=>{let s="";[[10,"x"],[9,"ix"],[5,"v"],[4,"iv"],[1,"i"]].forEach(([v,r])=>{while(n>=v){s+=r;n-=v}});return s};
+ const lay=async(lang,grad,opts)=>{back();richSetup(lang,grad);Object.assign(S,opts||{});
+  const P=[],bad=m=>{if(!P.includes(m))P.push(m)},warns=[];console.warn=(...a)=>{warns.push(a.map(String).join(" "))};
+  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
+  try{await fontLoad();await imgPend();build(w);await Promise.all([...w.querySelectorAll("img")].map(m=>m.decode().catch(()=>{})));
+   const pg=[...w.querySelectorAll(".page")],rt=S.dir==="rtl",rc=el=>el.getBoundingClientRect();
+   if(!pg.length){bad("هیچ لاپەڕەیەک دروست نەبوو");return P}
+   if(pg.length>45)bad(pg.length+" لاپەڕە (زۆرە)");
+   const cv=pg[0].querySelector(".cv");
+   if(!cv)bad("بەرگ نییە");else{const pr=rc(pg[0]),h1=cv.querySelector("h1");
+    if(!h1||h1.textContent!==S.info.title)bad("بەرگ: ناونیشان هەڵەیە");
+    S.info.students.forEach(n=>{if(!cv.textContent.includes(n))bad("بەرگ: ناوی "+n+" نییە")});
+    const lg=cv.querySelector("img");if(!lg||!lg.naturalWidth)bad("بەرگ: لۆگۆ نەبینرا");
+    cv.querySelectorAll("*").forEach(x=>{const r=rc(x);if(r.width&&(r.right>pr.right+2||r.left<pr.left-2||r.bottom>pr.bottom+2))bad("بەرگ: ناوەڕۆک لە لاپەڕە دەردەچێت")})}
+   const bp=pg.filter(p=>p.querySelector(".bd"));
+   bp.forEach(p=>{const i=pg.indexOf(p)+1,bd=p.querySelector(".bd"),b=rc(bd),L="لاپەڕەی "+i+": ";
+    if(bd.scrollHeight>bd.clientHeight+1)bad(L+"ناوەڕۆک لە خوارەوە دەبڕدرێت");
+    if(bd.scrollWidth>bd.clientWidth+1)bad(L+"ناوەڕۆک لە لا دەردەچێت");
+    for(const x of bd.querySelectorAll("*")){const r=rc(x);if(r.width&&(r.right>b.right+2||r.left<b.left-2)){bad(L+"<"+x.tagName.toLowerCase()+"> لە لا دەردەچێت");break}}
+    const last=bd.lastElementChild;
+    if(!last||!bd.textContent.trim()&&!bd.querySelector("img,table,pre"))bad(L+"بەتاڵە");
+    else if(/^H[123]$/.test(last.tagName))bad(L+"ناونیشان لە کۆتایی لاپەڕەدایە و دەقەکەی لە لاپەڕەی دواتر");
+    if(getComputedStyle(bd).direction!==(rt?"rtl":"ltr"))bad(L+"ئاڕاستەی نووسین هەڵەیە");
+    if(rt!==p.classList.contains("rtl"))bad(L+"پۆلی rtl هەڵەیە");
+    bd.querySelectorAll("img").forEach(m=>{if(!m.complete||!m.naturalWidth)bad(L+"وێنەیەک نەبینرا")})});
+   const nb=bp.map(p=>p.querySelector(".ft")?p.querySelector(".ft").textContent:""),ex=[];let a=0,c=0,d=0;bp.forEach(p=>ex.push(S.pn==="arabic"?String(++c):(p.dataset.z==="f"?roman(++a):String(++d))));
+   if(nb.join(",")!==ex.join(","))bad("ژمارەی لاپەڕەکان ڕیز نییە: "+nb.slice(0,8).join(" "));
+   if(!S.notoc){const rows=[...w.querySelectorAll(".tr")].filter(r=>/\bl[123]\b/.test(r.className));if(!rows.length)bad("ناوەڕۆک بەتاڵە");
+    const mp=new Map();bp.filter(p=>p.dataset.z==="b").forEach(p=>p.querySelectorAll("h1,h2,h3").forEach(h=>{const k=h.textContent.trim();if(!mp.has(k))mp.set(k,p.querySelector(".ft").textContent)}));
+    rows.forEach(r=>{const t=r.querySelector(".tl").textContent.trim(),n=r.querySelector(".pgn").textContent.trim();if(!/^(\d+|[ivxlc]+)$/i.test(n))bad("ناوەڕۆک: لاپەڕەی «"+t.slice(0,18)+"» نییە");else if(mp.has(t)&&mp.get(t)!==n)bad("ناوەڕۆک: لاپەڕەی «"+t.slice(0,18)+"» هەڵەیە")})}
+   const LL=rt?RLAB[RL()]:{lof:"List of Figures",lot:"List of Tables"},hasH=t=>bp.some(p=>[...p.querySelectorAll("h1.sh,.tcn")].some(h=>h.textContent.trim().startsWith(t.trim())));
+   if(S.lof&&!hasH(LL.lof))bad("لیستی وێنەکان نییە");if(S.lot&&!hasH(LL.lot))bad("لیستی خشتەکان نییە");
+   const all=WS([...w.querySelectorAll(".bd")].map(x=>x.textContent).join("")),miss=[];
+   const need=s=>{s=WS(s);if(s.length<6)return;if(!all.includes(s))miss.push(s.slice(0,16))};
+   S.pages.forEach(g=>{need(dispT(g.title));g.blocks.forEach(b=>{if(b.t==="img"){need(b.cap);return}const tx=String(b.text||"");if(/\[\[CITE|\u2063/.test(tx))return;if(b.t==="tbl")tx.split("\n").forEach(r=>r.split("|").forEach(need));else tx.split("\n").forEach(need)})});
+   if(miss.length)bad("ناوەڕۆک ونبووە: "+miss.slice(0,3).join(" / "));
+  }catch(x){bad("build: "+(x&&x.message||x))}
+  finally{console.warn=cw;w.remove()}
+  warns.forEach(m=>{if(!/^page overflow/.test(m))bad(m.slice(0,70))});
+  return P};
+ const lays=async(lang,grad,vs)=>{const out=[];for(let i=0;i<vs.length;i++){const P=await lay(lang,grad,vs[i]);P.slice(0,2).forEach(m=>out.push("["+(vs[i].font||("جۆر "+(i+1)))+"] "+m))}return out.length?out.slice(0,4).join(" • "):true};
+ const V=[{},{pn:"arabic",notoc:1,hf:0,keepSec:0},{ls:2,al:"left",h1:20,h2:16,h3:14,cvs:"l"},{lof:0,lot:0,lineOn:false,hlc:0,cvs:"s",citeStyle:"ieee",tocfs:14}];
+ try{
+  await T("کتێبخانەی PDF",async()=>window.html2canvas&&window.jspdf&&window.jspdf.jsPDF?true:"html2canvas یان jsPDF نەهاتووە");
+  await T("فۆنتە کوردییەکان",async()=>{const bad=[];await Promise.all(KF.map(async([f])=>{try{const r=await Promise.race([document.fonts.load('400 16px "'+f+'"',SAMP),new Promise((_,j)=>setTimeout(()=>j(0),8000))]);if(!r||!r.length)bad.push(f)}catch(x){bad.push(f)}}));return bad.length?"نەهاتوون: "+bad.join("، "):true});
+  await T("هەڵگرتنی ناوخۆیی",async()=>{const k="adm-chk-ls";localStorage.setItem(k,"1");const ok=localStorage.getItem(k)==="1";localStorage.removeItem(k);return ok||"localStorage کار ناکات"});
+  await T("خوێندنەوەی دەقی AI",async()=>{const bad=[];
+   for(const l of ["en","ckb","ar"]){back();S.dir=l==="en"?"ltr":"rtl";if(l!=="en")S.rlang=l;
+    const raw=RICHTXT(l),rep=parseReport(cleanAI(raw)),ty={};rep.pages.forEach(g=>g.blocks.forEach(b=>{ty[b.t]=(ty[b.t]||0)+1}));
+    ["p","ul","ol","tbl","code","h"].forEach(t=>{if(!ty[t])bad.push(l+": "+t+" نەدۆزرایەوە")});
+    if((ty.code||0)!==2)bad.push(l+": "+(ty.code||0)+" کۆد (٢ پێویستە)");
+    const ks=rep.pages.map(g=>kindOf(g));if(!ks.includes("ref"))bad.push(l+": سەرچاوەکان نەناسرانەوە");if(!ks.includes("abs"))bad.push(l+": کورتە نەناسرایەوە");
+    const tb=rep.pages.flatMap(g=>g.blocks).find(b=>b.t==="tbl");if(!tb||tb.text.split("\n").length!==15)bad.push(l+": خشتە "+(tb?tb.text.split("\n").length:0)+" دێڕ");
+    const dirty=rep.pages.flatMap(g=>[g.title].concat(g.blocks.map(b=>b.text))).find(x=>/\x60\x60\x60|\|\s*-{3}|^#{1,6}\s|\*\*/m.test(String(x||"")));if(dirty)bad.push(l+": نیشانەی Markdown ماوە");
+    const wr=parseReport(cleanAI("Sure! Here is your report:\n\n"+raw+"\n\nLet me know if you want any changes."));if(wr.title!==rep.title||wr.pages.length!==rep.pages.length)bad.push(l+": دەقی زیادی AI نەسڕایەوە")}
+   back();return bad.length?bad.slice(0,4).join(" • "):true});
+  await T("پرۆمپتی AI",async()=>{const bad=[];for(const l of ["en","ckb","ar"])for(const m of ["rep","grad"]){try{const p=aiPrompt("Computer Networks",m==="grad"?0:10,l,Math.random(),"IT Department",m);if(!p||p.length<400||/undefined|NaN|\[object/.test(p))bad.push(l+"/"+m)}catch(x){bad.push(l+"/"+m+": "+x.message)}}return bad.length?bad.join(" • "):true});
+  await T("ڕووکاری دەستکاریکردن",async()=>{const bad=[],ck=(n,s)=>{if(typeof s!=="string"||s.length<20)bad.push(n+" بەتاڵە");else if(/undefined|NaN|\[object Object\]/.test(s))bad.push(n+" undefined/NaN")};
+   for(const l of ["en","ckb","ar"]){back();richSetup(l,0);
+    for(const [n,f] of [["tplUI",tplUI],["logoUI",logoUI],["typeUI",typeUI],["acadUI",acadUI]]){try{ck(l+"/"+n,f())}catch(x){bad.push(l+"/"+n+": "+x.message)}}
+    for(const t of ["info","sections","appearance"]){curP=-1;contentTab=t;try{ck(l+"/"+t,pagesUI())}catch(x){bad.push(l+"/"+t+": "+x.message)}}
+    for(let i=0;i<S.pages.length;i++){curP=i;try{ck(l+"/لاپەڕە"+(i+1),pagesUI())}catch(x){bad.push(l+"/لاپەڕە"+(i+1)+": "+x.message)}}}
+   back();return bad.length?bad.slice(0,4).join(" • "):true});
+  await T("دیزاین و لاپەڕەکان — ئینگلیزی",()=>lays("en",0,V.concat(["Times New Roman","Georgia","Arial","Verdana","Courier New"].map(f=>({font:f})))));
+  await T("دیزاین و لاپەڕەکان — کوردی",()=>lays("ckb",0,V.concat(KF.map(([f])=>({font:f})))));
+  await T("دیزاین و لاپەڕەکان — عەرەبی",()=>lays("ar",0,V.concat(KF.map(([f])=>({font:f})))));
+  await T("دیزاین — بەحسی دەرچوون",()=>lays("ckb",1,[{},{ls:2}]));
+ }finally{console.warn=cw;back()}};
 const runCheck=async()=>{if(CHKB)return;CHKB=true;CHK=[];render();
  const H=window.__chk,add=(n,ok,m,ms)=>{CHK.push({n,ok,m,ms});const el=box.querySelector("#chk");if(el)el.innerHTML=chkH()};
  const T=async(n,fn)=>{const t0=Date.now();try{const r=await fn();if(r===true)add(n,true,"",Date.now()-t0);else add(n,false,String(r))}catch(x){add(n,false,(x&&x.message)||String(x))}};
@@ -2155,11 +2265,11 @@ const runCheck=async()=>{if(CHKB)return;CHKB=true;CHK=[];render();
  await T("تۆمارکردنی هەڵەکان",async()=>{const x=await rpc("log_app_error",{p_msg:"ping",p_where:"check",p_stack:"",p_device:"",p_ver:APPV,p_url:""});return x.ok?true:"log_app_error: "+(x.error||"?")});
  if(!H||typeof S==="undefined")add("PDF / Word",false,"فەنکشنەکان نەدۆزرانەوە");
  else{const snap=JSON.stringify(S);try{localStorage.setItem("adm-chk-backup",snap)}catch(x){}
-  const setup=(lang,grad)=>{const rtl=lang!=="en";S.dir=rtl?"rtl":"ltr";if(rtl)S.rlang=lang;const rep=parseReport(cleanAI(EXAMPLE[lang]));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rtl?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub=""};
+  const setup=(lang,grad)=>{const rtl=lang!=="en";S.dir=rtl?"rtl":"ltr";if(rtl)S.rlang=lang;const rep=parseReport(cleanAI(RICHTXT(lang)));S.pages=rep.pages;S.info.title=rep.title||"Test";S.tcap=1;RICHSET(lang);if(grad){S.pages.forEach(g=>{const k=kindOf(g);if(k=="ch"||k=="ref")g.startNewPage=true});S.info.sub=rtl?"توێژینەوەی دەرچوون":"Graduation Research"}else S.info.sub=""};
   const exp=async kind=>{window.__dlc=[];let al=null;const oa=window.alert;window.alert=m=>{al=String(m)};window.__lastErr=null;try{await(kind==="pdf"?H.pdf():H.docx())}catch(x){al=al||String(x&&x.message||x)}finally{window.alert=oa}
    const it=window.__dlc||[];window.__dlc=null;if(al)return al.replace(/\s+/g," ")+(window.__lastErr?" — "+window.__lastErr.m:"");
-   const f=it.find(i=>kind==="pdf"?/\.pdf$/i.test(i.name):/\.docx$/i.test(i.name));return f&&f.blob&&f.blob.size>1500?true:"فایلەکە بەتاڵە یان دروست نەبوو"};
-  try{for(const z of [["PDF — ئینگلیزی","en","pdf",0],["Word — ئینگلیزی","en","docx",0],["PDF — کوردی (ڕاست-بۆ-چەپ)","ckb","pdf",0],["Word — کوردی (ڕاست-بۆ-چەپ)","ckb","docx",0],["PDF — بەحسی دەرچوون","ckb","pdf",1]])
+   const f=it.find(i=>kind==="pdf"?/\.pdf$/i.test(i.name):/\.docx$/i.test(i.name));if(!(f&&f.blob&&f.blob.size>1500))return "فایلەکە بەتاڵە یان دروست نەبوو";const vb=await verifyOut(kind,f.blob);return vb===true?(window.__lastErr?"هەڵەی ناوەکی: "+window.__lastErr.m:true):vb};
+  try{await extraCheck(T,add);for(const z of [["PDF — ئینگلیزی","en","pdf",0],["Word — ئینگلیزی","en","docx",0],["PDF — کوردی (ڕاست-بۆ-چەپ)","ckb","pdf",0],["Word — کوردی (ڕاست-بۆ-چەپ)","ckb","docx",0],["PDF — بەحسی دەرچوون","ckb","pdf",1],["Word — بەحسی دەرچوون","ckb","docx",1],["PDF — عەرەبی (ڕاست-بۆ-چەپ)","ar","pdf",0],["Word — عەرەبی (ڕاست-بۆ-چەپ)","ar","docx",0]])
     await T(z[0],async()=>{setup(z[1],z[3]);await tickP(50);return await exp(z[2])})}
   finally{for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(snap));try{localStorage.removeItem("adm-chk-backup")}catch(x){}try{save()}catch(x){}}}
  CHKB=false;render()};
