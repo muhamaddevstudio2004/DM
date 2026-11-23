@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.38";</script>
+<script>window.APP_VERSION="1.39";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1924,6 +1924,7 @@ function pdfFixCode(doc){
    if(c.contains("cs1")){pre.style.position="relative";pre.style.overflow="hidden";pre.insertBefore(mk("position:absolute;left:0;top:0;bottom:0;width:4px;background:#6366f1"),pre.firstChild)}
    else if(c.contains("cs3")){pre.style.position="relative";pre.style.overflow="hidden";pre.insertBefore(mk("position:absolute;left:0;right:0;top:0;height:4px;background:#cba6f7"),pre.firstChild)}
    else if(c.contains("cs2")){
+    [...pre.children].forEach(ch=>{if(String(ch.className).indexOf("pseudoelement_before")>-1)ch.remove()});
     const bar=mk("display:block;position:relative;height:14px;margin:0 0 7px","div");
     [["1.5px","#ff5f56"],["16.5px","#ffbd2e"],["31.5px","#27c93f"]].forEach(d=>bar.appendChild(mk("position:absolute;top:2.5px;left:"+d[0]+";width:9px;height:9px;border-radius:50%;background:"+d[1])));
     pre.insertBefore(bar,pre.firstChild)}
