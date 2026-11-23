@@ -1578,7 +1578,8 @@ function blockSheet(pi,bi,fromTap){
   if(act=="add"){if(sec){S.pages.splice(P+1,0,{title:"New Section",blocks:[{t:"p",text:"",cap:""}]});save();rp();blockSheet(P+1,-1);showEl(P+1,-1,450)}else{S.pages[P].blocks.splice(B+1,0,{t:"p",text:"",cap:""});save();rp();blockSheet(P,B+1);showEl(P,B+1,450)}return}
   if(act=="rep"){closeSheet();_rb=b0;_ri.click();return}
   if(act=="del"){if(!armDel(a))return;if(sec){S.pages.splice(P,1);if(!S.pages.length)S.pages.push({title:"New Section",blocks:[{t:"p",text:"",cap:""}]})}else{const bl=S.pages[P].blocks;bl.splice(B,1);if(!bl.length)bl.push({t:"p",text:"",cap:""})}closeSheet();changed(true)}});
- if(["p","ul","ol","tbl","code"].includes(t0))setTimeout(()=>{const ta=o.querySelector("textarea");if(ta)ta.focus()},60);
+ o.addEventListener("mousedown",ev=>{if(ev.target.closest(".sh-seg button,.sh-tog"))ev.preventDefault()});
+ if(["p","ul","ol","tbl"].includes(t0))setTimeout(()=>{const ta=o.querySelector("textarea");if(ta)ta.focus()},60);
  if(fromTap)showEl(P,B,80)}
 function coverSheet(kind,focusLast){const I=S.info;let ttl="Cover",icn="edit",body="";
  const fld=(k,l)=>shLb(l)+`<input type="text" dir="auto" data-ck="${k}" value="${e(I[k])}">`;
