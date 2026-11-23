@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.37";</script>
+<script>window.APP_VERSION="1.38";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1809,6 +1809,12 @@ function fixRtlMarkers(root){
    m.textContent=ord?n+".":"•";
    m.style.cssText="position:absolute;top:0;right:-"+pad+"px;width:"+pad+"px;text-align:center;font-weight:normal;pointer-events:none";
    li.insertBefore(m,li.firstChild)})})}
+async function pdfClonePrep(doc){
+ try{doc.querySelectorAll(".page .bd").forEach(b=>{b.style.overflow="visible"})}catch(x){}
+ try{const f=S.font||(S.dir=="rtl"?"Noto Naskh Arabic":"");
+  if(doc.fonts){if(f)await Promise.all([400,700].map(w=>doc.fonts.load(w+' 16px "'+f+'"',SAMP).catch(()=>{})));await doc.fonts.ready}}catch(x){}
+ try{await Promise.all([...doc.images].map(m=>m.decode?m.decode().catch(()=>{}):0))}catch(x){}
+ await new Promise(r=>setTimeout(r,40))}
 async function buildStable(w){const dec=()=>Promise.all([...w.querySelectorAll("img")].map(m=>m.decode?m.decode().catch(()=>{}):0));
  for(let k=0;k<3;k++){build(w);await dec();await new Promise(r=>requestAnimationFrame(()=>r()));
   if(![...w.querySelectorAll(".page .bd")].some(b=>b.scrollHeight>b.clientHeight+1))break}}
@@ -1822,7 +1828,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*86,"Page "+(i+1)+" of "+pg.length);
    await new Promise(r=>requestAnimationFrame(()=>r()));
-   const c=await html2canvas(pg[i],{scale:innerWidth<900?1.5:2,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:794,windowHeight:1123,onclone:pdfFixCode});
+   const c=await html2canvas(pg[i],{scale:innerWidth<900?1.5:2,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:794,windowHeight:1123,onclone:async d=>{pdfFixCode(d);await pdfClonePrep(d)}});
    if(i)pdf.addPage("a4","portrait");
    pdf.addImage(c.toDataURL("image/jpeg",.88),"JPEG",0,0,210,297,undefined,"FAST");
    c.width=c.height=0}
