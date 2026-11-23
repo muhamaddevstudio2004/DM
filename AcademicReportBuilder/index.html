@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.35";</script>
+<script>window.APP_VERSION="1.36";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -432,7 +432,7 @@ html[dir="rtl"] .hv-tx{text-align:right}
 #isheet input[type=text]{min-height:46px}
 #isheet .stu-del{flex:none;width:46px;min-width:46px;height:46px;min-height:46px;padding:0;color:#a11b32;border-color:#c9828d;background:#fff}
 #isheet{position:fixed;left:0;right:0;top:0;bottom:0;z-index:9990;background:rgba(15,42,82,.16);display:flex;align-items:flex-end;justify-content:center}
-html.sh-lock,html.sh-lock body{overflow:hidden!important;overscroll-behavior:none}#isheet{overscroll-behavior:contain;touch-action:none}#isheet .sh-bd{touch-action:pan-y;overscroll-behavior:contain}
+@media (hover:hover) and (pointer:fine){html.sh-lock,html.sh-lock body{overflow:hidden!important}}#isheet{overscroll-behavior:contain}#isheet .sh-bd{overscroll-behavior:contain}#isheet.kb .sh-in{max-height:100%}
 #isheet .sh-in{width:100%;max-width:640px;max-height:68%;display:flex;flex-direction:column;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -8px 28px rgba(15,42,82,.3);overflow:hidden;color:#0f2a52}
 .sh-hd{flex:none;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--ac);border-bottom:3px solid var(--yl);color:#fff}
 .sh-ic{flex:none;width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:var(--yl);color:#0f2a52}.sh-ic .ic{width:18px;height:18px}
@@ -1557,14 +1557,14 @@ const shDone=()=>`<button type="button" class="pri sh-done" data-sh="x">${e(tr("
 const shFoot=add=>`<button type="button" class="sh-ib" data-sh="up" title="${e(tr("Move up"))}" aria-label="${e(tr("Move up"))}">${ic("up")}</button><button type="button" class="sh-ib" data-sh="dn" title="${e(tr("Move down"))}" aria-label="${e(tr("Move down"))}">${ic("down")}</button>${add?`<button type="button" class="sh-ib" data-sh="add" title="${e(tr("Add below"))}" aria-label="${e(tr("Add below"))}">${ic("plus")}</button>`:""}<button type="button" class="sh-ib dng" data-sh="del" title="${e(tr("Delete"))}" aria-label="${e(tr("Delete"))}">${ic("trash")}</button>${shDone()}`;
 function mkSheet(title,icn,body,foot){closeSheet();const o=document.createElement("div");o.id="isheet";o.setAttribute("role","dialog");o.setAttribute("aria-label",title);
  o.innerHTML=`<div class="sh-in"><div class="sh-hd"><span class="sh-ic">${ic(icn)}</span><b>${e(title)}</b><button type="button" class="sh-x" data-sh="x" aria-label="${e(tr("Close"))}">${ic("x")}</button></div><div class="sh-bd">${body}</div><div class="sh-ft">${foot}</div></div>`;
- const vv=window.visualViewport,fx=()=>{if(!vv)return;const kb=window.innerHeight-vv.height-vv.offsetTop;if(Math.abs(vv.height-window.innerHeight)<2&&vv.offsetTop<2){o.style.top="0";o.style.height="";o.style.bottom="0"}else{o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px";o.style.bottom="auto"}};
+ const vv=window.visualViewport,fx=()=>{if(!vv)return;const kb=window.innerHeight-vv.height-vv.offsetTop>120||window.innerHeight-vv.height>120;o.classList.toggle("kb",!!kb);if(!kb&&vv.offsetTop<2){o.style.top="0";o.style.height="";o.style.bottom="0"}else{o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px";o.style.bottom="auto"}};
  let sy=0;const ts=ev=>{sy=ev.touches[0].clientY},tm=ev=>{const s=ev.target.closest&&ev.target.closest(".sh-bd");if(!s){ev.preventDefault();return}const dy=ev.touches[0].clientY-sy;if(s.scrollHeight<=s.clientHeight+1||(dy>0&&s.scrollTop<=0)||(dy<0&&s.scrollTop+s.clientHeight>=s.scrollHeight-1))ev.preventDefault()},wh=ev=>{if(!(ev.target.closest&&ev.target.closest(".sh-bd")))ev.preventDefault()};
  o.addEventListener("touchstart",ts,{passive:true});o.addEventListener("touchmove",tm,{passive:false});o.addEventListener("wheel",wh,{passive:false});
  document.documentElement.classList.add("sh-lock");
  if(vv){vv.addEventListener("resize",fx);vv.addEventListener("scroll",fx)}
- window.addEventListener("resize",fx);o.addEventListener("focusout",()=>{setTimeout(fx,50);setTimeout(fx,300);setTimeout(fx,700)});
+ window.addEventListener("resize",fx);window.addEventListener("scroll",fx);o.addEventListener("focusin",()=>{setTimeout(fx,50);setTimeout(fx,300);setTimeout(fx,700)});o.addEventListener("focusout",()=>{setTimeout(fx,50);setTimeout(fx,300);setTimeout(fx,700)});
  const iv=setInterval(fx,250);fx();
- o._off=()=>{clearInterval(iv);window.removeEventListener("resize",fx);if(vv){vv.removeEventListener("resize",fx);vv.removeEventListener("scroll",fx)}};
+ o._off=()=>{clearInterval(iv);window.removeEventListener("resize",fx);window.removeEventListener("scroll",fx);if(vv){vv.removeEventListener("resize",fx);vv.removeEventListener("scroll",fx)}};
  document.body.appendChild(o);return o}
 function showEl(pi,bi,d){setTimeout(()=>{const el=document.querySelector(`#doc [data-pi="${pi}"][data-bi="${bi}"]`);if(!el)return;const t=el.getBoundingClientRect().top,vv=window.visualViewport,vh=vv?vv.height:innerHeight;if(t<80||t>vh*.3)window.scrollBy({top:t-110,behavior:"smooth"})},d||60)}
 function armDel(a){if(a.dataset.arm)return true;a.dataset.arm=1;a._h=a.innerHTML;a.classList.add("arm");a.textContent=tr("Sure? Tap again");setTimeout(()=>{if(a.isConnected){delete a.dataset.arm;a.classList.remove("arm");a.innerHTML=a._h}},3000);return false}
