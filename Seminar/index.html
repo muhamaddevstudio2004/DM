@@ -2486,11 +2486,8 @@ function openUF(){
   say("Reading file…");
   try{
    const d=await sbReadFile(f);say("");
-   const ti=String((d.info&&d.info.title)||"").trim()||"—",n=d.pages.length;
-   res.innerHTML=`<div class="uf-ok"><b>${e(tr("Seminar found"))}</b><span dir="auto">${e(ti)}</span><small>${n} ${e(tr("pages"))}</small></div><p class="uf-warn">${e(tr("Your current seminar will be replaced."))}</p><button type="button" class="pri uf-go">${e(tr("Replace current seminar and open"))}</button>`;
-   res.querySelector(".uf-go").onclick=()=>{
-    S=d;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){alert("Storage is full. Remove or shrink some images.")}
-    applyCol();view="pages";contentTab="info";curP=-1;closeUF();renderEd();tab("pv");window.scrollTo(0,0)}
+   S=d;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){alert("Storage is full. Remove or shrink some images.")}
+   applyCol();view="pages";contentTab="info";curP=-1;closeUF();renderEd();tab("pv");window.scrollTo(0,0)
   }catch(x){
    const k=x&&x.k;
    say(k==="type"?"Please choose a PDF or PPTX file.":k==="bad"?"The seminar data in this file is damaged or was changed, so it cannot be opened.":"This file was not created by Seminar Builder. Only PDF or PPTX files downloaded from this system can be uploaded.",true)}});
