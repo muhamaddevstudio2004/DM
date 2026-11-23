@@ -461,6 +461,24 @@ html[dir="rtl"] .hv-tx{text-align:right}
 </style><style id="wmcss">
 /* Watermark: a background layer on the live view only (#doc). Export builds its own off-screen container, so downloaded files stay clean. */
 #doc .page{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22794%22 height=%221123%22 viewBox=%220 0 794 1123%22%3E%3Cg transform=%22rotate(-30 397 303)%22 text-anchor=%22middle%22 fill=%22%23143a7b%22 fill-opacity=%22.085%22%3E%3Ctext x=%22397%22 y=%22299%22 font-family=%22Arial,Helvetica,sans-serif%22 font-weight=%22700%22 font-size=%2244%22 letter-spacing=%221%22%3ECopyRight DevMuhamad.com%3C/text%3E%3Ctext x=%22397%22 y=%22343%22 font-family=%22'Noto Naskh Arabic','Noto Sans Arabic',Tahoma,Arial,sans-serif%22 font-weight=%22700%22 font-size=%2228%22 direction=%22rtl%22 unicode-bidi=%22embed%22%3E%D8%A6%DB%95%D9%85 watermark %D9%80%D9%80%DB%95 %D9%84%DB%95 %D8%AF%D8%A7%D8%A8%DB%95%D8%B2%D8%A7%D9%86%D8%AF%D9%86 %D9%84%D8%A7%D8%AF%DB%95%D8%AF%D8%B1%DB%8E%D8%AA%3C/text%3E%3C/g%3E%3Cg transform=%22rotate(-30 397 820)%22 text-anchor=%22middle%22 fill=%22%23143a7b%22 fill-opacity=%22.085%22%3E%3Ctext x=%22397%22 y=%22816%22 font-family=%22Arial,Helvetica,sans-serif%22 font-weight=%22700%22 font-size=%2244%22 letter-spacing=%221%22%3ECopyRight DevMuhamad.com%3C/text%3E%3Ctext x=%22397%22 y=%22860%22 font-family=%22'Noto Naskh Arabic','Noto Sans Arabic',Tahoma,Arial,sans-serif%22 font-weight=%22700%22 font-size=%2228%22 direction=%22rtl%22 unicode-bidi=%22embed%22%3E%D8%A6%DB%95%D9%85 watermark %D9%80%D9%80%DB%95 %D9%84%DB%95 %D8%AF%D8%A7%D8%A8%DB%95%D8%B2%D8%A7%D9%86%D8%AF%D9%86 %D9%84%D8%A7%D8%AF%DB%95%D8%AF%D8%B1%DB%8E%D8%AA%3C/text%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:0 0;background-size:794px 1123px}
+#upf{position:fixed;inset:0;z-index:9990;background:rgba(46,33,68,.55);display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){#upf{align-items:center}}
+#upf .uf-sheet{background:var(--card,#fff);color:var(--fg);width:100%;max-width:480px;max-height:92vh;overflow:auto;box-sizing:border-box;border-radius:18px 18px 0 0;border-top:5px solid var(--yl);padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+@media(min-width:600px){#upf .uf-sheet{border-radius:18px}}
+.uf-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.uf-top b{display:block;font-size:19px;color:var(--ac)}.uf-top small{display:block;color:var(--mut);font-size:13px;line-height:1.4}
+.uf-ic{flex:none;width:44px;height:44px;border-radius:12px;background:var(--yl);color:var(--ac,#143a7b);display:flex;align-items:center;justify-content:center}.uf-ic .ic{width:24px;height:24px}
+.uf-x{margin-inline-start:auto;flex:none;width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%}.uf-x .ic{width:20px;height:20px}
+.uf-note{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--yl);background:#fff8e6;color:var(--ac,#143a7b);border-radius:14px;padding:14px;margin-bottom:14px}
+.uf-lock{flex:none;width:38px;height:38px;border-radius:50%;background:var(--ac,#143a7b);color:var(--yl,#d8bb74);display:flex;align-items:center;justify-content:center}.uf-lock .ic{width:20px;height:20px}
+.uf-note b{display:block;font-size:16px;margin-bottom:4px}.uf-note p{margin:0 0 10px;font-size:14px;line-height:1.55}
+.uf-chips{display:flex;gap:8px}.uf-chips span{background:var(--ac,#143a7b);color:var(--yl,#d8bb74);border-radius:999px;padding:3px 14px;font-size:13px;font-weight:700}
+#upf .uf-pick{display:flex;justify-content:center;width:100%;box-sizing:border-box;margin:0 0 6px;padding:13px 12px;font-weight:700;background:var(--yl);color:var(--ac,#143a7b);border-color:#b8923a;border-radius:10px;min-height:48px}
+.uf-tip{margin:6px 2px 10px;color:var(--mut);font-size:13px;line-height:1.5}
+.uf-st{margin:8px 2px;min-height:1.2em;font-size:14px;line-height:1.5;color:var(--ac)}.uf-st.bad{color:#b00020;font-weight:700;background:#fdecee;border-radius:10px;padding:10px 12px}
+.uf-ok{display:flex;flex-direction:column;gap:2px;border:2px solid #2e7d4f;background:#eaf6ee;color:#1d4d31;border-radius:12px;padding:12px 14px;margin-top:6px}.uf-ok b{font-size:15px}.uf-ok span{font-size:17px;font-weight:700}.uf-ok small{font-size:13px}
+.uf-warn{margin:10px 2px;font-size:14px;color:#8a5a00;font-weight:700}
+#upf .uf-go{width:100%;min-height:48px;border-radius:10px;font-size:16px}
 </style>
 </head><body data-tab="edit">
 <div id="top"><b id="lg"></b><button id="bpdf" class="pri"></button><button id="bdocx" aria-label="Download Word file" style="display:none"></button></div>
@@ -496,8 +514,9 @@ function splitLab(d){const LB=/^\u2063[^\u2063\n]+\u2063$/;d.pages.forEach(p=>{c
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.info&&d.pages){const i=d.info;if(i.sub==="Visit to an FTTH Service Center – Erbil, Iraq")i.sub="";if(i.course==="Computer Networks II")i.course="";if(!i.students)i.students=[i.s1,i.s2,i.s3].filter(Boolean);if(!Array.isArray(d.refs))d.refs=[];mergeOl(d);splitLab(d);return d}}catch(x){}return seed()}
 let st;function save(){clearTimeout(st);st=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){alert("Storage is full. Remove or shrink some images.")}},300)}
 /* ---------- editor ---------- */
+IC.uplf="M12 21V9m-5 5 5-5 5 5M5 3h14";
 function homeUI(){
- const C=[["help","help","How to use","4 quick steps","help"],["upl","upload","Create Report","Paste and import","upl"],["pages","doc","Edit Report","Info, pages, images","go"]];
+ const C=[["help","help","How to use","4 quick steps","help"],["upl","upload","Create Report","Paste and import","upl"],["pages","doc","Edit Report","Info, pages, images","go"],["uplf","uplf","Upload","Only PDF or Word from this system","uplf"]];
  return `<div class="hv"><section class="hv-hero"><h2>Academic Report Builder</h2><span class="hv-rule"></span></section>
 <div class="langsw" role="group" aria-label="Interface language">${[["en","English"],["ckb","کوردی"],["ar","العربية"]].map(([v,n])=>`<button data-a="ui" data-v="${v}" class="${UIL==v?"on":""}">${n}</button>`).join("")}</div>
 <div class="hv-grid">${C.map(([v,i,t,d,act])=>`<button class="hv-card" data-a="${act}" data-v="${v}"><span class="hv-ic">${ic(i)}</span><span class="hv-tx"><b>${t}</b><small>${d}</small></span><span class="hv-arrow">${ic("next")}</span></button>`).join("")}</div>
@@ -509,6 +528,7 @@ function changed(re){save();if(re)renderEd();rp()}
 $("ed").addEventListener("click",ev=>{const b=ev.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,p=+b.dataset.p,k=+b.dataset.b,pg=S.pages[p];
  if(a=="ui"){setUI(b.dataset.v);return}
  if(a=="help"){openHelp();return}
+ if(a=="uplf"){openUF();return}
  if(a=="delp"||a=="delb"||a=="delref"||(a=="tpl"&&b.dataset.seed)){if(!b.dataset.arm){b.dataset.arm=1;b._h=b.innerHTML;b.textContent="Sure? Tap again";setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.innerHTML=b._h}},3000);return}}
  if(a=="addp"){S.pages.push({title:"New Section",blocks:[{t:"p",text:""}]});curP=S.pages.length-1}
  else if(a=="open")curP=curP==p?-1:p;
@@ -1743,11 +1763,12 @@ async function makeDocx(pgn){
  const footer=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ${WNS}><w:p><w:pPr><w:jc w:val="center"/></w:pPr>${FLD("PAGE","1",{sz:22})}</w:p></w:ftr>`;
  const settings=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings ${WNS}><w:updateFields w:val="true"/><w:defaultTabStop w:val="720"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`;
  const docXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${WNS}><w:body>${doc}</w:body></w:document>`;
- const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`;
+ const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="bin" ContentType="application/octet-stream"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`;
  const R0="http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
- const rootRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R0}officeDocument" Target="word/document.xml"/></Relationships>`;
+ const rootRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R0}officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="${R0}reportData" Target="docProps/report.bin"/></Relationships>`;
  const docRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R0}styles" Target="styles.xml"/><Relationship Id="rId2" Type="${R0}numbering" Target="numbering.xml"/><Relationship Id="rId3" Type="${R0}footer" Target="footer1.xml"/><Relationship Id="rId4" Type="${R0}settings" Target="settings.xml"/>${rels.join("")}</Relationships>`;
  const T=[["[Content_Types].xml",ct],["_rels/.rels",rootRels],["word/document.xml",docXml],["word/_rels/document.xml.rels",docRels],["word/styles.xml",styles],["word/numbering.xml",numbering],["word/settings.xml",settings],["word/footer1.xml",footer]].map(([n,s])=>[n,enc.encode(s)]);
+ T.push(["docProps/report.bin",await packState()]);
  return zipStore(T.concat(media))}
 
 $("bdocx").onclick=async()=>{const b=$("bdocx"),old=b.innerHTML;b.disabled=true;
@@ -1785,7 +1806,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing pages…");
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
  try{scrollTo(0,0);await fontLoad();await imgPend();build(w);fixRtlMarkers(w);
-  const pg=[...w.querySelectorAll(".page")],pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
+  const pg=[...w.querySelectorAll(".page")],pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});pdf.setProperties({keywords:"RBLD1:"+await sbB64(await packState())});
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*86,"Page "+(i+1)+" of "+pg.length);
    await new Promise(r=>requestAnimationFrame(()=>r()));
@@ -1800,6 +1821,80 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
  }catch(x){if(!(x&&x.code=="declined")){window.logAppError(x,"pdf");alert("PDF export failed. Please try again.")}}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
+/* ===== Upload Seminar: only PDF / PPTX files downloaded from this system can be re-opened ===== */
+const SBSIG=s=>{let h1=0xdeadbeef^11,h2=0x41c6ce57^11;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(4294967296*(2097151&h2)+(h1>>>0)).toString(36)};
+const sbBytes=async(u8,mode)=>{try{const S2=new (mode=="z"?CompressionStream:DecompressionStream)("gzip");return new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(S2)).arrayBuffer())}catch(x){return null}};
+const sbB64=u8=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(",")[1]||"");fr.readAsDataURL(new Blob([u8]))});
+const sbUnB64=async b=>{try{return new Uint8Array(await (await fetch("data:application/octet-stream;base64,"+b)).arrayBuffer())}catch(x){return Uint8Array.from(atob(b),c=>c.charCodeAt(0))}};
+/* the seminar data that is hidden inside every PDF / PPTX this system creates */
+async function packState(){
+ const d=JSON.stringify(S),raw=new TextEncoder().encode(JSON.stringify({app:"academic-report-builder",v:1,sig:SBSIG("RBLD1|"+d),d})),z=await sbBytes(raw,"z"),out=new Uint8Array((z?z.length:raw.length)+1);
+ out[0]=z?1:0;out.set(z||raw,1);return out}
+async function sbUnzipFind(buf,name){
+ const u=new Uint8Array(buf),dv=new DataView(buf);let e=-1;
+ for(let i=u.length-22;i>=Math.max(0,u.length-65600);i--){if(dv.getUint32(i,true)===0x06054b50){e=i;break}}
+ if(e<0)return null;const n=dv.getUint16(e+10,true),dec=new TextDecoder();let p=dv.getUint32(e+16,true);
+ for(let k=0;k<n;k++){
+  if(p+46>u.length||dv.getUint32(p,true)!==0x02014b50)return null;
+  const m=dv.getUint16(p+10,true),cs=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),el=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),lo=dv.getUint32(p+42,true),nm=dec.decode(u.subarray(p+46,p+46+nl));
+  if(nm===name){const ds=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),raw=u.subarray(ds,ds+cs);
+   if(m===0)return raw;
+   if(m===8){try{return new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer())}catch(x){return null}}
+   return null}
+  p+=46+nl+el+cl}
+ return null}
+/* keep only safe values from a file that was opened */
+function sbClean(d){
+ if(!d||typeof d!=="object"||!d.info||typeof d.info!=="object"||!Array.isArray(d.pages)||d.pages.length>400)return null;
+ const okU=v=>typeof v=="string"&&(v===""||/^data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+\/=]+$/i.test(v)||/^https?:\/\/[^\s"'<>`\\]+$/i.test(v));
+ const walk=(o,dp)=>{if(dp>8||!o||typeof o!=="object")return;for(const k of Object.keys(o)){const v=o[k];if(k==="logo"||k==="pic"||k==="picUrl"||k==="src"){if(!okU(v))o[k]=""}else if(v&&typeof v==="object")walk(v,dp+1)}};
+ walk(d,0);
+ if(!/^#[0-9a-f]{6}$/i.test(d.color||""))delete d.color;if(!/^#[0-9a-f]{6}$/i.test(d.lineColor||""))delete d.lineColor;
+ if(d.font!=null&&!/^[\w \-]{1,60}$/.test(String(d.font)))delete d.font;
+ if(d.dir!=="rtl")d.dir="ltr";if(d.rlang!=null&&d.rlang!=="ar"&&d.rlang!=="ckb")delete d.rlang;
+ d.pages=d.pages.filter(p=>p&&typeof p==="object");d.pages.forEach(p=>{p.blocks=(Array.isArray(p.blocks)?p.blocks:[]).filter(b=>b&&typeof b==="object")});
+ if(!Array.isArray(d.refs))d.refs=[];if(!Array.isArray(d.info.students))d.info.students=[];
+ d.refs.forEach((r,i)=>{if(r&&!r.id)r.id="ref-legacy-"+i});if(!d.citeStyle)d.citeStyle="apa";d.tpl="report";if(d.lineOn===undefined)d.lineOn=false;if(!d.lineColor)d.lineColor="#b8923a";
+ return d}
+async function sbReadFile(f){
+ const nm=(f.name||"").toLowerCase(),pdf=/\.pdf$/.test(nm),ppt=/\.docx$/.test(nm);
+ if(!pdf&&!ppt)throw{k:"type"};
+ const buf=await f.arrayBuffer();let pay=null;
+ if(ppt)pay=await sbUnzipFind(buf,"docProps/report.bin");
+ else{const t=new TextDecoder("latin1").decode(new Uint8Array(buf)),i=t.indexOf("RBLD1:");
+  if(i>=0){const r=t.slice(i+6),j=r.search(/[^A-Za-z0-9+\/=]/);pay=await sbUnB64(j<0?r:r.slice(0,j))}}
+ if(!pay||pay.length<3)throw{k:"foreign"};
+ let env;
+ try{const body=pay.subarray(1),raw=pay[0]===1?await sbBytes(body,"u"):body;if(!raw)throw 0;env=JSON.parse(new TextDecoder().decode(raw))}catch(x){throw{k:"bad"}}
+ if(!env||env.app!=="academic-report-builder"||env.v!==1||typeof env.d!=="string")throw{k:"foreign"};
+ if(env.sig!==SBSIG("RBLD1|"+env.d))throw{k:"bad"};
+ let st;try{st=sbClean(JSON.parse(env.d))}catch(x){st=null}
+ if(!st)throw{k:"bad"};return st}
+function closeUF(){const o=document.getElementById("upf");if(o)o.remove();document.removeEventListener("keydown",ufKey)}
+function ufKey(ev){if(ev.key==="Escape")closeUF()}
+function openUF(){
+ if(document.getElementById("upf"))return;
+ const o=document.createElement("div");o.id="upf";o.dir=UIL==="en"?"ltr":"rtl";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");
+ o.innerHTML=`<div class="uf-sheet"><div class="uf-top"><span class="uf-ic">${ic("uplf")}</span><div><b>${e(tr("Upload Report"))}</b><small>${e(tr("Reopen a report you downloaded from this system"))}</small></div><button type="button" class="uf-x" aria-label="${e(tr("Close"))}">${ic("x")}</button></div>
+<div class="uf-note"><span class="uf-lock">${ic("lock")}</span><div><b>${e(tr("Only files from this system are accepted"))}</b><p>${e(tr("Upload the PDF or Word file that you downloaded from Report Builder. It opens exactly as you saved it, ready to edit. Files from other places, or files edited or re-saved in another program, are rejected."))}</p><div class="uf-chips"><span>PDF</span><span>WORD</span></div></div></div>
+<label class="fb uf-pick">${ic("uplf")}<span>${e(tr("Choose PDF or Word file"))}</span><input type="file" id="ufi" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden></label>
+<p class="uf-tip">${e(tr("Tip: do not re-save the file in Word or a PDF editor before uploading."))}</p>
+<p class="uf-st" id="ufs" role="status" aria-live="polite"></p><div id="ufr"></div></div>`;
+ o.addEventListener("click",ev=>{if(ev.target===o||ev.target.closest(".uf-x"))closeUF()});
+ document.body.appendChild(o);document.addEventListener("keydown",ufKey);
+ const st=o.querySelector("#ufs"),res=o.querySelector("#ufr"),inp=o.querySelector("#ufi");
+ const say=(t,bad)=>{st.textContent=t?tr(t):"";st.className="uf-st"+(bad?" bad":"")};
+ inp.addEventListener("change",async()=>{
+  const f=inp.files&&inp.files[0];inp.value="";res.innerHTML="";if(!f)return;
+  say("Reading file…");
+  try{
+   const d=await sbReadFile(f);say("");
+   S=d;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){alert("Storage is full. Remove or shrink some images.")}
+   applyCol();view="pages";contentTab="info";curP=-1;closeUF();renderEd();tab("pv");window.scrollTo(0,0)
+  }catch(x){
+   const k=x&&x.k;
+   say(k==="type"?"Please choose a PDF or Word file.":k==="bad"?"The report data in this file is damaged or was changed, so it cannot be opened.":"This file was not created by Report Builder. Only PDF or Word files downloaded from this system can be uploaded.",true)}});
+}
 function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Report Builder</span>`;{const dl=({ckb:"داگرتن",ar:"تحميل"})[UIL]||"Download";$("bpdf").innerHTML=ic("dl")+"<span>"+dl+"</span>";$("bpdf").setAttribute("aria-label",dl+" PDF + Word")}
 document.querySelector('[data-t="edit"]').innerHTML=`<span class="tab-ic">${ic("edit")}</span><span class="tab-t">Edit</span>`;document.querySelector('[data-t="pv"]').innerHTML=`<span class="tab-ic">${ic("eye")}</span><span class="tab-t">Live</span>`;
 }
@@ -2758,6 +2853,7 @@ login()};
 document.addEventListener("click",e=>{const t=e.target;if(!t.closest||!t.closest(".ftr")||t.closest("a"))return;
  taps++;clearTimeout(tm);tm=setTimeout(()=>{taps=0},700);
  if(taps>=3){taps=0;clearTimeout(tm);openAdmin()}},true)}
+Object.assign(DICT.ckb,{"Upload": "بارکردن", "Only PDF or Word from this system": "تەنها PDF یان Word ی ئەم سیستەمە", "Reopen a report you downloaded from this system": "ڕاپۆرتێک بکەوە کە لەم سیستەمە دابەزاندووتە", "Only files from this system are accepted": "تەنها فایلی ئەم سیستەمە قبوڵ دەکرێت", "Upload the PDF or Word file that you downloaded from Report Builder. It opens exactly as you saved it, ready to edit. Files from other places, or files edited or re-saved in another program, are rejected.": "ئەو فایلی PDF یان Word ە ئەپلۆد بکە کە لە دروستکەری ڕاپۆرت دابەزاندووتە. وەک خۆی دەکرێتەوە و ئامادەیە بۆ دەستکاری. فایلی شوێنی تر، یان فایلێک کە لە بەرنامەیەکی تر دەستکاری یان دووبارە پاشەکەوت کرابێت، ڕەت دەکرێتەوە.", "Choose PDF or Word file": "هەڵبژاردنی فایلی PDF یان Word", "Tip: do not re-save the file in Word or a PDF editor before uploading.": "ئامۆژگاری: پێش ئەپلۆدکردن فایلەکە لە Word یان دەستکاریکەری PDF دووبارە پاشەکەوت مەکە.", "Reading file…": "فایلەکە دەخوێنرێتەوە…", "Please choose a PDF or Word file.": "تکایە فایلی PDF یان Word هەڵبژێرە.", "The report data in this file is damaged or was changed, so it cannot be opened.": "زانیاری ڕاپۆرتەکە لەم فایلەدا تێکچووە یان گۆڕدراوە، بۆیە ناکرێتەوە.", "This file was not created by Report Builder. Only PDF or Word files downloaded from this system can be uploaded.": "ئەم فایلە لەلایەن دروستکەری ڕاپۆرتەوە دروست نەکراوە. تەنها فایلی PDF یان Word کە لەم سیستەمە دابەزێنراوە دەکرێت ئەپلۆد بکرێت."});Object.assign(DICT.ar,{"Upload": "رفع", "Only PDF or Word from this system": "فقط PDF أو Word من هذا النظام", "Reopen a report you downloaded from this system": "أعد فتح تقرير قمت بتنزيله من هذا النظام", "Only files from this system are accepted": "يُقبل فقط ملف هذا النظام", "Upload the PDF or Word file that you downloaded from Report Builder. It opens exactly as you saved it, ready to edit. Files from other places, or files edited or re-saved in another program, are rejected.": "ارفع ملف PDF أو Word الذي نزّلته من منشئ التقارير. يُفتح تماماً كما حفظته وجاهزاً للتعديل. تُرفض الملفات من أي مكان آخر أو الملفات التي عُدّلت أو أُعيد حفظها في برنامج آخر.", "Choose PDF or Word file": "اختيار ملف PDF أو Word", "Tip: do not re-save the file in Word or a PDF editor before uploading.": "نصيحة: لا تُعد حفظ الملف في Word أو محرر PDF قبل رفعه.", "Reading file…": "جارٍ قراءة الملف…", "Please choose a PDF or Word file.": "الرجاء اختيار ملف PDF أو Word.", "The report data in this file is damaged or was changed, so it cannot be opened.": "بيانات التقرير في هذا الملف تالفة أو تم تغييرها، لذلك لا يمكن فتحه.", "This file was not created by Report Builder. Only PDF or Word files downloaded from this system can be uploaded.": "لم يتم إنشاء هذا الملف بواسطة منشئ التقارير. يمكن رفع ملفات PDF أو Word التي تم تنزيلها من هذا النظام فقط."});
 {const bp=document.getElementById("bpdf"),bw=document.getElementById("bdocx"),pdfFn=bp.onclick,docxFn=bw.onclick;
  const saveOne=async(blob,name)=>{let dl=null;try{dl=window.claude&&await claude.use("downloads")}catch(x){}
   if(dl)await dl.save({filename:name,data:blob});
