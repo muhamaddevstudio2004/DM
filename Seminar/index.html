@@ -1749,8 +1749,8 @@ function detectScript(raw){
   return ku>=3?"ckb":"ar"}
 async function runGen(raw){
  const ST=["Reading seminar content…","Detecting headings and sections…","Organizing seminar content…","Creating A4 pages…","Applying academic formatting…","Generating table of contents…","Calculating page numbers…","Preparing the final seminar…"];
- const LD=mkLoader({title:"Generating seminar",steps:ST});
- const set=async(i,f)=>{LD.update((i+f)/8*100,ST[i]);LD.steps(i,f);await tickP(f===0||f>=1?70:16)};
+ const LD={update(){},steps(){},done(){},el:{remove(){}}};
+ const set=async(i,f)=>{if(i===0&&f===0)await tickP(0)};
  const oldP=S.pages,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font,oldSt=S.stpl;let w=null;
  try{
   /* 1 read */
@@ -1775,7 +1775,7 @@ async function runGen(raw){
   /* 8 finish */
   await set(7,0);w.remove();w=null;curP=-1;view="pages";save();await set(7,1);
   LD.done("Your seminar has been successfully generated!");
-  await new Promise(r=>setTimeout(r,900));
+  
   LD.el.remove();const u=$("ur");if(u)u.remove();URD="";renderEd();tab("pv");autoImagesBg();
   const importedChars=S.pages.reduce((n,p)=>n+(p.title||"").length+p.blocks.reduce((m,b)=>m+String(b.text||"").length,0),0);
   console.info("Seminar import complete:",raw.length,"source characters;",importedChars,"characters placed in",S.pages.length,"sections.");
