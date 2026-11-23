@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.36";</script>
+<script>window.APP_VERSION="1.37";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1809,12 +1809,15 @@ function fixRtlMarkers(root){
    m.textContent=ord?n+".":"•";
    m.style.cssText="position:absolute;top:0;right:-"+pad+"px;width:"+pad+"px;text-align:center;font-weight:normal;pointer-events:none";
    li.insertBefore(m,li.firstChild)})})}
+async function buildStable(w){const dec=()=>Promise.all([...w.querySelectorAll("img")].map(m=>m.decode?m.decode().catch(()=>{}):0));
+ for(let k=0;k<3;k++){build(w);await dec();await new Promise(r=>requestAnimationFrame(()=>r()));
+  if(![...w.querySelectorAll(".page .bd")].some(b=>b.scrollHeight>b.clientHeight+1))break}}
 $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
  if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing pages…");
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
- try{scrollTo(0,0);await fontLoad();await imgPend();build(w);fixRtlMarkers(w);
+ try{scrollTo(0,0);await fontLoad();await imgPend();await buildStable(w);fixRtlMarkers(w);
   const pg=[...w.querySelectorAll(".page")],pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});pdf.setProperties({keywords:"RBLD1:"+await sbB64(await packState())});
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*86,"Page "+(i+1)+" of "+pg.length);
@@ -2305,7 +2308,7 @@ const ckZip=u=>{const dv=new DataView(u.buffer,u.byteOffset,u.byteLength);let p=
  for(let i=0;i<n;i++){if(dv.getUint32(o,true)!==0x02014b50)return null;const crc=dv.getUint32(o+16,true),sz=dv.getUint32(o+24,true),nl=dv.getUint16(o+28,true),xl=dv.getUint16(o+30,true),cl=dv.getUint16(o+32,true),lo=dv.getUint32(o+42,true),nm=dec.decode(u.subarray(o+46,o+46+nl)),st=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),d=u.subarray(st,st+sz);out[nm]={d,ok:crc32(d)===crc};o+=46+nl+xl+cl}return out};
 const verifyOut=async(kind,blob)=>{try{const u=new Uint8Array(await blob.arrayBuffer());
  if(kind==="pdf"){const s=new TextDecoder("latin1").decode(u);if(s.slice(0,5)!=="%PDF-")return "فایلی PDF دروست نییە";
-  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);let want=0;try{await fontLoad();await imgPend();build(w);want=w.querySelectorAll(".page").length}finally{w.remove()}
+  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);let want=0;try{await fontLoad();await imgPend();await buildStable(w);want=w.querySelectorAll(".page").length}finally{w.remove()}
   const got=(s.match(/\/Type\s*\/Page[^s]/g)||[]).length;return got===want?true:"ژمارەی لاپەڕەی PDF ("+got+") وەک ڕاپۆرتەکە نییە ("+want+")"}
  const z=ckZip(u);if(!z)return "فایلی Word زیپەکەی تێکچووە";
  const bad=[],need=["[Content_Types].xml","_rels/.rels","word/document.xml","word/_rels/document.xml.rels","word/styles.xml"];need.forEach(n=>{if(!z[n])bad.push("نییە: "+n)});
