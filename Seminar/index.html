@@ -7,7 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
 <link rel="preconnect" href="https://niiznyukddmmdqajmpcl.supabase.co" crossorigin><link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<script src="/codes.js"></script>
+<script>/* PDF libraries load on demand; works even if an older codes.js is cached */
+window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",html2canvas:"https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"},ok=function(){return n==="jspdf"?!!(window.jspdf&&window.jspdf.jsPDF):!!window.html2canvas};
+ if(ok())return Promise.resolve(true);window.__abLP=window.__abLP||{};if(window.__abLP[n])return window.__abLP[n];
+ var once=function(cors){return new Promise(function(res,rej){var s=document.createElement("script");s.src=U[n];s.async=true;if(cors)s.crossOrigin="anonymous";var t=setTimeout(function(){s.onload=s.onerror=null;s.remove();rej(new Error(n+" timeout"))},25000);
+  s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
+ return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
+addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
+<script src="/codes.js?v=242"></script>
 <style>
 :root{--bg:#fff;--fg:#2E2144;--card:#fff;--bd:#D9D0E4;--ac:#4B3869;--yl:#d8bb74;--gd:#b8923a;--dc:#4B3869;--dk:#8b0000;--mut:#6C6280;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -2341,7 +2348,7 @@ async function snapAll(L){
   const pg=[...w.querySelectorAll(".slide")],alt=e=>(e.innerText||"").replace(/\s+/g," ").trim().slice(0,300);
   /* the browser draws each slide exactly as in Live; html2canvas is only the fallback */
   if(window.ARender&&ARender.enabled()){try{const r=await ARender.render(pg,{w:1280,h:720,scale:1.5,quality:.88,dataURL:true,progress:(i,n)=>L.update(8+(i/n)*84,"Slide "+i+" of "+n)});r.forEach((x,i)=>out.push({d:x.d,b:x.u8,alt:alt(pg[i])}));return out}catch(x){console.warn("native render failed, using html2canvas",x);out.length=0}}
-  if(!window.html2canvas)await ARender.lib("html2canvas");fixRtlMarkers(w);
+  if(!window.html2canvas)await window.__abLib("html2canvas");fixRtlMarkers(w);
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
    pg.forEach((e,j)=>{e.style.display=j==i?"block":"none"});
@@ -2357,7 +2364,7 @@ async function saveBlob(blob,name){let dl=null;try{dl=window.claude&&await claud
  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}}
 const fname=ext=>((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Seminar")+"."+ext;
 const exportPdf=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!(window.jspdf&&window.jspdf.jsPDF)&&window.ARender&&ARender.lib)try{await ARender.lib("jspdf")}catch(x){}
+ if(!(window.jspdf&&window.jspdf.jsPDF))try{await window.__abLib("jspdf")}catch(x){}
  if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");
@@ -2411,7 +2418,7 @@ const showDL=(items)=>{const old=document.getElementById("dlres");if(old)old.rem
   xb.onclick=()=>{if(!xb.dataset.arm){xb.dataset.arm=1;const h=xb.textContent;xb.textContent=SU;xb.style.color="#b00020";xb.style.fontWeight="700";xt=setTimeout(()=>{if(xb.isConnected){delete xb.dataset.arm;xb.textContent=h;xb.style.color="";xb.style.fontWeight=""}},3000);return}clearTimeout(xt);o.remove()}}};
 /* V2.27: both files are built first, then each has its own button (iOS blocks a second automatic download) */
 const exportBoth=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!(window.jspdf&&window.jspdf.jsPDF)&&window.ARender&&ARender.lib)try{await ARender.lib("jspdf")}catch(x){}
+ if(!(window.jspdf&&window.jspdf.jsPDF))try{await window.__abLib("jspdf")}catch(x){}
  if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");let sl=null,items=[];
