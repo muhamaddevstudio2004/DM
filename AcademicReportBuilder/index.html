@@ -2,11 +2,11 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.41";</script>
+<script>window.APP_VERSION="1.43";</script>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#143a7b"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Report"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://niiznyukddmmdqajmpcl.supabase.co" crossorigin><link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <script src="/codes.js"></script>
 <style>
 :root{--bg:#fff;--fg:#0f2a52;--card:#fff;--bd:#c9d6ea;--ac:#143a7b;--yl:#d8bb74;--gd:#b8923a;--dc:#143a7b;--dk:#8b0000;--mut:#51627f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -73,7 +73,7 @@ textarea{resize:vertical;min-height:80px}
 .bd figure{margin:8px 0;text-align:center}.bd figure img{max-width:100%;max-height:430px}.bd figcaption{font-style:italic;font-size:.85em;line-height:1.3}
 .tr{display:flex;align-items:flex-end;gap:4px;margin:3px 0;line-height:1.4}.tr .tl{flex:0 1 auto;min-width:0;overflow-wrap:anywhere;border:0;border-radius:0;background:none;padding:0;box-shadow:none}.tr.l2,.tr.l3{font-weight:400}.tcn{font-size:.85em;font-style:italic;color:#444;border-bottom:1px solid #888;margin-bottom:10px;padding-bottom:3px}.tr i{flex:1 0 22px;border-bottom:1px dotted #000;margin-bottom:.35em}.tr .pgn{flex:none;min-width:2.2em;text-align:right}.page.rtl .tr .pgn{text-align:left}.tr.l1{font-weight:bold;margin-top:9px;text-transform:uppercase}.tr.l2{margin-inline-start:22px}.tr.l3{margin-inline-start:44px}.tr.lf{margin:5px 0}
 .cv{position:absolute;inset:56px 76px 56px;display:flex;flex-direction:column;justify-content:space-between;font-family:var(--cf);line-height:1.35}
-.cv .lgph{flex:none;width:112px;height:112px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed #9aa8c4;border-radius:12px;background:#f4f6fa;color:#7a89a8;font-family:Arial,sans-serif;font-size:13pt;letter-spacing:.12em}.cv .lgph .ic{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.x .lgph{display:none}@media print{.lgph{display:none!important}}
+.cv .lgph{flex:none;width:112px;height:112px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed #9aa8c4;border-radius:12px;background:#f4f6fa;color:#7a89a8;font-family:Arial,sans-serif;font-size:13pt;letter-spacing:.12em}.cv .lgph .ic{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.x .lgph{visibility:hidden}@media print{.lgph{display:none!important}}
 .cv .ct{display:flex;justify-content:space-between;align-items:center;font-weight:bold;font-size:calc(19pt*var(--cz,1))}.cv .ct img{max-height:120px;max-width:120px;object-fit:contain}
 .cv .cm{text-align:center}.cv .cm.ns{padding-top:56px}.cv .cm.ns h1{margin-bottom:0}.cv h1{font-size:calc(27pt*var(--cz,1));color:var(--dc);margin:0 0 14px;line-height:1.2}.cv .sb{font-size:calc(15pt*var(--cz,1));color:#333}
 .cv .cb{display:flex;justify-content:space-between;font-size:calc(17pt*var(--cz,1))}.cv .cb>div{flex:none}.cv li{white-space:nowrap}.cv .r{color:var(--dc);font-size:calc(19pt*var(--cz,1))}.cv ul{margin:4px 0;padding-left:20px;font-weight:bold}
@@ -419,14 +419,14 @@ html[dir="rtl"] .hv-tx{text-align:right}
 #doc figure img.academic-report-image,#doc .cv .lgph,#doc .cv .ct img{cursor:pointer}
 .img-ph{border:2px dashed var(--dc);border-radius:10px;padding:16px 12px;margin:10px 0 14px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--dc);background:#f6f3f9;font:700 11pt/1.3 var(--cf,Arial),sans-serif;cursor:pointer;text-align:center}
 .img-ph .ic{width:34px;height:34px;stroke-width:1.6}
-.x .img-ph{display:none}
+.x .img-ph{visibility:hidden}
 #isheet{position:fixed;inset:0;z-index:9990;background:rgba(30,18,48,.55);display:flex;align-items:flex-end;justify-content:center}
 #isheet .is-in{width:100%;max-width:560px;box-sizing:border-box;background:#fff;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
 #isheet button{min-height:50px;font-weight:700;font-size:16px;border-radius:12px;justify-content:center;touch-action:manipulation}
 #isheet .dng{color:#b00020;border-color:#b00020;background:#fff}
 @media print{.img-ph,#isheet{display:none!important}}
-#doc .cv [data-cv]{cursor:pointer;outline:1px dashed rgba(20,58,123,.3);outline-offset:4px;border-radius:3px;min-height:34px}
-#doc .cv [data-cv="top"]{min-width:190px;min-height:56px}
+.cv [data-cv]{min-height:34px}.cv [data-cv="top"]{min-width:190px;min-height:56px}
+#doc .cv [data-cv]{cursor:pointer;outline:1px dashed rgba(20,58,123,.3);outline-offset:4px;border-radius:3px}
 @media print{#doc .cv [data-cv]{outline:none!important}}
 #isheet.cvs .is-in{max-height:72vh;overflow:auto}
 #isheet label{display:block;margin:2px 0 -4px;font-size:12px;font-weight:700;color:var(--mut)}
@@ -1525,7 +1525,7 @@ function zipStore(files){
  en.setUint32(0,0x06054b50,true);en.setUint16(8,files.length,true);en.setUint16(10,files.length,true);en.setUint32(12,cs,true);en.setUint32(16,off,true);
  return new Blob([...parts,...cd,new Uint8Array(en.buffer)],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})}
 const WNS='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
-async function makeDocx(pgn){
+async function makeDocx(pgn,LAY){LAY=LAY||{starts:new Set(),img:new Map()};let CK="";
  const rt=S.dir=="rtl",I=S.info,TW=9626,enc=new TextEncoder();
  const col=(S.color||"#143a7b").replace("#","").toUpperCase();
  const dk=col.match(/\w\w/g).map(v=>Math.round(parseInt(v,16)*.72).toString(16).padStart(2,"0")).join("").toUpperCase();
@@ -1590,17 +1590,18 @@ async function makeDocx(pgn){
   else if(b.t=="tbl"&&(has||S.tcap)&&String(b.text||"").trim()){const c={k:"t",label:L.tab+(++tn)+": ",text:capT(has||tblAuto(sec,b)),bm:"_Cap"+(++cn)};cm.set(b,c);caps.push(c)}}));
  const capP=(txt,fs,c)=>P(R(txt,{i:!rt,sz:Math.round(fs*2*.9)}),{keepNext:0,jc:"center",sp:'w:before="40" w:after="120" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
  /* ---- block (dom) -> xml ---- */
+ const LH=(fs,k)=>Math.round(fs*k*20),pbX=x=>{x=String(x||"");if(!x)return x;if(x.startsWith("<w:p>")){return x.replace(/^<w:p><w:pPr>((?:<w:pStyle [^>]*\/>)?(?:<w:keepNext\/>)?)(?:<w:pageBreakBefore\/>)?/,"<w:p><w:pPr>$1<w:pageBreakBefore/>")}return P("",{pb:1,sp:'w:before="0" w:after="0" w:line="20" w:lineRule="exact"',tiny:1})+x};
  function conv(el,fs,c,b){const t=el.tagName,o={sz:fs*2};
-  if(t=="P")return P(runsOf(el,o),{keepNext:el.dataset&&el.dataset.lead=="1"?1:0});
+  if(t=="P")return P(runsOf(el,o),{keepNext:el.dataset&&el.dataset.lead=="1"?1:0,sp:`w:after="120" w:line="${LH(fs,ls)}" w:lineRule="exact"`});
   if(t=="PRE"){const ln=[...el.children],cs=el.classList.contains("cs2")?2:el.classList.contains("cs3")?3:el.classList.contains("cs1")?1:0,dk2=cs>1,bg=["F3F5F8","F8FAFC","0D1117","1E1E2E"][cs],fg=["","1E293B","C9D1D9","CDD6F4"][cs],HD={hk:"FF7B72",hs:"A5D6FF",hc:"8B949E",hn:"79C0FF",hv:"FFA657",hf:"D2A8FF",ht:"7EE787",ha:"D2A8FF",hy:"79C0FF"},co={font:"Courier New",sz:Math.round(fs*2*.8),rtl:0,color:fg||undefined},nl=ln.length>1,st=+(el.style.getPropertyValue("--ln0")||0);
    const cr=x=>[...x.childNodes].map(n=>{if(n.nodeType==3)return R(n.nodeValue,co);const c=n.className;return R(n.textContent,Object.assign({},co,HLC[c.slice(1)]?{color:(dk2?HD:HLC)[c.slice(1)],i:c=="xhc"?1:0}:{}))}).join("");
-   return ln.map((x,i)=>P(R((nl?String(st+i+1).padStart(2," ")+"  ":""),Object.assign({},co,{color:dk2?"6E7681":"8A94A6"}))+cr(x),{ltr:1,shd:bg,jc:"left",keepNext:i<ln.length-1?1:0,sp:`w:before="0" w:after="${i==ln.length-1?140:0}" w:line="250" w:lineRule="auto"`})).join("")}
+   return ln.map((x,i)=>P(R((nl?String(st+i+1).padStart(2," ")+"  ":""),Object.assign({},co,{color:dk2?"6E7681":"8A94A6"}))+cr(x),{ltr:1,shd:bg,jc:"left",keepNext:i<ln.length-1?1:0,sp:`w:before="0" w:after="${i==ln.length-1?150:0}" w:line="${LH(fs,.82*1.45)}" w:lineRule="exact"`})).join("")}
   if(t=="UL"||t=="OL"){const nid=t=="OL"?newNum(el.start||1):1,li=[...el.children];
-   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:20}"`,jc:el.classList.contains("ref-blk")?"left":undefined,ltr:el.classList.contains("ref-blk")&&refDir(x.textContent)=="ltr"})).join("")}
+   return li.map((x,i)=>P(runsOf(x,o),{num:nid,sp:`w:after="${i==li.length-1?120:0}" w:line="${LH(fs,ls)}" w:lineRule="exact"`,jc:el.classList.contains("ref-blk")?"left":undefined,ltr:el.classList.contains("ref-blk")&&refDir(x.textContent)=="ltr"})).join("")}
   if(t=="TABLE"){const cap=el.querySelector("caption");let out="";
    if(cap)out+=P(R(cap.textContent,{i:!rt,sz:Math.round(fs*2*.95)}),{keepNext:1,jc:"center",sp:'w:before="60" w:after="80" w:line="260" w:lineRule="auto"',bm:c&&c.bm});
    const hr=[...el.querySelectorAll("thead tr")],br=[...el.querySelectorAll("tbody tr")],nc=Math.max(1,((hr[0]||br[0]||{children:[]}).children.length)),cw=Math.floor(TW/nc),tsz=Math.round(fs*2*.92);
-   const row=(r,hd)=>`<w:tr><w:trPr><w:cantSplit/>${hd?"<w:tblHeader/>":""}</w:trPr>${[...r.children].map(cc=>tc(cw,P(runsOf(cc,{sz:tsz,b:hd,color:hd?"FFFFFF":""}),{sp:'w:before="40" w:after="40" w:line="260" w:lineRule="auto"',jc:"left"}),{shd:hd?dk:""})).join("")}</w:tr>`;
+   const row=(r,hd)=>`<w:tr><w:trPr><w:cantSplit/>${hd?"<w:tblHeader/>":""}</w:trPr>${[...r.children].map(cc=>tc(cw,P(runsOf(cc,{sz:tsz,b:hd,color:hd?"FFFFFF":""}),{sp:`w:before="60" w:after="60" w:line="${LH(fs,.92*1.3)}" w:lineRule="exact"`,jc:"left"}),{shd:hd?dk:""})).join("")}</w:tr>`;
    out+=tbl(Array(nc).fill(cw),hr.map(r=>row(r,1)).join("")+br.map(r=>row(r,0)).join(""),1)+TINY();return out}
   if(t=="FIGURE"){const lay=el.querySelector(".image-layout"),cl=lay?([...lay.classList].find(x=>["left","right","top","bottom","center"].includes(x))||"left"):"left";
    const note=lay&&lay.querySelector(".image-copy"),fc=el.querySelector("figcaption"),info=imgs[b&&b.src];let out="";
@@ -1608,10 +1609,11 @@ async function makeDocx(pgn){
    const noteP=()=>hasNote?P(runsOf(note,o),{}):"";
    const cap=fc?capP(fc.textContent,fs,c):"";
    if(!info)return noteP()+cap;
-   if((cl=="left"||cl=="right")&&hasNote){const pct={a:.32,s:.2,m:.32,l:.44}[b.sz||"m"],[w,h]=fit(info,pct*642,280,1),iw=Math.round(w*15)+240,tw=TW-iw;
+   const LI=LAY.img.get(CK);
+   if((cl=="left"||cl=="right")&&hasNote){const pct={a:.32,s:.2,m:.32,l:.44}[b.sz||"m"],[w,h]=LI||fit(info,pct*642,280,1),iw=Math.round(w*15)+240,tw=TW-iw;
     const ci=tc(iw,P(DR(info,w,h),{jc:"left",keepNext:1}),{}),ct=tc(tw,P(runsOf(note,o),{}),{});
     out+=P("",{sp:'w:before="0" w:after="0" w:line="120" w:lineRule="exact"',tiny:1})+tbl(cl=="left"?[iw,tw]:[tw,iw],`<w:tr><w:trPr><w:cantSplit/></w:trPr>${cl=="left"?ci+ct:ct+ci}</w:tr>`,0)+cap+TINY();return out}
-   const[w,h]=fit(info,642*.8,(+el.dataset.fit||360),0),im=P(DR(info,w,h),{jc:"center",keepNext:1,sp:el.classList.contains("nocap")?'w:before="360" w:after="200"':'w:before="120" w:after="60"'});
+   const[w,h]=LI||fit(info,642*.8,(+el.dataset.fit||360),0),im=P(DR(info,w,h),{jc:"center",keepNext:1,sp:el.classList.contains("nocap")?'w:before="360" w:after="200"':'w:before="120" w:after="60"'});
    return (cl=="bottom"?noteP()+im:im+noteP())+cap}
   return ""}
  /* ---- cover ---- */
@@ -1634,13 +1636,13 @@ async function makeDocx(pgn){
  const sect=(foot,fmt,start)=>`<w:sectPr>${foot?'<w:footerReference w:type="default" r:id="rId3"/>':""}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1140" w:bottom="1304" w:left="1140" w:header="567" w:footer="567" w:gutter="0"/>${borders}${fmt?`<w:pgNumType w:fmt="${fmt}"${start?` w:start="${start}"`:""}/>`:""}${rt?"<w:bidi/>":""}</w:sectPr>`;
  const sectP=(x)=>P("",{sect:x,sp:'w:before="0" w:after="0" w:line="20" w:lineRule="exact"',tiny:1});
  let doc=cover()+sectP(sect(0));
- const mkSec=(sec,front,first)=>{const fs=sec.pg.fs||12,im={};sec.items.forEach(x=>im[x.bi]=x);let out="";
-  out+=P(R((sec.num?sec.num+" ":"")+sec.title),{style:front?"FrontHeading":"Heading1",pb:front?!first:(!!sec.pg.startNewPage&&!first)});
+ const mkSec=(sec,front,first)=>{const fs=sec.pg.fs||12,im={},PI=S.pages.indexOf(sec.pg),ST=k=>!front&&LAY.starts.has(PI+":"+k);sec.items.forEach(x=>im[x.bi]=x);let out="";
+  out+=P(R((sec.num?sec.num+" ":"")+sec.title),{style:front?"FrontHeading":"Heading1",pb:front?!first:((!!sec.pg.startNewPage||ST(-1))&&!first)});
   if(sec.k==="ref"){sec.pg.blocks.forEach(b=>blockEls(b).forEach(el=>{el.classList.add("ref-blk");out+=conv(el,fs,null,b)}));
    citationList().forEach((r,i)=>{const d=document.createElement("div");d.innerHTML=referenceHTML(r,i);out+=P(runsOf(d,{sz:fs*2}),{ind:'w:left="720" w:hanging="720"',sp:'w:after="150"',jc:"left"})});return out}
   sec.pg.blocks.forEach((b,bi)=>{
-   if(b.t=="h"){const x=im[bi];if(!x)return;out+=P(R((x.num?x.num+" ":"")+x.title),{style:x.lv==3?"Heading3":"Heading2",pb:!!b.newPage});return}
-   const c=cm.get(b);blockEls(b,c&&c.label,c&&c.text).forEach(el=>out+=conv(el,fs,c,b))});
+   if(b.t=="h"){const x=im[bi];if(!x)return;out+=P(R((x.num?x.num+" ":"")+x.title),{style:x.lv==3?"Heading3":"Heading2",pb:!!b.newPage||ST(bi)});return}
+   CK=PI+":"+bi;let bx="";const c=cm.get(b);blockEls(b,c&&c.label,c&&c.text).forEach(el=>bx+=conv(el,fs,c,b));out+=ST(bi)?pbX(bx):bx});
   return out};
  let first=true,front="";
  O.front.forEach(sec=>{front+=mkSec(sec,true,first);first=false});
@@ -1661,11 +1663,11 @@ async function makeDocx(pgn){
  /* ---- styles / numbering / package ---- */
  const bidi=rt?"<w:bidi/>":"";
  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${WNS}><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="${e(ff)}" w:hAnsi="${e(ff)}" w:eastAsia="${e(ff)}" w:cs="${e(csf)}"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-SA"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
-<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:pPr>${bidi}<w:spacing w:after="120" w:line="${Math.round(ls*240)}" w:lineRule="auto"/><w:jc w:val="${al}"/></w:pPr></w:style>
-<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/>${lineOn?`<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="3" w:color="${gd}"/></w:pBdr>`:""}${bidi}<w:spacing w:before="280" w:after="160" w:line="312" w:lineRule="auto"/><w:jc w:val="left"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:bCs/><w:caps/><w:color w:val="${dk}"/><w:sz w:val="${H1*2}"/><w:szCs w:val="${H1*2}"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:pPr>${bidi}<w:spacing w:after="120" w:line="${Math.round(12*ls*20)}" w:lineRule="exact"/><w:jc w:val="${al}"/></w:pPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/>${lineOn?`<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="3" w:color="${gd}"/></w:pBdr>`:""}${bidi}<w:spacing w:before="210" w:after="${lineOn?120:120}" w:line="${Math.round(H1*1.3*20)}" w:lineRule="exact"/><w:jc w:val="left"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:bCs/><w:caps/><w:color w:val="${dk}"/><w:sz w:val="${H1*2}"/><w:szCs w:val="${H1*2}"/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="FrontHeading"><w:name w:val="Front Heading"/><w:basedOn w:val="Heading1"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:outlineLvl w:val="9"/></w:pPr></w:style>
-<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/>${bidi}<w:spacing w:before="200" w:after="80" w:line="312" w:lineRule="auto"/><w:jc w:val="left"/><w:outlineLvl w:val="1"/></w:pPr><w:rPr><w:b/><w:bCs/><w:sz w:val="${H2*2}"/><w:szCs w:val="${H2*2}"/></w:rPr></w:style>
-<w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/>${bidi}<w:spacing w:before="160" w:after="60" w:line="312" w:lineRule="auto"/><w:jc w:val="left"/><w:outlineLvl w:val="2"/></w:pPr><w:rPr><w:b/><w:bCs/><w:sz w:val="${H3*2}"/><w:szCs w:val="${H3*2}"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/>${bidi}<w:spacing w:before="150" w:after="60" w:line="${Math.round(H2*1.3*20)}" w:lineRule="exact"/><w:jc w:val="left"/><w:outlineLvl w:val="1"/></w:pPr><w:rPr><w:b/><w:bCs/><w:sz w:val="${H2*2}"/><w:szCs w:val="${H2*2}"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/>${bidi}<w:spacing w:before="120" w:after="45" w:line="${Math.round(H3*1.3*20)}" w:lineRule="exact"/><w:jc w:val="left"/><w:outlineLvl w:val="2"/></w:pPr><w:rPr><w:b/><w:bCs/><w:sz w:val="${H3*2}"/><w:szCs w:val="${H3*2}"/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="TOC1"><w:name w:val="toc 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="39"/><w:pPr><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="${TW}"/></w:tabs>${bidi}<w:spacing w:before="120" w:after="40" w:line="288" w:lineRule="auto"/><w:jc w:val="left"/></w:pPr><w:rPr><w:b/><w:bCs/><w:caps/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="TOC2"><w:name w:val="toc 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="39"/><w:pPr><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="${TW}"/></w:tabs>${bidi}<w:spacing w:before="0" w:after="20" w:line="288" w:lineRule="auto"/><w:ind w:left="330"/><w:jc w:val="left"/></w:pPr></w:style>
 <w:style w:type="paragraph" w:styleId="TOC3"><w:name w:val="toc 3"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="39"/><w:pPr><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="${TW}"/></w:tabs>${bidi}<w:spacing w:before="0" w:after="20" w:line="288" w:lineRule="auto"/><w:ind w:left="660"/><w:jc w:val="left"/></w:pPr></w:style>
@@ -1684,18 +1686,28 @@ async function makeDocx(pgn){
  T.push(["docProps/report.bin",await packState()]);
  return zipStore(T.concat(media))}
 
+/* reads the Live pagination of a built container: which block starts each body page, and the real image sizes */
+function docxLayout(w){const starts=new Set(),seen=new Set(),img=new Map();
+ [...w.querySelectorAll(".page")].filter(p=>p.dataset.z==="b").forEach((p,i)=>{const bd=p.querySelector(".bd");if(!bd)return;const f=bd.firstElementChild;
+  if(i>0&&f&&f.dataset.pi!==undefined){const k=f.dataset.pi+":"+f.dataset.bi;if(!seen.has(k))starts.add(k)}
+  bd.querySelectorAll("[data-pi]").forEach(el=>seen.add(el.dataset.pi+":"+el.dataset.bi))});
+ w.querySelectorAll("figure[data-pi] img.academic-report-image").forEach(im=>{const f=im.closest("figure");if(im.offsetWidth&&im.offsetHeight)img.set(f.dataset.pi+":"+f.dataset.bi,[im.offsetWidth,im.offsetHeight])});
+ return{starts,img}}
+let LASTLAY=null;
 $("bdocx").onclick=async()=>{const b=$("bdocx"),old=b.innerHTML;b.disabled=true;
  const L=mkLoader({title:"Creating Word file"});L.el.style.zIndex=9999;L.update(5,"Preparing pages…");
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
- try{scrollTo(0,0);await fontLoad();await imgPend();build(w);
-  const pgn=[...w.querySelectorAll(".tr")].map(d=>(d.querySelector(".pgn")||{}).textContent||"");w.remove();
-  L.update(40,"Building Word document…");await new Promise(r=>setTimeout(r,30));
-  const blob=await makeDocx(pgn),name=((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Report")+".docx";
+ try{scrollTo(0,0);let pgn,lay;const key=JSON.stringify(S);
+  if(LASTLAY&&LASTLAY.key===key){pgn=LASTLAY.pgn;lay=LASTLAY.lay}   /* the PDF was just built from the same report: reuse its pages */
+  else{await fontLoad();await imgPend();await buildStable(w);pgn=[...w.querySelectorAll(".tr")].map(d=>(d.querySelector(".pgn")||{}).textContent||"");lay=docxLayout(w)}
+  LASTLAY=null;w.remove();
+  L.update(40,"Building Word document…");await new Promise(r=>setTimeout(r,0));
+  const blob=await makeDocx(pgn,lay),name=((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Report")+".docx";
   L.update(97,"Saving file…");let dl=null;
   try{dl=window.claude&&await claude.use("downloads")}catch(x){}
   if(window.__dlc)window.__dlc.push({blob,name});else if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
-  L.done("Your Word file is ready");await new Promise(r=>setTimeout(r,650))
+  L.done("Your Word file is ready");if(!window.__dlc)await new Promise(r=>setTimeout(r,650))
  }catch(x){if(!(x&&x.code=="declined")){window.logAppError(x,"word");alert("Word export failed. Please try again.\n"+(x&&x.message||""))}}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
 if(typeof globalThis.refDir!=="function")globalThis.refDir=t=>/^[^A-Za-z\u0600-\u06FF]*[A-Za-z]/.test(String(t||"").replace(/<[^>]*>/g,""))?"ltr":"rtl";
@@ -1723,24 +1735,30 @@ async function buildStable(w){const dec=()=>Promise.all([...w.querySelectorAll("
  for(let k=0;k<3;k++){build(w);await dec();await new Promise(r=>requestAnimationFrame(()=>r()));
   if(![...w.querySelectorAll(".page .bd")].some(b=>b.scrollHeight>b.clientHeight+1))break}}
 $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
+ if(!(window.jspdf&&window.jspdf.jsPDF)&&window.ARender&&ARender.lib)try{await ARender.lib("jspdf")}catch(x){}
+ if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing pages…");
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
- try{scrollTo(0,0);await fontLoad();await imgPend();await buildStable(w);fixRtlMarkers(w);
+ try{scrollTo(0,0);await fontLoad();await imgPend();await buildStable(w);
+  LASTLAY={key:JSON.stringify(S),pgn:[...w.querySelectorAll(".tr")].map(d=>(d.querySelector(".pgn")||{}).textContent||""),lay:docxLayout(w)};
   const pg=[...w.querySelectorAll(".page")],pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});pdf.setProperties({keywords:"RBLD1:"+await sbB64(await packState())});
+  let shots=null;
+  if(window.ARender&&ARender.enabled()){try{shots=await ARender.render(pg,{w:794,h:1123,scale:2,quality:.9,progress:(i,n)=>L.update(8+(i/n)*86,"Page "+i+" of "+n)})}catch(x){console.warn("native render failed, using html2canvas",x);shots=null}}
+  if(shots)shots.forEach((x,i)=>{if(i)pdf.addPage("a4","portrait");pdf.addImage(x.u8,"JPEG",0,0,210,297,undefined,"FAST")});
+  else{if(!window.html2canvas)await ARender.lib("html2canvas");fixRtlMarkers(w);
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*86,"Page "+(i+1)+" of "+pg.length);
    await new Promise(r=>requestAnimationFrame(()=>r()));
    const c=await html2canvas(pg[i],{scale:innerWidth<900?1.5:2,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:794,windowHeight:1123,onclone:async d=>{pdfFixCode(d);await pdfClonePrep(d)}});
    if(i)pdf.addPage("a4","portrait");
    pdf.addImage(c.toDataURL("image/jpeg",.88),"JPEG",0,0,210,297,undefined,"FAST");
-   c.width=c.height=0}
+   c.width=c.height=0}}
   L.update(97,"Saving file…");const blob=pdf.output("blob"),name=((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Report")+".pdf";let dl=null;
   try{dl=window.claude&&await claude.use("downloads")}catch(x){}
   if(window.__dlc)window.__dlc.push({blob,name});else if(dl)await dl.save({filename:name,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
-  L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
+  L.done("Your PDF is ready");if(!window.__dlc)await new Promise(r=>setTimeout(r,650))
  }catch(x){if(!(x&&x.code=="declined")){window.logAppError(x,"pdf");alert("PDF export failed. Please try again.")}}
  w.remove();L.el.remove();b.disabled=false;b.innerHTML=old};
 /* ===== Upload Seminar: only PDF / PPTX files downloaded from this system can be re-opened ===== */
@@ -2063,7 +2081,7 @@ const extraCheck=async(T,add)=>{
  const lays=async(lang,grad,vs)=>{const out=[];for(let i=0;i<vs.length;i++){const P=await lay(lang,grad,vs[i]);P.slice(0,2).forEach(m=>out.push("["+(vs[i].font||("جۆر "+(i+1)))+"] "+m))}return out.length?out.slice(0,4).join(" • "):true};
  const V=[{},{pn:"arabic",notoc:1,hf:0,keepSec:0},{ls:2,al:"left",h1:20,h2:16,h3:14,cvs:"l"},{lof:0,lot:0,lineOn:false,hlc:0,cvs:"s",citeStyle:"ieee",tocfs:14}];
  try{
-  await T("کتێبخانەی PDF",async()=>window.html2canvas&&window.jspdf&&window.jspdf.jsPDF?true:"html2canvas یان jsPDF نەهاتووە");
+  await T("کتێبخانەی PDF",async()=>{try{await ARender.lib("jspdf");await ARender.lib("html2canvas")}catch(x){}return window.html2canvas&&window.jspdf&&window.jspdf.jsPDF?true:"html2canvas یان jsPDF نەهاتووە"});
   await T("فۆنتە کوردییەکان",async()=>{const bad=[];await Promise.all(KF.map(async([f])=>{try{const r=await Promise.race([document.fonts.load('400 16px "'+f+'"',SAMP),new Promise((_,j)=>setTimeout(()=>j(0),8000))]);if(!r||!r.length)bad.push(f)}catch(x){bad.push(f)}}));return bad.length?"نەهاتوون: "+bad.join("، "):true});
   await T("هەڵگرتنی ناوخۆیی",async()=>{const k="adm-chk-ls";localStorage.setItem(k,"1");const ok=localStorage.getItem(k)==="1";localStorage.removeItem(k);return ok||"localStorage کار ناکات"});
   await T("خوێندنەوەی دەقی AI",async()=>{const bad=[];
