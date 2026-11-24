@@ -225,13 +225,22 @@ R.warm=function(){try{
  const st=document.documentElement.style,f=new Set(),add=v=>String(v||"").split(",").forEach(x=>{x=x.trim().replace(/^["']|["']$/g,"");if(GFAM.includes(x))f.add(x)});
  add(st.getPropertyValue("--ff"));add(st.getPropertyValue("--cf"));f.add("Noto Naskh Arabic");if(APP==="seminar")f.add("Noto Sans Arabic");
  fontCSS([...f]).catch(()=>{})}catch(x){}};
+/* Safari draws semi-transparent image pixels (e.g. window shadows in screenshots) as a solid grey band inside
+   an SVG image. So, on Safari only, transparent images are first laid onto the colour behind them, exactly as Live shows them. */
+const bgOf=el=>{for(let e=el.parentElement;e;e=e.parentElement){const c=getComputedStyle(e).backgroundColor;if(c&&!/rgba\(\s*0,\s*0,\s*0,\s*0\s*\)|transparent/.test(c))return c}return"#fff"};
+const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
+async function flattenImgs(orig,clone){const oi=[...orig.querySelectorAll("img")].filter(e=>!e.closest(".wm,.pic-x")),ci=[...clone.querySelectorAll("img")];if(oi.length!==ci.length)return;
+ await Promise.all(ci.map(async(im,k)=>{try{const src=im.getAttribute("src")||"";if(!/^data:image\/(png|webp|gif|svg)/i.test(src))return;
+  const i=await loadImg(src);if(!i||!i.naturalWidth)return;const s=Math.min(1,2400/Math.max(i.naturalWidth,i.naturalHeight)),c=document.createElement("canvas");
+  c.width=Math.max(1,Math.round(i.naturalWidth*s));c.height=Math.max(1,Math.round(i.naturalHeight*s));const x=c.getContext("2d");x.fillStyle=bgOf(oi[k]);x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);
+  im.setAttribute("src",c.toDataURL("image/png"));c.width=c.height=0}catch(x){}}))}
 /* nodes: .page / .slide elements (already built, attached). Returns [{blob,u8,d}] in order. */
 R.render=async function(nodes,o){o=o||{};const W=o.w,H=o.h,sc=o.scale||2,q=o.quality||.9,prog=o.progress||(()=>{});
  if(!R.enabled())throw new Error("native disabled");
  const fonts=await fontCSS(usedFams(nodes));
  const de=document.documentElement,css=pageCSS()+"\n"+fonts+"\n.fo-root,.fo-body{margin:0;padding:0;width:"+W+"px;height:"+H+"px;overflow:hidden}";
  const wk=isWK(),out=new Array(nodes.length);let done=0;
- const one=async i=>{const n=nodes[i].cloneNode(true);n.querySelectorAll(".wm,.pic-x").forEach(x=>x.remove());await inlineImgs(n);
+ const one=async i=>{const n=nodes[i].cloneNode(true);n.querySelectorAll(".wm,.pic-x").forEach(x=>x.remove());await inlineImgs(n);if(wk)await flattenImgs(nodes[i],n);
   const root=document.createElement("div");root.className=("fo-root "+de.className).trim();["dir","lang"].forEach(a=>{if(de.getAttribute(a))root.setAttribute(a,de.getAttribute(a))});if(de.dataset.ui)root.setAttribute("data-ui",de.dataset.ui);root.setAttribute("style",de.style.cssText);
   const stl=document.createElement("style");stl.textContent=css;root.appendChild(stl);
   const body=document.createElement("div");body.className="fo-body x";body.appendChild(n);root.appendChild(body);
