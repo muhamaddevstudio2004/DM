@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=243"></script>
+<script src="/codes.js?v=244"></script>
 <style>
 :root{--bg:#fff;--fg:#2E2144;--card:#fff;--bd:#D9D0E4;--ac:#4B3869;--yl:#d8bb74;--gd:#b8923a;--dc:#4B3869;--dk:#8b0000;--mut:#6C6280;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -2344,7 +2344,7 @@ function fixRtlMarkers(root){
 function ellipsize(root){root.querySelectorAll(".sl-t,.ft .fl,.pic .cr").forEach(el=>{if(el.scrollWidth<=el.clientWidth+1)return;const t=el.textContent;let lo=0,hi=t.length;while(lo<hi){const m=(lo+hi+1)>>1;el.textContent=t.slice(0,m)+"…";if(el.scrollWidth<=el.clientWidth+1)lo=m;else hi=m-1}el.textContent=t.slice(0,lo)+"…";el.style.textOverflow="clip"})}
 async function snapAll(L){
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:1280px;z-index:1";document.body.appendChild(w);const out=[];
- try{scrollTo(0,0);for(const g of S.pages){if(g.pic&&/^https?:/i.test(g.pic)){const d=await urlToData(g.pic);if(d)g.pic=d}}await fontLoad();await imgPend();build(w,0,true);
+ try{scrollTo(0,0);for(const g of S.pages){if(g.pic&&/^https?:/i.test(g.pic)){const d=await urlToData(g.pic);if(d)g.pic=d}}await fontLoad();await imgPend();build(w,0,true);if(window.ARender&&ARender.flatten)await ARender.flatten(w);
   const pg=[...w.querySelectorAll(".slide")],alt=e=>(e.innerText||"").replace(/\s+/g," ").trim().slice(0,300);
   /* the browser draws each slide exactly as in Live; html2canvas is only the fallback */
   if(window.ARender&&ARender.enabled()){try{const r=await ARender.render(pg,{w:1280,h:720,scale:1.5,quality:.88,dataURL:true,progress:(i,n)=>L.update(8+(i/n)*84,"Slide "+i+" of "+n)});r.forEach((x,i)=>out.push({d:x.d,b:x.u8,alt:alt(pg[i])}));return out}catch(x){console.warn("native render failed, using html2canvas",x);out.length=0}}
