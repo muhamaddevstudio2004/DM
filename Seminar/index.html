@@ -2,10 +2,11 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
+<script>window.APP_VERSION="2.42";</script>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://niiznyukddmmdqajmpcl.supabase.co" crossorigin><link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <script src="/codes.js"></script>
 <style>
 :root{--bg:#fff;--fg:#2E2144;--card:#fff;--bd:#D9D0E4;--ac:#4B3869;--yl:#d8bb74;--gd:#b8923a;--dc:#4B3869;--dk:#8b0000;--mut:#6C6280;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1292,7 +1293,7 @@ function homeUI(){
 <div class="langsw" role="group" aria-label="Interface language">${[["en","English"],["ckb","کوردی"],["ar","العربية"]].map(([v,n])=>`<button data-a="ui" data-v="${v}" class="${UIL==v?"on":""}">${n}</button>`).join("")}</div>
 ${window.ACodes?ACodes.homeBadge():""}<div class="hv-grid">${C.map(([v,i,t,d,act])=>`<button class="hv-card" data-a="${act}" data-v="${v}"><span class="hv-ic">${ic(i)}</span><span class="hv-tx"><b>${t}</b><small>${d}</small></span><span class="hv-arrow">${ic("next")}</span></button>`).join("")}</div>
 <div class="xsw"><a href="/"><span>All systems</span></a><a href="/AcademicReportBuilder/"><span>Report Builder</span></a></div>
-<div class="ftr">Developed by <a href="https://DevMuhamad.com" target="_blank" rel="noopener noreferrer">DevMuhamad.com</a></div></div>`}
+<div class="ftr">Developed by <a href="https://DevMuhamad.com" target="_blank" rel="noopener noreferrer">DevMuhamad.com</a> V${window.APP_VERSION}</div></div>`}
 function renderEd(){document.body.dataset.view=view;
  const back=`<button data-a="home" style="margin-bottom:10px">${ic("back")}Back</button>`;$("ed").innerHTML=view=="home"?homeUI():(view=="pages"&&curP>=0?"":back)+({tpl:tplUI(),pages:pagesUI()}[view]||"");$("ed").querySelectorAll('input[type=text],textarea').forEach(x=>x.dir="auto")}
 function mv(a,i,d){const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]}
@@ -2336,8 +2337,11 @@ function fixRtlMarkers(root){
 function ellipsize(root){root.querySelectorAll(".sl-t,.ft .fl,.pic .cr").forEach(el=>{if(el.scrollWidth<=el.clientWidth+1)return;const t=el.textContent;let lo=0,hi=t.length;while(lo<hi){const m=(lo+hi+1)>>1;el.textContent=t.slice(0,m)+"…";if(el.scrollWidth<=el.clientWidth+1)lo=m;else hi=m-1}el.textContent=t.slice(0,lo)+"…";el.style.textOverflow="clip"})}
 async function snapAll(L){
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:1280px;z-index:1";document.body.appendChild(w);const out=[];
- try{scrollTo(0,0);for(const g of S.pages){if(g.pic&&/^https?:/i.test(g.pic)){const d=await urlToData(g.pic);if(d)g.pic=d}}await fontLoad();await imgPend();build(w,0,true);fixRtlMarkers(w);
-  const pg=[...w.querySelectorAll(".slide")];
+ try{scrollTo(0,0);for(const g of S.pages){if(g.pic&&/^https?:/i.test(g.pic)){const d=await urlToData(g.pic);if(d)g.pic=d}}await fontLoad();await imgPend();build(w,0,true);
+  const pg=[...w.querySelectorAll(".slide")],alt=e=>(e.innerText||"").replace(/\s+/g," ").trim().slice(0,300);
+  /* the browser draws each slide exactly as in Live; html2canvas is only the fallback */
+  if(window.ARender&&ARender.enabled()){try{const r=await ARender.render(pg,{w:1280,h:720,scale:1.5,quality:.88,dataURL:true,progress:(i,n)=>L.update(8+(i/n)*84,"Slide "+i+" of "+n)});r.forEach((x,i)=>out.push({d:x.d,b:x.u8,alt:alt(pg[i])}));return out}catch(x){console.warn("native render failed, using html2canvas",x);out.length=0}}
+  if(!window.html2canvas)await ARender.lib("html2canvas");fixRtlMarkers(w);
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
    pg.forEach((e,j)=>{e.style.display=j==i?"block":"none"});
@@ -2353,7 +2357,8 @@ async function saveBlob(blob,name){let dl=null;try{dl=window.claude&&await claud
  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}}
 const fname=ext=>((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Seminar")+"."+ext;
 const exportPdf=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
+ if(!(window.jspdf&&window.jspdf.jsPDF)&&window.ARender&&ARender.lib)try{await ARender.lib("jspdf")}catch(x){}
+ if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");
  try{const sl=await snapAll(L),W=297,H=167.0625,pdf=new jspdf.jsPDF({unit:"mm",format:[W,H],orientation:"landscape",compress:true});
@@ -2387,7 +2392,6 @@ function makePptx(sl,pk){
  if(pk)F.push(["docProps/seminar.bin",pk]);
  return zipStore(F,"application/vnd.openxmlformats-officedocument.presentationml.presentation")}
 const exportPptx=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!window.html2canvas){alert("The slide library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PowerPoint file"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");
  try{const sl=await snapAll(L);L.update(95,"Building PowerPoint…");await new Promise(r=>setTimeout(r,30));
@@ -2407,7 +2411,8 @@ const showDL=(items)=>{const old=document.getElementById("dlres");if(old)old.rem
   xb.onclick=()=>{if(!xb.dataset.arm){xb.dataset.arm=1;const h=xb.textContent;xb.textContent=SU;xb.style.color="#b00020";xb.style.fontWeight="700";xt=setTimeout(()=>{if(xb.isConnected){delete xb.dataset.arm;xb.textContent=h;xb.style.color="";xb.style.fontWeight=""}},3000);return}clearTimeout(xt);o.remove()}}};
 /* V2.27: both files are built first, then each has its own button (iOS blocks a second automatic download) */
 const exportBoth=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!window.html2canvas||!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
+ if(!(window.jspdf&&window.jspdf.jsPDF)&&window.ARender&&ARender.lib)try{await ARender.lib("jspdf")}catch(x){}
+ if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");let sl=null,items=[];
  try{sl=await snapAll(L);const pk=await packState();
@@ -2417,7 +2422,7 @@ const exportBoth=async()=>{const b=$("bpdf"),old=b.innerHTML;
   }catch(x){alert("PDF export failed. Please try again.")}
   try{L.update(97,"Building PowerPoint…");await new Promise(r=>setTimeout(r,0));items.push({label:"PowerPoint (PPTX)",blob:makePptx(sl,pk),name:fname("pptx")})
   }catch(x){alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
-  L.done("Your PowerPoint is ready");await new Promise(r=>setTimeout(r,650))
+  L.done("Your PowerPoint is ready");await new Promise(r=>setTimeout(r,250))
  }catch(x){alert("PDF export failed. Please try again.")}
  L.el.remove();b.disabled=false;b.innerHTML=old;
  if(items.length)showDL(items)};
@@ -2748,7 +2753,7 @@ Object.assign(DICT.ckb,{"PDF export failed. Please try again.":"هەناردەی
 Object.assign(DICT.ar,{"PDF export failed. Please try again.":"فشل تصدير PDF. حاول مرة أخرى.","PowerPoint export failed. Please try again.":"فشل تصدير PowerPoint. حاول مرة أخرى."});
 /* one valid code (or an active print-shop subscription) = one download action: PDF first, then PowerPoint */
 $("bpdf").onclick=()=>{if(!window.ACodes){alert("The download system could not load. Check your connection and try again.");return}ACodes.gate(async()=>{try{await exportBoth()}catch(x){console.error(x)}})};
-if(window.ACodes)ACodes.init({app:"seminar",ver:"S2.41",lang:()=>UIL,onChange:()=>{if(view=="home")renderEd()},
+if(window.ACodes)ACodes.init({app:"seminar",ver:"S"+window.APP_VERSION,lang:()=>UIL,onChange:()=>{if(view=="home")renderEd()},
  /* codes sold before the merge (old seminar project) keep working */
  legacy:{url:"https://vvdqshbgngebqwwyuqpj.supabase.co",key:"sb_publishable_zGoR1CASdHr0w3FA0ugrsA_3c5EyjGN"}});
 statics();applyUI();trInit();renderEd();trTree(document.getElementById("top"));trTree(document.getElementById("nav"));trTree(document.getElementById("ed"));
