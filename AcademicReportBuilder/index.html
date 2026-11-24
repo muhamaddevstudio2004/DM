@@ -7,7 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
 <link rel="preconnect" href="https://niiznyukddmmdqajmpcl.supabase.co" crossorigin><link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<script src="/codes.js"></script>
+<script>/* PDF libraries load on demand; works even if an older codes.js is cached */
+window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",html2canvas:"https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"},ok=function(){return n==="jspdf"?!!(window.jspdf&&window.jspdf.jsPDF):!!window.html2canvas};
+ if(ok())return Promise.resolve(true);window.__abLP=window.__abLP||{};if(window.__abLP[n])return window.__abLP[n];
+ var once=function(cors){return new Promise(function(res,rej){var s=document.createElement("script");s.src=U[n];s.async=true;if(cors)s.crossOrigin="anonymous";var t=setTimeout(function(){s.onload=s.onerror=null;s.remove();rej(new Error(n+" timeout"))},25000);
+  s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
+ return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
+addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
+<script src="/codes.js?v=143"></script>
 <style>
 :root{--bg:#fff;--fg:#0f2a52;--card:#fff;--bd:#c9d6ea;--ac:#143a7b;--yl:#d8bb74;--gd:#b8923a;--dc:#143a7b;--dk:#8b0000;--mut:#51627f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -1735,7 +1742,7 @@ async function buildStable(w){const dec=()=>Promise.all([...w.querySelectorAll("
  for(let k=0;k<3;k++){build(w);await dec();await new Promise(r=>requestAnimationFrame(()=>r()));
   if(![...w.querySelectorAll(".page .bd")].some(b=>b.scrollHeight>b.clientHeight+1))break}}
 $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
- if(!(window.jspdf&&window.jspdf.jsPDF)&&window.ARender&&ARender.lib)try{await ARender.lib("jspdf")}catch(x){}
+ if(!(window.jspdf&&window.jspdf.jsPDF))try{await window.__abLib("jspdf")}catch(x){}
  if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing pages…");
@@ -1746,7 +1753,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   let shots=null;
   if(window.ARender&&ARender.enabled()){try{shots=await ARender.render(pg,{w:794,h:1123,scale:2,quality:.9,progress:(i,n)=>L.update(8+(i/n)*86,"Page "+i+" of "+n)})}catch(x){console.warn("native render failed, using html2canvas",x);shots=null}}
   if(shots)shots.forEach((x,i)=>{if(i)pdf.addPage("a4","portrait");pdf.addImage(x.u8,"JPEG",0,0,210,297,undefined,"FAST")});
-  else{if(!window.html2canvas)await ARender.lib("html2canvas");fixRtlMarkers(w);
+  else{if(!window.html2canvas)await window.__abLib("html2canvas");fixRtlMarkers(w);
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*86,"Page "+(i+1)+" of "+pg.length);
    await new Promise(r=>requestAnimationFrame(()=>r()));
@@ -2081,7 +2088,7 @@ const extraCheck=async(T,add)=>{
  const lays=async(lang,grad,vs)=>{const out=[];for(let i=0;i<vs.length;i++){const P=await lay(lang,grad,vs[i]);P.slice(0,2).forEach(m=>out.push("["+(vs[i].font||("جۆر "+(i+1)))+"] "+m))}return out.length?out.slice(0,4).join(" • "):true};
  const V=[{},{pn:"arabic",notoc:1,hf:0,keepSec:0},{ls:2,al:"left",h1:20,h2:16,h3:14,cvs:"l"},{lof:0,lot:0,lineOn:false,hlc:0,cvs:"s",citeStyle:"ieee",tocfs:14}];
  try{
-  await T("کتێبخانەی PDF",async()=>{try{await ARender.lib("jspdf");await ARender.lib("html2canvas")}catch(x){}return window.html2canvas&&window.jspdf&&window.jspdf.jsPDF?true:"html2canvas یان jsPDF نەهاتووە"});
+  await T("کتێبخانەی PDF",async()=>{try{await window.__abLib("jspdf");await window.__abLib("html2canvas")}catch(x){}return window.html2canvas&&window.jspdf&&window.jspdf.jsPDF?true:"html2canvas یان jsPDF نەهاتووە"});
   await T("فۆنتە کوردییەکان",async()=>{const bad=[];await Promise.all(KF.map(async([f])=>{try{const r=await Promise.race([document.fonts.load('400 16px "'+f+'"',SAMP),new Promise((_,j)=>setTimeout(()=>j(0),8000))]);if(!r||!r.length)bad.push(f)}catch(x){bad.push(f)}}));return bad.length?"نەهاتوون: "+bad.join("، "):true});
   await T("هەڵگرتنی ناوخۆیی",async()=>{const k="adm-chk-ls";localStorage.setItem(k,"1");const ok=localStorage.getItem(k)==="1";localStorage.removeItem(k);return ok||"localStorage کار ناکات"});
   await T("خوێندنەوەی دەقی AI",async()=>{const bad=[];
