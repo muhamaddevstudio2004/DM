@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=145"></script>
+<script src="/codes.js?v=146"></script>
 <style>
 :root{--bg:#fff;--fg:#0f2a52;--card:#fff;--bd:#c9d6ea;--ac:#143a7b;--yl:#d8bb74;--gd:#b8923a;--dc:#143a7b;--dk:#8b0000;--mut:#51627f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -1747,7 +1747,7 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing pages…");
  const w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:1";document.body.appendChild(w);
- try{scrollTo(0,0);await fontLoad();await imgPend();await buildStable(w);if(window.ARender&&ARender.flatten)await ARender.flatten(w);
+ try{scrollTo(0,0);await fontLoad();await imgPend();await buildStable(w);
   LASTLAY={key:JSON.stringify(S),pgn:[...w.querySelectorAll(".tr")].map(d=>(d.querySelector(".pgn")||{}).textContent||""),lay:docxLayout(w)};
   const pg=[...w.querySelectorAll(".page")],pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});pdf.setProperties({keywords:"RBLD1:"+await sbB64(await packState())});
   let shots=null;
