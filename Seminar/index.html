@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
-<script>window.APP_VERSION="2.43";</script>
+<script>window.APP_VERSION="2.45";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -56,6 +56,7 @@ input[type=color]::-webkit-color-swatch-wrapper{padding:2px}input[type=color]::-
 #app{display:flex;align-items:flex-start;padding-bottom:76px}#ed{flex:1;min-width:0;padding:10px}#pv{flex:1;min-width:0;padding:10px;overflow-x:hidden}
 body[data-tab="edit"] #pv{display:none}body[data-tab="pv"] #ed{display:none}
 @media(min-width:900px){#app #ed,#app #pv{display:block!important}#ed{max-width:46%}#nav{display:none}#app{padding-bottom:0}}
+@media(min-width:900px){html[data-view="pages"]{overflow:hidden}body[data-view="pages"]{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}body[data-view="pages"] #app{flex:1;min-height:0;align-items:stretch}body[data-view="pages"] #ed,body[data-view="pages"] #pv{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:10px;margin-bottom:10px}
 .card h3{margin:0 0 8px;font-size:15px}
 label{display:block;font-size:12px;color:var(--mut);margin-top:6px}
@@ -1302,7 +1303,7 @@ function homeUI(){
 ${window.ACodes?ACodes.homeBadge():""}<div class="hv-grid">${C.map(([v,i,t,d,act])=>`<button class="hv-card" data-a="${act}" data-v="${v}"><span class="hv-ic">${ic(i)}</span><span class="hv-tx"><b>${t}</b><small>${d}</small></span><span class="hv-arrow">${ic("next")}</span></button>`).join("")}</div>
 <div class="xsw"><a href="/"><span>All systems</span></a><a href="/AcademicReportBuilder/"><span>Report Builder</span></a></div>
 <div class="ftr">Developed by <a href="https://DevMuhamad.com" target="_blank" rel="noopener noreferrer">DevMuhamad.com</a> V${window.APP_VERSION}</div></div>`}
-function renderEd(){document.body.dataset.view=view;
+function renderEd(){document.body.dataset.view=view;document.documentElement.dataset.view=view;
  const back=`<button data-a="home" style="margin-bottom:10px">${ic("back")}Back</button>`;$("ed").innerHTML=view=="home"?homeUI():(view=="pages"&&curP>=0?"":back)+({tpl:tplUI(),pages:pagesUI()}[view]||"");$("ed").querySelectorAll('input[type=text],textarea').forEach(x=>x.dir="auto")}
 function mv(a,i,d){const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]}
 function changed(re){save();if(re)renderEd();rp()}
@@ -1762,8 +1763,8 @@ function detectScript(raw){
   return ku>=3?"ckb":"ar"}
 async function runGen(raw){
  const ST=["Reading seminar content…","Detecting headings and sections…","Organizing seminar content…","Creating A4 pages…","Applying academic formatting…","Generating table of contents…","Calculating page numbers…","Preparing the final seminar…"];
- const LD=mkLoader({title:"Generating seminar",steps:ST});
- const set=async(i,f)=>{LD.update((i+f)/8*100,ST[i]);LD.steps(i,f);await tickP(f===0||f>=1?70:16)};
+ const LD={update(){},steps(){},done(){},el:{remove(){}}};
+ const set=async(i,f)=>{if(i===0&&f===0)await tickP(0)};
  const oldP=S.pages,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font,oldSt=S.stpl;let w=null;
  try{
   /* 1 read */
@@ -1788,7 +1789,6 @@ async function runGen(raw){
   /* 8 finish */
   await set(7,0);w.remove();w=null;curP=-1;view="pages";save();await set(7,1);
   LD.done("Your seminar has been successfully generated!");
-  await new Promise(r=>setTimeout(r,900));
   LD.el.remove();const u=$("ur");if(u)u.remove();URD="";renderEd();tab("pv");autoImagesBg();
   const importedChars=S.pages.reduce((n,p)=>n+(p.title||"").length+p.blocks.reduce((m,b)=>m+String(b.text||"").length,0),0);
   console.info("Seminar import complete:",raw.length,"source characters;",importedChars,"characters placed in",S.pages.length,"sections.");
