@@ -133,12 +133,9 @@ A.shopActive=function(){const sh=shopGet();if(!sh)return false;if(!(sh.apps||[])
 A.canAI=function(){return CFG.ai===true};
 A.aiGen=async function(prompt){
  if(!prompt||prompt.length<10)throw{code:"bad_request"};
- const sh=shopGet(),tok=sh&&sh.t||"";let r;
- try{r=await fetch(CFG.url.replace(/\/+$/,"")+"/functions/v1/ai-generate",{method:"POST",
-  headers:{"content-type":"application/json",apikey:CFG.key,authorization:"Bearer "+CFG.key},
-  body:JSON.stringify({app:APP,prompt:prompt,token:tok,code:""})})}catch(x){throw{code:"net"}}
- let j;try{j=await r.json()}catch(x){j={}}
- if(!r.ok||!j||j.ok!==true)throw{code:(j&&j.error)||"error",reason:j&&j.reason,status:r.status};
+ const sh=shopGet(),tok=sh&&sh.t||"";
+ const j=await rpc("ai_generate",{p_token:tok,p_code:"",p_app:APP,p_prompt:prompt});
+ if(!j||j.ok!==true)throw{code:(j&&j.error)||"error",reason:j&&j.reason,status:j&&j.status};
  return j.text};
 /* ---- print-shop status card on the home screen ---- */
 /* ---- install as an app (PWA) ---- */
