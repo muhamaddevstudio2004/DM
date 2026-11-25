@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
-<script>window.APP_VERSION="2.49";</script>
+<script>window.APP_VERSION="2.50";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=249"></script>
+<script src="/codes.js?v=250"></script>
 <style>
 :root{--bg:#fff;--fg:#2E2144;--card:#fff;--bd:#D9D0E4;--ac:#4B3869;--yl:#d8bb74;--gd:#b8923a;--dc:#4B3869;--dk:#8b0000;--mut:#6C6280;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -1650,8 +1650,6 @@ const AISEC={
  en:{abs:"Abstract",intro:"Introduction",obj:"Objectives",lit:"Background and Literature Review",main:"Main Discussion",app:"Applications and Case Study",chal:"Advantages and Challenges",con:"Conclusion",rec:"Recommendations",ref:"References",kw:"Keywords"},
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"باکگراوند و پێداچوونەوەی ئەدەبیات",main:"گفتوگۆی سەرەکی",app:"بەکارهێنانەکان و نموونەی دۆخ",chal:"سوود و تەحەدیاتەکان",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان",kw:"وشە سەرەکییەکان"},
  ar:{abs:"الملخص",intro:"المقدمة",obj:"الأهداف",lit:"الخلفية ومراجعة الأدبيات",main:"المناقشة الرئيسية",app:"التطبيقات ودراسة حالة",chal:"المزايا والتحديات",con:"الخاتمة",rec:"التوصيات",ref:"المراجع",kw:"الكلمات المفتاحية"}};
-function aiLenBoost(p){var P=(+p>0)?Math.min(40,Math.max(1,Math.round(+p))):6;var w=P*290;
- return "=== LENGTH REQUIREMENT (this is the real target \u2014 follow it exactly) ===\nThe finished seminar must fill about "+P+" slide"+(P>1?"s":"")+" of body text. Write AT LEAST "+w+" words in total, excluding references. Every section must contain several full, well-developed paragraphs with explanation, examples and detail \u2014 never just one or two sentences. Keep expanding and writing until the seminar genuinely reaches this length; do not be brief, do not summarise, and do not stop early. Writing more is better than writing less. This length requirement overrides any earlier suggestion to keep the seminar short.";}
 function aiErrMsg(e){const c=e&&e.code;if(c==="not_allowed"||c==="invalid"||c==="expired"||c==="paused"||c==="wrong_app")return "Your print-shop subscription is not active for this app.";if(c==="too_long")return "The topic is too long. Shorten it and try again.";if(c==="bad_request")return "Please write a clear topic first.";if(c==="rate")return "Too many tries right now. Please wait a minute and try again.";if(c==="net")return "Connection problem. Check the internet and try again.";if(c==="sql")return "AI is not installed yet. Run the setup SQL, then try again.";if(c==="server_config")return "AI is not set up yet. Copy the prompt and use ChatGPT for now.";return "AI could not generate right now. Copy the prompt and use ChatGPT, or try again. ["+((e&&e.status)||"")+((e&&e.code&&e.code!=="error")?"/"+e.code:"")+((e&&e.reason)?"/"+e.reason:"")+"]";}
 function aiPrompt(topic,slides,lang,dept){
  const N=AISEC[lang]||AISEC.en,t=(topic||"").trim()||"[TOPIC]",auto=!(+slides>0),T=auto?0:Math.min(40,Math.max(6,Math.round(+slides))),S=T;
@@ -1837,7 +1835,7 @@ function openUR(){if($("ur"))return;
  if(aiGo)aiGo.onclick=async()=>{
   if(URB)return;
   if(!AIS.t.trim()){aS.style.color="#b00020";aS.textContent="Write the topic first.";aT.focus();return}
-  AIS.seed=Math.random();aiUpd();const _p=aV.value+"\n\n"+aiLenBoost(AIS.p);
+  AIS.seed=Math.random();aiUpd();const _p=aV.value;
   URB=true;const _ob=aiGo.innerHTML;aiGo.disabled=true;aiGo.innerHTML="Generating with AI…";aS.style.color="";aS.textContent="";
   try{const text=await ACodes.aiGen(_p);URB=false;await runGen(text)}
   catch(e){URB=false;aiGo.disabled=false;aiGo.innerHTML=_ob;aS.style.color="#b00020";aS.textContent=aiErrMsg(e)}
