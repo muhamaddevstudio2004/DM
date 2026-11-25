@@ -8,7 +8,8 @@
 const CFG={
  url:"https://niiznyukddmmdqajmpcl.supabase.co",      /* Project Settings > API > Project URL */
  key:"sb_publishable_wnhwx9LqUR5JnI4A_iVFjA_qvIGv7Lj",  /* Project Settings > API > anon / publishable key */
- wa:"9647509628683"                                   /* your WhatsApp number */
+ wa:"9647509628683",                                  /* your WhatsApp number */
+ ai:true   /* built-in AI generation on? turn off with false if you have not deployed the ai-generate function */
 };
 const A=window.ACodes={};
 let APP="report",LEG=null,VER="",LANG=()=>"en",ON=()=>{};
@@ -127,6 +128,18 @@ A.gate=async function(action){
   return dialog(action,r.r&&r.r!=="invalid"?msgFor(r):"")}
  dialog(action)};
 
+/* ---- built-in AI generation (Gemini via the ai-generate edge function) ---- */
+A.shopActive=function(){const sh=shopGet();if(!sh)return false;if(!(sh.apps||[]).includes(APP))return false;if(sh.st&&sh.st!=="ok")return false;if(sh.exp&&new Date(sh.exp)<=Date.now())return false;return true};
+A.canAI=function(){return CFG.ai===true};
+A.aiGen=async function(prompt){
+ if(!prompt||prompt.length<10)throw{code:"bad_request"};
+ const sh=shopGet(),tok=sh&&sh.t||"";let r;
+ try{r=await fetch(CFG.url.replace(/\/+$/,"")+"/functions/v1/ai-generate",{method:"POST",
+  headers:{"content-type":"application/json",apikey:CFG.key,authorization:"Bearer "+CFG.key},
+  body:JSON.stringify({app:APP,prompt:prompt,token:tok,code:""})})}catch(x){throw{code:"net"}}
+ let j;try{j=await r.json()}catch(x){j={}}
+ if(!r.ok||!j||j.ok!==true)throw{code:(j&&j.error)||"error",reason:j&&j.reason,status:r.status};
+ return j.text};
 /* ---- print-shop status card on the home screen ---- */
 /* ---- install as an app (PWA) ---- */
 let BIP=null;
