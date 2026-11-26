@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
-<script>window.APP_VERSION="2.56";</script>
+<script>window.APP_VERSION="2.57";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -2679,14 +2679,14 @@ async function saveBlob(blob,name){let dl=null;try{dl=window.claude&&await claud
 const fname=ext=>((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Seminar")+"."+ext;
 const exportPdf=async()=>{const b=$("bpdf"),old=b.innerHTML;
  if(!(window.jspdf&&window.jspdf.jsPDF))try{await window.__abLib("jspdf")}catch(x){}
- if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
+ if(!(window.jspdf&&window.jspdf.jsPDF)){window.logAppError&&window.logAppError("PDF library failed to load (jspdf)","pdf-export/lib");alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");
  try{const sl=await snapAll(L),W=297,H=167.0625,pdf=new jspdf.jsPDF({unit:"mm",format:[W,H],orientation:"landscape",compress:true});
   sl.forEach((x,i)=>{if(i)pdf.addPage([W,H],"landscape");pdf.addImage(x.d,"JPEG",0,0,W,H,undefined,"FAST")});
   L.update(97,"Saving file…");await saveBlob(pdf.output("blob"),fname("pdf"));
   L.done("Your PDF is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("PDF export failed. Please try again.")}
+ }catch(x){if(!(x&&x.code=="declined")){window.logAppError&&window.logAppError(x,"pdf-export/"+(S.stpl||"?")+"/"+S.pages.length+"sl");alert("PDF export failed. Please try again.")}}
  L.el.remove();b.disabled=false;b.innerHTML=old};
 function makePptx(sl,pk){
  const enc=new TextEncoder(),X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',
@@ -2718,7 +2718,7 @@ const exportPptx=async()=>{const b=$("bpdf"),old=b.innerHTML;
  try{const sl=await snapAll(L);L.update(95,"Building PowerPoint…");await new Promise(r=>setTimeout(r,30));
   await saveBlob(makePptx(sl),fname("pptx"));
   L.done("Your PowerPoint is ready");await new Promise(r=>setTimeout(r,650))
- }catch(x){if(!(x&&x.code=="declined"))alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
+ }catch(x){if(!(x&&x.code=="declined")){window.logAppError&&window.logAppError(x,"pptx-export/"+(S.stpl||"?")+"/"+S.pages.length+"sl");alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}}
  L.el.remove();b.disabled=false;b.innerHTML=old};
 /* V2.21: one rendering pass feeds BOTH files (previously every slide was rendered twice) */
 const showDL=(items)=>{const old=document.getElementById("dlres");if(old)old.remove();
@@ -2726,25 +2726,26 @@ const showDL=(items)=>{const old=document.getElementById("dlres");if(old)old.rem
  const o=document.createElement("div");o.id="dlres";o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(46,33,68,.55);display:flex;align-items:center;justify-content:center;padding:18px";
  o.innerHTML='<div style="background:#fff;color:#2E2144;border-top:4px solid #d8bb74;border-radius:14px;max-width:380px;width:100%;box-sizing:border-box;padding:22px 20px 16px;text-align:center;box-shadow:0 16px 44px rgba(46,33,68,.3)"><h3 style="margin:0 0 6px;color:#4B3869;font-size:19px">'+e(T[0])+'</h3><p style="margin:0 0 16px;font-size:14px;color:#6C6280">'+e(T[1])+'</p><div id="dlb"></div><button type="button" id="dlx" style="width:100%;min-height:42px;margin-top:6px;border:0;background:transparent;color:#6C6280;font-size:14px">'+e(T[2])+'</button></div>';
  document.body.appendChild(o);const box=o.querySelector("#dlb");
- items.forEach(it=>{const bt=document.createElement("button");bt.type="button";bt.style.cssText="width:100%;min-height:48px;margin-bottom:10px;border-radius:10px;background:#4B3869;color:#d8bb74;border:1px solid #4B3869;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px";bt.innerHTML=ic("dl")+"<span>"+e(it.label)+"</span>";bt.onclick=async()=>{try{await saveBlob(it.blob,it.name)}catch(x){if(!(x&&x.code=="declined"))alert("Download failed. Please try again.")}};box.appendChild(bt)});
+ items.forEach(it=>{const bt=document.createElement("button");bt.type="button";bt.style.cssText="width:100%;min-height:48px;margin-bottom:10px;border-radius:10px;background:#4B3869;color:#d8bb74;border:1px solid #4B3869;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px";bt.innerHTML=ic("dl")+"<span>"+e(it.label)+"</span>";bt.onclick=async()=>{try{await saveBlob(it.blob,it.name)}catch(x){if(!(x&&x.code=="declined")){window.logAppError&&window.logAppError(x,"download-save/"+(it.name||"").split(".").pop());alert("Download failed. Please try again.")}}};box.appendChild(bt)});
  {const xb=o.querySelector("#dlx"),SU={ckb:"دڵنیایت؟ دووبارە دابگرە",ar:"هل أنت متأكد؟ اضغط مرة أخرى",en:"Sure? Tap again"}[UIL]||"Sure? Tap again";let xt=0;
   /* only the Close button closes this dialog, and only after a second tap; taps outside do nothing */
   xb.onclick=()=>{if(!xb.dataset.arm){xb.dataset.arm=1;const h=xb.textContent;xb.textContent=SU;xb.style.color="#b00020";xb.style.fontWeight="700";xt=setTimeout(()=>{if(xb.isConnected){delete xb.dataset.arm;xb.textContent=h;xb.style.color="";xb.style.fontWeight=""}},3000);return}clearTimeout(xt);o.remove()}}};
 /* V2.27: both files are built first, then each has its own button (iOS blocks a second automatic download) */
 const exportBoth=async()=>{const b=$("bpdf"),old=b.innerHTML;
  if(!(window.jspdf&&window.jspdf.jsPDF))try{await window.__abLib("jspdf")}catch(x){}
- if(!(window.jspdf&&window.jspdf.jsPDF)){alert("The PDF library could not load. Check your connection and try again.");return}
+ if(!(window.jspdf&&window.jspdf.jsPDF)){window.logAppError&&window.logAppError("PDF library failed to load (jspdf)","export/lib");alert("The PDF library could not load. Check your connection and try again.");return}
  b.disabled=true;
  const L=mkLoader({title:"Creating PDF"});L.el.style.zIndex=9999;L.update(3,"Preparing slides…");let sl=null,items=[];
+ const ectx=()=>"/"+(S.stpl||"?")+"/"+(S.pages?S.pages.length:"?")+"sl/"+(S.dir||"");
  try{sl=await snapAll(L);const pk=await packState();
   try{const W=297,H=167.0625,pdf=new jspdf.jsPDF({unit:"mm",format:[W,H],orientation:"landscape",compress:true});pdf.setProperties({keywords:"SBLD1:"+await sbB64(pk)});
    sl.forEach((x,i)=>{if(i)pdf.addPage([W,H],"landscape");pdf.addImage(x.d,"JPEG",0,0,W,H,undefined,"FAST")});
    L.update(96,"Saving file…");items.push({label:"PDF",blob:pdf.output("blob"),name:fname("pdf")})
-  }catch(x){alert("PDF export failed. Please try again.")}
+  }catch(x){window.logAppError&&window.logAppError(x,"export/pdf-build"+ectx());alert("PDF export failed. Please try again.")}
   try{L.update(97,"Building PowerPoint…");await new Promise(r=>setTimeout(r,0));items.push({label:"PowerPoint (PPTX)",blob:makePptx(sl,pk),name:fname("pptx")})
-  }catch(x){alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
+  }catch(x){window.logAppError&&window.logAppError(x,"export/pptx-build"+ectx());alert("PowerPoint export failed. Please try again.\n"+(x&&x.message||""))}
   L.done("Your PowerPoint is ready");await new Promise(r=>setTimeout(r,250))
- }catch(x){alert("PDF export failed. Please try again.")}
+ }catch(x){window.logAppError&&window.logAppError(x,"export/snap"+ectx());alert("PDF export failed. Please try again.")}
  L.el.remove();b.disabled=false;b.innerHTML=old;
  if(items.length)showDL(items)};
 /* ===== Upload Seminar: only PDF / PPTX files downloaded from this system can be re-opened ===== */
