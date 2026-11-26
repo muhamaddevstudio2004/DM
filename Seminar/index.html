@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
-<script>window.APP_VERSION="2.51";</script>
+<script>window.APP_VERSION="2.54";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=251"></script>
+<script src="/codes.js?v=254"></script>
 <style>
 :root{--bg:#fff;--fg:#2E2144;--card:#fff;--bd:#D9D0E4;--ac:#4B3869;--yl:#d8bb74;--gd:#b8923a;--dc:#4B3869;--dk:#8b0000;--mut:#6C6280;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -1042,6 +1042,27 @@ body.lsh-open{overflow:hidden}
 .stp-h i{left:7%;width:48%;top:10%;height:9%;background:#1d1b24}
 .stp-h b{left:7%;right:7%;top:28%;height:0;border-top:2px solid #1d1b24}
 .stp-h u{left:7%;width:56%;top:42%;height:5%;background:#cfc9bd;box-shadow:0 9px 0 #cfc9bd,0 18px 0 #cfc9bd}
+.stp-i{background:linear-gradient(140deg,#f3f6ff,#e7ecfa)}
+.stp-i::before{content:"";position:absolute;right:-16%;top:-28%;width:46%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--dc) 38%,transparent),transparent 70%)}
+.stp-i i{left:7%;top:13%;width:17%;height:25%;border-radius:4px;background:linear-gradient(140deg,var(--dk),var(--dc) 55%,var(--gd) 185%)}
+.stp-i b{left:30%;right:14%;top:19%;height:8%;border-radius:4px;background:linear-gradient(90deg,var(--dc),var(--gd))}
+.stp-i u{left:7%;right:30%;top:56%;height:13%;border-radius:5px;background:#fff;box-shadow:0 4px 7px rgba(30,40,90,.14),0 150% 0 0 #fff}
+.stp-j{background:radial-gradient(120% 120% at 80% -10%,color-mix(in srgb,var(--dc) 45%,#0a0c11),#0a0c11 60%)}
+.stp-j::before{content:"";position:absolute;left:8%;right:8%;top:15%;bottom:15%;border:1px solid color-mix(in srgb,var(--gd) 55%,transparent);border-radius:3px}
+.stp-j i{left:15%;top:30%;width:19%;height:16%;border-radius:4px;background:none;border:1.5px solid var(--gd)}
+.stp-j b{left:40%;right:16%;top:34%;height:7%;border-radius:3px;background:var(--gl)}
+.stp-j u{left:40%;right:24%;top:54%;height:6%;border-radius:3px;background:#3a3d46;box-shadow:0 8px 0 #3a3d46}
+.stp-k{background-color:var(--dk);background-image:linear-gradient(rgba(222,233,255,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(222,233,255,.3) 1px,transparent 1px);background-size:11px 11px}
+.stp-k::before{content:"";position:absolute;inset:10%;border:1px solid rgba(222,233,255,.5)}
+.stp-k i{left:12%;top:20%;width:15%;height:24%;border:1.5px solid var(--gd);background:none}
+.stp-k b{left:32%;right:14%;top:26%;height:7%;background:#e9f0ff}
+.stp-k u{left:12%;right:30%;top:60%;height:6%;background:rgba(222,233,255,.5);box-shadow:0 9px 0 rgba(222,233,255,.5)}
+.stp-l{background:#faf6ec}
+.stp-l::before{content:"";position:absolute;inset:8%;border:1.5px solid var(--dc)}
+.stp-l::after{content:"";position:absolute;inset:12%;border:1px solid var(--gd)}
+.stp-l i{left:50%;top:22%;transform:translateX(-50%);width:15%;aspect-ratio:1;border-radius:50%;background:var(--dc)}
+.stp-l b{left:28%;right:28%;top:48%;height:5%;background:var(--gd)}
+.stp-l u{left:22%;right:22%;top:64%;height:4%;background:#cbb98f;box-shadow:0 8px 0 #cbb98f}
 
 .slide.st-f .ts.ts2::before,.slide.st-g .ts.ts2::before,.slide.st-h .ts.ts2::before{display:block}
 .slide.st-f .tc::before,.slide.st-g .tc::before,.slide.st-h .tc::before{display:none}
@@ -1049,6 +1070,16 @@ body.lsh-open{overflow:hidden}
 .slide.st-f{--bt:174px;--bl:56px;--br:56px;--bb:96px}
 .slide.st-g{--bt:164px;--bl:50px;--br:50px;--bb:96px}
 .slide.st-h{--bt:176px;--bl:70px;--br:70px;--bb:92px}
+.slide.st-i .ts.ts2::before,.slide.st-j .ts.ts2::before{display:block}
+.slide.st-i .tc::before,.slide.st-j .tc::before{display:none}
+.slide.st-i .ts::after,.slide.st-j .ts::after{display:none}
+.slide.st-i{--bt:168px;--bl:58px;--br:58px;--bb:94px}
+.slide.st-j{--bt:168px;--bl:60px;--br:60px;--bb:94px}
+.slide.st-k .ts.ts2::before,.slide.st-l .ts.ts2::before{display:block}
+.slide.st-k .tc::before,.slide.st-l .tc::before{display:none}
+.slide.st-k .ts::after,.slide.st-l .ts::after{display:none}
+.slide.st-k{--bt:168px;--bl:62px;--br:62px;--bb:96px}
+.slide.st-l{--bt:176px;--bl:70px;--br:70px;--bb:96px}
 
 /* ================= F · SKETCH (blue rounded cards, yellow doodles, marker highlight) ================= */
 .slide.st-f{background-color:#f4f7fd;background-image:linear-gradient(rgba(70,90,170,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(70,90,170,.08) 1px,transparent 1px);background-size:34px 34px;color:var(--dk)}
@@ -1244,6 +1275,253 @@ body.lsh-open{overflow:hidden}
 .slide.st-h .ce3{color:var(--dc)}
 .slide.st-h .lgc.ph{background:#fff}
 .slide.st-h .ts~.wm div{color:var(--ink);opacity:.08}
+
+/* ================= I · HORIZON (light gradient, soft glass cards) ================= */
+.slide.st-i{background:linear-gradient(135deg,#f6f8ff 0%,#eceffb 55%,#e7ecfa 100%);color:#1b2036}
+.slide.st-i::before{content:"";position:absolute;right:-180px;top:-200px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--dc) 26%,transparent),transparent 70%);pointer-events:none}
+.slide.st-i.rtl::before{right:auto;left:-180px}
+.slide.st-i .sl-h{top:30px;left:52px;right:52px;height:108px;background:none;border:0;padding:0;gap:22px;color:#1b2036;overflow:visible}
+.slide.st-i .sl-h::before{display:none}
+.slide.st-i .sl-h::after{content:"";position:absolute;left:0;right:34%;bottom:-2px;height:5px;border-radius:5px;background:linear-gradient(90deg,var(--dc),var(--gd))}
+.slide.st-i.rtl .sl-h::after{left:34%;right:0;background:linear-gradient(270deg,var(--dc),var(--gd))}
+.slide.st-i .sl-n{min-width:92px;height:92px;border-radius:26px;background:linear-gradient(140deg,var(--dk),var(--dc) 60%,var(--gd) 170%);color:#fff;font:800 44px/1 var(--cf),"Segoe UI",Arial,sans-serif;box-shadow:0 10px 24px color-mix(in srgb,var(--dc) 40%,transparent)}
+.slide.st-i .sl-t{color:#161a2e;font:800 52px/1.18 var(--cf),"Segoe UI",Arial,sans-serif;letter-spacing:-.01em}
+.slide.st-i.rtl .sl-t{line-height:1.7;letter-spacing:0}
+.slide.st-i .sl-i{width:92px;height:92px;border-radius:26px;background:#fff;border:0;color:var(--dc);box-shadow:0 8px 20px rgba(30,40,90,.14)}
+.slide.st-i .sl-i .ic{width:44px;height:44px}
+.slide.st-i .sl-r{background:#fff;color:var(--dc);border:0;border-radius:999px;padding:10px 24px;font-weight:700;box-shadow:0 6px 16px rgba(30,40,90,.12)}
+.slide.st-i .bd h2{font-family:var(--cf),"Segoe UI",Arial,sans-serif;font-weight:800;color:var(--dk);border:0;padding:0 0 0 18px;position:relative}
+.slide.st-i .bd h2::before{content:"";position:absolute;left:0;top:.1em;bottom:.1em;width:7px;border-radius:7px;background:linear-gradient(var(--dc),var(--gd))}
+.slide.st-i.rtl .bd h2{padding:0 18px 0 0}
+.slide.st-i.rtl .bd h2::before{left:auto;right:0}
+.slide.st-i .bd h3{color:var(--dc)}
+.slide.st-i .bd p{background:rgba(255,255,255,.72);border:1px solid #fff;border-radius:20px;box-shadow:0 10px 26px rgba(30,40,90,.10);padding:12px 26px}
+.slide.st-i .bd>h1+p{background:linear-gradient(120deg,var(--dc),var(--dk));color:#fff;border:0;font-weight:600}
+.slide.st-i .bd ul li,.slide.st-i .bd ol li{background:rgba(255,255,255,.72);border:1px solid #fff;border-radius:16px;box-shadow:0 8px 20px rgba(30,40,90,.08)}
+.slide.st-i .bd ul li::before{border-radius:50%;transform:none;width:.42em;height:.42em;background:linear-gradient(135deg,var(--dc),var(--gd))}
+.slide.slide.slide.slide.st-i .bd ol li::before{border-radius:50%;background:var(--dc);color:#fff;box-shadow:none}
+.slide.st-i .bd tbody tr{background:rgba(255,255,255,.72);border:1px solid #fff;border-radius:16px;box-shadow:0 8px 20px rgba(30,40,90,.10)}
+.slide.st-i .bd tbody tr:nth-child(n) td:first-child{background:linear-gradient(125deg,var(--dk),var(--dc));color:#fff}
+.slide.st-i .bd caption,.slide.st-i .bd figcaption,.slide.st-i .tcn{color:#5c6688}
+.slide.st-i .tr.l1{background:rgba(255,255,255,.8);border:0;border-radius:14px;box-shadow:0 8px 18px rgba(30,40,90,.09);padding:.3em .7em;color:var(--dk)}
+.slide.st-i .tr .tn{background:linear-gradient(135deg,var(--dc),var(--gd));color:#fff}
+.slide.st-i .tr .pgn{background:var(--dc);color:#fff}
+.slide.st-i .bd.fl .tr,.slide.st-i .bd.fl .tr.l1{background:rgba(255,255,255,.82);border:1px solid #fff;border-radius:22px;box-shadow:0 12px 26px rgba(30,40,90,.12);color:var(--dk)}
+.slide.st-i .bd.fl .tr .tn{background:linear-gradient(135deg,var(--dc),var(--gd));color:#fff;border-bottom:0}
+.slide.st-i .bd.fl .tr .ti{color:var(--dc)}
+.slide.st-i .bd.fl .tr::after,.slide.st-i.rtl .bd.fl .tr::after{border:0;width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--dc),var(--gd));margin-top:-8px}
+.slide.st-i .ref-entry{background:rgba(255,255,255,.72);border:1px solid #fff;border-radius:14px;box-shadow:0 6px 16px rgba(30,40,90,.08)}
+.slide.st-i .pic{border:7px solid #fff;border-radius:22px;box-shadow:0 0 0 2px color-mix(in srgb,var(--gd) 70%,#fff),0 16px 34px rgba(30,40,90,.2)}
+.slide.st-i .pic.ph{border:4px dashed var(--dc);background-color:rgba(255,255,255,.6);color:var(--dc)}
+.slide.st-i .ft{background:none;border:0;color:#5c6688;padding:0 52px;height:64px}
+.slide.st-i .ft b{background:linear-gradient(120deg,var(--dc),var(--dk));color:#fff;border-radius:999px;padding:1px 18px;font-weight:700}
+.slide.st-i .ft .pb{top:0;height:7px;border-radius:0 7px 7px 0;background:linear-gradient(90deg,var(--dc),var(--gd))}
+.slide.st-i.rtl .ft .pb{border-radius:7px 0 0 7px}
+.slide.st-i .ts{background:none;color:#fff}
+.slide.st-i .ts::before{content:"";position:absolute;left:38px;right:38px;top:16px;bottom:18px;width:auto;height:auto;border-radius:40px;background:linear-gradient(150deg,var(--dk) 0%,var(--dc) 52%,color-mix(in srgb,var(--dc) 55%,var(--gd)) 125%);box-shadow:0 20px 50px rgba(20,28,70,.4)}
+.slide.st-i .ts .tc::after{content:"";position:absolute;right:70px;top:48px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--gd) 55%,transparent),transparent 70%);pointer-events:none}
+.slide.st-i.rtl .ts .tc::after{right:auto;left:70px}
+.slide.st-i .tc{padding:40px 90px 46px}
+.slide.st-i .lgc{background:#fff;border-radius:22px}
+.slide.st-i .lgc.ph{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.5);color:#fff;border-radius:50%}
+.slide.st-i .kick{color:var(--gl);font-weight:800;letter-spacing:.12em}
+.slide.st-i .ts h1{color:#fff;font-family:var(--cf),"Segoe UI",Arial,sans-serif;font-weight:800;letter-spacing:-.01em}
+.slide.st-i .ts .rule{width:160px;height:9px;border-radius:9px;background:linear-gradient(90deg,var(--gd),var(--gl))}
+.slide.st-i .ts .sub{color:rgba(255,255,255,.92)}
+.slide.st-i .inst b{color:#fff}
+.slide.st-i .inst span{color:rgba(255,255,255,.82)}
+.slide.st-i .t3{border-top:2px solid rgba(255,255,255,.28)}
+.slide.st-i .t3 b{color:var(--gl)}
+.slide.st-i .ce1{color:#fff}
+.slide.st-i .ce1 small,.slide.st-i .ce3 small{color:rgba(255,255,255,.82)}
+.slide.st-i .ce3{color:var(--gl)}
+.slide.st-i .t3 .yr{color:#fff;background:rgba(255,255,255,.16);border-radius:999px;padding:0 24px;font-weight:800}
+.slide.st-i .ts~.wm div{color:var(--dc);opacity:.1}
+
+/* ================= J · NOIR (dark luxe, gold frame + hairlines) ================= */
+.slide.st-j{background:radial-gradient(130% 120% at 85% -10%,color-mix(in srgb,var(--dc) 40%,#0b0d13) 0%,#0b0d13 55%);color:#e9e7df}
+.slide.st-j .sl-h{top:30px;left:56px;right:56px;height:104px;background:none;border:0;padding:0;gap:22px;color:#e9e7df;overflow:visible}
+.slide.st-j .sl-h::before{display:none}
+.slide.st-j .sl-h::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:linear-gradient(90deg,var(--gd),transparent)}
+.slide.st-j.rtl .sl-h::after{background:linear-gradient(270deg,var(--gd),transparent)}
+.slide.st-j .sl-n{min-width:90px;height:90px;box-sizing:border-box;border-radius:20px;background:none;border:2px solid var(--gd);color:var(--gl);font:700 42px/1 var(--cf),"Segoe UI",Arial,sans-serif}
+.slide.st-j .sl-t{color:#f3f1ea;font:700 50px/1.2 var(--ff),serif;letter-spacing:.005em}
+.slide.st-j.rtl .sl-t{line-height:1.7}
+.slide.st-j .sl-i{width:90px;height:90px;border-radius:20px;background:color-mix(in srgb,var(--gd) 16%,#12151d);border:1px solid color-mix(in srgb,var(--gd) 40%,transparent);color:var(--gl)}
+.slide.st-j .sl-i .ic{width:44px;height:44px}
+.slide.st-j .sl-r{background:#161a24;color:#e9e7df;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:10px 24px;font-weight:600}
+.slide.st-j .bd h2{font-family:var(--ff),serif;color:#f3f1ea;border:0;padding:0 0 0 18px;position:relative}
+.slide.st-j .bd h2::before{content:"";position:absolute;left:0;top:.1em;bottom:.1em;width:4px;background:var(--gd)}
+.slide.st-j.rtl .bd h2{padding:0 18px 0 0}
+.slide.st-j.rtl .bd h2::before{left:auto;right:0}
+.slide.st-j .bd h3{color:var(--gl)}
+.slide.st-j .bd p{background:#13171f;border:1px solid rgba(255,255,255,.07);border-left:4px solid var(--gd);border-radius:14px;box-shadow:0 10px 26px rgba(0,0,0,.4);padding:12px 24px;color:#dddbd3}
+.slide.st-j.rtl .bd p{border-left:1px solid rgba(255,255,255,.07);border-right:4px solid var(--gd)}
+.slide.st-j .bd>h1+p{background:linear-gradient(120deg,color-mix(in srgb,var(--dc) 60%,#13171f),#13171f);color:#f3f1ea;border-left-color:var(--gl);font-weight:600}
+.slide.st-j .bd ul li,.slide.st-j .bd ol li{background:#13171f;border:1px solid rgba(255,255,255,.07);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.35);color:#dddbd3}
+.slide.st-j .bd ul li::before{transform:rotate(45deg);width:.38em;height:.38em;background:var(--gd)}
+.slide.slide.slide.slide.st-j .bd ol li::before{color:var(--gl);background:none}
+.slide.st-j .bd ol li::marker{color:var(--gl)}
+.slide.st-j .bd tbody tr{background:#13171f;border:1px solid rgba(255,255,255,.07);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.35);color:#dddbd3}
+.slide.st-j .bd tbody tr:nth-child(n) td:first-child{background:var(--gd);color:#14130d;font-weight:700}
+.slide.st-j .bd th{background:var(--dc);color:#fff}
+.slide.st-j .bd caption,.slide.st-j .bd figcaption,.slide.st-j .tcn{color:#9a978c}
+.slide.st-j .tr.l1{background:#13171f;border:1px solid rgba(255,255,255,.07);border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.3);padding:.3em .7em;color:#e9e7df}
+.slide.st-j .tr .tn{background:var(--gd);color:#14130d}
+.slide.st-j .tr .pgn{background:color-mix(in srgb,var(--gd) 22%,#13171f);color:var(--gl)}
+.slide.st-j .tr.l2 .pgn,.slide.st-j .tr.l3 .pgn{background:none;color:var(--gl)}
+.slide.st-j .bd.fl .tr,.slide.st-j .bd.fl .tr.l1{background:#13171f;border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 12px 26px rgba(0,0,0,.4);color:#e9e7df}
+.slide.st-j .bd.fl .tr .tn{background:var(--gd);color:#14130d;border-bottom:0}
+.slide.st-j .bd.fl .tr .ti{color:var(--gl)}
+.slide.st-j .bd.fl .tr::after,.slide.st-j.rtl .bd.fl .tr::after{border:0;width:14px;height:14px;border-radius:50%;background:var(--gd);margin-top:-7px}
+.slide.st-j .ref-entry{background:#13171f;border:1px solid rgba(255,255,255,.07);border-radius:12px;color:#dddbd3}
+.slide.st-j .pic{border:6px solid #13171f;border-radius:14px;box-shadow:0 0 0 2px var(--gd),0 16px 34px rgba(0,0,0,.5)}
+.slide.st-j .pic.ph{border:3px dashed var(--gl);background-color:#13171f;color:var(--gl)}
+.slide.st-j .ft{background:none;border-top:1px solid rgba(255,255,255,.08);color:#9a978c;padding:0 56px}
+.slide.st-j .ft b{background:var(--gd);color:#14130d;border-radius:999px;padding:1px 18px;font-weight:700}
+.slide.st-j .ft .pb{top:-1px;height:3px;background:var(--gd)}
+.slide.st-j .ts{background:radial-gradient(120% 120% at 80% -10%,color-mix(in srgb,var(--dc) 45%,#0a0c11) 0%,#0a0c11 58%);color:#f3f1ea}
+.slide.st-j .ts::before{content:"";position:absolute;left:46px;right:46px;top:40px;bottom:42px;width:auto;height:auto;border:1.5px solid color-mix(in srgb,var(--gd) 55%,transparent);border-radius:8px;background:none}
+.slide.st-j .tc{padding:58px 100px 56px}
+.slide.st-j .lgc{background:#13171f;border-radius:16px;border:1px solid rgba(255,255,255,.1)}
+.slide.st-j .lgc.ph{background:none;border:2px dashed var(--gl);color:var(--gl);border-radius:50%}
+.slide.st-j .kick{color:var(--gl);font-weight:700;letter-spacing:.28em;text-transform:uppercase;font-size:28px}
+.slide.st-j .ts h1{color:#f6f4ee;font-family:var(--ff),serif;font-weight:700;letter-spacing:.01em}
+.slide.st-j .ts .rule{width:120px;height:3px;background:var(--gd)}
+.slide.st-j .ts .sub{color:#c9c6bc}
+.slide.st-j .inst b{color:#f3f1ea}
+.slide.st-j .inst span{color:#b7b4a9}
+.slide.st-j .t3{border-top:1px solid rgba(255,255,255,.14)}
+.slide.st-j .t3 b{color:var(--gl)}
+.slide.st-j .ce1{color:#f3f1ea}
+.slide.st-j .ce1 small,.slide.st-j .ce3 small{color:#b7b4a9}
+.slide.st-j .ce3{color:var(--gl)}
+.slide.st-j .t3 .yr{color:var(--gl);border:1px solid color-mix(in srgb,var(--gd) 45%,transparent);border-radius:999px;padding:0 22px;font-weight:700}
+.slide.st-j .ts~.wm div{color:#fff;opacity:.06}
+
+/* ================= K · BLUEPRINT (technical grid, frame, corner marks, compass) ================= */
+.slide.st-k{--ln:rgba(222,233,255,.42);--lf:rgba(222,233,255,.13);--pnl:rgba(255,255,255,.05);background-color:var(--dk);background-image:linear-gradient(var(--ln) 1px,transparent 1px),linear-gradient(90deg,var(--ln) 1px,transparent 1px),linear-gradient(var(--lf) 1px,transparent 1px),linear-gradient(90deg,var(--lf) 1px,transparent 1px);background-size:174px 174px,174px 174px,29px 29px,29px 29px;color:#e9f0ff}
+.slide.st-k::before{content:"";position:absolute;inset:22px;border:1.5px solid rgba(222,233,255,.5);pointer-events:none}
+.slide.st-k::after{content:"";position:absolute;inset:14px;pointer-events:none;background:linear-gradient(var(--gd),var(--gd)) no-repeat left top/32px 2px,linear-gradient(var(--gd),var(--gd)) no-repeat left top/2px 32px,linear-gradient(var(--gd),var(--gd)) no-repeat right top/32px 2px,linear-gradient(var(--gd),var(--gd)) no-repeat right top/2px 32px,linear-gradient(var(--gd),var(--gd)) no-repeat left bottom/32px 2px,linear-gradient(var(--gd),var(--gd)) no-repeat left bottom/2px 32px,linear-gradient(var(--gd),var(--gd)) no-repeat right bottom/32px 2px,linear-gradient(var(--gd),var(--gd)) no-repeat right bottom/2px 32px}
+.slide.st-k .sl-h{top:30px;left:66px;right:66px;height:104px;background:none;border:0;border-bottom:1.5px solid rgba(222,233,255,.5);padding:0 0 12px;gap:22px;color:#e9f0ff;align-items:flex-end;overflow:visible}
+.slide.st-k .sl-h::before{display:none}
+.slide.st-k .sl-h::after{content:"";position:absolute;right:0;bottom:-1.5px;width:130px;height:9px;background:repeating-linear-gradient(90deg,var(--gd) 0 2px,transparent 2px 15px)}
+.slide.st-k.rtl .sl-h::after{right:auto;left:0}
+.slide.st-k .sl-n{min-width:84px;height:84px;border-radius:0;box-sizing:border-box;background:none;border:2px solid var(--gd);color:var(--gl);font:700 40px/1 var(--cf),"Consolas",monospace}
+.slide.st-k .sl-t{color:#fff;font:700 46px/1.16 var(--cf),"Segoe UI",Arial,sans-serif;letter-spacing:.01em}
+.slide.st-k.rtl .sl-t{line-height:1.7}
+.slide.st-k .sl-i{width:84px;height:84px;border-radius:0;background:var(--pnl);border:2px solid rgba(222,233,255,.4);color:var(--gl)}
+.slide.st-k .sl-i .ic{width:44px;height:44px}
+.slide.st-k .sl-r{background:var(--pnl);color:#e9f0ff;border:1px solid rgba(222,233,255,.35);border-radius:3px;padding:10px 22px;font-weight:600}
+.slide.st-k .bd h2{font-family:var(--cf),"Segoe UI",Arial,sans-serif;font-weight:800;color:#fff;border:0;padding:0 0 0 20px;position:relative}
+.slide.st-k .bd h2::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;border:2px solid var(--gd);border-right:0}
+.slide.st-k.rtl .bd h2{padding:0 20px 0 0}
+.slide.st-k.rtl .bd h2::before{left:auto;right:0;border:2px solid var(--gd);border-left:0}
+.slide.st-k .bd h3{color:var(--gl)}
+.slide.st-k .bd p{background:var(--pnl);border:1px solid rgba(222,233,255,.22);border-left:3px solid var(--gd);border-radius:3px;box-shadow:none;padding:12px 22px;color:#d9e4f6}
+.slide.st-k.rtl .bd p{border-left:1px solid rgba(222,233,255,.22);border-right:3px solid var(--gd)}
+.slide.st-k .bd>h1+p{background:color-mix(in srgb,var(--gd) 16%,var(--pnl));border-left-color:var(--gl);color:#fff;font-weight:600}
+.slide.st-k .bd ul li,.slide.st-k .bd ol li{background:var(--pnl);border:1px solid rgba(222,233,255,.2);border-radius:3px;color:#d9e4f6}
+.slide.st-k .bd ul li::before{content:"";width:.46em;height:.46em;background:none;border:2px solid var(--gd);transform:none;border-radius:0;top:.56em}
+.slide.slide.slide.slide.st-k .bd ol li::before{color:var(--gl);background:none}
+.slide.st-k .bd ol li::marker{color:var(--gl)}
+.slide.st-k .bd tbody tr{background:var(--pnl);border:1px solid rgba(222,233,255,.22);border-radius:3px;color:#d9e4f6}
+.slide.st-k .bd tbody tr:nth-child(n) td:first-child{background:rgba(222,233,255,.1);color:#fff;font-weight:700;border-right:1px solid rgba(222,233,255,.25)}
+.slide.st-k .bd th{background:var(--gd);color:var(--dk)}
+.slide.st-k .bd caption,.slide.st-k .bd figcaption,.slide.st-k .tcn{color:#9fb2d6}
+.slide.st-k .tr.l1{background:var(--pnl);border:1px solid rgba(222,233,255,.22);border-radius:3px;padding:.3em .7em;color:#e9f0ff}
+.slide.st-k .tr .tn{background:none;border:2px solid var(--gd);color:var(--gl)}
+.slide.st-k .tr .pgn{background:var(--gd);color:var(--dk)}
+.slide.st-k .tr.l2 .pgn,.slide.st-k .tr.l3 .pgn{background:none;color:var(--gl)}
+.slide.st-k .bd.fl .tr,.slide.st-k .bd.fl .tr.l1{background:var(--pnl);border:1px solid rgba(222,233,255,.25);border-radius:4px;color:#e9f0ff}
+.slide.st-k .bd.fl .tr .tn{background:none;border:2px solid var(--gd);color:var(--gl);border-bottom:2px solid var(--gd)}
+.slide.st-k .bd.fl .tr .ti{color:var(--gl)}
+.slide.st-k .bd.fl .tr::after,.slide.st-k.rtl .bd.fl .tr::after{border:0;width:12px;height:12px;background:var(--gd);margin-top:-6px;transform:rotate(45deg)}
+.slide.st-k .ref-entry{background:var(--pnl);border:1px solid rgba(222,233,255,.2);border-radius:3px;color:#d9e4f6}
+.slide.st-k .pic{border:2px solid rgba(222,233,255,.55);border-radius:2px;box-shadow:0 0 0 6px var(--dk),0 0 0 7px rgba(222,233,255,.25),0 12px 28px rgba(0,0,0,.5)}
+.slide.st-k .pic.ph{border:2px dashed var(--gl);background-color:var(--pnl);color:var(--gl)}
+.slide.st-k .ft{background:none;border-top:1.5px solid rgba(222,233,255,.4);color:#9fb2d6;padding:0 64px}
+.slide.st-k .ft b{background:var(--gd);color:var(--dk);border-radius:2px;padding:1px 14px;font-weight:700}
+.slide.st-k .ft .pb{top:-1.5px;height:3px;background:var(--gd)}
+.slide.st-k .ts{background-color:var(--dk);background-image:linear-gradient(var(--ln) 1px,transparent 1px),linear-gradient(90deg,var(--ln) 1px,transparent 1px),linear-gradient(var(--lf) 1px,transparent 1px),linear-gradient(90deg,var(--lf) 1px,transparent 1px);background-size:174px 174px,174px 174px,29px 29px,29px 29px;color:#e9f0ff}
+.slide.st-k .ts::before{content:"";position:absolute;right:70px;top:50%;transform:translateY(-50%);width:440px;height:440px;border-radius:50%;border:1.5px solid rgba(222,233,255,.34);box-shadow:0 0 0 42px rgba(222,233,255,0),0 0 0 43px rgba(222,233,255,.2);background:linear-gradient(rgba(222,233,255,.3),rgba(222,233,255,.3)) center/1px 100% no-repeat,linear-gradient(90deg,rgba(222,233,255,.3),rgba(222,233,255,.3)) center/100% 1px no-repeat,radial-gradient(circle,transparent 128px,rgba(222,233,255,.22) 129px,transparent 132px,transparent 999px)}
+.slide.st-k.rtl .ts::before{right:auto;left:70px}
+.slide.st-k .ts .tc::after{content:"";position:absolute;left:66px;right:66px;top:34px;bottom:34px;border:1.5px solid rgba(222,233,255,.4);pointer-events:none}
+.slide.st-k .tc{padding:60px 92px 56px}
+.slide.st-k .lgc{background:var(--pnl);border-radius:0;border:1.5px solid rgba(222,233,255,.4)}
+.slide.st-k .lgc.ph{background:none;border:2px dashed var(--gl);color:var(--gl);border-radius:0}
+.slide.st-k .kick{color:var(--gl);font-weight:700;letter-spacing:.3em;text-transform:uppercase;font-size:27px;font-family:var(--cf),"Consolas",monospace}
+.slide.st-k .ts h1{color:#fff;font-family:var(--cf),"Segoe UI",Arial,sans-serif;font-weight:800;letter-spacing:.005em}
+.slide.st-k .ts .rule{width:150px;height:0;border-top:2px solid var(--gd);box-shadow:0 7px 0 -1px var(--gd)}
+.slide.st-k .ts .sub{color:#c6d3ea}
+.slide.st-k .inst b{color:#fff}
+.slide.st-k .inst span{color:#aebdd9}
+.slide.st-k .t3{border-top:1.5px solid rgba(222,233,255,.4)}
+.slide.st-k .t3 b{color:var(--gl)}
+.slide.st-k .ce1{color:#fff}
+.slide.st-k .ce1 small,.slide.st-k .ce3 small{color:#aebdd9}
+.slide.st-k .ce3{color:var(--gl)}
+.slide.st-k .t3 .yr{color:var(--dk);background:var(--gd);border-radius:2px;padding:0 20px;font-weight:800;font-family:var(--cf),"Consolas",monospace}
+.slide.st-k .ts~.wm div{color:#fff;opacity:.07}
+
+/* ================= L · GAZETTE (ivory classic journal, double frame, serif, drop-cap) ================= */
+.slide.st-l{background-color:#faf6ec;background-image:radial-gradient(rgba(120,92,40,.06) 1px,transparent 1.3px);background-size:9px 9px;color:#2c2516}
+.slide.st-l::before{content:"";position:absolute;inset:20px;border:2px solid var(--dc);pointer-events:none}
+.slide.st-l::after{content:"";position:absolute;inset:26px;border:1px solid var(--gd);pointer-events:none}
+.slide.st-l .sl-h{top:44px;left:72px;right:72px;height:104px;background:none;border:0;border-top:3px solid var(--dc);border-bottom:3px double var(--dc);padding:8px 0;gap:22px;color:var(--dc);overflow:visible}
+.slide.st-l .sl-h::before{display:none}
+.slide.st-l .sl-n{min-width:78px;height:78px;border-radius:50%;box-sizing:border-box;background:var(--dc);color:var(--gl);border:3px double var(--gl);font:700 36px/1 var(--ff),Georgia,serif}
+.slide.st-l .sl-t{color:var(--dc);font:700 46px/1.16 var(--ff),Georgia,serif;letter-spacing:.01em}
+.slide.st-l.rtl .sl-t{line-height:1.7}
+.slide.st-l .sl-i{width:78px;height:78px;border-radius:50%;background:none;border:2px solid var(--gd);color:var(--dc)}
+.slide.st-l .sl-i .ic{width:42px;height:42px}
+.slide.st-l .sl-r{background:none;color:var(--dc);border:1px solid var(--gd);border-radius:999px;padding:8px 22px;font-weight:600;font-family:var(--ff),serif}
+.slide.st-l .bd h2{font-family:var(--ff),Georgia,serif;color:var(--dc);border:0;text-align:center;padding:0 0 16px;margin:14px 0 12px;position:relative;overflow:visible;white-space:normal}
+.slide.st-l .bd h2::before{content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:130px;height:0;border-top:2px solid var(--gd);z-index:0}
+.slide.st-l .bd h2::after{content:"";position:absolute;left:50%;bottom:0;width:11px;height:11px;transform:translate(-50%,0) rotate(45deg);background:#faf6ec;border:2px solid var(--gd);z-index:1}
+.slide.st-l .bd h3{color:var(--dk);text-align:center}
+.slide.st-l .bd p{background:none;border:0;border-bottom:1px solid rgba(90,68,22,.2);border-radius:0;box-shadow:none;padding:0 0 11px;margin:0 0 13px;font-family:var(--ff),Georgia,serif}
+.slide.st-l:not(.rtl) .bd>h1+p::first-letter{float:left;font:700 80px/.74 var(--ff),Georgia,serif;color:var(--dc);padding:8px 14px 2px 0}
+.slide.st-l .bd>h1+p{background:none;border-bottom:2px solid var(--dc);color:#2c2516}
+.slide.st-l .bd ul li,.slide.st-l .bd ol li{background:none;border:0;border-bottom:1px dotted rgba(90,68,22,.35);border-radius:0;box-shadow:none;font-family:var(--ff),Georgia,serif}
+.slide.st-l .bd ul li::before{width:.4em;height:.4em;background:var(--gd);transform:rotate(45deg)}
+.slide.slide.slide.slide.st-l .bd ol li::before{background:none;color:var(--dc)}
+.slide.st-l .bd ol li::marker{color:var(--dc);font-family:var(--ff),serif}
+.slide.st-l .bd tbody tr{background:none;border:0;border-bottom:1px solid rgba(90,68,22,.28);border-radius:0;box-shadow:none}
+.slide.st-l .bd tbody tr:nth-child(n) td:first-child{background:none;color:var(--dc);font-weight:700;font-family:var(--ff),serif}
+.slide.st-l .bd th{background:var(--dc);color:var(--gl);font-family:var(--ff),serif}
+.slide.st-l .bd caption,.slide.st-l .bd figcaption,.slide.st-l .tcn{color:#7a6540;font-style:italic}
+.slide.st-l .tr.l1{background:none;border:0;border-bottom:1px dotted rgba(90,68,22,.4);border-radius:0;box-shadow:none;padding:.32em .2em;color:var(--dc)}
+.slide.st-l .tr .tn{background:var(--dc);color:var(--gl)}
+.slide.st-l .tr .pgn{background:none;color:var(--dc);font-weight:700}
+.slide.st-l .bd.fl .tr,.slide.st-l .bd.fl .tr.l1{background:#fffdf7;border:1px solid var(--gd);border-radius:0;box-shadow:0 4px 10px rgba(90,68,22,.14);color:var(--dc)}
+.slide.st-l .bd.fl .tr .tn{background:var(--dc);color:var(--gl);border-bottom:3px solid var(--gd);border-radius:50%}
+.slide.st-l .bd.fl .tr .ti{color:var(--dc)}
+.slide.st-l .bd.fl .tr::after,.slide.st-l.rtl .bd.fl .tr::after{border:0;width:10px;height:10px;background:var(--gd);transform:rotate(45deg);margin-top:-5px}
+.slide.st-l .ref-entry{background:none;border:0;border-bottom:1px dotted rgba(90,68,22,.3);border-radius:0;color:#2c2516}
+.slide.st-l .pic{border:6px solid #fff;border-radius:2px;box-shadow:0 0 0 2px var(--dc),0 0 0 6px #faf6ec,0 0 0 8px var(--gd),0 12px 26px rgba(70,48,12,.22)}
+.slide.st-l .pic.ph{border:3px solid var(--gd);background-color:#fffdf7;color:var(--dc)}
+.slide.st-l .ft{background:none;border-top:2px solid var(--dc);color:#6b5a38;padding:0 68px;font-family:var(--ff),serif}
+.slide.st-l .ft b{background:var(--dc);color:var(--gl);border-radius:0;padding:1px 15px;font-weight:700}
+.slide.st-l .ft .pb{top:-2px;height:3px;background:var(--gd)}
+.slide.st-l .ts{background-color:#faf6ec;background-image:radial-gradient(rgba(120,92,40,.06) 1px,transparent 1.3px);background-size:9px 9px;color:#2c2516}
+.slide.st-l .ts::before{content:"";position:absolute;left:34px;right:34px;top:30px;bottom:30px;width:auto;height:auto;border:2px solid var(--dc);box-shadow:inset 0 0 0 5px #faf6ec,inset 0 0 0 7px var(--gd);background:none;border-radius:0}
+.slide.st-l .tc{padding:62px 104px 58px}
+.slide.st-l .lgc{background:none;border-radius:50%;border:2px solid var(--dc)}
+.slide.st-l .lgc.ph{background:none;border:2px double var(--gd);color:var(--dc);border-radius:50%}
+.slide.st-l .kick{color:var(--dc);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:26px;font-family:var(--ff),serif}
+.slide.st-l .ts h1{color:var(--dc);font-family:var(--ff),Georgia,serif;font-weight:700;letter-spacing:.01em}
+.slide.st-l .ts .rule{width:140px;height:0;border-top:3px double var(--dc)}
+.slide.st-l .ts .sub{color:#5a4a28;font-style:italic;font-family:var(--ff),serif}
+.slide.st-l .inst b{color:var(--dc)}
+.slide.st-l .inst span{color:#6b5a38}
+.slide.st-l .t3{border-top:3px double var(--dc)}
+.slide.st-l .t3 b{color:var(--dc);font-family:var(--ff),serif}
+.slide.st-l .ce1{color:var(--dc)}
+.slide.st-l .ce1 small,.slide.st-l .ce3 small{color:#6b5a38}
+.slide.st-l .ce3{color:var(--dc)}
+.slide.st-l .t3 .yr{color:var(--dc);background:none;border:1px solid var(--dc);border-radius:0;padding:0 20px;font-weight:700;font-family:var(--ff),serif}
+.slide.st-l .ts~.wm div{color:var(--dc);opacity:.07}
 .slide .t3 b:empty{min-height:32px}
 #upf{position:fixed;inset:0;z-index:9990;background:rgba(46,33,68,.55);display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:600px){#upf{align-items:center}}
@@ -1282,7 +1560,7 @@ const ic=n=>`<svg class="ic" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 const FIELDS=[["sup","Supervisor / Doctor"],["uni","University"],["col","College"],["dep","Department"],["year","Academic year"],["course","Course name"],["title","Seminar main title"],["sub","Seminar subtitle"]];
 const TYPES={h:"Subtitle",p:"Paragraph",ul:"Bullet list",ol:"Numbered list",tbl:"Table",img:"Image"};
 const HINT={ul:"One item per line",ol:"One item per line",tbl:"Header 1 | Header 2\nCell | Cell",p:"Write or paste text. A new line starts a new paragraph."};
-const STPL=["a","b","c","d","e","f","g","h"],STP=v=>STPL.includes(v)?v:"a";
+const STPL=["a","b","c","d","e","f","g","h","i","j","k","l"],STP=v=>STPL.includes(v)?v:"a";
 function lblL(L){const o=Object.assign({},L);if(S.lt){if(typeof S.lt.by=="string")o.by=S.lt.by;if(typeof S.lt.sup=="string")o.sup=S.lt.sup}return o}
 /* random slide template: never the same one as the previous seminar */
 function pickStpl(){let last="";try{last=localStorage.getItem("arb_last_stpl")||""}catch(x){}const prev=STPL.includes(S.stpl)?S.stpl:last,pool=STPL.filter(v=>v!==prev),v=pool[Math.floor(Math.random()*pool.length)];try{localStorage.setItem("arb_last_stpl",v)}catch(x){}return v}
@@ -1800,7 +2078,7 @@ function openUR(){if($("ur"))return;
  const o=document.createElement("div");o.id="ur";
  o.innerHTML=`<header class="ur-top"><div class="ur-top-in"><span class="ur-mark">${ic("upload")}</span><div class="ur-ttl"><b>Upload Seminar</b><small>Import an existing seminar into the academic layout</small></div><button type="button" id="urc" class="ur-close" aria-label="Close">${ic("x")}</button></div></header>
 <main class="ur-main"><div class="ur-wrap">
-<details class="ur-guide ur-ai" id="aiBox" open><summary><b>Create your seminar</b><small>Type the topic and generate automatically — or switch to copy &amp; paste.</small></summary><div class="ur-modes" id="aiModes"><button type="button" data-mode="ai"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 4.3L18 8l-4.3 1.7L12 14l-1.7-4.3L6 8l4.3-1.7L12 2z"/></svg><span>Automatic (AI)</span><small class="ur-beta">Beta</small></button><button type="button" data-mode="paste" class="on"><span>Copy &amp; paste</span></button></div>
+<details class="ur-guide ur-ai" id="aiBox" open><summary><b>Create your seminar</b><small>Type the topic and generate automatically — or switch to copy &amp; paste.</small></summary><div class="ur-modes" id="aiModes"><button type="button" data-mode="ai"><span>Automatic</span><small class="ur-beta">Beta</small></button><button type="button" data-mode="paste" class="on"><span>Manual</span></button></div>
 <input id="aiT" type="text" dir="auto" placeholder="Seminar Title:" aria-label="Seminar Title" autocomplete="off">
 <input id="aiD" type="text" dir="auto" placeholder="Department: (e.g. IT)" aria-label="Department" autocomplete="off" style="margin-top:8px">
 <div class="ai-line"><span>Number of slides</span><input id="aiN" type="number" inputmode="numeric" min="5" max="40" placeholder="Auto" style="width:150px;height:44px;box-sizing:border-box;text-align:center;border:2px solid var(--bd);border-radius:22px;background:var(--card);font-weight:700;color:var(--ac)"></div>
@@ -1940,7 +2218,7 @@ function reportInfoUI(){
  return hi+logoUI()+typeUI()+acadUI();
 }
 
-function stplUI(){applyCol();const cur=STP(S.stpl),T=[["a","Aurora","Gradient header"],["b","Minimal","Clean light"],["c","Midnight","Dark mode"],["d","Bubble","Soft and round"],["e","Blocks","Bold outlines"],["f","Sketch","Marker and doodles"],["g","Bento","Rounded smart cards"],["h","Editorial","Big type, thin lines"]];
+function stplUI(){applyCol();const cur=STP(S.stpl),T=[["a","Aurora","Gradient header"],["b","Minimal","Clean light"],["c","Midnight","Dark mode"],["d","Bubble","Soft and round"],["e","Blocks","Bold outlines"],["f","Sketch","Marker and doodles"],["g","Bento","Rounded smart cards"],["h","Editorial","Big type, thin lines"],["i","Horizon","Gradient & glass"],["j","Noir","Premium dark"],["k","Blueprint","Technical grid"],["l","Gazette","Ornate journal"]];
  return `<section class="ds-card"><div class="ds-head"><h4>${e(tr("Slide template"))}</h4></div><div class="stg">${T.map(([v,n,d])=>`<button type="button" class="stb${cur==v?" on":""}" data-a="stpl" data-v="${v}" aria-pressed="${cur==v}"><span class="stp stp-${v}"><i></i><b></b><u></u></span><span class="stn">${e(tr(n))}</span><small>${e(tr(d))}</small></button>`).join("")}</div></section>`}
 function reportAppearanceUI(){const c=S.color||"#4B3869",lc=S.lineColor||"#b8923a",on=S.lineOn!==false;
  const P=["#4B3869","#7a1f2b","#1f5c4a","#0f6b78","#3b3f4a","#143a7b"];
@@ -2531,7 +2809,7 @@ const UIKEY="sb-ui-lang";let UIL="en";try{const v=localStorage.getItem(UIKEY);if
 const DICT={
 ckb:{
 "Seminar Builder":"دروستکەری سیمینار","Download Word file":"داگرتنی فایلی Word","Print":"چاپکردن","Edit":"دەستکاری","Preview":"ڕاستەوخۆ","Live":"ڕاستەوخۆ",
-"Video guide · 2 min":"ڤیدیۆی فێرکاری · ٢ خولەک","Play video":"لێدانی ڤیدیۆ","Watch how it works":"سەیر بکە چۆن کار دەکات","Video guide":"ڤیدیۆی فێرکاری","Generate with AI":"دروستکردن بە AI","Generating with AI…":"دروستکردن بە AI…","Generates it for you inside the app — no copy-paste.":"خۆی لەناو ئەپەکە بۆت دروستی دەکات — بەبێ کۆپی/پەیست.","Write the topic first.":"سەرەتا بابەتەکە بنووسە.","Automatic AI needs an active print-shop subscription.":"دروستکردنی ئۆتۆماتیکی بە AI پێویستی بە بەشداربوونی چالاکی پەراوگەیە.","Your print-shop subscription is not active for this app.":"بەشداربوونی پەراوگەکەت بۆ ئەم سیستەمە چالاک نییە.","The topic is too long. Shorten it and try again.":"بابەتەکە زۆر درێژە. کورتی بکەرەوە و دووبارە هەوڵ بدە.","Please write a clear topic first.":"تکایە سەرەتا بابەتێکی ڕوون بنووسە.","Connection problem. Check the internet and try again.":"کێشەی پەیوەندی. ئینتەرنێت بپشکنە و دووبارە هەوڵ بدە.","AI is not set up yet. Copy the prompt and use ChatGPT for now.":"AI هێشتا ئامادە نەکراوە. پرۆمپتەکە کۆپی بکە و ئێستا ChatGPT بەکاربهێنە.","AI could not generate right now. Copy the prompt and use ChatGPT, or try again.":"AI ئێستا نەیتوانی دروستی بکات. پرۆمپتەکە کۆپی بکە و ChatGPT بەکاربهێنە، یان دووبارە هەوڵ بدە.","Automatic (AI)":"خۆکار (AI)","Beta":"تاقیکردنەوە","Copy & paste":"کۆپی/پەیست","Create your report":"ڕاپۆرتەکەت دروست بکە","Create your seminar":"سیمینارەکەت دروست بکە","Type the topic and generate automatically — or switch to copy & paste.":"بابەتەکە بنووسە و خۆکار دروستی بکە — یان بگۆڕە بۆ کۆپی/پەیست.","Too many tries right now. Please wait a minute and try again.":"داواکاری زۆرە ئێستا. تکایە خولەکێک چاوەڕێ بکە و دووبارە هەوڵ بدە.","Academic Seminar Builder":"دروستکەری سیمیناری ئەکادیمی","Template":"قاڵب","Design and colors":"دیزاین و ڕەنگەکان","Seminar":"سیمینار","Edit Seminar":"دەستکاریکردنی سیمینار","Info, pages, images":"زانیاری، لاپەڕە، وێنە",
+"Video guide · 2 min":"ڤیدیۆی فێرکاری · ٢ خولەک","Play video":"لێدانی ڤیدیۆ","Watch how it works":"سەیر بکە چۆن کار دەکات","Video guide":"ڤیدیۆی فێرکاری","Generate with AI":"دروستکردن بە AI","Generating with AI…":"دروستکردن بە AI…","Generates it for you inside the app — no copy-paste.":"خۆی لەناو ئەپەکە بۆت دروستی دەکات — بەبێ کۆپی/پەیست.","Write the topic first.":"سەرەتا بابەتەکە بنووسە.","Automatic AI needs an active print-shop subscription.":"دروستکردنی ئۆتۆماتیکی بە AI پێویستی بە بەشداربوونی چالاکی پەراوگەیە.","Your print-shop subscription is not active for this app.":"بەشداربوونی پەراوگەکەت بۆ ئەم سیستەمە چالاک نییە.","The topic is too long. Shorten it and try again.":"بابەتەکە زۆر درێژە. کورتی بکەرەوە و دووبارە هەوڵ بدە.","Please write a clear topic first.":"تکایە سەرەتا بابەتێکی ڕوون بنووسە.","Connection problem. Check the internet and try again.":"کێشەی پەیوەندی. ئینتەرنێت بپشکنە و دووبارە هەوڵ بدە.","AI is not set up yet. Copy the prompt and use ChatGPT for now.":"AI هێشتا ئامادە نەکراوە. پرۆمپتەکە کۆپی بکە و ئێستا ChatGPT بەکاربهێنە.","AI could not generate right now. Copy the prompt and use ChatGPT, or try again.":"AI ئێستا نەیتوانی دروستی بکات. پرۆمپتەکە کۆپی بکە و ChatGPT بەکاربهێنە، یان دووبارە هەوڵ بدە.","Automatic (AI)":"خۆکار (AI)","Automatic":"خۆکار","Manual":"دەستی","Beta":"تاقیکردنەوە","Copy & paste":"کۆپی/پەیست","Create your report":"ڕاپۆرتەکەت دروست بکە","Create your seminar":"سیمینارەکەت دروست بکە","Type the topic and generate automatically — or switch to copy & paste.":"بابەتەکە بنووسە و خۆکار دروستی بکە — یان بگۆڕە بۆ کۆپی/پەیست.","Too many tries right now. Please wait a minute and try again.":"داواکاری زۆرە ئێستا. تکایە خولەکێک چاوەڕێ بکە و دووبارە هەوڵ بدە.","Academic Seminar Builder":"دروستکەری سیمیناری ئەکادیمی","Template":"قاڵب","Design and colors":"دیزاین و ڕەنگەکان","Seminar":"سیمینار","Edit Seminar":"دەستکاریکردنی سیمینار","Info, pages, images":"زانیاری، لاپەڕە، وێنە",
 "Upload Seminar":"بارکردنی سیمینار","Create Seminar":"دروستکردنی سیمینار","Paste and import":"لکاندن و هاوردەکردن","Developed by":"پەرەپێدراوە لەلایەن","Back":"گەڕانەوە","Interface language":"زمانی ڕووکار",
 "Academic Seminar":"سیمیناری ئەکادیمی","Double border":"چوارچێوەی دووانە","Selected":"هەڵبژێردراوە","Modern Seminar":"سیمیناری مۆدێرن","Side bar":"هێڵی لا","Coming soon":"بەم زووانە",
 "Field Visit Seminar":"سیمیناری سەردانی مەیدانی","Ready outline":"پێکهاتەی ئامادە","CV / Resume":"سیڤی","INFO":"زانیاری","PAGE":"لاپەڕە","DESIGN":"دیزاین",
@@ -2578,7 +2856,7 @@ ckb:{
 "Applying academic formatting…":"جێبەجێکردنی ڕێکخستنی ئەکادیمی…","Generating table of contents…":"دروستکردنی ناوەڕۆک…","Calculating page numbers…":"ژماردنی ژمارەی لاپەڕەکان…","Preparing the final seminar…":"ئامادەکردنی سیمیناری کۆتایی…"},
 ar:{
 "Seminar Builder":"منشئ السمنار","Download Word file":"تنزيل ملف Word","Print":"طباعة","Edit":"تحرير","Preview":"مباشر","Live":"مباشر",
-"Video guide · 2 min":"فيديو إرشادي · دقيقتان","Play video":"تشغيل الفيديو","Watch how it works":"شاهد كيف يعمل","Video guide":"فيديو إرشادي","Generate with AI":"إنشاء بالذكاء الاصطناعي","Generating with AI…":"جارٍ الإنشاء بالذكاء الاصطناعي…","Generates it for you inside the app — no copy-paste.":"ينشئه لك داخل التطبيق — بدون نسخ ولصق.","Write the topic first.":"اكتب الموضوع أولاً.","Automatic AI needs an active print-shop subscription.":"الإنشاء التلقائي بالذكاء الاصطناعي يتطلب اشتراكاً فعّالاً.","Your print-shop subscription is not active for this app.":"اشتراكك غير فعّال لهذا التطبيق.","The topic is too long. Shorten it and try again.":"الموضوع طويل جداً. اختصره وحاول مرة أخرى.","Please write a clear topic first.":"يرجى كتابة موضوع واضح أولاً.","Connection problem. Check the internet and try again.":"مشكلة في الاتصال. تحقق من الإنترنت وحاول مرة أخرى.","AI is not set up yet. Copy the prompt and use ChatGPT for now.":"الذكاء الاصطناعي غير مُعد بعد. انسخ الموجه واستخدم ChatGPT الآن.","AI could not generate right now. Copy the prompt and use ChatGPT, or try again.":"تعذّر الإنشاء الآن. انسخ الموجه واستخدم ChatGPT أو حاول مرة أخرى.","Automatic (AI)":"تلقائي (AI)","Beta":"تجريبي","Copy & paste":"نسخ ولصق","Create your report":"أنشئ تقريرك","Create your seminar":"أنشئ سمنارك","Type the topic and generate automatically — or switch to copy & paste.":"اكتب الموضوع وأنشئه تلقائياً — أو بدّل إلى النسخ واللصق.","Too many tries right now. Please wait a minute and try again.":"محاولات كثيرة الآن. يرجى الانتظار دقيقة والمحاولة مرة أخرى.","Academic Seminar Builder":"منشئ السمنار الأكاديمي","Template":"القالب","Design and colors":"التصميم والألوان","Seminar":"السمنار","Edit Seminar":"تحرير السمنار","Info, pages, images":"المعلومات والصفحات والصور",
+"Video guide · 2 min":"فيديو إرشادي · دقيقتان","Play video":"تشغيل الفيديو","Watch how it works":"شاهد كيف يعمل","Video guide":"فيديو إرشادي","Generate with AI":"إنشاء بالذكاء الاصطناعي","Generating with AI…":"جارٍ الإنشاء بالذكاء الاصطناعي…","Generates it for you inside the app — no copy-paste.":"ينشئه لك داخل التطبيق — بدون نسخ ولصق.","Write the topic first.":"اكتب الموضوع أولاً.","Automatic AI needs an active print-shop subscription.":"الإنشاء التلقائي بالذكاء الاصطناعي يتطلب اشتراكاً فعّالاً.","Your print-shop subscription is not active for this app.":"اشتراكك غير فعّال لهذا التطبيق.","The topic is too long. Shorten it and try again.":"الموضوع طويل جداً. اختصره وحاول مرة أخرى.","Please write a clear topic first.":"يرجى كتابة موضوع واضح أولاً.","Connection problem. Check the internet and try again.":"مشكلة في الاتصال. تحقق من الإنترنت وحاول مرة أخرى.","AI is not set up yet. Copy the prompt and use ChatGPT for now.":"الذكاء الاصطناعي غير مُعد بعد. انسخ الموجه واستخدم ChatGPT الآن.","AI could not generate right now. Copy the prompt and use ChatGPT, or try again.":"تعذّر الإنشاء الآن. انسخ الموجه واستخدم ChatGPT أو حاول مرة أخرى.","Automatic (AI)":"تلقائي (AI)","Automatic":"تلقائي","Manual":"يدوي","Beta":"تجريبي","Copy & paste":"نسخ ولصق","Create your report":"أنشئ تقريرك","Create your seminar":"أنشئ سمنارك","Type the topic and generate automatically — or switch to copy & paste.":"اكتب الموضوع وأنشئه تلقائياً — أو بدّل إلى النسخ واللصق.","Too many tries right now. Please wait a minute and try again.":"محاولات كثيرة الآن. يرجى الانتظار دقيقة والمحاولة مرة أخرى.","Academic Seminar Builder":"منشئ السمنار الأكاديمي","Template":"القالب","Design and colors":"التصميم والألوان","Seminar":"السمنار","Edit Seminar":"تحرير السمنار","Info, pages, images":"المعلومات والصفحات والصور",
 "Upload Seminar":"رفع سمنار","Create Seminar":"إنشاء سمنار","Paste and import":"لصق واستيراد","Developed by":"تطوير","Back":"رجوع","Interface language":"لغة الواجهة",
 "Academic Seminar":"سمنار أكاديمي","Double border":"إطار مزدوج","Selected":"محدد","Modern Seminar":"سمنار حديث","Side bar":"شريط جانبي","Coming soon":"قريباً",
 "Field Visit Seminar":"سمنار زيارة ميدانية","Ready outline":"هيكل جاهز","CV / Resume":"السيرة الذاتية","INFO":"معلومات","PAGE":"الصفحات","DESIGN":"التصميم",
@@ -2675,7 +2953,7 @@ const T=(k,a,b)=>{if(!DICT.ckb[k])DICT.ckb[k]=a;if(!DICT.ar[k])DICT.ar[k]=b};
 ["Type","جۆر","النوع"],["Level","ئاست","المستوى"],["Add student","زیادکردنی خوێندکار","إضافة طالب"],["Student name","ناوی خوێندکار","اسم الطالب"],["Level 2 (1.1)","ئاستی ٢ (1.1)","المستوى 2 (1.1)"],["Level 3 (1.1.1)","ئاستی ٣ (1.1.1)","المستوى 3 (1.1.1)"],
 ["Edit label","دەستکاری ناونیشان","تعديل العنوان"],["Label","ناونیشان","العنوان"],["Slide template","تیمپلەیتی سلاید","قالب الشرائح"],
 ["Aurora","ئۆرۆرا","أورورا"],["Minimal","سادە","بسيط"],["Midnight","نیوەشەو","منتصف الليل"],
-["Gradient header","هێدەری ڕەنگاوڕەنگ","رأس متدرج"],["Clean light","ڕووناک و ڕێکوپێک","فاتح ونظيف"],["Dark mode","دۆخی تاریک","الوضع الداكن"],["Bubble","بەبڵ","فقاعات"],["Blocks","بلۆک","كتل"],["Soft and round","نەرم و خڕ","ناعم ومستدير"],["Side column","ستوونی لاتەنیشت","عمود جانبي"],["Sketch","سکێچ","سكتش"],["Bento","بێنتۆ","بينتو"],["Editorial","ئێدیتۆریاڵ","تحريري"],["Marker and doodles","نیشانکەر و هێڵی دەستکرد","قلم تمييز وخطوط يدوية"],["Rounded smart cards","کارتی خڕی مۆدێرن","بطاقات مستديرة عصرية"],["Big type, thin lines","نووسینی گەورە، هێڵی تەنک","خط كبير وخطوط رفيعة"],["Upload","بارکردن","رفع"],["Only PDF or PPTX from this system","تەنها PDF یان PPTX ی ئەم سیستەمە","فقط PDF أو PPTX من هذا النظام"],["Reopen a seminar you downloaded from this system","سیمینارێک بکەوە کە لەم سیستەمە دابەزاندووتە","أعد فتح سمنار قمت بتنزيله من هذا النظام"],["Only files from this system are accepted","تەنها فایلی ئەم سیستەمە قبوڵ دەکرێت","يُقبل فقط ملف هذا النظام"],["Upload the PDF or PPTX that you downloaded from Seminar Builder. It opens exactly as you saved it, ready to edit. Files from other places, or files edited or re-saved in another program, are rejected.","ئەو PDF یان PPTX ە ئەپلۆد بکە کە لە دروستکەری سیمینار دابەزاندووتە. وەک خۆی دەکرێتەوە و ئامادەیە بۆ دەستکاری. فایلی شوێنی تر، یان فایلێک کە لە بەرنامەیەکی تر دەستکاری یان دووبارە پاشەکەوت کرابێت، ڕەت دەکرێتەوە.","ارفع ملف PDF أو PPTX الذي نزّلته من منشئ السمنار. يُفتح تماماً كما حفظته وجاهزاً للتعديل. تُرفض الملفات من أي مكان آخر أو الملفات التي عُدّلت أو أُعيد حفظها في برنامج آخر."],["Choose PDF or PPTX file","هەڵبژاردنی فایلی PDF یان PPTX","اختيار ملف PDF أو PPTX"],["Tip: do not re-save the file in PowerPoint or a PDF editor before uploading.","ئامۆژگاری: پێش ئەپلۆدکردن فایلەکە لە PowerPoint یان دەستکاریکەری PDF دووبارە پاشەکەوت مەکە.","نصيحة: لا تُعد حفظ الملف في PowerPoint أو محرر PDF قبل رفعه."],["Reading file…","فایلەکە دەخوێنرێتەوە…","جارٍ قراءة الملف…"],["Seminar found","سیمینار دۆزرایەوە","تم العثور على السمنار"],["pages","لاپەڕە","صفحة"],["Your current seminar will be replaced.","سیمینارە ئێستاکەت دەگۆڕدرێت.","سيتم استبدال السمنار الحالي."],["Replace current seminar and open","سیمیناری ئێستا بگۆڕە و بیکەرەوە","استبدال السمنار الحالي وفتحه"],["Please choose a PDF or PPTX file.","تکایە فایلی PDF یان PPTX هەڵبژێرە.","الرجاء اختيار ملف PDF أو PPTX."],["The seminar data in this file is damaged or was changed, so it cannot be opened.","زانیاری سیمینارەکە لەم فایلەدا تێکچووە یان گۆڕدراوە، بۆیە ناکرێتەوە.","بيانات السمنار في هذا الملف تالفة أو تم تغييرها، لذلك لا يمكن فتحه."],["This file was not created by Seminar Builder. Only PDF or PPTX files downloaded from this system can be uploaded.","ئەم فایلە لەلایەن دروستکەری سیمینارەوە دروست نەکراوە. تەنها فایلی PDF یان PPTX کە لەم سیستەمە دابەزێنراوە دەکرێت ئەپلۆد بکرێت.","لم يتم إنشاء هذا الملف بواسطة منشئ السمنار. يمكن رفع ملفات PDF أو PPTX التي تم تنزيلها من هذا النظام فقط."]].forEach(x=>T(...x));
+["Gradient header","هێدەری ڕەنگاوڕەنگ","رأس متدرج"],["Clean light","ڕووناک و ڕێکوپێک","فاتح ونظيف"],["Dark mode","دۆخی تاریک","الوضع الداكن"],["Bubble","بەبڵ","فقاعات"],["Blocks","بلۆک","كتل"],["Soft and round","نەرم و خڕ","ناعم ومستدير"],["Side column","ستوونی لاتەنیشت","عمود جانبي"],["Sketch","سکێچ","سكتش"],["Bento","بێنتۆ","بينتو"],["Editorial","ئێدیتۆریاڵ","تحريري"],["Marker and doodles","نیشانکەر و هێڵی دەستکرد","قلم تمييز وخطوط يدوية"],["Rounded smart cards","کارتی خڕی مۆدێرن","بطاقات مستديرة عصرية"],["Big type, thin lines","نووسینی گەورە، هێڵی تەنک","خط كبير وخطوط رفيعة"],["Horizon","هۆرایزن","هورايزن"],["Noir","نوار","نوار"],["Gradient & glass","گرادیەنت و شووشە","متدرج وزجاجي"],["Premium dark","تاریکی لوکس","داكن فاخر"],["Blueprint","بلووپرینت","مخطط"],["Gazette","گازێت","صحيفة"],["Technical grid","تۆڕی تەکنیکی","شبكة تقنية"],["Ornate journal","گۆڤاری نەخشدار","مجلة مزخرفة"],["Upload","بارکردن","رفع"],["Only PDF or PPTX from this system","تەنها PDF یان PPTX ی ئەم سیستەمە","فقط PDF أو PPTX من هذا النظام"],["Reopen a seminar you downloaded from this system","سیمینارێک بکەوە کە لەم سیستەمە دابەزاندووتە","أعد فتح سمنار قمت بتنزيله من هذا النظام"],["Only files from this system are accepted","تەنها فایلی ئەم سیستەمە قبوڵ دەکرێت","يُقبل فقط ملف هذا النظام"],["Upload the PDF or PPTX that you downloaded from Seminar Builder. It opens exactly as you saved it, ready to edit. Files from other places, or files edited or re-saved in another program, are rejected.","ئەو PDF یان PPTX ە ئەپلۆد بکە کە لە دروستکەری سیمینار دابەزاندووتە. وەک خۆی دەکرێتەوە و ئامادەیە بۆ دەستکاری. فایلی شوێنی تر، یان فایلێک کە لە بەرنامەیەکی تر دەستکاری یان دووبارە پاشەکەوت کرابێت، ڕەت دەکرێتەوە.","ارفع ملف PDF أو PPTX الذي نزّلته من منشئ السمنار. يُفتح تماماً كما حفظته وجاهزاً للتعديل. تُرفض الملفات من أي مكان آخر أو الملفات التي عُدّلت أو أُعيد حفظها في برنامج آخر."],["Choose PDF or PPTX file","هەڵبژاردنی فایلی PDF یان PPTX","اختيار ملف PDF أو PPTX"],["Tip: do not re-save the file in PowerPoint or a PDF editor before uploading.","ئامۆژگاری: پێش ئەپلۆدکردن فایلەکە لە PowerPoint یان دەستکاریکەری PDF دووبارە پاشەکەوت مەکە.","نصيحة: لا تُعد حفظ الملف في PowerPoint أو محرر PDF قبل رفعه."],["Reading file…","فایلەکە دەخوێنرێتەوە…","جارٍ قراءة الملف…"],["Seminar found","سیمینار دۆزرایەوە","تم العثور على السمنار"],["pages","لاپەڕە","صفحة"],["Your current seminar will be replaced.","سیمینارە ئێستاکەت دەگۆڕدرێت.","سيتم استبدال السمنار الحالي."],["Replace current seminar and open","سیمیناری ئێستا بگۆڕە و بیکەرەوە","استبدال السمنار الحالي وفتحه"],["Please choose a PDF or PPTX file.","تکایە فایلی PDF یان PPTX هەڵبژێرە.","الرجاء اختيار ملف PDF أو PPTX."],["The seminar data in this file is damaged or was changed, so it cannot be opened.","زانیاری سیمینارەکە لەم فایلەدا تێکچووە یان گۆڕدراوە، بۆیە ناکرێتەوە.","بيانات السمنار في هذا الملف تالفة أو تم تغييرها، لذلك لا يمكن فتحه."],["This file was not created by Seminar Builder. Only PDF or PPTX files downloaded from this system can be uploaded.","ئەم فایلە لەلایەن دروستکەری سیمینارەوە دروست نەکراوە. تەنها فایلی PDF یان PPTX کە لەم سیستەمە دابەزێنراوە دەکرێت ئەپلۆد بکرێت.","لم يتم إنشاء هذا الملف بواسطة منشئ السمنار. يمكن رفع ملفات PDF أو PPTX التي تم تنزيلها من هذا النظام فقط."]].forEach(x=>T(...x));
 const ov=document.createElement("div");ov.id="lsh";ov.hidden=true;document.body.appendChild(ov);
 let sh=null;const rt=()=>S.dir=="rtl",ph=v=>rt()&&(v=="left"||v=="right")?(v=="left"?"right":"left"):v;
 const lab=Object.fromEntries(FIELDS),X=s=>e(tr(s));
