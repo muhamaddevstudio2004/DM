@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.57";</script>
+<script>window.APP_VERSION="1.58";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#143a7b"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Report"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=157"></script>
+<script src="/codes.js?v=158"></script>
 <style>
 :root{--bg:#fff;--fg:#0f2a52;--card:#fff;--bd:#c9d6ea;--ac:#143a7b;--yl:#d8bb74;--gd:#b8923a;--dc:#143a7b;--dk:#8b0000;--mut:#51627f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -130,7 +130,7 @@ textarea{resize:vertical;min-height:80px}
 .cv ul,.page.rtl .cv ul{list-style:none;padding:0!important;margin:6px 0}.cv li{list-style:none;white-space:nowrap}.cv li::before{content:"•\00a0\00a0";font-weight:bold}
 .lt{unicode-bidi:isolate;direction:ltr}.page.rtl .cv{line-height:1.6}
 .citation{color:#143a7b;text-decoration:underline;font-weight:600}.autolink{color:#143a7b;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere;word-break:break-all}.ref-entry{padding-left:48px;text-indent:-48px;overflow-wrap:anywhere;margin-bottom:10px}.page.rtl .ref-entry{padding-left:0;padding-right:48px;text-indent:-48px}.page.rtl .ref-entry[dir="ltr"]{padding-left:48px;padding-right:0;text-align:left!important;text-align-last:left!important}
-.bd a{overflow-wrap:anywhere}.bd li,.bd figcaption,.bd h1,.bd h2,.bd h3{overflow-wrap:anywhere}.bd .image-layout>*{min-width:0;max-width:100%}
+.bd a{overflow-wrap:anywhere;word-break:break-word}.bd li,.bd figcaption,.bd h1,.bd h2,.bd h3{overflow-wrap:anywhere;word-break:break-word}.bd .image-layout>*{min-width:0;max-width:100%}.bd *{max-width:100%}.bd pre.code{max-width:100%}
 .page .ref-blk{padding-inline-start:0!important;margin-inline-start:0}.page .ref-blk li[dir]{list-style:none;position:relative;padding-inline-start:1.3em;text-align:start!important;text-align-last:start!important;unicode-bidi:isolate}.page .ref-blk li[dir]::before{content:"•";position:absolute;inset-inline-start:.2em}.page .ref-blk p[dir]{text-align:start!important;text-align-last:start!important}.bd table{break-inside:auto}.bd tr{break-inside:avoid;page-break-inside:avoid}.bd thead{display:table-header-group}.bd figure{break-inside:avoid;page-break-inside:avoid}.bd h1,.bd h2,.bd h3{break-after:avoid;page-break-after:avoid}.bd img{height:auto;object-fit:contain;max-width:100%}.x .page{margin:0;box-shadow:none;page-break-after:always}.x .page:last-child{page-break-after:auto}
 .bd>h1{border-bottom:2px solid var(--gd);padding-bottom:4px}.bd>h1.sh{margin-top:14px;text-transform:uppercase}.bd>h1.sh:first-child{margin-top:0}.cv h1::after{content:"";display:block;width:90px;height:3px;background:var(--gd);margin:12px auto 0}.no-report-line .bd>h1{border-bottom:0;padding-bottom:0}.no-report-line .cv h1::after{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1988,7 +1988,7 @@ ckb:{
 "Heading and paragraph typography":"جۆری نووسینی ناونیشان و پەرەگراف","Line spacing":"مەودای نێوان دێڕەکان","Paragraph alignment":"ڕێکخستنی پەرەگراف","Justified ★":"هاوتەریب ★","Start-aligned":"لە سەرەتاوە",
 "Heading 1 size (pt)":"قەبارەی ناونیشانی ١ (pt)","Heading 2 size (pt)":"قەبارەی ناونیشانی ٢ (pt)","Heading 3 size (pt)":"قەبارەی ناونیشانی ٣ (pt)",
 "Add Page":"زیادکردنی لاپەڕە","Tap a page to edit it. Saved automatically.":"لەسەر لاپەڕەیەک دابگرە بۆ دەستکاریکردن. خۆکارانە پاشەکەوت دەبێت.",
-"Cover design":"دیزاینی بەرگ","Classic":"کلاسیک","Double border":"چوارچێوەی دووانە","Academic Blue":"ئەکادیمی شین","Corner emblems":"نیشانەی گۆشەکان","Academic Clean":"ئەکادیمی ساف","Corner fans":"بادەی گۆشەکان","Report color":"ڕەنگی ڕاپۆرت","Custom color":"ڕەنگی دڵخواز","Custom report color":"ڕەنگی دڵخوازی ڕاپۆرت","Title line":"هێڵی ناونیشان","Under headings and cover":"لە ژێر ناونیشانەکان و بەرگ","Line color":"ڕەنگی هێڵ",
+"Cover design":"دیزاینی بەرگ","Classic":"کلاسیک","Double border":"چوارچێوەی دووانە","EPU Homework":"ئەرکی EPU","EPU Report":"ڕاپۆرتی EPU","Clean · logo on top":"پاک · لۆگۆ لەسەرەوە","Clean · header left":"پاک · زانیاری لای چەپ","Academic Blue":"ئەکادیمی شین","Corner emblems":"نیشانەی گۆشەکان","Academic Clean":"ئەکادیمی ساف","Corner fans":"بادەی گۆشەکان","Report color":"ڕەنگی ڕاپۆرت","Custom color":"ڕەنگی دڵخواز","Custom report color":"ڕەنگی دڵخوازی ڕاپۆرت","Title line":"هێڵی ناونیشان","Under headings and cover":"لە ژێر ناونیشانەکان و بەرگ","Line color":"ڕەنگی هێڵ",
 "Pages":"لاپەڕەکان","Page title":"ناونیشانی لاپەڕە","Section type":"جۆری بەش","Chapter":"بەشی سەرەکی","Abstract":"کورتە","Acknowledgment":"سوپاسگوزاری","References":"سەرچاوەکان","Appendix":"پاشکۆ",
 "Text size of this page (pt)":"قەبارەی دەقی ئەم لاپەڕەیە (pt)","Apply this size to all pages + contents":"ئەم قەبارەیە بۆ هەموو لاپەڕەکان + ناوەڕۆک جێبەجێ بکە",
 "Subtitle":"ناونیشانی لاوەکی","Block actions":"کارەکانی بلۆک","Move up":"بەرزکردنەوە","Move block up":"بەرزکردنەوەی بلۆک","Move down":"نزمکردنەوە","Move block down":"نزمکردنەوەی بلۆک","Delete block":"سڕینەوەی بلۆک","Delete":"سڕینەوە",
@@ -2036,7 +2036,7 @@ ar:{
 "Heading and paragraph typography":"تنسيق العناوين والفقرات","Line spacing":"تباعد الأسطر","Paragraph alignment":"محاذاة الفقرة","Justified ★":"ضبط ★","Start-aligned":"محاذاة للبداية",
 "Heading 1 size (pt)":"حجم العنوان 1 (pt)","Heading 2 size (pt)":"حجم العنوان 2 (pt)","Heading 3 size (pt)":"حجم العنوان 3 (pt)",
 "Add Page":"إضافة صفحة","Tap a page to edit it. Saved automatically.":"اضغط على صفحة لتحريرها. يُحفظ تلقائياً.",
-"Cover design":"تصميم الغلاف","Classic":"كلاسيكي","Double border":"إطار مزدوج","Academic Blue":"أكاديمي أزرق","Corner emblems":"زخارف الزوايا","Academic Clean":"أكاديمي نظيف","Corner fans":"مراوح الزوايا","Report color":"لون التقرير","Custom color":"لون مخصص","Custom report color":"لون مخصص للتقرير","Title line":"خط العنوان","Under headings and cover":"تحت العناوين والغلاف","Line color":"لون الخط",
+"Cover design":"تصميم الغلاف","Classic":"كلاسيكي","Double border":"إطار مزدوج","EPU Homework":"واجب EPU","EPU Report":"تقرير EPU","Clean · logo on top":"نظيف · الشعار بالأعلى","Clean · header left":"نظيف · المعلومات لليسار","Academic Blue":"أكاديمي أزرق","Corner emblems":"زخارف الزوايا","Academic Clean":"أكاديمي نظيف","Corner fans":"مراوح الزوايا","Report color":"لون التقرير","Custom color":"لون مخصص","Custom report color":"لون مخصص للتقرير","Title line":"خط العنوان","Under headings and cover":"تحت العناوين والغلاف","Line color":"لون الخط",
 "Pages":"الصفحات","Page title":"عنوان الصفحة","Section type":"نوع القسم","Chapter":"فصل","Abstract":"ملخص","Acknowledgment":"شكر وتقدير","References":"المراجع","Appendix":"ملحق",
 "Text size of this page (pt)":"حجم نص هذه الصفحة (pt)","Apply this size to all pages + contents":"تطبيق هذا الحجم على كل الصفحات والمحتويات",
 "Subtitle":"عنوان فرعي","Block actions":"إجراءات الكتلة","Move up":"تحريك للأعلى","Move block up":"نقل الكتلة للأعلى","Move down":"تحريك للأسفل","Move block down":"نقل الكتلة للأسفل","Delete block":"حذف الكتلة","Delete":"حذف",
