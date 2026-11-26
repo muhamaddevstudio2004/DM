@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Report Builder</title>
-<script>window.APP_VERSION="1.55";</script>
+<script>window.APP_VERSION="1.57";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#143a7b"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Report"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=155"></script>
+<script src="/codes.js?v=157"></script>
 <style>
 :root{--bg:#fff;--fg:#0f2a52;--card:#fff;--bd:#c9d6ea;--ac:#143a7b;--yl:#d8bb74;--gd:#b8923a;--dc:#143a7b;--dk:#8b0000;--mut:#51627f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -1853,11 +1853,17 @@ $("bpdf").onclick=async()=>{const b=$("bpdf"),old=b.innerHTML;
   if(window.ARender&&ARender.enabled()){try{shots=await ARender.render(pg,{w:794,h:1123,scale:2,quality:.9,progress:(i,n)=>L.update(8+(i/n)*86,"Page "+i+" of "+n)})}catch(x){console.warn("native render failed, using html2canvas",x);shots=null}}
   if(shots)shots.forEach((x,i)=>{if(i)pdf.addPage("a4","portrait");pdf.addImage(x.u8,"JPEG",0,0,210,297,undefined,"FAST")});
   else{if(!window.html2canvas)await window.__abLib("html2canvas");fixRtlMarkers(w);
+  const SC=innerWidth<900?1.5:2;
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*86,"Page "+(i+1)+" of "+pg.length);
    await new Promise(r=>requestAnimationFrame(()=>r()));
-   const c=await html2canvas(pg[i],{scale:innerWidth<900?1.5:2,backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:794,windowHeight:1123,onclone:async d=>{pdfFixCode(d);await pdfClonePrep(d)}});
+   /* one bad page must never fail the whole PDF: try normal, then lower scale, then a titled placeholder */
+   let c=null;const scales=[SC,1.1];
+   for(let a=0;a<scales.length&&!c;a++){try{
+     c=await html2canvas(pg[i],{scale:scales[a],backgroundColor:"#fff",useCORS:true,scrollX:0,scrollY:0,windowWidth:794,windowHeight:1123,onclone:async d=>{pdfFixCode(d);await pdfClonePrep(d)}});
+   }catch(err){console.warn("page "+(i+1)+" render attempt "+(a+1)+" failed",err);c=null;if(a<scales.length-1)await new Promise(r=>setTimeout(r,80))}}
    if(i)pdf.addPage("a4","portrait");
+   if(!c){c=document.createElement("canvas");c.width=Math.round(794*SC);c.height=Math.round(1123*SC);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#1f2430";x.textAlign="center";x.textBaseline="middle";x.font="bold "+Math.round(30*SC)+"px Arial,Helvetica,sans-serif";const tt=((((pg[i].querySelector(".cv h1,.bd>h1,h1,h2")||{}).textContent)||("Page "+(i+1)))).trim().slice(0,60);x.fillText(tt,c.width/2,c.height/2)}
    pdf.addImage(c.toDataURL("image/jpeg",.88),"JPEG",0,0,210,297,undefined,"FAST");
    c.width=c.height=0}}
   L.update(97,"Saving file…");const blob=pdf.output("blob"),name=((S.info.title||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_").slice(0,50)||"Report")+".pdf";let dl=null;
