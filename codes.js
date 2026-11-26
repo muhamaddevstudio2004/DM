@@ -134,7 +134,11 @@ A.canAI=function(){return CFG.ai===true};
 A.aiGen=async function(prompt){
  if(!prompt||prompt.length<10)throw{code:"bad_request"};
  const sh=shopGet(),tok=sh&&sh.t||"";
- const j=await rpc("ai_generate",{p_token:tok,p_code:"",p_app:APP,p_prompt:prompt});
+ const body={p_token:tok,p_code:"",p_app:APP,p_prompt:prompt};
+ const t0=Date.now();
+ let j=await rpc("ai_generate",body);
+ /* one quick retry only when it failed FAST (a transient network/queue hiccup on the free tier), never after a long timeout */
+ if((!j||j.ok!==true)&&j&&j.error==="net"&&(Date.now()-t0)<20000){await new Promise(r=>setTimeout(r,2000));j=await rpc("ai_generate",body);}
  if(!j||j.ok!==true)throw{code:(j&&j.error)||"error",reason:j&&j.reason,status:j&&j.status};
  return j.text};
 /* ---- print-shop status card on the home screen ---- */
@@ -402,7 +406,7 @@ const isDark=()=>{try{const p=document.createElement("div");p.style.cssText="pos
 root.innerHTML=`<style>${CSS}</style><div id="ov" class="${isDark()?"dk":""}"><div class="app" dir="rtl" id="admc"></div><div class="ts" id="ts" role="status"></div></div>`;
 document.body.appendChild(host);
 const o=root.querySelector("#ov"),box=root.querySelector("#admc"),ts=root.querySelector("#ts");
-let pw="",R=null,REV=null,DAILY=null,PAY=null,PREV="stats",srt=LS.g("adm-srt","left"),LOG=null,LOGM=null,ERR=null,ERRG=[],CHK=null,CHKB=false,tab="shop",view="stats",det=null,DET={},q="",flt="all",NEW=null,tm=0,tk=0,idle=0,upd=new Date(),selMode=false,SH=[],SC=0;
+let pw="",R=null,REV=null,DAILY=null,PAY=null,PREV="stats",srt=LS.g("adm-srt","left"),LOG=null,LOGM=null,ERR=null,ERRG=[],CHK=null,CHKB=false,tab="shop",view="stats",det=null,DET={},q="",flt="all",NEW=null,tm=0,tk=0,idle=0,upd=new Date(),selMode=false,SH=[],SC=0,KA=null;
 const SEL=new Set(),CF={k:"shop",apps:["report","seminar"],d:30,n:5,m:2,t:""},OPENG=new Set();
 let LOCKMIN=+LS.g("adm-lock","5");
 const key=ev=>{if(ev.key==="Escape"){const m=o.querySelector(".md");if(m)m.remove();else if(view==="det")back();else close()}};
@@ -508,14 +512,21 @@ const legend=()=>`<div class="lgd"><span><i style="background:var(--ac)"></i>ڕ�
 const loadPay=async()=>{const x=await rpc("admin_payments",{p_pw:pw});PAY=x&&x.ok?x:{err:x&&x.error||"net"};if(view==="pay")render()};
 const loadLog=async()=>{const x=await rpc("admin_log",{p_pw:pw});if(x&&x.ok&&Array.isArray(x.items)){LOG=x.items;LOGM=x.month||null}else{LOG=null;LOGM=null}};
 const loadErrs=async()=>{const x=await rpc("admin_errors",{p_pw:pw});ERR=x&&x.ok&&Array.isArray(x.items)?x.items:null};
+const loadKA=async()=>{const x=await rpc("keepalive_status",{p_pw:pw});KA=x&&x.ok?x:{err:(x&&x.error)||"net"}};
 const loadDet=async l=>{const x=await rpc("admin_code_detail",{p_pw:pw,p_code:l});if(x&&x.ok){DET[l]=x;if(view==="det"&&det===l)render()}};
-const reload=async top=>{const x=await rpc("admin_list",{p_pw:pw});if(!x.ok){toastA(aerr(x),true);render();return false}R=x.items||[];REV=x.rev||null;DAILY=x.daily||null;await Promise.all([loadLog(),loadErrs()].concat(view==="pay"?[loadPay()]:[]));if(view==="det"&&det)loadDet(det);upd=new Date();render(top);return true};
+const reload=async top=>{const x=await rpc("admin_list",{p_pw:pw});if(!x.ok){toastA(aerr(x),true);render();return false}R=x.items||[];REV=x.rev||null;DAILY=x.daily||null;await Promise.all([loadLog(),loadErrs(),loadKA()].concat(view==="pay"?[loadPay()]:[]));if(view==="det"&&det)loadDet(det);upd=new Date();render(top);return true};
 const setRev=async(labels,val)=>{const x=await rpc("admin_set_revoked",{p_pw:pw,p_codes:labels,p_revoked:val});if(!x.ok)toastA(aerr(x),true);await reload();if(x.ok)toastA(val?"ڕاگیرا ✓":"چالاک کرایەوە ✓")};
 const delMany=async ls=>{const x=await rpc("admin_delete",{p_pw:pw,p_codes:ls});if(!x.ok){toastA(aerr(x),true);return}ls.forEach(l=>SEL.delete(l));if(NEW)NEW=NEW.filter(z=>!ls.includes(z));await reload();toastA("سڕانەوە ✓")};
 const extend=async(l,d)=>{const x=await rpc("admin_extend",{p_pw:pw,p_code:l,p_days:d});if(!x.ok){toastA(aerr(x),true);return}await reload();toastA((d>0?"+":"")+d+" ڕۆژ ✓")};
 /* ---- errors ---- */
 const errGroups=()=>{const m={};(ERR||[]).forEach(e=>{const k=e.app+"|"+e.src+"|"+e.msg;if(!m[k])m[k]={msg:e.msg||"",src:e.src||"",app:e.app||"",n:0,last:e.at,stack:e.stack||"",device:e.device||"",ver:e.ver||""};m[k].n++});return Object.values(m).sort((a,b)=>new Date(b.last)-new Date(a.last))};
 const errTxt=g=>"Error: "+g.msg+"\nApp: "+g.app+"\nWhere: "+g.src+"\nCount: "+g.n+"\nLast: "+ft(g.last)+"\nDevice: "+g.device+"\nVersion: "+g.ver+(g.stack?"\nStack:\n"+g.stack:"");
+const kaBanner=()=>{if(!KA)return"";
+ if(KA.err)return KA.err==="sql"?`<button class="mini" data-a="go" data-v="set"><div><b>چاودێری keep-alive دانەمەزراوە</b><small>keepalive.sql ـی نوێ Run بکە بۆ پیشاندانی دۆخی workflow لێرە</small></div>${I.left}</button>`:"";
+ const h=KA.hours;
+ if(h==null)return `<button class="mini k-ex" data-a="kacp"><div><b>⚠ keep-alive هیچ کات نەگەیشتووە</b><small>GitHub workflowـەکە هێشتا Supabaseـی بانگ نەکردووە. دابگرە بۆ ڕێنمایی.</small></div>${I.copy}</button>`;
+ if(h<=36){const t=h<1?"کەمتر لە کاتژمێرێک":(h<24?Math.round(h)+" کاتژمێر":Math.round(h/24)+" ڕۆژ");return `<div class="ok-n">${I.check} keep-alive کاردەکات — دوایین جار ${t} لەمەوبەر • ${KA.runs_7d||0} جار لەم ٧ ڕۆژەدا</div>`}
+ const d=Math.max(1,Math.round(h/24));return `<button class="mini k-ex" data-a="kacp"><div><b>⚠ keep-alive ${d} ڕۆژە نەگەیشتووە!</b><small>GitHub workflowـەکە لەوانەیە وەستابێت. دابگرە بۆ کۆپی + ڕێنمایی.</small></div>${I.copy}</button>`};
 const errBanner=()=>{const n=(ERR||[]).filter(e=>Date.now()-new Date(e.at)<864e5).length;return n?`<button class="mini k-ex" data-a="go" data-v="set"><div><b>⚠ ${n} هەڵە لە ٢٤ کاتژمێری ڕابردوو</b><small>بۆ بینین دابگرە</small></div>${I.left}</button>`:""};
 const errH=()=>{if(ERR===null)return `<div class="pn"><div class="ph"><h4>هەڵەکان</h4></div><p class="sub">${AE.sql}</p></div>`;
  const G=errGroups();ERRG=G;
@@ -596,7 +607,7 @@ const vStats=()=>{const sh=listOf("shop"),act=sh.filter(c=>st(c).k==="ok"),sg=li
  let acts;if(LOG===null)acts=`<div class="pn"><h4>دوایین بەکارهێنانەکان</h4><p class="sub">${AE.sql}</p></div>`;
  else acts=`<div class="pn"><h4>دوایین بەکارهێنانەکان</h4>${LOG.length?`<div class="hl">${LOG.slice(0,8).map(ev=>{const d=dv(ev.info),c=byCode(ev.code);return `<button class="hi${c?" ar":""}"${c?` data-a="opentab" data-k="${c.kind}" data-l="${X(c.code)}"`:""}><span class="hc">${d.ic}</span><div><b dir="auto">${X(c?nameOf(c)||fc(c.code):fc(ev.code))}</b><small>${X(APN[ev.app]||ev.app||"")}${ev.action==="activate"?" • چالاککردن":""} • <bdi>${ft(ev.at)}</bdi> • ${X(d.t)}</small></div></button>`}).join("")}</div>`:`<p class="sub">هێشتا هیچ بەکارهێنانێک تۆمار نەکراوە.</p>`}</div>`;
  const codes=`<div class="pn"><div class="ph"><h4>کۆدەکانی خوێندکار</h4><button class="ib" data-a="go" data-v="codes">${I.list}<span>بینین</span></button></div><div class="nt"><span>یەکجاری ئامادە: ${sg.filter(c=>st(c).k==="ok").length}</span><span>کاتی چالاک: ${tm2.filter(c=>st(c).k==="ok").length}</span></div></div>`;
- return errBanner()+(has||!sh.length?"":`<div class="sql2">${SQL2}</div>`)+kpis+`<div class="dash"><div class="gr">${rnw}${chart}</div><div class="gr">${tops}${codes}${acts}</div></div>`};
+ return kaBanner()+errBanner()+(has||!sh.length?"":`<div class="sql2">${SQL2}</div>`)+kpis+`<div class="dash"><div class="gr">${rnw}${chart}</div><div class="gr">${tops}${codes}${acts}</div></div>`};
 const vPay=()=>{if(PAY===null)return `<div class="pn"><p class="sub">بارکردن…</p></div>`;if(PAY.err)return `<div class="sql2">${PAY.err==="sql"?SQL2:X(aerr({error:PAY.err}))}</div>`;
  const it=PAY.items||[],ms=PAY.months||[],mx=Math.max(1,...ms.map(z=>+(z.sum&&z.sum.IQD||0)));const MN=["","کانوونی دووەم","شوبات","ئازار","نیسان","ئایار","حوزەیران","تەممووز","ئاب","ئەیلوول","تشرینی یەکەم","تشرینی دووەم","کانوونی یەکەم"];
  const groups=[],gm={};it.forEach((p,i)=>{const k=String(p.paid_at).slice(0,7);if(!gm[k]){gm[k]=[];groups.push(k)}gm[k].push([p,i])});
@@ -729,6 +740,7 @@ o.addEventListener("click",async ev=>{const b=ev.target.closest("[data-a]");if(!
  case"chk":runCheck();break;
  case"chkcp":doCopy("Fix ONLY the following errors found by the admin system test. Do not change anything else in the file.\n\n"+(CHK||[]).filter(r=>!r.ok).map((r,i)=>(i+1)+". Location: "+r.n+"\n   Error type: "+r.m).join("\n\n"),"ئیرۆرەکان کۆپی کران ✓");break;
  case"errcp":{const gg=ERRG[+b.dataset.i];if(gg)doCopy(errTxt(gg),"هەڵەکە کۆپی کرا ✓");break}
+ case"kacp":{const last=KA&&KA.last?ft(KA.last):"هیچ کات",h=KA&&KA.hours;const txt="Keep-alive status (main / report Supabase)\nLast ping: "+last+(h!=null?" ("+Math.round(h)+"h ago)":"")+"\nRuns in last 7 days: "+((KA&&KA.runs_7d)||0)+"\n\nبۆ دۆزینەوەی هەڵەکە:\n1) GitHub ‹ Actions ‹ Keep Supabase awake\n2) دوایین run (❌) بکەرەوە\n3) تێکستی هەڵەکە کۆپی بکە و بۆ پشتگیری بینێرە.";doCopy(txt,"دۆخەکە کۆپی کرا ✓");break}
  case"errclr":sure("هەموو هەڵەکان بسڕدرێنەوە؟","ئەم کردارە ناگەڕێتەوە.","سڕینەوە",async()=>{const x=await rpc("admin_errors_clear",{p_pw:pw});if(x.ok){await loadErrs();render();toastA("سڕانەوە ✓")}else toastA(aerr(x),true)});break;
  case"lk":pw="";close();break;
  }});
