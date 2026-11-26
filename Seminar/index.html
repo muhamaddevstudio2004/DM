@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
 <title>Academic Seminar Builder</title>
-<script>window.APP_VERSION="2.54";</script>
+<script>window.APP_VERSION="2.56";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
@@ -14,7 +14,7 @@ window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/
   s.onload=function(){clearTimeout(t);ok()?res(true):rej(new Error(n))};s.onerror=function(){clearTimeout(t);s.remove();rej(new Error(n))};document.head.appendChild(s)})};
  return window.__abLP[n]=once(true).catch(function(){return once(false)}).catch(function(x){delete window.__abLP[n];throw x})};
 addEventListener("load",function(){setTimeout(function(){window.__abLib("jspdf").catch(function(){})},1500)});</script>
-<script src="/codes.js?v=254"></script>
+<script src="/codes.js?v=256"></script>
 <style>
 :root{--bg:#fff;--fg:#2E2144;--card:#fff;--bd:#D9D0E4;--ac:#4B3869;--yl:#d8bb74;--gd:#b8923a;--dc:#4B3869;--dk:#8b0000;--mut:#6C6280;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root.never{--bg:#17181a;--fg:#ececec;--card:#232528;--bd:#3d4046;--ac:#ff9a9a;--mut:#a0a5ad}}
@@ -1670,6 +1670,15 @@ function parseReport(raw){
  flush();
  if(pre.length){if(pages.length&&pre.length<=2&&pre.every(x=>x.length<=160)){if(!title)title=pre[0]}else{if(!pages.length)pages.push({title:rt?RLAB[RL()].intro:"Introduction",blocks:[]});pages[0].blocks.unshift({t:"p",text:pre.join(" "),cap:""})}}
  pages.forEach(p=>{if(!p.blocks.length)p.blocks.push({t:"p",text:"",cap:""})});
+ /* robust title fallback: ChatGPT does not always put the title as a single "# ..." line */
+ if(!title){
+  const fl=(L.find(x=>x.trim())||"").trim();
+  const bm=fl.match(/^#{1,6}\s+(.+?)\s*#*$/)||fl.match(/^(?:\*\*|__)(.+?)(?:\*\*|__)\s*:?$/)||fl.match(/^(?:title|seminar title|seminar|presentation|topic|ناونیشان|ناونیشانی سیمینار|العنوان|عنوان)\s*[:：]\s*(.+)$/i);
+  if(bm)title=cleanTitle(bm[1]);
+  else if(fl&&fl.length<=90&&!/[.!?؟]$/.test(fl)&&!/^([-*•–·|>#]|\d+[.)]\s)/.test(fl)&&!SECN.test(cleanTitle(fl)))title=cleanTitle(fl);
+  if(!title){const p0=pages.find(p=>p.title&&!SECN.test(p.title)&&!/^(introduction|untitled|پێشەکی|المقدمة)$/i.test(p.title));if(p0)title=p0.title}
+ }
+ if(title)title=title.replace(/^(?:seminar\s+title|presentation\s+title|seminar|presentation|title|topic|ناونیشانی\s*سیمینار|ناونیشان|بابەت|العنوان|عنوان(?:\s*العرض)?|الموضوع)\s*[:：]\s*/i,"").trim()||title;
  return{title,pages};
 }
 let URD="",URB=false;
@@ -2056,7 +2065,7 @@ async function runGen(raw){
   for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"||(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.stpl=pickStpl();S.pages=rep.pages;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}if(SCR)S.pages.forEach(g=>{if(!isRefPg(g)&&(g.hint||g.picUrl||g.pic))g.pos="l"});
+  S.stpl=pickStpl();S.pages=rep.pages;S.info.title=rep.title||(rep.pages[0]&&rep.pages[0].title)||S.info.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}if(SCR)S.pages.forEach(g=>{if(!isRefPg(g)&&(g.hint||g.picUrl||g.pic))g.pos="l"});
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
   /* 5 formatting check */
@@ -2643,11 +2652,22 @@ async function snapAll(L){
   /* the browser draws each slide exactly as in Live; html2canvas is only the fallback */
   if(window.ARender&&ARender.enabled()){try{const r=await ARender.render(pg,{w:1280,h:720,scale:1.5,quality:.88,dataURL:true,progress:(i,n)=>L.update(8+(i/n)*84,"Slide "+i+" of "+n)});r.forEach((x,i)=>out.push({d:x.d,b:x.u8,alt:alt(pg[i])}));return out}catch(x){console.warn("native render failed, using html2canvas",x);out.length=0}}
   if(!window.html2canvas)await window.__abLib("html2canvas");fixRtlMarkers(w);
+  const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent||"")||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent||"")),SC=IOS?1.3:1.5;
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
    pg.forEach((e,j)=>{e.style.display=j==i?"block":"none"});
    await new Promise(r=>requestAnimationFrame(()=>r()));ellipsize(pg[i]);
-   const c=await html2canvas(pg[i],{scale:1.5,backgroundColor:"#fff",useCORS:true,logging:false,scrollX:0,scrollY:0,windowWidth:1280,windowHeight:720,ignoreElements:el=>el.id==="app"||el.id==="top"||el.id==="nav"});
+   /* one bad slide must never fail the whole PDF: try normal, then lower scale (less memory), then a titled placeholder */
+   let c=null;const scales=[SC,1];
+   for(let a=0;a<scales.length&&!c;a++){try{
+     c=await html2canvas(pg[i],{scale:scales[a],backgroundColor:"#fff",useCORS:true,logging:false,scrollX:0,scrollY:0,windowWidth:1280,windowHeight:720,ignoreElements:el=>el.id==="app"||el.id==="top"||el.id==="nav"});
+   }catch(err){console.warn("slide "+(i+1)+" render attempt "+(a+1)+" failed",err);c=null;if(a<scales.length-1)await new Promise(r=>setTimeout(r,80))}}
+   if(!c){c=document.createElement("canvas");c.width=Math.round(1280*SC);c.height=Math.round(720*SC);const x=c.getContext("2d");
+    let bg="#ffffff";try{const b=getComputedStyle(pg[i]).backgroundColor;if(b&&b!=="rgba(0, 0, 0, 0)"&&b!=="transparent")bg=b}catch(e){}
+    x.fillStyle=bg;x.fillRect(0,0,c.width,c.height);
+    const rgb=(bg.match(/\d+/g)||[255,255,255]).map(Number),dark=(rgb[0]+rgb[1]+rgb[2])/3<128;
+    x.fillStyle=dark?"#f2f2f2":"#1f2430";x.textAlign="center";x.textBaseline="middle";x.font="bold "+Math.round(42*SC)+"px Arial,Helvetica,sans-serif";
+    const tt=(((pg[i].querySelector(".sl-t,.ts h1,h1")||{}).textContent)||"").trim().slice(0,56);if(tt)x.fillText(tt,c.width/2,c.height/2)}
    const jb=await new Promise(r=>c.toBlob(r,"image/jpeg",.86)),jd=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(jb)}),ju=new Uint8Array(await jb.arrayBuffer());
    out.push({d:jd,b:ju,alt:(pg[i].innerText||"").replace(/\s+/g," ").trim().slice(0,300)});
    c.width=c.height=0}
