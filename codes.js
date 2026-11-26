@@ -511,7 +511,7 @@ const bars=(rows,lab)=>{const mx=Math.max(1,...rows.map(z=>z.r+z.s));return `<di
 const legend=()=>`<div class="lgd"><span><i style="background:var(--ac)"></i>ڕاپۆرت</span><span><i style="background:var(--yl,#d8bb74)"></i>سیمینار</span></div>`;
 const loadPay=async()=>{const x=await rpc("admin_payments",{p_pw:pw});PAY=x&&x.ok?x:{err:x&&x.error||"net"};if(view==="pay")render()};
 const loadLog=async()=>{const x=await rpc("admin_log",{p_pw:pw});if(x&&x.ok&&Array.isArray(x.items)){LOG=x.items;LOGM=x.month||null}else{LOG=null;LOGM=null}};
-const loadErrs=async()=>{const x=await rpc("admin_errors",{p_pw:pw});ERR=x&&x.ok&&Array.isArray(x.items)?x.items:null};
+const loadErrs=async()=>{const x=await rpc("admin_errors",{p_pw:pw});ERR=x&&x.ok&&Array.isArray(x.items)?x.items.filter(e=>!(e&&e.msg==="ping"&&e.src==="check")):null};
 const loadKA=async()=>{const x=await rpc("keepalive_status",{p_pw:pw});KA=x&&x.ok?x:{err:(x&&x.error)||"net"}};
 const loadDet=async l=>{const x=await rpc("admin_code_detail",{p_pw:pw,p_code:l});if(x&&x.ok){DET[l]=x;if(view==="det"&&det===l)render()}};
 const reload=async top=>{const x=await rpc("admin_list",{p_pw:pw});if(!x.ok){toastA(aerr(x),true);render();return false}R=x.items||[];REV=x.rev||null;DAILY=x.daily||null;await Promise.all([loadLog(),loadErrs(),loadKA()].concat(view==="pay"?[loadPay()]:[]));if(view==="det"&&det)loadDet(det);upd=new Date();render(top);return true};
