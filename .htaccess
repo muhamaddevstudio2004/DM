@@ -1,0 +1,27 @@
+# DevMuhamad.com — clean public paths that hide the real folder names.
+# The real folders stay EXACTLY as they are. This only maps a pretty URL
+# to each real folder internally, so the address bar shows the clean path
+# (e.g. /report/) while the server quietly serves the real folder.
+# Works on Apache / cPanel shared hosting.
+
+RewriteEngine On
+
+# /report  ->  AcademicReportBuilder
+RewriteRule ^report/?$        /AcademicReportBuilder/    [L]
+RewriteRule ^report/(.*)$     /AcademicReportBuilder/$1  [L]
+
+# /seminar ->  Seminar
+RewriteRule ^seminar/?$       /Seminar/                  [L]
+RewriteRule ^seminar/(.*)$    /Seminar/$1                [L]
+
+# /cv      ->  CV
+RewriteRule ^cv/?$            /CV/                       [L]
+RewriteRule ^cv/(.*)$         /CV/$1                     [L]
+
+# /konkan  ->  Konkan
+RewriteRule ^konkan/?$        /Konkan/                   [L]
+RewriteRule ^konkan/(.*)$     /Konkan/$1                 [L]
+
+# /locker24 -> Locker24
+RewriteRule ^locker24/?$      /Locker24/                 [L]
+RewriteRule ^locker24/(.*)$   /Locker24/$1               [L]
