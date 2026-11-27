@@ -1954,7 +1954,7 @@ function openUF(){
 /* PDF capture: html2canvas cannot draw inset box-shadows or gradient pseudo-elements, so in the temporary copy that is photographed the code cards use plain shapes that look the same as Live */
 function pdfFixCode(doc){
  try{
-  if(!doc.getElementById("pdf-fix-code")){const st=doc.createElement("style");st.id="pdf-fix-code";st.textContent=".bd pre.code.cs2::before{content:none !important;display:none !important;background:none !important}";doc.head.appendChild(st)}
+  if(!doc.getElementById("pdf-fix-code")){const st=doc.createElement("style");st.id="pdf-fix-code";st.textContent=".bd pre.code.cs2::before{content:none !important;display:none !important;background:none !important}.bd pre.code.nl code{padding-left:0 !important;text-indent:0 !important}.bd pre.code.nl code::before{content:none !important;display:none !important}";doc.head.appendChild(st)}
   doc.querySelectorAll("pre.code").forEach(pre=>{
    const c=pre.classList;if(!(c.contains("cs1")||c.contains("cs2")||c.contains("cs3")))return;
    pre.style.boxShadow="none";
@@ -1967,6 +1967,17 @@ function pdfFixCode(doc){
     [["1.5px","#ff5f56"],["16.5px","#ffbd2e"],["31.5px","#27c93f"]].forEach(d=>bar.appendChild(mk("position:absolute;top:2.5px;left:"+d[0]+";width:9px;height:9px;border-radius:50%;background:"+d[1])));
     pre.insertBefore(bar,pre.firstChild)}
   })
+  /* html2canvas drops text shifted by negative text-indent (the line-number hanging indent),
+     so multi-line code vanished in the PDF; add real line-number spans instead */
+  doc.querySelectorAll("pre.code.nl").forEach(pre=>{
+   const dark=pre.classList.contains("cs2")||pre.classList.contains("cs3");
+   const start=parseInt(pre.style.getPropertyValue("--ln0")||"0",10)||0;
+   [...pre.querySelectorAll("code")].forEach((cd,idx)=>{
+    if(cd.querySelector(".pdf-ln"))return;
+    const s=doc.createElement("span");s.className="pdf-ln";s.setAttribute("aria-hidden","true");
+    s.style.cssText="display:inline-block;width:1.9em;margin-right:.6em;text-align:right;color:"+(dark?"#6e7681":"#8a94a6");
+    s.textContent=String(start+idx+1);
+    cd.insertBefore(s,cd.firstChild)})})
  }catch(x){console.warn("pdfFixCode",x)}}
 function statics(){$("lg").innerHTML=`<span class="lg-mark"><svg class="ic cap" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 2 12l14 7 14-7z" fill="currentColor" stroke="none"/><path d="M8 16.2v5.1c0 1.7 3.6 3.4 8 3.4s8-1.7 8-3.4v-5.1l-8 4z" fill="currentColor" stroke="none"/><path d="M28 13v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="22.6" r="1.8" fill="currentColor" stroke="none"/></svg></span><span class="lg-t">Report Builder</span>`;{const dl=({ckb:"داگرتن",ar:"تحميل"})[UIL]||"Download";$("bpdf").innerHTML=ic("dl")+"<span>"+dl+"</span>";$("bpdf").setAttribute("aria-label",dl+" PDF + Word")}
 document.querySelector('[data-t="edit"]').innerHTML=`<span class="tab-ic">${ic("edit")}</span><span class="tab-t">Edit</span>`;document.querySelector('[data-t="pv"]').innerHTML=`<span class="tab-ic">${ic("eye")}</span><span class="tab-t">Live</span>`;
