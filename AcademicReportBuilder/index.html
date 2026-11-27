@@ -1954,7 +1954,7 @@ function openUF(){
 /* PDF capture: html2canvas cannot draw inset box-shadows or gradient pseudo-elements, so in the temporary copy that is photographed the code cards use plain shapes that look the same as Live */
 function pdfFixCode(doc){
  try{
-  if(!doc.getElementById("pdf-fix-code")){const st=doc.createElement("style");st.id="pdf-fix-code";st.textContent=".bd pre.code.cs2::before{content:none !important;display:none !important;background:none !important}.bd pre.code.nl code{padding-left:0 !important;text-indent:0 !important}.bd pre.code.nl code::before{content:none !important;display:none !important}";doc.head.appendChild(st)}
+  if(!doc.getElementById("pdf-fix-code")){const st=doc.createElement("style");st.id="pdf-fix-code";st.textContent=".bd pre.code.cs2::before{content:none !important;display:none !important;background:none !important}.bd pre.code.nl code{padding-left:0 !important;text-indent:0 !important}.bd pre.code.nl code::before{content:none !important;display:none !important}.bd pre.code.nl{counter-reset:none !important}.bd pre.code.nl code{counter-increment:none !important}.bd pre.code,.bd pre.code code{unicode-bidi:normal !important}";doc.head.appendChild(st)}
   doc.querySelectorAll("pre.code").forEach(pre=>{
    const c=pre.classList;if(!(c.contains("cs1")||c.contains("cs2")||c.contains("cs3")))return;
    pre.style.boxShadow="none";
