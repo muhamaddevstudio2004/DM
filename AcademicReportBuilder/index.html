@@ -818,7 +818,11 @@ ${`<div class="hw-vid"><div class="hw-vtag"><svg viewBox="0 0 24 24"><path d="M8
 const AIS={t:"",p:"auto",l:null,d:""};try{AIS.d=(localStorage.getItem("arb_dept")||"").slice(0,60)}catch(x){}
 /* V18: department name -> prompt perspective + cover line */
 function deptName(raw){return String(raw||"").replace(/\s+/g," ").trim().slice(0,60).replace(/^(?:department|dept\.?)\s+of\s+/i,"").replace(/\s*(?:department|dept\.?|dep\.?)$/i,"").replace(/^(?:بەشی|قسم)\s+/,"").trim()}
-function deptLabel(raw,cur){const n=deptName(raw);if(!n)return"";const rest=String(cur||"").split("|").slice(1).join("|").trim();const base=/[\u0600-\u06FF]/.test(n)?String(raw).replace(/\s+/g," ").trim():n+" Department";return base+(rest?" | "+rest:"")}
+/* V19: English dept name -> capital initials (Information Technology -> IT); Kurdish kept as-is */
+function deptInitials(n){const s=String(n||"").trim();if(/^[A-Za-z]{1,5}$/.test(s))return s.toUpperCase();const stop=/^(?:of|and|the|for|in|on|a|an|de|du|des|la|le|und|von)$/i;const words=s.split(/[\s\-\/&.,_]+/).filter(Boolean);const sig=words.filter(function(w){return !stop.test(w)});const use=sig.length?sig:words;if(use.length<=1)return use[0]||s;return use.map(function(w){const m=w.match(/[A-Za-z]/);return(m?m[0]:w[0]).toUpperCase()}).join("")}
+const DEPTKU={"information technology":"تەکنەلۆژیای زانیاری","it":"تەکنەلۆژیای زانیاری","computer science":"زانستی کۆمپیوتەر","cs":"زانستی کۆمپیوتەر","computer":"کۆمپیوتەر","computer engineering":"ئەندازیاری کۆمپیوتەر","software engineering":"ئەندازیاری سۆفتوێر","information systems":"سیستەمی زانیاری","networks":"تۆڕەکان","network":"تۆڕ","law":"یاسا","medicine":"پزیشکی","nursing":"پەرستاری","pharmacy":"دەرمانسازی","dentistry":"پزیشکی ددان","accounting":"ژمێریاری","business administration":"کارگێڕی","management":"بەڕێوەبردن","economics":"ئابووری","statistics":"ئامار","mathematics":"بیرکاری","math":"بیرکاری","physics":"فیزیا","chemistry":"کیمیا","biology":"زیندەزانی","civil engineering":"ئەندازیاری شارستانی","architecture":"تەلارسازی","electrical engineering":"ئەندازیاری کارەبا","mechanical engineering":"ئەندازیاری میکانیک","petroleum engineering":"ئەندازیاری نەوت","engineering":"ئەندازیاری","english":"زمانی ئینگلیزی","english language":"زمانی ئینگلیزی","kurdish":"زمانی کوردی","arabic":"زمانی عەرەبی","history":"مێژوو","geography":"جوگرافیا","political science":"زانستی ڕامیاری","media":"ڕاگەیاندن","journalism":"ڕۆژنامەوانی","education":"پەروەردە","fine arts":"هونەرە جوانەکان","agriculture":"کشتوکاڵ","veterinary":"پزیشکی ئاژەڵ","finance":"دارایی","banking":"بانکداری","finance and banking":"دارایی و بانکداری","marketing":"بازاڕگەری","sociology":"کۆمەڵناسی","psychology":"دەروونزانی","translation":"وەرگێڕان","international relations":"پەیوەندییە نێودەوڵەتییەکان"};
+function deptKurdish(n){const k=String(n||"").toLowerCase().replace(/[^a-z\s]/g," ").replace(/\s+/g," ").trim();return DEPTKU[k]||""}
+function deptLabel(raw,cur,lang){const n=deptName(raw);if(!n)return"";const rest=String(cur||"").split("|").slice(1).join("|").trim();const base=/[\u0600-\u06FF]/.test(n)?String(raw).replace(/\s+/g," ").trim():(lang==="ckb"?(deptKurdish(n)||deptInitials(n)):deptInitials(n));return base+(rest?" | "+rest:"")}
 const AISEC={
  en:{abs:"Abstract",intro:"Introduction",obj:"Objectives",lit:"Literature Review",met:"Methodology",main:"Main Content",res:"Results",dis:"Discussion",con:"Conclusion",rec:"Recommendations",ref:"References"},
  ckb:{abs:"کورتە",intro:"پێشەکی",obj:"ئامانجەکان",lit:"پێداچوونەوەی ئەدەبیات",met:"میتۆدۆلۆجی",main:"ناوەڕۆکی سەرەکی",res:"ئەنجامەکان",dis:"گفتوگۆ",con:"دەرئەنجام",rec:"پێشنیارەکان",ref:"سەرچاوەکان"},
@@ -1061,7 +1065,7 @@ async function runGen(raw){
   for(let i=0;i<rep.pages.length;i++){const g=rep.pages[i];g.title=(g.title||"").trim()||"Untitled";g.blocks=g.blocks.filter(b=>b.t=="img"?!noImg(g):!!(b.text||"").trim());if(!g.blocks.length)g.blocks.push({t:"p",text:"",cap:""});if(i%20==0)await set(2,i/rep.pages.length)}
   await set(2,1);
   /* 4 pages */
-  S.pages=rep.pages;delete S.gr;S.tcap=1;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep);if(dl)S.info.dep=dl}
+  S.pages=rep.pages;delete S.gr;S.tcap=1;if(rep.title)S.info.title=rep.title;{const dl=deptLabel(AIS.d,S.info.dep,S.dir==="rtl"?(S.rlang||"ckb"):"en");if(dl)S.info.dep=dl}
   w=document.createElement("div");w.className="x";w.style.cssText="position:absolute;left:-10000px;top:0;width:794px";document.body.appendChild(w);
   await set(3,0);await fontLoad();build(w);await set(3,1);
   /* 5 formatting check */
@@ -2337,7 +2341,7 @@ const extraCheck=async(T,add)=>{
    const dc=[["Department of IT","IT"],["IT Department","IT"],["Dept. of Computer Science","Computer Science"],["بەشی کۆمپیوتەر","کۆمپیوتەر"],["قسم الحاسوب","الحاسوب"],["  IT   ","IT"],["","" ]];
    dc.forEach(([a,b])=>{if(deptName(a)!==b)add("deptName(«"+a+"») = «"+deptName(a)+"» نەک «"+b+"»")});
    if(deptName("x".repeat(100)).length>60)add("deptName درێژییەکەی سنووردار نەکراوە");
-   if(deptLabel("IT","College | Morning")!=="IT Department | Morning")add("deptLabel ی ئینگلیزی هەڵەیە: "+deptLabel("IT","College | Morning"));
+   if(deptLabel("IT","College | Morning")!=="IT | Morning")add("deptLabel ی ئینگلیزی هەڵەیە: "+deptLabel("IT","College | Morning"));
    if(deptLabel("بەشی کۆمپیوتەر","x | y")!=="بەشی کۆمپیوتەر | y")add("deptLabel ی کوردی هەڵەیە: "+deptLabel("بەشی کۆمپیوتەر","x | y"));
    if(deptLabel("","x")!=="")add("deptLabel ی بەتاڵ هەڵەیە");
    return fin(out)});
