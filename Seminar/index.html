@@ -5,7 +5,7 @@
 <script>window.APP_VERSION="2.57";</script>
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B3869"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Seminar"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Scheherazade+New:wght@400;600;700&family=Vazirmatn:wght@400;600;700;800&display=swap">
 <link rel="preconnect" href="https://niiznyukddmmdqajmpcl.supabase.co" crossorigin><link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <script>/* PDF libraries load on demand; works even if an older codes.js is cached */
 window.__abLib=function(n){var U={jspdf:"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",html2canvas:"https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"},ok=function(){return n==="jspdf"?!!(window.jspdf&&window.jspdf.jsPDF):!!window.html2canvas};
@@ -2670,6 +2670,9 @@ async function snapAll(L){
    d.querySelectorAll(".slide, .slide *").forEach(el=>{const cs=getComputedStyle(el);for(const p in PROPS){const v=cs[p];if(v&&MOD.test(v))try{el.style.setProperty(PROPS[p],fix(v))}catch(_){}}
     ["::before","::after"].forEach(pe=>{let pcs;try{pcs=getComputedStyle(el,pe)}catch(_){return}if(!pcs||!pcs.content||pcs.content==="none")return;const decls=[];for(const p in PROPS){const v=pcs[p];if(v&&MOD.test(v)){try{decls.push(PROPS[p]+":"+fix(v)+" !important")}catch(_){}}}if(decls.length){const cls="pdfpe"+(uid++);el.classList.add(cls);extra.push("."+cls+pe+"{"+decls.join(";")+"}")}})});
    if(extra.length){const st=d.createElement("style");st.textContent=extra.join("");(d.head||d.documentElement).appendChild(st)}
+   /* RTL titles fell back to serif, which html2canvas cannot shape for Arabic (letters split).
+      Force an Arabic-shaping fallback chain on every RTL heading in the capture clone. */
+   if(d.querySelector(".slide.rtl")){const fs=d.createElement("style");fs.textContent='.slide.rtl h1,.slide.rtl h2,.slide.rtl h3,.slide.rtl .sl-t,.slide.rtl .ts h1,.slide.rtl .ts .sub,.slide.rtl .sub{font-family:var(--cf),"Noto Naskh Arabic","Geeza Pro",Tahoma,Arial,sans-serif !important}';(d.head||d.documentElement).appendChild(fs)}
   }catch(x){console.warn("pdfResolveColors",x)}}
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
