@@ -2672,7 +2672,10 @@ async function snapAll(L){
    if(extra.length){const st=d.createElement("style");st.textContent=extra.join("");(d.head||d.documentElement).appendChild(st)}
    /* RTL titles fell back to serif, which html2canvas cannot shape for Arabic (letters split).
       Force an Arabic-shaping fallback chain on every RTL heading in the capture clone. */
-   if(d.querySelector(".slide.rtl")){const fs=d.createElement("style");fs.textContent='.slide.rtl h1,.slide.rtl h2,.slide.rtl h3,.slide.rtl .sl-t,.slide.rtl .ts h1,.slide.rtl .ts .sub,.slide.rtl .sub{font-family:var(--cf),"Noto Naskh Arabic","Geeza Pro",Tahoma,Arial,sans-serif !important}';(d.head||d.documentElement).appendChild(fs)}
+   /* html2canvas renders text character-by-character when letter-spacing is set, which breaks
+      Arabic/Kurdish shaping and bidi (letters split and reverse) — worst on the big cover/closing
+      titles. Remove letter-spacing for RTL slides in the clone and pin an Arabic-shaping font. */
+   if(d.querySelector(".slide.rtl")){const fs=d.createElement("style");fs.textContent='.slide.rtl *{letter-spacing:normal !important;word-spacing:normal !important}.slide.rtl h1,.slide.rtl h2,.slide.rtl h3,.slide.rtl .sl-t,.slide.rtl .ts h1,.slide.rtl .ts .sub,.slide.rtl .sub{font-family:var(--cf),"Noto Naskh Arabic","Geeza Pro",Tahoma,Arial,sans-serif !important;direction:rtl !important}';(d.head||d.documentElement).appendChild(fs)}
   }catch(x){console.warn("pdfResolveColors",x)}}
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
