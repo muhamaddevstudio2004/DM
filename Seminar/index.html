@@ -1560,7 +1560,7 @@ const ic=n=>`<svg class="ic" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 const FIELDS=[["sup","Supervisor / Doctor"],["uni","University"],["col","College"],["dep","Department"],["year","Academic year"],["course","Course name"],["title","Seminar main title"],["sub","Seminar subtitle"]];
 const TYPES={h:"Subtitle",p:"Paragraph",ul:"Bullet list",ol:"Numbered list",tbl:"Table",img:"Image"};
 const HINT={ul:"One item per line",ol:"One item per line",tbl:"Header 1 | Header 2\nCell | Cell",p:"Write or paste text. A new line starts a new paragraph."};
-const STPL=["a","b","c","d","e","f","g","h","i","j","k","l"],STP=v=>STPL.includes(v)?v:"a";
+const STPL=["a","b","c","d","e","f","g","h","i","j","l"],STP=v=>STPL.includes(v)?v:"a";
 function lblL(L){const o=Object.assign({},L);if(S.lt){if(typeof S.lt.by=="string")o.by=S.lt.by;if(typeof S.lt.sup=="string")o.sup=S.lt.sup}return o}
 /* random slide template: never the same one as the previous seminar */
 function pickStpl(){let last="";try{last=localStorage.getItem("arb_last_stpl")||""}catch(x){}const prev=STPL.includes(S.stpl)?S.stpl:last,pool=STPL.filter(v=>v!==prev),v=pool[Math.floor(Math.random()*pool.length)];try{localStorage.setItem("arb_last_stpl",v)}catch(x){}return v}
@@ -2230,7 +2230,7 @@ function reportInfoUI(){
  return hi+logoUI()+typeUI()+acadUI();
 }
 
-function stplUI(){applyCol();const cur=STP(S.stpl),T=[["a","Aurora","Gradient header"],["b","Minimal","Clean light"],["c","Midnight","Dark mode"],["d","Bubble","Soft and round"],["e","Blocks","Bold outlines"],["f","Sketch","Marker and doodles"],["g","Bento","Rounded smart cards"],["h","Editorial","Big type, thin lines"],["i","Horizon","Gradient & glass"],["j","Noir","Premium dark"],["k","Blueprint","Technical grid"],["l","Gazette","Ornate journal"]];
+function stplUI(){applyCol();const cur=STP(S.stpl),T=[["a","Aurora","Gradient header"],["b","Minimal","Clean light"],["c","Midnight","Dark mode"],["d","Bubble","Soft and round"],["e","Blocks","Bold outlines"],["f","Sketch","Marker and doodles"],["g","Bento","Rounded smart cards"],["h","Editorial","Big type, thin lines"],["i","Horizon","Gradient & glass"],["j","Noir","Premium dark"],["l","Gazette","Ornate journal"]];
  return `<section class="ds-card"><div class="ds-head"><h4>${e(tr("Slide template"))}</h4></div><div class="stg">${T.map(([v,n,d])=>`<button type="button" class="stb${cur==v?" on":""}" data-a="stpl" data-v="${v}" aria-pressed="${cur==v}"><span class="stp stp-${v}"><i></i><b></b><u></u></span><span class="stn">${e(tr(n))}</span><small>${e(tr(d))}</small></button>`).join("")}</div></section>`}
 function reportAppearanceUI(){const c=S.color||"#4B3869",lc=S.lineColor||"#b8923a",on=S.lineOn!==false;
  const P=["#4B3869","#7a1f2b","#1f5c4a","#0f6b78","#3b3f4a","#143a7b"];
