@@ -2059,7 +2059,7 @@ async function runGen(raw){
  const oldP=S.pages,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font,oldSt=S.stpl;let w=null;
  try{
   /* 1 read */
-  await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}
+  await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}else{S.dir="ltr";S.rlang="";S.font=""}
    const L=cleanAI(raw).split("\n"),CH=2000,out=[];
   for(let a=0;a<L.length;a+=CH){out.push(...L.slice(a,a+CH).map(x=>x.replace(/\t/g,"  ")));await set(0,Math.min(1,(a+CH)/L.length))}
   /* 2 detect */
@@ -2434,7 +2434,7 @@ function fitFlow(t){const els=[...t.querySelectorAll(".slide .bd.fl .tr .tl")];i
  const rg=document.createRange(),wide=el=>{const sc=el.offsetWidth?el.getBoundingClientRect().width/el.offsetWidth:1;let m=0;rg.selectNodeContents(el);[...rg.getClientRects()].forEach(r=>{if(r.width>m)m=r.width});return Math.max(el.scrollWidth,m/sc)>el.clientWidth+1};
  let min=0;els.forEach(el=>{let px=parseFloat(getComputedStyle(el).fontSize)||16;const start=px;while(wide(el)&&px>start*.4){px-=1;el.style.fontSize=px+"px"}if(!min||px<min)min=px});els.forEach(el=>{el.style.fontSize=min+"px"})}
 function fitCover(tc){const h=tc.querySelector("h1"),sb=tc.querySelector(".sub"),is=tc.querySelector(".inst span");if(is){let q=31;is.style.fontSize=q+"px";while(is.scrollWidth>is.clientWidth+1&&q>18){q-=1;is.style.fontSize=q+"px"}}if(!h)return;const ov=()=>tc.scrollHeight>tc.clientHeight+1;let f=78;while(ov()&&f>34){f-=3;h.style.fontSize=f+"px"}let g=41;while(sb&&ov()&&g>22){g-=2;sb.style.fontSize=g+"px"}}
-function SLEND(I,names,rt){const ar=RL()=="ar",T=!rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"];return `<div class="ts ts2"><div class="tc ce"><div class="ce1" data-ed="info:uni,col,dep">${e(I.uni||"")}<br><small>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</small></div><div><h1>${T[0]}</h1><span class="rule"></span><div class="sub">${T[1]}</div></div><div class="ce3" data-ed="stu">${e(names.join(" · "))}${I.sup?"<br><small>"+e(I.sup)+"</small>":""}</div></div></div>`}
+function SLEND(I,names,rt){const ar=RL()=="ar",T=!rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"];return `<div class="ts ts2"><div class="tc ce"><div class="ce1" data-ed="info:uni,col,dep">${e(I.uni||"")}<br><small>${[I.col,I.dep].filter(Boolean).map(e).join(" &middot; ")}</small></div><div><h1 data-ed="end">${e((I.endT!=null&&String(I.endT).trim())?I.endT:T[0])}</h1><span class="rule"></span><div class="sub" data-ed="end">${e(I.endS!=null?I.endS:T[1])}</div></div><div class="ce3" data-ed="stu">${e(names.join(" · "))}${I.sup?"<br><small>"+e(I.sup)+"</small>":""}</div></div></div>`}
 function tameJustify(t){
  const cv=tameJustify.cv||(tameJustify.cv=document.createElement("canvas").getContext("2d"));
  t.querySelectorAll(".page:not(.rtl) .bd p").forEach(p=>{
@@ -2656,6 +2656,17 @@ async function snapAll(L){
   if(window.ARender&&ARender.enabled()){try{const r=await ARender.render(pg,{w:1280,h:720,scale:1.5,quality:.88,dataURL:true,progress:(i,n)=>L.update(8+(i/n)*84,"Slide "+i+" of "+n)});r.forEach((x,i)=>out.push({d:x.d,b:x.u8,alt:alt(pg[i])}));return out}catch(x){console.warn("native render failed, using html2canvas",x);out.length=0}}
   if(!window.html2canvas)await window.__abLib("html2canvas");fixRtlMarkers(w);
   const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent||"")||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent||"")),SC=IOS?1.3:1.5;
+  /* html2canvas (iOS) cannot parse modern CSS colour functions. color-mix() resolves to
+     color(srgb ...) in getComputedStyle, which html2canvas also fails on, so template gradient
+     backgrounds vanished in the PDF. Convert every modern colour token to a plain rgba() in the
+     capture clone, using a canvas to read the true pixel colour. */
+  function pdfResolveColors(d){try{
+   const cv=d.createElement("canvas");cv.width=cv.height=2;const cx=cv.getContext("2d");
+   const MOD=/\b(?:color|color-mix|lab|lch|oklab|oklch|hwb)\(/;
+   const toRGB=expr=>{cx.fillStyle="#010203";cx.fillStyle=expr;if(cx.fillStyle==="#010203"&&!/^#010203$/i.test(expr.trim()))return expr;cx.clearRect(0,0,2,2);cx.fillRect(0,0,2,2);const p=cx.getImageData(0,0,1,1).data;return "rgba("+p[0]+","+p[1]+","+p[2]+","+(p[3]/255).toFixed(3)+")"};
+   const fix=val=>{let out="",i=0;while(i<val.length){const m=val.slice(i).match(MOD);if(!m){out+=val.slice(i);break}const j=i+m.index;out+=val.slice(i,j);let k=j+m[0].length,depth=1;while(k<val.length&&depth>0){const ch=val[k];if(ch==="(")depth++;else if(ch===")")depth--;k++}out+=toRGB(val.slice(j,k));i=k}return out};
+   d.querySelectorAll(".page, .page *").forEach(el=>{const cs=getComputedStyle(el);["backgroundImage","backgroundColor","borderColor","boxShadow","color","outlineColor","fill","stroke"].forEach(prop=>{const v=cs[prop];if(v&&MOD.test(v))try{el.style[prop]=fix(v)}catch(_){}})});
+  }catch(x){console.warn("pdfResolveColors",x)}}
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
    pg.forEach((e,j)=>{e.style.display=j==i?"block":"none"});
@@ -2663,7 +2674,7 @@ async function snapAll(L){
    /* one bad slide must never fail the whole PDF: try normal, then lower scale (less memory), then a titled placeholder */
    let c=null;const scales=[SC,1];
    for(let a=0;a<scales.length&&!c;a++){try{
-     c=await html2canvas(pg[i],{scale:scales[a],backgroundColor:"#fff",useCORS:true,logging:false,scrollX:0,scrollY:0,windowWidth:1280,windowHeight:720,ignoreElements:el=>el.id==="app"||el.id==="top"||el.id==="nav"});
+     c=await html2canvas(pg[i],{scale:scales[a],backgroundColor:"#fff",useCORS:true,logging:false,scrollX:0,scrollY:0,windowWidth:1280,windowHeight:720,ignoreElements:el=>el.id==="app"||el.id==="top"||el.id==="nav",onclone:d=>pdfResolveColors(d)});
    }catch(err){console.warn("slide "+(i+1)+" render attempt "+(a+1)+" failed",err);c=null;if(a<scales.length-1)await new Promise(r=>setTimeout(r,80))}}
    if(!c){c=document.createElement("canvas");c.width=Math.round(1280*SC);c.height=Math.round(720*SC);const x=c.getContext("2d");
     let bg="#ffffff";try{const b=getComputedStyle(pg[i]).backgroundColor;if(b&&b!=="rgba(0, 0, 0, 0)"&&b!=="transparent")bg=b}catch(e){}
@@ -3041,12 +3052,15 @@ function sBlk(i,k,isNew){const g=S.pages[i],b=g&&g.blocks[k];if(!b)return;const 
    else{b.text=String(v.text||"").replace(/\s+$/,"");if(b.t=="tbl")b.cap=(v.cap||"").trim();else{if(dd.lt)b.t=dd.lt;if(dd.ta)b.ta=dd.ta;else delete b.ta}}
    if(b.t=="img"?!b.src&&!String(b.note).trim():!String(b.text).trim()){const x=g.blocks.indexOf(b);if(x>=0)g.blocks.splice(x,1)}}})}
 function sTitle(i){const g=S.pages[i];if(!g)return;show("Section title",row("Section title",inp("title",g.title)),{g,done(){const v=val();g.title=(v.title||"").trim()||g.title}})}
+/* closing (thank-you) slide: editable title + subtitle; empty = language default */
+function endDef(){const ar=RL()=="ar",rt=S.dir=="rtl";return !rt?["Thank You","Questions & Discussion"]:ar?["شكراً لحسن استماعكم","الأسئلة والمناقشة"]:["سوپاس بۆ گوێگرتنتان","پرسیار و گفتوگۆ"]}
+function sEnd(){const I=S.info,D=endDef(),cT=I.endT!=null?I.endT:D[0],cS=I.endS!=null?I.endS:D[1];show("Closing slide",row("Closing title",inp("endT",cT))+row("Closing subtitle",inp("endS",cS)),{done(){const v=val();I.endT=(v.endT||"").trim();I.endS=(v.endS||"").trim()}})}
 function sLT(k){const D=S.dir=="rtl"?RLAB[RL()]:{toc:"Table of Contents",lof:"List of Figures",lot:"List of Tables"},cur=(S.lt&&S.lt[k])||D[k]||"";
  show(k=="toc"?"Table of Contents":"Section title",row("Section title",inp("title",cur)),{done(){const v=(val().title||"").trim();S.lt=S.lt||{};if(v&&v!==D[k])S.lt[k]=v;else delete S.lt[k]}})}
 function sLbl(k){if(k!=="by"&&k!=="sup")return;const D=S.dir=="rtl"?RLAB[RL()]:{by:"Presented by:",sup:"Supervised by:"},cur=(S.lt&&typeof S.lt[k]=="string")?S.lt[k]:(D[k]||"");
  show("Edit label",row("Label",inp("title",cur)),{done(){const v=(val().title||"").trim();S.lt=S.lt||{};if(!v)S.lt[k]="";else if(v!==D[k])S.lt[k]=v;else delete S.lt[k]}})}
 function open(id){const p=String(id).split(":");
- if(p[0]=="info")sInfo(p[1]);else if(p[0]=="stu")sStu();else if(p[0]=="ref")sRef(p.slice(1).join(":"));else if(p[0]=="pic")sPic(+p[1]);else if(p[0]=="pg")sPg(+p[1]);else if(p[0]=="ptitle")sTitle(+p[1]);else if(p[0]=="lt")sLT(p[1]);else if(p[0]=="lbl")sLbl(p[1]);else if(p[0]=="b")sBlk(+p[1],+p[2])}
+ if(p[0]=="info")sInfo(p[1]);else if(p[0]=="stu")sStu();else if(p[0]=="ref")sRef(p.slice(1).join(":"));else if(p[0]=="pic")sPic(+p[1]);else if(p[0]=="pg")sPg(+p[1]);else if(p[0]=="ptitle")sTitle(+p[1]);else if(p[0]=="lt")sLT(p[1]);else if(p[0]=="lbl")sLbl(p[1]);else if(p[0]=="end")sEnd();else if(p[0]=="b")sBlk(+p[1],+p[2])}
 window.LV={open};
 /* --- actions inside the sheet --- */
 ov.addEventListener("click",ev=>{const t=ev.target;
@@ -3074,8 +3088,8 @@ const _tab=tab;tab=function(t){_tab(t);if(t==="pv"&&!window.LV.hinted){window.LV
 
 /* ---------- download codes, print-shop mode and admin panel live in codes.js (shared with the Report system) ---------- */
 /* translations for the two new export messages */
-Object.assign(DICT.ckb,{"PDF export failed. Please try again.":"هەناردەی PDF سەرکەوتوو نەبوو. دووبارە هەوڵ بدەوە.","PowerPoint export failed. Please try again.":"هەناردەی PowerPoint سەرکەوتوو نەبوو. دووبارە هەوڵ بدەوە."});
-Object.assign(DICT.ar,{"PDF export failed. Please try again.":"فشل تصدير PDF. حاول مرة أخرى.","PowerPoint export failed. Please try again.":"فشل تصدير PowerPoint. حاول مرة أخرى."});
+Object.assign(DICT.ckb,{"PDF export failed. Please try again.":"هەناردەی PDF سەرکەوتوو نەبوو. دووبارە هەوڵ بدەوە.","PowerPoint export failed. Please try again.":"هەناردەی PowerPoint سەرکەوتوو نەبوو. دووبارە هەوڵ بدەوە.","Closing slide":"سلایدی کۆتایی","Closing title":"ناونیشانی کۆتایی","Closing subtitle":"ژێرناونیشانی کۆتایی"});
+Object.assign(DICT.ar,{"PDF export failed. Please try again.":"فشل تصدير PDF. حاول مرة أخرى.","PowerPoint export failed. Please try again.":"فشل تصدير PowerPoint. حاول مرة أخرى.","Closing slide":"الشريحة الختامية","Closing title":"عنوان الختام","Closing subtitle":"العنوان الفرعي للختام"});
 /* one valid code (or an active print-shop subscription) = one download action: PDF first, then PowerPoint */
 $("bpdf").onclick=()=>{if(!window.ACodes){alert("The download system could not load. Check your connection and try again.");return}ACodes.gate(async()=>{try{await exportBoth()}catch(x){console.error(x)}})};
 if(window.ACodes)ACodes.init({app:"seminar",ver:"S"+window.APP_VERSION,lang:()=>UIL,onChange:()=>{if(view=="home")renderEd()},
