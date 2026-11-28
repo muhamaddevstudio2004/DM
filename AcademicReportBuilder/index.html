@@ -1342,9 +1342,12 @@ function covThumb(v,DC,GD){DC=DC||"#143a7b";GD=GD||"#b8923a";const box=g=>`<span
  return box(covDeco("cov2",DC,GD).replace(/^<svg[^>]*>/,"").replace(/<\/svg>$/,""));}
 function covDeco(k,DC,GD){
  if(k=="epu1"||k=="epu2"){
-  /* clean single academic rule — no corner ornaments, matches the Word look */
+  /* same page border as Classic (double rule + corner dots), without the corner emblems */
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" preserveAspectRatio="none">`
-   +`<rect x="34" y="34" width="726" height="1055" fill="none" stroke="${DC}" stroke-width="2.4"/>`
+   +`<rect x="30" y="30" width="734" height="1063" fill="none" stroke="${DC}" stroke-width="3"/>`
+   +`<rect x="40" y="40" width="714" height="1043" fill="none" stroke="${GD}" stroke-width="2"/>`
+   +[[30,30],[764,30],[30,1093],[764,1093]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="6" fill="${DC}"/>`).join("")
+   +[[40,40],[754,40],[40,1083],[754,1083]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="3.5" fill="${GD}"/>`).join("")
    +`</svg>`;
  }
  if(k=="cov2"){
