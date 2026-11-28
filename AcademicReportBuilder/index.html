@@ -1056,7 +1056,7 @@ async function runGen(raw){
  const oldP=S.pages,oldDp=S.info.dep,oldSb=S.info.sub,oldT=S.info.title,oldD=S.dir,oldRl=S.rlang,oldF=S.font;let w=null;
  try{
   /* 1 read */
-  await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}
+  await set(0,0);const SCR=detectScript(raw);if(SCR){S.dir="rtl";S.rlang=SCR;S.font="Vazirmatn"}else{S.dir="ltr";S.rlang="";S.font=""}
    const L=cleanAI(raw).split("\n"),CH=2000,out=[];
   for(let a=0;a<L.length;a+=CH){out.push(...L.slice(a,a+CH).map(x=>x.replace(/\t/g,"  ")));await set(0,Math.min(1,(a+CH)/L.length))}
   /* 2 detect */
