@@ -2661,11 +2661,15 @@ async function snapAll(L){
      backgrounds vanished in the PDF. Convert every modern colour token to a plain rgba() in the
      capture clone, using a canvas to read the true pixel colour. */
   function pdfResolveColors(d){try{
-   const cv=d.createElement("canvas");cv.width=cv.height=2;const cx=cv.getContext("2d");
+   const cv=d.createElement("canvas");cv.width=cv.height=2;const cx=cv.getContext("2d",{willReadFrequently:true});
    const MOD=/\b(?:color|color-mix|lab|lch|oklab|oklch|hwb)\(/;
    const toRGB=expr=>{cx.fillStyle="#010203";cx.fillStyle=expr;if(cx.fillStyle==="#010203"&&!/^#010203$/i.test(expr.trim()))return expr;cx.clearRect(0,0,2,2);cx.fillRect(0,0,2,2);const p=cx.getImageData(0,0,1,1).data;return "rgba("+p[0]+","+p[1]+","+p[2]+","+(p[3]/255).toFixed(3)+")"};
    const fix=val=>{let out="",i=0;while(i<val.length){const m=val.slice(i).match(MOD);if(!m){out+=val.slice(i);break}const j=i+m.index;out+=val.slice(i,j);let k=j+m[0].length,depth=1;while(k<val.length&&depth>0){const ch=val[k];if(ch==="(")depth++;else if(ch===")")depth--;k++}out+=toRGB(val.slice(j,k));i=k}return out};
-   d.querySelectorAll(".page, .page *").forEach(el=>{const cs=getComputedStyle(el);["backgroundImage","backgroundColor","borderColor","boxShadow","color","outlineColor","fill","stroke"].forEach(prop=>{const v=cs[prop];if(v&&MOD.test(v))try{el.style[prop]=fix(v)}catch(_){}})});
+   const PROPS={backgroundImage:"background-image",backgroundColor:"background-color",borderTopColor:"border-top-color",borderRightColor:"border-right-color",borderBottomColor:"border-bottom-color",borderLeftColor:"border-left-color",boxShadow:"box-shadow",color:"color",outlineColor:"outline-color",fill:"fill",stroke:"stroke"};
+   const extra=[];let uid=0;
+   d.querySelectorAll(".slide, .slide *").forEach(el=>{const cs=getComputedStyle(el);for(const p in PROPS){const v=cs[p];if(v&&MOD.test(v))try{el.style.setProperty(PROPS[p],fix(v))}catch(_){}}
+    ["::before","::after"].forEach(pe=>{let pcs;try{pcs=getComputedStyle(el,pe)}catch(_){return}if(!pcs||!pcs.content||pcs.content==="none")return;const decls=[];for(const p in PROPS){const v=pcs[p];if(v&&MOD.test(v)){try{decls.push(PROPS[p]+":"+fix(v)+" !important")}catch(_){}}}if(decls.length){const cls="pdfpe"+(uid++);el.classList.add(cls);extra.push("."+cls+pe+"{"+decls.join(";")+"}")}})});
+   if(extra.length){const st=d.createElement("style");st.textContent=extra.join("");(d.head||d.documentElement).appendChild(st)}
   }catch(x){console.warn("pdfResolveColors",x)}}
   for(let i=0;i<pg.length;i++){
    L.update(8+(i/pg.length)*84,"Slide "+(i+1)+" of "+pg.length);
